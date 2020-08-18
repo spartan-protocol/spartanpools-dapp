@@ -12,11 +12,13 @@ import { message } from 'antd';
 
 import WalletDrawer from './WalletDrawer'
 import { getAddressShort, } from '../../utils'
-import { getListedPools, getPoolsData, getWalletData, getStakesData } from '../../client/web3'
+import { getAssets, getAssetDetails, getWalletData, getStakesData } from '../../client/web3'
 
 const { Header } = Layout;
 
 const Headbar = (props) => {
+
+
 
     const context = useContext(Context)
     const [connecting, setConnecting] = useState(false)
@@ -31,24 +33,32 @@ const Headbar = (props) => {
     const connectWallet = async () => {
         setConnecting(true)
         window.web3 = new Web3(window.ethereum);
-        const accountConnected = (await window.web3.eth.getAccounts())[0];
-        if (accountConnected) {
-            message.loading('Loading pools', 5);
-            let poolArray = context.poolArray ? context.poolArray : await getListedPools()
-            let poolsData = context.poolsData ? context.poolsData : await getPoolsData(poolArray)
-            message.loading('Loading stake data', 3);
-            let stakesData = context.stakesData ? context.stakesData : await getStakesData(accountConnected, poolArray)
-            if (!context.poolsData) {
-                context.setContext({ 'poolArray': poolArray })
-                context.setContext({ 'poolsData': poolsData })
-                context.setContext({ 'stakesData': stakesData })
-            }
-            message.loading('Loading wallet data', 3);
-            let walletData = await getWalletData(poolArray)
-            context.setContext({ 'walletData': walletData })
-            context.setContext({ 'connected': true })
+        const account= (await window.web3.eth.getAccounts())[0];
+        if (account) {
+            message.loading('Loading assets', 3);
+            let assetArray = context.assetArray ? context.assetArray : await getAssets()
+            context.setContext({ 'assetArray': assetArray })
+            let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getAssetDetails(account, assetArray)
+            context.setContext({ 'assetDetailsArray': assetDetailsArray })
 
-            await getSpartaPrice()
+            message.loading('Loading wallet data', 3);
+            let walletData = await getWalletData(account, assetDetailsArray)
+            context.setContext({ 'walletData': walletData })
+
+            // let poolArray = context.poolArray ? context.poolArray : await getListedPools()
+            // let poolsData = context.poolsData ? context.poolsData : await getPoolsData(poolArray)
+            // message.loading('Loading stake data', 3);
+            // let stakesData = context.stakesData ? context.stakesData : await getStakesData(accountConnected, poolArray)
+            // if (!context.poolsData) {
+            //     context.setContext({ 'poolArray': poolArray })
+            //     context.setContext({ 'poolsData': poolsData })
+            //     context.setContext({ 'stakesData': stakesData })
+            // }
+
+            
+            context.setContext({ 'connected': true })
+            // console.log({walletData})
+            // await getSpartaPrice()
             setConnecting(false)
             setConnected(true)
             message.success('Loaded!',  2);
@@ -69,12 +79,12 @@ const Headbar = (props) => {
         return false;
     }
 
-    const getSpartaPrice = async () => {
-        let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan&vs_currencies=usd')
-        console.log(resp.data.spartan.usd)
-        context.setContext({ 'spartanPrice': resp.data.spartan.usd })
-        return
-    }
+    // const getSpartaPrice = async () => {
+    //     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan&vs_currencies=usd')
+    //     console.log(resp.data.spartan.usd)
+    //     context.setContext({ 'spartanPrice': resp.data.spartan.usd })
+    //     return
+    // }
 
     const addr = () => {
         return getAddressShort(context.walletData?.address)
@@ -93,10 +103,13 @@ const Headbar = (props) => {
                 <Col xs={20}>
                     <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
                         <Menu.Item key='1'>
-                            <Link to={"/overview"}>OVERVIEW</Link>
+                            <Link to={"/upgrade"}>UPGRADE</Link>
                         </Menu.Item>
                         <Menu.Item key='2'>
-                            <Link to={"/pools"}>POOLS</Link>
+                            <Link to={"/swap"}>SWAP</Link>
+                        </Menu.Item>
+                        <Menu.Item key='3'>
+                            <Link to={"/dao"}>DAO</Link>
                         </Menu.Item>
                         {/* <Menu.Item key="3">
                             <Link to={"/cdps"}>CDPs</Link>
@@ -104,9 +117,9 @@ const Headbar = (props) => {
                         <Menu.Item key="4">
                             <Link to={"/anchor"}>PRICE ANCHOR</Link>
                         </Menu.Item>  */}
-                        <Menu.Item key="5">
-                            <Link to={"/about"}>ABOUT</Link>
-                        </Menu.Item>
+                        {/* <Menu.Item key="5">
+                            <Link to={"/upgrade"}>UPGRADE</Link>
+                        </Menu.Item> */}
                     </Menu>
                 </Col>
                 <Col xs={4} style={{ textAlign: 'right' }}>
@@ -127,7 +140,7 @@ const Headbar = (props) => {
                 closable={false}
                 onClose={onClose}
                 visible={visible}
-                width={300}
+                width={450}
             >
                 <WalletDrawer />
             </Drawer>

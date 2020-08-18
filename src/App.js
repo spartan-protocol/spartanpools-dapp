@@ -8,15 +8,19 @@ import { Colour } from './ui/components/elements'
 import Headbar from './ui/layout/Headbar'
 // import Footer from './ui/layout/Footer'
 
-import Overview from './ui/pages/Overview'
-import Pools from './ui/pages/Pools'
+import SimpleSwap from './ui/pages/SimpleSwap'
+import Upgrade from './ui/pages/Upgrade'
+import Dao from './ui/pages/DAO'
+
+// import Overview from './ui/pages/Overview'
+// import Pools from './ui/pages/Pools'
 //  import CDPs from './ui/pages/CDPs'
 // import PriceAnchor from './ui/pages/PriceAnchor'
-import About from './ui/pages/About'
+// import About from './ui/pages/About'
 
-import Stake from './ui/pages/Stake'
-import Swap from './ui/pages/Swap'
-import CreatePool from './ui/pages/CreatePool'
+// import Stake from './ui/pages/Stake'
+// import Swap from './ui/pages/Swap'
+// import CreatePool from './ui/pages/CreatePool'
 // import ManageCDP from './ui/pages/manageCDP'
 // import OpenCDP from './ui/pages/openCDP'
 import { ContextProvider } from './context'
@@ -44,17 +48,20 @@ const App = () => {
 						<Headbar />
 						<Content style={contentStyles}>
 							<Switch>
-								<Route path="/" exact component={Overview} />
-								<Route path="/overview" exact component={Overview} />
-								<Route path="/pools" exact component={Pools} />
+								<Route path="/" exact component={Upgrade} />
+								<Route path="/upgrade" exact component={Upgrade} />
+								<Route path="/swap" exact component={SimpleSwap} />
+								<Route path="/dao" exact component={Dao} />
+								{/* <Route path="/overview" exact component={Overview} />
+								<Route path="/pools" exact component={Pools} /> */}
 								{/* <Route path="/CDPs" exact component={CDPs} /> */}
 								{/* <Route path="/anchor" exact component={PriceAnchor} /> */}
-								<Route path="/about" exact component={About} />
+								{/* <Route path="/about" exact component={About} />
 								<Route path="/pool/stake" exact component={Stake} />
-								<Route path="/pool/swap" exact component={Swap} />
+								<Route path="/pool/swap" exact component={Swap} /> */}
 								{/* <Route path="/cdp/manageCDP" exact component={ManageCDP}/> */}
 								{/* <Route path="/cdp/openCDP" exact component={OpenCDP}/> */}
-								<Route path="/pool/create" exact component={CreatePool} />
+								{/* <Route path="/pool/create" exact component={CreatePool} /> */}
 							</Switch>
 						</Content>
 						{/* <Footer style={{height:50}}/> */}

@@ -1,22 +1,24 @@
 import Web3 from 'web3'
 
 import ERC20 from '../artifacts/ERC20.json'
-// import SPARTAER from '../artifacts/Sparta.json'
-import POOLS from '../artifacts/SpartaPools2.json'
+import SPARTA from '../artifacts/Sparta.json'
+import POOLS from '../artifacts/SPOOL.json'
+import UTILS from '../artifacts/Utils.json'
 
 export const ETH = '0x0000000000000000000000000000000000000000'
-//export const SPARTA = '0x95d0c08e59bbc354ee2218da9f82a04d7cdb6fdf'
-//export const POOLS_ADDR = '0xCFE254e64Bb766bDb0998801F7b9F2E6762a92DB'
-export const SPARTA = '0x4ba6ddd7b89ed838fed25d208d4f644106e34279'
+export const SPARTA_ADDR = '0x4c70e3Fb5D828f5f992B6aF9a49D13716F717cac'
+export const SPARTA_ABI = SPARTA.abi
 export const POOLS_ADDR = '0x52DEcc80d5233d35d3E2dCdC0Ad2ba0373155c45'
 export const POOLS_ABI = POOLS.abi
 export const ERC20_ABI = ERC20.abi
+export const UTILS_ADDR = '0xB1941e0a8C7D05EF27E84bB6cD95B14573010d8d'
+export const UTILS_ABI = UTILS.abi
 
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
 }
-export const getEtherscanURL = () => {
-    return "https://etherscan.io/"
+export const getExplorerURL = () => {
+    return "https://explorer.binance.org/smart-testnet/"
 }
 export const getAccountArray = async () => {
     var web3_ = getWeb3()
@@ -24,7 +26,7 @@ export const getAccountArray = async () => {
     return accounts
 }
 
-export const getETHBalance = async (acc) => {
+export const getBNBBalance = async (acc) => {
     var web3_ = getWeb3()
     var bal_ = await web3_.eth.getBalance(acc)
     return bal_
@@ -44,9 +46,48 @@ export const getTokenName = async (address) => {
     return await contractToken.methods.name().call()
 }
 
+export const getUtilsContract = () => {
+    var web3 = getWeb3()
+    return new web3.eth.Contract(UTILS_ABI, UTILS_ADDR)
+}
+
+export const getSpartaContract = () => {
+    var web3 = getWeb3()
+    return new web3.eth.Contract(SPARTA_ABI, SPARTA_ADDR)
+}
+
 export const getPoolsContract = () => {
     var web3 = getWeb3()
     return new web3.eth.Contract(POOLS_ABI, POOLS_ADDR)
+}
+
+// Get just an array of assets that can be upgrade
+export const getAssets = async () => {
+    var contract = getSpartaContract()
+    let assetArray = await contract.methods.allAssets().call() 
+    console.log({ assetArray })
+    return assetArray
+}
+
+// Build out Asset Details, as long as have balance
+export const getAssetDetails = async (address, assetArray) => {
+    let assetDetailsArray = []
+    for (let i = 0; i < assetArray.length; i++) {
+        let utilsContract = getUtilsContract()
+        let tokenDetails = await utilsContract.methods.getTokenDetailsWithBalance(assetArray[i], address).call()
+        if(+tokenDetails.balance > 0){
+            assetDetailsArray.push(tokenDetails)
+        }
+    }
+    console.log({ assetDetailsArray })
+    return assetDetailsArray
+}
+
+// Filter assets for eligiblity to upgrade
+export const getEligibleAssets = async (address, assetDetailsArray) => {
+    const eligibleAssetArray = assetDetailsArray.find((item) => !item.hasClaimed)
+    console.log({ eligibleAssetArray })
+    return eligibleAssetArray
 }
 
 export const getListedPools = async () => {
@@ -119,39 +160,32 @@ export const getNetworkData = async (poolsData) => {
     return (networkData)
 }
 
-// export const getWalletData = async () => {}
-export const getWalletData = async (poolArray) => {
-    var account = await getAccountArray()
-    var address = account[0]
-    var accountBalance = await getETHBalance(address)
+export const getWalletData = async (address, assetDetailsArray) => {
+    var accountBalance = await getBNBBalance(address)
     var tokens = []
     var walletData = {
         'address': address,
         'tokens': tokens
     }
     tokens.push({
-        'symbol': 'ETH',
-        'name': 'Etherum',
+        'symbol': 'BNB',
+        'name': 'Binance Chain Token',
         'balance': accountBalance,
         'address': '0x0000000000000000000000000000000000000000'
     })
     tokens.push({
         'symbol': 'SPARTA',
         'name': 'Sparta',
-        'balance': await getTokenContract(SPARTA).methods.balanceOf(address).call(),
-        'address': SPARTA
+        'balance': await getTokenContract(SPARTA_ADDR).methods.balanceOf(address).call(),
+        'address': SPARTA_ADDR
     })
-    for (let i = 1; i < poolArray.length; i++) {
-        var contractToken = getTokenContract(poolArray[i])
-        var tokenSymbol = await contractToken.methods.symbol().call()
-        var tokenName = await contractToken.methods.name().call()
-        var tokenBalance = await contractToken.methods.balanceOf(address).call()
-        var tokenAddress = poolArray[i]
+    for (let i = 0; i < assetDetailsArray.length; i++) {
+        var obj = assetDetailsArray[i]
         tokens.push({
-            'symbol': tokenSymbol,
-            'name': tokenName,
-            'balance': tokenBalance,
-            'address': tokenAddress
+            'symbol': obj.symbol,
+            'name': obj.name,
+            'balance': obj.balance,
+            'address': obj.tokenAddress
         })
     }
     console.log({ walletData })
