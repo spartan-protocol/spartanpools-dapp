@@ -24,7 +24,7 @@ const DAO = (props) => {
     const [connected, setConnected] = useState(false)
     const [visible, setVisible] = useState(false);
 
-    const [asset, setAsset] = useState(false);
+    const [token, setAsset] = useState(false);
     const [maxClaim, setMaxClaim] = useState(false);
     const [claimRate, setClaimRate] = useState(false);
 
@@ -53,7 +53,7 @@ const DAO = (props) => {
     const listAsset = async () => {
         console.log('listAsset')
         let contract = getSpartaContract()
-        let tx = await contract.methods.listAssetWithClaim(asset, maxClaim, claimRate).send({from:context.walletData.address})
+        let tx = await contract.methods.listAssetWithClaim(token, maxClaim, claimRate).send({from:context.walletData.address})
         console.log(tx.transactionHash)
     }
 
@@ -71,7 +71,7 @@ const DAO = (props) => {
                 <Col xs={24}>
                     <Row style={paneStyles}>
                         <Col xs={24} style={colStyles}>
-                            <h2>LIST ASSET</h2>
+                            <h2>LIST TOKEN</h2>
                             <Input onChange={changeAsset}
                                 placeholder={'Enter BEP2E Asset Address'}
                                 allowClear={true}></Input>

@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react'
 import { Context } from '../../context'
 import { Link } from 'react-router-dom'
 import { Table } from 'antd'
-// import { getPoolsData } from '../../client/web3_old'
+import { getListedTokens, getListedPools, getPoolsData } from '../../client/web3'
 import { formatUSD, formatAPY, convertFromWei } from '../../utils'
 import { PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined } from '@ant-design/icons';
 
@@ -29,13 +29,17 @@ const PoolTable = (props) => {
     const context = useContext(Context)
 
     useEffect(() => {
-        // getData()
+        getData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    // const getData = async () => {
-    //     context.setContext({ poolsData: await getPoolsData() })
-    // }
+    const getData = async () => {
+        let tokenArray = await getListedTokens()
+        context.setContext({ tokenArray: tokenArray })
+        let poolArray = await getListedPools()
+        context.setContext({ poolArray: poolArray })
+        context.setContext({ poolsData: await getPoolsData(tokenArray) })
+    }
 
     const columns = [
         {

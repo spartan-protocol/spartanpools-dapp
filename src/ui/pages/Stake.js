@@ -31,7 +31,7 @@ const Stake = (props) => {
         'price': 0,
         'volume': 0,
         'spartan': 0,
-        'asset': 0,
+        'token': 0,
         'depth': 0,
         'txCount': 0,
         'apy': 0,
@@ -66,9 +66,9 @@ const Stake = (props) => {
         'name': 'XXX',
         'address': ETH,
         'spartan': 0,
-        'asset': 0,
+        'token': 0,
         'spartanStaked': 0,
-        'assetStaked': 0,
+        'tokenStaked': 0,
         'roi': 0,
         'units': 0,
         'share': 0
@@ -293,7 +293,7 @@ const Stake = (props) => {
             data: `${getShare()}%`
         },
         field2: {
-            title: 'YOUR ASSETS',
+            title: 'YOUR TOKENS',
             data: `${getShare() * convertFromWei(mainPool.depth)}`
         },
         field3: {
@@ -308,7 +308,7 @@ const Stake = (props) => {
             <div style={{ marginTop: '-50px' }}>
                 <Center><PoolPane
                     symbol={mainPool?.symbol}
-                    balance={mainPool?.asset}
+                    balance={mainPool?.tokenAmt}
                     data={poolAttributes}
                     hideSubpane={hideSubpane} /></Center>
             </div>

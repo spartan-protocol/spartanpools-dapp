@@ -35,14 +35,14 @@ const Headbar = (props) => {
         window.web3 = new Web3(window.ethereum);
         const account= (await window.web3.eth.getAccounts())[0];
         if (account) {
-            message.loading('Loading assets', 3);
-            let assetArray = context.assetArray ? context.assetArray : await getAssets()
-            context.setContext({ 'assetArray': assetArray })
-            let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getAssetDetails(account, assetArray)
-            context.setContext({ 'assetDetailsArray': assetDetailsArray })
+            message.loading('Loading tokens', 3);
+            let tokenArray = context.tokenArray ? context.tokenArray : await getAssets()
+            context.setContext({ 'tokenArray': tokenArray })
+            let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getAssetDetails(account, tokenArray)
+            context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
 
             message.loading('Loading wallet data', 3);
-            let walletData = await getWalletData(account, assetDetailsArray)
+            let walletData = await getWalletData(account, tokenDetailsArray)
             context.setContext({ 'walletData': walletData })
 
             // let poolArray = context.poolArray ? context.poolArray : await getListedPools()
@@ -101,7 +101,10 @@ const Headbar = (props) => {
         <Header>
             <Row>
                 <Col xs={20}>
-                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['0']}>
+                        <Menu.Item key='0'>
+                            <Link to={"/overview"}>OVERVIEW</Link>
+                        </Menu.Item>
                         <Menu.Item key='1'>
                             <Link to={"/upgrade"}>UPGRADE</Link>
                         </Menu.Item>
@@ -109,7 +112,13 @@ const Headbar = (props) => {
                             <Link to={"/swap"}>SWAP</Link>
                         </Menu.Item>
                         <Menu.Item key='3'>
+                            <Link to={"/stake"}>STAKE</Link>
+                        </Menu.Item>
+                        <Menu.Item key='4'>
                             <Link to={"/dao"}>DAO</Link>
+                        </Menu.Item>
+                        <Menu.Item key='5'>
+                            <Link to={"/pools"}>POOLS</Link>
                         </Menu.Item>
                         {/* <Menu.Item key="3">
                             <Link to={"/cdps"}>CDPs</Link>

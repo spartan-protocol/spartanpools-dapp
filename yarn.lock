@@ -2543,9 +2543,9 @@ babel-plugin-macros@2.8.0:
     cosmiconfig "^6.0.0"
     resolve "^1.12.0"
 
-babel-plugin-named-asset-import@^0.3.6:
+babel-plugin-named-token-import@^0.3.6:
   version "0.3.6"
-  resolved "https://registry.yarnpkg.com/babel-plugin-named-asset-import/-/babel-plugin-named-asset-import-0.3.6.tgz#c9750a1b38d85112c9e166bf3ef7c5dbc605f4be"
+  resolved "https://registry.yarnpkg.com/babel-plugin-named-token-import/-/babel-plugin-named-token-import-0.3.6.tgz#c9750a1b38d85112c9e166bf3ef7c5dbc605f4be"
   integrity sha512-1aGDUfL1qOOIoqk9QKGIo2lANk+C7ko/fqH0uIyC71x3PEGz0uVP8ISgfEsFuG+FKmjHTvFK/nNM8dowpmUxLA==
 
 babel-plugin-syntax-object-rest-spread@^6.8.0:
@@ -8093,9 +8093,9 @@ opn@^5.5.0:
   dependencies:
     is-wsl "^1.1.0"
 
-optimize-css-assets-webpack-plugin@5.0.3:
+optimize-css-tokens-webpack-plugin@5.0.3:
   version "5.0.3"
-  resolved "https://registry.yarnpkg.com/optimize-css-assets-webpack-plugin/-/optimize-css-assets-webpack-plugin-5.0.3.tgz#e2f1d4d94ad8c0af8967ebd7cf138dcb1ef14572"
+  resolved "https://registry.yarnpkg.com/optimize-css-tokens-webpack-plugin/-/optimize-css-tokens-webpack-plugin-5.0.3.tgz#e2f1d4d94ad8c0af8967ebd7cf138dcb1ef14572"
   integrity sha512-q9fbvCRS6EYtUKKSwI87qm2IxlyJK5b4dygW1rKUBT6mMDhdG5e5bZT63v6tnJR9F9FB/H5a0HTmtw+laUBxKA==
   dependencies:
     cssnano "^4.1.10"
@@ -9878,7 +9878,7 @@ react-scripts@3.4.1:
     babel-eslint "10.1.0"
     babel-jest "^24.9.0"
     babel-loader "8.1.0"
-    babel-plugin-named-asset-import "^0.3.6"
+    babel-plugin-named-token-import "^0.3.6"
     babel-preset-react-app "^9.1.2"
     camelcase "^5.3.1"
     case-sensitive-paths-webpack-plugin "2.3.0"
@@ -9902,7 +9902,7 @@ react-scripts@3.4.1:
     jest-resolve "24.9.0"
     jest-watch-typeahead "0.4.2"
     mini-css-extract-plugin "0.9.0"
-    optimize-css-assets-webpack-plugin "5.0.3"
+    optimize-css-tokens-webpack-plugin "5.0.3"
     pnp-webpack-plugin "1.6.4"
     postcss-flexbugs-fixes "4.1.0"
     postcss-loader "3.0.0"

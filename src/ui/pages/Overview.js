@@ -5,7 +5,7 @@ import { Row, Col } from 'antd'
 import { HR, H1, H2, Text, LabelGroup, Button, Gap } from '../components/elements';
 import { rowStyles } from '../components/styles'
 
-import {getNetworkData} from '../../client/web3'
+import {getRouterContract} from '../../client/web3'
 import { formatUSD, convertFromWei } from '../../utils'
 
 const Overview = (props) => {
@@ -27,9 +27,14 @@ const Overview = (props) => {
     }, [context.connected])
 
     const getData = async () => {
-        let networkData = await getNetworkData(context.poolsData)
-        context.setContext({'networkData': networkData})
-        setNetworkData(networkData)
+
+        var contract = getRouterContract()
+        let SPARTA = await contract.methods.SPARTA().call() 
+        console.log(SPARTA)
+
+        // let networkData = await getNetworkData(context.poolsData)
+        // context.setContext({'networkData': networkData})
+        // setNetworkData(networkData)
     }
 
     // const volume = () => {
@@ -42,7 +47,10 @@ const Overview = (props) => {
             <H1>Overview</H1>
             <HR />
             <Gap/>
-            <Row  style={rowStyles}>
+            <h1>
+
+            </h1>
+            {/* <Row  style={rowStyles}>
                 <Col xs={3}>
                     <LabelGroup size={24} label={'POOLS'} title={networkData?.pools} />
                 </Col>
@@ -58,14 +66,14 @@ const Overview = (props) => {
                 <Col xs={6}>
                     <LabelGroup size={24}  label={'TOTAL REVENUE'} title={formatUSD(convertFromWei(networkData?.totalRevenue), context.spartanPrice)} />
                 </Col>
-            </Row>
-            <Gap/>
+            </Row> */}
+            {/* <Gap/>
             <H2>POOLS</H2><br></br>
             <Text>You can provide liquidity and trade across pools</Text><br/>
             <Link to={"/pools"}><Button type="primary">POOLS</Button></Link>
-            <Gap></Gap>
+            <Gap></Gap> */}
             {/* <H2>CDPs</H2><br></br>
-            <Text>You can create debt from pooled assets</Text><br/>
+            <Text>You can create debt from pooled tokens</Text><br/>
             <Link to={"/pools"}><Button type="primary">CDPS</Button></Link> */}
 
         </div>

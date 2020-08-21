@@ -23,7 +23,7 @@ const DrawerContent = (props) => {
     return (
         <>
             <Tabs defaultActiveKey="1" onChange={callback}>
-                <TabPane tab="ASSETS" key="1">
+                <TabPane tab="TOKENS" key="1">
                     <AssetTable />
                 </TabPane>
                 {/* <TabPane tab="STAKES" key="2">
@@ -59,6 +59,7 @@ export const AssetTable = () => {
                             symbol={record.symbol}
                             name={record.name}
                             balance={record.balance}
+                            address={record.address}
                             size={32} />
                 </div>
             )

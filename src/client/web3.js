@@ -2,16 +2,20 @@ import Web3 from 'web3'
 
 import ERC20 from '../artifacts/ERC20.json'
 import SPARTA from '../artifacts/Sparta.json'
-import POOLS from '../artifacts/SPOOL.json'
+import SROUTER from '../artifacts/SRouter.json'
+import POOLS from '../artifacts/SPool.json'
 import UTILS from '../artifacts/Utils.json'
 
 export const ETH = '0x0000000000000000000000000000000000000000'
-export const SPARTA_ADDR = '0x4c70e3Fb5D828f5f992B6aF9a49D13716F717cac'
+export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
+export const SPARTA_ADDR = '0x0C1d8c5911A1930ab68b3277D35f45eEd25e1F26'
 export const SPARTA_ABI = SPARTA.abi
-export const POOLS_ADDR = '0x52DEcc80d5233d35d3E2dCdC0Ad2ba0373155c45'
+export const ROUTER_ADDR = '0x20d0270649c9f13c081FF98350148706A05557F8'
+export const ROUTER_ABI = SROUTER.abi
+export const POOLS_ADDR = '0xeEbAe10ead47F2aA115B4BA6f07A227F12A5AaB1'
 export const POOLS_ABI = POOLS.abi
 export const ERC20_ABI = ERC20.abi
-export const UTILS_ADDR = '0xB1941e0a8C7D05EF27E84bB6cD95B14573010d8d'
+export const UTILS_ADDR = '0xC7b43AF5Deb54E62d2cdffa9eD1e9F58199ec75E'
 export const UTILS_ABI = UTILS.abi
 
 export const getWeb3 = () => {
@@ -61,7 +65,12 @@ export const getPoolsContract = () => {
     return new web3.eth.Contract(POOLS_ABI, POOLS_ADDR)
 }
 
-// Get just an array of assets that can be upgrade
+export const getRouterContract = () => {
+    var web3 = getWeb3()
+    return new web3.eth.Contract(ROUTER_ABI, ROUTER_ADDR)
+}
+
+// Get just an array of tokens that can be upgrade
 export const getAssets = async () => {
     var contract = getSpartaContract()
     let assetArray = await contract.methods.allAssets().call() 
@@ -74,59 +83,55 @@ export const getAssetDetails = async (address, assetArray) => {
     let assetDetailsArray = []
     for (let i = 0; i < assetArray.length; i++) {
         let utilsContract = getUtilsContract()
-        let tokenDetails = await utilsContract.methods.getTokenDetailsWithBalance(assetArray[i], address).call()
-        if(+tokenDetails.balance > 0){
-            assetDetailsArray.push(tokenDetails)
+        let assetDetails = await utilsContract.methods.getTokenDetailsWithBalance(assetArray[i], address).call()
+        if(+assetDetails.balance > 0){
+            assetDetailsArray.push(assetDetails)
         }
     }
     console.log({ assetDetailsArray })
     return assetDetailsArray
 }
 
-// Filter assets for eligiblity to upgrade
+// Filter tokens for eligiblity to upgrade
 export const getEligibleAssets = async (address, assetDetailsArray) => {
     const eligibleAssetArray = assetDetailsArray.find((item) => !item.hasClaimed)
     console.log({ eligibleAssetArray })
     return eligibleAssetArray
 }
 
-export const getListedPools = async () => {
-    var contract = getPoolsContract()
-    var poolCount = await contract.methods.poolCount().call()
-    let poolArray = []
-    for (let i = 0; i < poolCount; i++) {
-        let pool = await contract.methods.arrayPools(i).call()
-        poolArray.push(pool)
-    }
+export const getListedTokens = async () => {
+    var contract = getUtilsContract()
+    let tokenArray = await contract.methods.allTokens().call() 
+    console.log({ tokenArray })
+    return tokenArray
+}
+export const getListedPools= async () => {
+    var contract = getUtilsContract()
+    let poolArray = await contract.methods.allPools().call() 
     console.log({ poolArray })
     return poolArray
 }
 
-export const getPoolsData = async (poolArray) => {
-    var contractPool = getPoolsContract()
+export const getPoolsData = async (tokenArray) => {
+    var contract = getUtilsContract()
     let poolsData = []
-    for (let i = 0; i < poolArray.length; i++) {
+    for (let i = 0; i < tokenArray.length; i++) {
         var symbol; var name;
-        if (poolArray[i] === ETH) {
-            symbol = 'ETH'
-            name = 'Ethereum'
-        } else {
-            var contractToken = getTokenContract(poolArray[i])
-            symbol = await contractToken.methods.symbol().call()
-            name = await contractToken.methods.name().call()
-        }
-        let poolDataRaw = await contractPool.methods.poolData(poolArray[i]).call()
-        let apy = await contractPool.methods.getPoolAPY(poolArray[i]).call()
+        let tokenDetails = await contract.methods.getTokenDetails(tokenArray[i]).call()
+        symbol = tokenDetails.symbol
+        name = tokenDetails.name
+        let poolDataRaw = await contract.methods.getPoolData(tokenArray[i]).call()
+        let apy = await contract.methods.getPoolAPY(tokenArray[i]).call()
 
         let poolData = {
             'symbol': symbol,
             'name': name,
-            'address': poolArray[i],
-            'price': +poolDataRaw.spartan / +poolDataRaw.asset,
+            'address': tokenArray[i],
+            'price': +poolDataRaw.baseAmt / +poolDataRaw.tokenAmt,
             'volume': +poolDataRaw.volume,
-            'spartan': +poolDataRaw.spartan,
-            'asset': +poolDataRaw.asset,
-            'depth': 2 * +poolDataRaw.spartan,
+            'baseAmt': +poolDataRaw.baseAmt,
+            'tokenAmt': +poolDataRaw.tokenAmt,
+            'depth': 2 * +poolDataRaw.baseAmt,
             'txCount': +poolDataRaw.txCount,
             'apy': +apy,
             'units': +poolDataRaw.poolUnits,
@@ -160,7 +165,7 @@ export const getNetworkData = async (poolsData) => {
     return (networkData)
 }
 
-export const getWalletData = async (address, assetDetailsArray) => {
+export const getWalletData = async (address, tokenDetailsArray) => {
     var accountBalance = await getBNBBalance(address)
     var tokens = []
     var walletData = {
@@ -179,8 +184,8 @@ export const getWalletData = async (address, assetDetailsArray) => {
         'balance': await getTokenContract(SPARTA_ADDR).methods.balanceOf(address).call(),
         'address': SPARTA_ADDR
     })
-    for (let i = 0; i < assetDetailsArray.length; i++) {
-        var obj = assetDetailsArray[i]
+    for (let i = 0; i < tokenDetailsArray.length; i++) {
+        var obj = tokenDetailsArray[i]
         tokens.push({
             'symbol': obj.symbol,
             'name': obj.name,
@@ -262,7 +267,7 @@ export const getStakesData = async (address, poolArray) => {
         let poolDataRaw = await contractPool.methods.poolData(poolArray[i]).call()
         let stakeDataRaw = await contractPool.methods.getMemberStakeData(address, poolArray[i]).call()
         let spartan = await contractPool.methods.getStakerShareSparta(address, poolArray[i]).call()
-        let asset = await contractPool.methods.getStakerShareAsset(address, poolArray[i]).call()
+        let token = await contractPool.methods.getStakerShareAsset(address, poolArray[i]).call()
 
         let ROI = await contractPool.methods.getMemberROI(address, poolArray[i]).call()
 
@@ -271,9 +276,9 @@ export const getStakesData = async (address, poolArray) => {
             'name': name,
             'address': poolArray[i],
             'spartan': spartan,
-            'asset': asset,
-            'spartanStaked': +stakeDataRaw.asset,
-            'assetStaked': +stakeDataRaw.asset,
+            'token': token,
+            'spartanStaked': +stakeDataRaw.tokenAmt,
+            'tokenStaked': +stakeDataRaw.tokenAmt,
             'roi': +ROI,
             'units': +stakeDataRaw.stakeUnits,
             'share': +stakeDataRaw.stakeUnits / +poolDataRaw.poolUnits

@@ -34,7 +34,7 @@ const CreatePool = (props) => {
     //     'price': 0,
     //     'volume': 0,
     //     'spartan': 0,
-    //     'asset': 0,
+    //     'token': 0,
     //     'depth': 0,
     //     'txCount': 0,
     //     'apy': 0,
@@ -115,7 +115,7 @@ const CreatePool = (props) => {
         setStake1Data(await getStakeInputData(convertToWei(input), stake1Data))
         // const stake = {
         //     spartan: convertToWei(input),
-        //     asset: stake2Data.input
+        //     token: stake2Data.input
         // }
         // setStakeUnits(getStakeUnits(stake, stake))
     }
@@ -125,7 +125,7 @@ const CreatePool = (props) => {
     //     setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
     //     const stake = {
     //         spartan: inputTokenData.balance,
-    //         asset: stake2Data.input
+    //         token: stake2Data.input
     //     }
     //     setStakeUnits(getStakeUnits(stake, stake))
     // }
@@ -135,12 +135,12 @@ const CreatePool = (props) => {
         setStake1Data(await getStakeInputData(finalAmt, stake1Data))
         // const stake = {
         //     spartan: finalAmt,
-        //     asset: stake2Data.input
+        //     token: stake2Data.input
         // }
         // setStakeUnits(getStakeUnits(stake, stake))
     }
 
-    // const changeStake2Token = async (asset) => {
+    // const changeStake2Token = async (token) => {
     //     console.log("changing sell tokens not enabled yet")
     // }
 
@@ -149,7 +149,7 @@ const CreatePool = (props) => {
         setStake2Data(await getStakeInputData(convertToWei(input), stake2Data))
         // const stake = {
         //     spartan: stake1Data.input,
-        //     asset: convertToWei(input)
+        //     token: convertToWei(input)
         // }
         // console.log(stake)
         // setStakeUnits(getStakeUnits(stake, stake))
@@ -161,7 +161,7 @@ const CreatePool = (props) => {
         setStake2Data(await getStakeInputData(finalAmt, stake2Data))
         // const stake = {
         //     spartan: stake1Data.input,
-        //     asset: finalAmt
+        //     token: finalAmt
         // }
         // console.log(stake)
         // setStakeUnits(getStakeUnits(stake, stake))

@@ -2,16 +2,13 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
-import Web3 from 'web3'
-import { SPARTA_ADDR, getSpartaContract, getTokenContract, getAssetDetails } from '../../client/web3'
+import { SPARTA_ADDR, getSpartaContract, getTokenContract, getAssetDetails, getWalletData } from '../../client/web3'
 
 import { Button, Row, Col, message, Input, Table } from 'antd';
 import { paneStyles, colStyles } from '../components/styles'
 
-import ERC20 from '../../artifacts/ERC20.json'
 import { LoadingOutlined } from '@ant-design/icons';
 var utils = require('ethers').utils;
-const ERC20_ABI = ERC20.abi
 
 const Upgrade = (props) => {
 
@@ -25,7 +22,7 @@ const Upgrade = (props) => {
     const [connected, setConnected] = useState(false)
     const [visible, setVisible] = useState(false);
 
-    const [asset, setAsset] = useState('0x0000000000000000000000000000000000000000');
+    const [token, setAsset] = useState('0x0000000000000000000000000000000000000000');
     const [approval, setApproval] = useState(false)
     const [startTx, setStartTx] = useState(false);
     const [endTx, setEndTx] = useState(false);
@@ -33,7 +30,7 @@ const Upgrade = (props) => {
     useEffect(() => {
         getData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.assetDetailsArray])
+    }, [context.tokenDetailsArray])
 
     const getData = async () => {
         // let eligibleAssetArray = context.eligibleAssetArray ? context.eligibleAssetArray : await getEligibleAssets(walletData.address)
@@ -55,7 +52,7 @@ const Upgrade = (props) => {
     }
 
     const approve = async () => {
-        const contract = getTokenContract(asset)
+        const contract = getTokenContract(token)
         // (utils.parseEther(10**18)).toString()
         const supply = await contract.methods.totalSupply().call()
         await contract.methods.approve(SPARTA_ADDR, supply).send({
@@ -64,12 +61,13 @@ const Upgrade = (props) => {
             gas: ''
         })
         message.success(`Transaction Sent!`,  2);
+        checkApproval(token)
     }
 
     const upgrade = async () => {
         setStartTx(true)
         let contract = getSpartaContract()
-        await contract.methods.upgrade(asset).send({
+        await contract.methods.upgrade(token).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -77,7 +75,10 @@ const Upgrade = (props) => {
         message.success(`Transaction Sent!`,  2);
         setStartTx(false)
         setEndTx(true)
-        context.setContext({ 'assetDetailsArray': await getAssetDetails(context.walletData.address, context.assetArray) })
+        let tokenDetailsArray = await getAssetDetails(context.walletData.address, context.tokenArray)
+        context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
+        let walletData = await getWalletData(context.walletData.address, tokenDetailsArray)
+        context.setContext({ 'walletData': walletData })
     }
 
     const indentStyles = {
@@ -89,7 +90,7 @@ const Upgrade = (props) => {
         <div>
             <h1>UPGRADE TO THE SPARTA PROTOCOL TOKEN</h1>
             <p>A minimum of 300 members each from 30 Binance Chain projects can acquire SPARTA using Proof-Of-Burn. </p>
-            <p><span>Acquiring SPARTA will destroy your previous assets and mint SPARTA in accordance with the &nbsp;
+            <p><span>Acquiring SPARTA will destroy your previous tokens and mint SPARTA in accordance with the &nbsp;
             <a href="http://spartanprotocol.org/sparta" target="blank">
                 Genesis Allocations.
             </a>
@@ -120,8 +121,8 @@ const Upgrade = (props) => {
                 </Col>
             </Row>
             <br/><br/>
-            <h2>ELIGIBLE ASSETS</h2>
-            <p>The following assets on your wallet can be upgraded to acquire SPARTA.</p>
+            <h2>ELIGIBLE TOKENS</h2>
+            <p>The following tokens on your wallet can be upgraded to acquire SPARTA.</p>
             <BalanceTable />
         </div>
     )
@@ -184,7 +185,7 @@ export const BalanceTable = () => {
 
     return (
         <>
-            <Table style={tableStyles} dataSource={context.assetDetailsArray} columns={columns} rowKey="symbol" />
+            <Table style={tableStyles} dataSource={context.tokenDetailsArray} columns={columns} rowKey="symbol" />
         </>
     )
 }
@@ -217,7 +218,7 @@ export const AllocationTable = () => {
             )
         },
         {
-            title: 'Rate (SPARTA per asset)',
+            title: 'Rate (SPARTA per token)',
             dataIndex: 'rate',
             key: 'rate',
             render: (rate) => (

@@ -39,9 +39,9 @@ export const InputPane = (props) => {
             placeholder={convertFromWei(props.paneData?.input)}
             // defaultValue={convertFromWei(props.paneData?.input)}
             allowClear={true}
-            // addonAfter={<TokenDropDown default={props.paneData?.address}
-            //   changeToken={props.changeToken}
-            //   tokenList={props.tokenList} />}
+          // addonAfter={<TokenDropDown default={props.paneData?.address}
+          //   changeToken={props.changeToken}
+          //   tokenList={props.tokenList} />}
           ></Input>
           <Sublabel>Balance:
             {convertFromWei(props.paneData?.balance)} ({props.paneData?.symbol})</Sublabel>
@@ -174,7 +174,7 @@ export const TokenDropDown = (props) => {
 
   const loadSymbols = async () => {
     setSymbol(await getTokenSymbol(props.default))
-    const symbols = props.tokenList.map( async (item) => await getTokenSymbol(item))
+    const symbols = props.tokenList.map(async (item) => await getTokenSymbol(item))
     setArraySymbols(symbols)
   }
 
@@ -359,12 +359,21 @@ export const CoinRow = (props) => {
         <Col xs={4}>
           <ColourCoin symbol={props.symbol} size={props.size} />
         </Col>
-        <Col xs={10}>
-          <Label size={props.size / 2.2}>{props.name}</Label><br />
-        </Col>
-        <Col xs={10}>
-          <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br />
-          {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
+        <Col xs={20}>
+          <Row>
+            <Col xs={12}>
+              <Label size={props.size / 2.2}>{props.name}</Label><br />
+            </Col>
+            <Col xs={12}>
+              <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br />
+              {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={24}>
+              <Label size={props.size / 3.5}>{props.address}</Label>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </div>
