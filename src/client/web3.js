@@ -3,7 +3,7 @@ import Web3 from 'web3'
 import ERC20 from '../artifacts/ERC20.json'
 import SPARTA from '../artifacts/Sparta.json'
 import SROUTER from '../artifacts/SRouter.json'
-import POOLS from '../artifacts/SPool.json'
+import POOLS from '../artifacts/SPOOL.json'
 import UTILS from '../artifacts/Utils.json'
 
 export const ETH = '0x0000000000000000000000000000000000000000'
@@ -73,7 +73,7 @@ export const getRouterContract = () => {
 // Get just an array of tokens that can be upgrade
 export const getAssets = async () => {
     var contract = getSpartaContract()
-    let assetArray = await contract.methods.allAssets().call() 
+    let assetArray = await contract.methods.allAssets().call()
     console.log({ assetArray })
     return assetArray
 }
@@ -101,13 +101,13 @@ export const getEligibleAssets = async (address, assetDetailsArray) => {
 
 export const getListedTokens = async () => {
     var contract = getUtilsContract()
-    let tokenArray = await contract.methods.allTokens().call() 
+    let tokenArray = await contract.methods.allTokens().call()
     console.log({ tokenArray })
     return tokenArray
 }
 export const getListedPools= async () => {
     var contract = getUtilsContract()
-    let poolArray = await contract.methods.allPools().call() 
+    let poolArray = await contract.methods.allPools().call()
     console.log({ poolArray })
     return poolArray
 }

@@ -6,7 +6,7 @@ import {
 } from '../components/elements';
 
 import {
-    POOLS_ADDR, 
+    POOLS_ADDR,
 } from '../../client/web3'
 
 const About = (props) => {
@@ -25,7 +25,7 @@ const About = (props) => {
                     <H1>Sparta Pools - V2</H1><br />
                     <Subtitle>Sparta Pools is an experimental Liquidity Pool System that uses dynamic slip-based fees to maximise revenue for liquidity providers. </Subtitle><br />
                     <Subtitle> </Subtitle><br />
-                    <a href="https://docs.google.com/document/d/1aIIcE-YMIa1OQl3-diUm-D_KA3yH5JMxirg2GMIP7Ck/edit?usp=sharing"
+                    <a href="https://github.com/spartan-protocol/resources/blob/master/whitepaper.pdf"
                     target="blank">
                     You can read more about it here.
                     </a>
@@ -35,7 +35,7 @@ const About = (props) => {
                     Current Contract
                     </a>
                 </Col>
-                
+
             </Row>
 
         </div>
