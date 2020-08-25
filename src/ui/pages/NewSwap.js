@@ -31,7 +31,7 @@ const NewSwap = (props) => {
         'price': 0,
         'volume': 0,
         'baseAmt': 0,
-        'token': 0,
+        'tokenAmt': 0,
         'depth': 0,
         'txCount': 0,
         'apy': 0,
