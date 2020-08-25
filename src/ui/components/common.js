@@ -7,9 +7,9 @@ import {
   rainbowStop, getIntFromName,
   convertFromWei, formatUSD,
 } from '../../utils'
-// import { getSwapOutput, getDoubleSwapOutput } from '../../math'
+import { paneStyles, colStyles, rowStyles } from '../components/styles'
 import { getTokenSymbol } from '../../client/web3'
-import { H1, HR, Colour, Text, Center, Label, Sublabel } from '../components/elements'
+import { H1, HR, Colour, Text, Center, Label, Sublabel, LabelGroup } from '../components/elements'
 
 export const BreadcrumbCombo = (props) => {
 
@@ -37,6 +37,7 @@ export const InputPane = (props) => {
         <Col xs={24}>
           <Input onChange={props.onInputChange}
             placeholder={convertFromWei(props.paneData?.input)}
+            size={'large'}
             // defaultValue={convertFromWei(props.paneData?.input)}
             allowClear={true}
           // addonAfter={<TokenDropDown default={props.paneData?.address}
@@ -256,6 +257,58 @@ export const TokenSymbol = (props) => {
 
   )
 
+}
+
+export const PoolPaneSide = (props) => {
+
+  const rowStylesPane = {
+    marginTop: 20
+}
+
+  return (
+    <div>
+      <Row style={paneStyles}>
+        <Col xs={24} style={colStyles}>
+          <Row>
+            <Col xs={12}>
+              <ColourCoin symbol={props.pool.symbol} size={50} style={{ marginTop: 10 }} />
+            </Col>
+            <Col xs={12}>
+              <LabelGroup size={30} element={props.pool.symbol} label={props.pool.name} />
+            </Col>
+          </Row>
+
+          <Row style={rowStylesPane}>
+            <Col xs={12}>
+              <LabelGroup size={20} element={convertFromWei(props.pool.depth)} label={'DEPTH (SPARTA)'} />
+            </Col>
+            <Col xs={12}>
+              <LabelGroup size={20} element={convertFromWei(props.pool.price)} label={'PRICE (SPARTA)'} />
+            </Col>
+          </Row>
+
+          <Row style={rowStylesPane}>
+            <Col xs={12}>
+              <LabelGroup size={20} element={convertFromWei(props.pool.volume)} label={'VOLUME (SPARTA)'} />
+            </Col>
+            <Col xs={12}>
+              <LabelGroup size={20} element={props.pool.txCount} label={'TX COUNT'} />
+            </Col>
+          </Row>
+
+          <Row style={rowStylesPane}>
+            <Col xs={12}>
+              <LabelGroup size={20} element={convertFromWei(props.pool.fees)} label={'FEES (SPARTA)'} />
+            </Col>
+            <Col xs={12}>
+              <LabelGroup size={20} element={`${props.pool.apy} %`} label={'APY'} />
+            </Col>
+          </Row>
+
+        </Col>
+      </Row>
+    </div>
+  )
 }
 
 export const PoolPane = (props) => {

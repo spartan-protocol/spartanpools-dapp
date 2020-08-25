@@ -9,6 +9,10 @@ import { Button, Row, Col, message, Input } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { paneStyles, colStyles } from '../components/styles'
 import { AssetTable } from '../layout/WalletDrawer'
+
+import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../utils'
+import { getSwapOutput, getSwapSlip } from '../../math'
+
 var utils = require('ethers').utils;
 
 const SimpleSwap = (props) => {
@@ -55,11 +59,24 @@ const SimpleSwap = (props) => {
         setSwapData(getSwapData(tokenDetails))
     }
 
-    const getSwapData = (details) => {
-        return {
-            'output': '100000000000000000',
-            'slip': 0.01,
+    const getSwapData = async (input, inputTokenData, outputTokenData, poolData) => {
+
+        var output; var slip
+        output = getSwapOutput(input, poolData, false)
+        slip = getSwapSlip(input, poolData, false)
+        console.log(formatBN(output), formatBN(slip))
+
+        const swapData = {
+            address: poolData.address,
+            balance: inputTokenData.balance,
+            input: formatBN(bn(input), 0),
+            inputSymbol: inputTokenData.symbol,
+            output: formatBN(output, 0),
+            outputSymbol: outputTokenData.symbol,
+            slip: formatBN(slip)
         }
+        console.log(swapData)
+        return swapData
     }
 
     const checkApproval = async (address) => {

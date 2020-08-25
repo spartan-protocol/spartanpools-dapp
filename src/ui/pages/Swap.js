@@ -28,7 +28,7 @@ const Swap = (props) => {
         'address': BNB_ADDR,
         'price': 0,
         'volume': 0,
-        'spartan': 0,
+        'baseAmt': 0,
         'token': 0,
         'depth': 0,
         'txCount': 0,

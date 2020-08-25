@@ -19,8 +19,8 @@ import Pools from './ui/pages/Pools'
 // import PriceAnchor from './ui/pages/PriceAnchor'
 // import About from './ui/pages/About'
 
-// import Stake from './ui/pages/Stake'
-import Swap from './ui/pages/Swap'
+import Stake from './ui/pages/NewStake'
+import Swap from './ui/pages/NewSwap'
 import CreatePool from './ui/pages/CreatePool'
 // import ManageCDP from './ui/pages/manageCDP'
 // import OpenCDP from './ui/pages/openCDP'
@@ -58,8 +58,8 @@ const App = () => {
 								<Route path="/pools" exact component={Pools} />
 								{/* <Route path="/CDPs" exact component={CDPs} /> */}
 								{/* <Route path="/anchor" exact component={PriceAnchor} /> */}
-								{/* <Route path="/about" exact component={About} />
-								<Route path="/pool/stake" exact component={Stake} /> */}
+								{/* <Route path="/about" exact component={About} /> */}
+								<Route path="/pool/stake" exact component={Stake} />
 								<Route path="/pool/swap" exact component={Swap} />
 								{/* <Route path="/cdp/manageCDP" exact component={ManageCDP}/> */}
 								{/* <Route path="/cdp/openCDP" exact component={OpenCDP}/> */}

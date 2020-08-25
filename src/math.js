@@ -4,7 +4,7 @@ export const getSwapOutput = (inputAmount, pool, toBase) => {
   // formula: (x * X * Y) / (x + X) ^ 2
   const x = bn(inputAmount)
   const X = toBase ? bn(pool.tokenAmt) : bn(pool.baseAmt) // input is token if toBase
-  const Y = toBase ? bn(pool.baseAmt) : bn(pool.tokenAmt) // output is spartan if toBase
+  const Y = toBase ? bn(pool.baseAmt) : bn(pool.tokenAmt) // output is baseAmt if toBase
   const numerator = x.times(X).times(Y)
   const denominator = x.plus(X).pow(2)
   const result = numerator.div(denominator)
@@ -15,7 +15,7 @@ export const getSwapInput = (toBase, pool, outputAmount) => {
   // formula: (((X*Y)/y - 2*X) - sqrt(((X*Y)/y - 2*X)^2 - 4*X^2))/2
   // (part1 - sqrt(part1 - part2))/2
   const X = toBase ? bn(pool.tokenAmt) : bn(pool.baseAmt) // input is token if toBase
-  const Y = toBase ? bn(pool.baseAmt) : bn(pool.tokenAmt) // output is spartan if toBase
+  const Y = toBase ? bn(pool.baseAmt) : bn(pool.tokenAmt) // output is base if toBase
   const y = bn(outputAmount)
   const part1 = X.times(Y).div(y).minus(X.times(2))
   const part2 = X.pow(2).times(4)
@@ -35,7 +35,7 @@ export const getSwapFee = (inputAmount, pool, toBase) => {
   // formula: (x * x * Y) / (x + X) ^ 2
   const x = bn(inputAmount)
   const X = toBase ? bn(bn(pool.tokenAmt)) : bn(pool.baseAmt) // input is token if toBase
-  const Y = toBase ? bn(pool.baseAmt) : bn(bn(pool.tokenAmt)) // output is spartan if toBase
+  const Y = toBase ? bn(pool.baseAmt) : bn(bn(pool.tokenAmt)) // output is base if toBase
   const numerator = x.times(x).multipliedBy(Y)
   const denominator = x.plus(X).pow(2)
   const result = numerator.div(denominator)
@@ -120,16 +120,16 @@ export const getStakeUnits = (stake, pool) => {
 }
 
 export const getPoolShare = (unitData, pool) => {
-  // formula: (spartan * part) / total; (token * part) / total
+  // formula: (baseAmt * part) / total; (tokenAmt * part) / total
   const units = bn(unitData.stakeUnits)
   const total = bn(unitData.totalUnits)
   const V = bn(pool.baseAmt)
   const T = bn(pool.tokenAmt)
-  const token = T.times(units).div(total)
-  const spartan = V.times(units).div(total)
+  const tokenAmt = T.times(units).div(total)
+  const baseAmt = V.times(units).div(total)
   const stakeData = {
-    token: token,
-    spartan: spartan,
+    tokenAmt: tokenAmt,
+    baseAmt: baseAmt,
   }
   // console.log((stakeData.tokenAmt).toFixed(0), (stakeData.baseAmt).toFixed(0))
   return stakeData

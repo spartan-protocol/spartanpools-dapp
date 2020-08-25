@@ -130,6 +130,9 @@ export const Sublabel = (props) => {
   if (props.margin) {
     styles.margin = props.margin
   }
+  if (props.size) {
+    styles.fontSize = props.size
+  }
 
   return (
     <span style={styles}>
@@ -142,8 +145,8 @@ export const LabelGroup = (props) => {
 
   return (
     <div style={{ display: 'block' }}>
-      <Label size={props.size}>{props.title}</Label><br />
-      <Sublabel size={props.size}>{props.label}</Sublabel><br />
+      <Sublabel size={props.size/(1.5)}>{props.label}</Sublabel><br />
+      <Label size={props.size}>{props.element}</Label><br />
     </div>
   )
 }

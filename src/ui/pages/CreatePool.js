@@ -6,7 +6,7 @@ import { Row, Col, Input } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import { BreadcrumbCombo, InputPane, CoinRow } from '../components/common'
-import { Center, Button } from '../components/elements'
+import { Center, Button, Sublabel } from '../components/elements'
 import { paneStyles, rowStyles, colStyles } from '../components/styles'
 
 
@@ -36,8 +36,8 @@ const CreatePool = (props) => {
     //     'address': BNB_ADDR,
     //     'price': 0,
     //     'volume': 0,
-    //     'spartan': 0,
-    //     'token': 0,
+    //     'baseAmt': 0,
+    //     'tokenAmt': 0,
     //     'depth': 0,
     //     'txCount': 0,
     //     'apy': 0,
@@ -117,18 +117,18 @@ const CreatePool = (props) => {
         const input = e.target.value
         setStake1Data(await getStakeInputData(convertToWei(input), stake1Data))
         // const stake = {
-        //     spartan: convertToWei(input),
-        //     token: stake2Data.input
+        //     baseAmt: convertToWei(input),
+        //     tokenAmt: stake2Data.input
         // }
         // setStakeUnits(getStakeUnits(stake, stake))
     }
 
-    // const changeStake1Token = async (token) => {
-    //     const inputTokenData = await getTokenData(token, context.walletData)
+    // const changeStake1Token = async (tokenAmt) => {
+    //     const inputTokenData = await getTokenData(tokenAmt, context.walletData)
     //     setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
     //     const stake = {
-    //         spartan: inputTokenData.balance,
-    //         token: stake2Data.input
+    //         baseAmt: inputTokenData.balance,
+    //         tokenAmt: stake2Data.input
     //     }
     //     setStakeUnits(getStakeUnits(stake, stake))
     // }
@@ -137,13 +137,13 @@ const CreatePool = (props) => {
         const finalAmt = (amount * stake1Data?.balance) / 100
         setStake1Data(await getStakeInputData(finalAmt, stake1Data))
         // const stake = {
-        //     spartan: finalAmt,
-        //     token: stake2Data.input
+        //     baseAmt: finalAmt,
+        //     tokenAmt: stake2Data.input
         // }
         // setStakeUnits(getStakeUnits(stake, stake))
     }
 
-    // const changeStake2Token = async (token) => {
+    // const changeStake2Token = async (tokenAmt) => {
     //     console.log("changing sell tokens not enabled yet")
     // }
 
@@ -151,8 +151,8 @@ const CreatePool = (props) => {
         const input = e.target.value
         setStake2Data(await getStakeInputData(convertToWei(input), stake2Data))
         // const stake = {
-        //     spartan: stake1Data.input,
-        //     token: convertToWei(input)
+        //     baseAmt: stake1Data.input,
+        //     tokenAmt: convertToWei(input)
         // }
         // console.log(stake)
         // setStakeUnits(getStakeUnits(stake, stake))
@@ -163,8 +163,8 @@ const CreatePool = (props) => {
         const finalAmt = (amount * stake2Data?.balance) / 100
         setStake2Data(await getStakeInputData(finalAmt, stake2Data))
         // const stake = {
-        //     spartan: stake1Data.input,
-        //     token: finalAmt
+        //     baseAmt: stake1Data.input,
+        //     tokenAmt: finalAmt
         // }
         // console.log(stake)
         // setStakeUnits(getStakeUnits(stake, stake))
@@ -273,7 +273,9 @@ const CreatePool = (props) => {
             <BreadcrumbCombo title={'CREATE POOL'} parent={'POOLS'} link={'/pools'} child={'CREATE'}></BreadcrumbCombo>
             <br />
             <Row style={rowStyles}>
+
                 <Col xs={12}>
+                
                     <Input
                         placeholder={'enter token address'}
                         onChange={onInputChange}></Input>
@@ -307,6 +309,7 @@ const CreatePool = (props) => {
                         <Col xs={24} style={colStyles}>
                             <Row >
                                 <Col xs={12}>
+                                <Sublabel size={20}>{'INPUT SPARTA'}</Sublabel><br />
                                     <InputPane
                                         // mainPool={mainPool}
                                         // tokenList={tokenShortList}
@@ -317,6 +320,7 @@ const CreatePool = (props) => {
                                     />
                                 </Col>
                                 <Col xs={12}>
+                                <Sublabel size={20}>{'INPUT TOKEN'}</Sublabel><br />
                                     <InputPane
                                         // tokenList={[tokenData.address]}
                                         paneData={stake2Data}
@@ -328,13 +332,13 @@ const CreatePool = (props) => {
                             </Row>
                             <Row style={rowStyles}>
                                 {/* <Col xs={12}>
-                                    <Center><LabelGroup size={18} title={`${convertFromWei(stakeUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${convertFromWei(stakeUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                                 </Col>
                                 <Col xs={12}>
-                                    <Center><LabelGroup size={18} title={`100%`} label={'SHARE'} /></Center>
+                                    <Center><LabelGroup size={18} element={`100%`} label={'SHARE'} /></Center>
                                 </Col> */}
                                 {/* <Col xs={8}>
-                                <Center><LabelGroup size={18} title={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
+                                <Center><LabelGroup size={18} element={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
                                 </Col> */}
                             </Row>
                             <br></br>

@@ -52,19 +52,19 @@ const Overview = (props) => {
             </h1>
             {/* <Row  style={rowStyles}>
                 <Col xs={3}>
-                    <LabelGroup size={24} label={'POOLS'} title={networkData?.pools} />
+                    <LabelGroup size={24} label={'POOLS'} element={networkData?.pools} />
                 </Col>
                 <Col xs={6}>
-                    <LabelGroup size={24}  label={'VOLUME'} title={formatUSD(convertFromWei(networkData?.totalVolume), context.spartanPrice)} />
+                    <LabelGroup size={24}  label={'VOLUME'} element={formatUSD(convertFromWei(networkData?.totalVolume), context.spartanPrice)} />
                 </Col>
                 <Col xs={3}>
-                    <LabelGroup size={24}  label={'TOTAL TX'} title={networkData?.totalTx}/>
+                    <LabelGroup size={24}  label={'TOTAL TX'} element={networkData?.totalTx}/>
                 </Col>
                 <Col xs={6}>
-                    <LabelGroup size={24}  label={'TOTAL STAKED'} title={formatUSD(convertFromWei(networkData?.totalStaked), context.spartanPrice)} />
+                    <LabelGroup size={24}  label={'TOTAL STAKED'} element={formatUSD(convertFromWei(networkData?.totalStaked), context.spartanPrice)} />
                 </Col>
                 <Col xs={6}>
-                    <LabelGroup size={24}  label={'TOTAL REVENUE'} title={formatUSD(convertFromWei(networkData?.totalRevenue), context.spartanPrice)} />
+                    <LabelGroup size={24}  label={'TOTAL REVENUE'} element={formatUSD(convertFromWei(networkData?.totalRevenue), context.spartanPrice)} />
                 </Col>
             </Row> */}
             {/* <Gap/>

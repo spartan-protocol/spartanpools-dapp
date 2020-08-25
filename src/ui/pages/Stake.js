@@ -30,8 +30,8 @@ const Stake = (props) => {
         'address': ETH,
         'price': 0,
         'volume': 0,
-        'spartan': 0,
-        'token': 0,
+        'baseAmt': 0,
+        'tokenAmt': 0,
         'depth': 0,
         'txCount': 0,
         'apy': 0,
@@ -55,8 +55,8 @@ const Stake = (props) => {
     const [hideSubpane, setHideSubPane] = useState(true)
     const [estStakeUnits, setStakeUnits] = useState(0)
     const [shareData, setShareData] = useState({
-        spartan: 0,
-        token: 0
+        baseAmt: 0,
+        tokenAmt: 0
     })
     const [approval1, setApproval1] = useState(false)
     const [approval2, setApproval2] = useState(false)
@@ -65,9 +65,9 @@ const Stake = (props) => {
         'symbol': 'XXX',
         'name': 'XXX',
         'address': ETH,
-        'spartan': 0,
-        'token': 0,
-        'spartanStaked': 0,
+        'baseAmt': 0,
+        'tokenAmt': 0,
+        'baseStaked': 0,
         'tokenStaked': 0,
         'roi': 0,
         'units': 0,
@@ -79,7 +79,7 @@ const Stake = (props) => {
      const [unstakeTx, setUnstakeTx] = useState(null)
 
     // PoolData {address, depth, balance}
-    // StakeData {spartan, token}
+    // StakeData {baseAmt, tokenAmt}
     // estStakeUnits, totalUnits
 
     useEffect(() => {
@@ -105,8 +105,8 @@ const Stake = (props) => {
         const outputTokenData = await getTokenData(params.pool, context.walletData)
         setStake2Data(await getStakeInputData(outputTokenData.balance, params.pool))
         const stake = {
-            spartan: inputTokenData.balance,
-            token: outputTokenData.balance
+            baseAmt: inputTokenData.balance,
+            tokenAmt: outputTokenData.balance
         }
         const estStakeUnits = getStakeUnits(stake, mainPool)
         setStakeUnits(estStakeUnits)
@@ -138,18 +138,18 @@ const Stake = (props) => {
         const input = e.target.value
         setStake1Data(await getStakeInputData(convertToWei(input), stake1Data.address))
         const stake = {
-            spartan: convertToWei(input),
-            token: stake2Data.input
+            baseAmt: convertToWei(input),
+            tokenAmt: stake2Data.input
         }
         setStakeUnits(getStakeUnits(stake, mainPool))
     }
 
-    const changeStake1Token = async (token) => {
-        const inputTokenData = await getTokenData(token)
-        setStake1Data(await getStakeInputData(inputTokenData.balance, token))
+    const changeStake1Token = async (tokenAmt) => {
+        const inputTokenData = await getTokenData(tokenAmt)
+        setStake1Data(await getStakeInputData(inputTokenData.balance, tokenAmt))
         const stake = {
-            spartan: inputTokenData.balance,
-            token: stake2Data.input
+            baseAmt: inputTokenData.balance,
+            tokenAmt: stake2Data.input
         }
         setStakeUnits(getStakeUnits(stake, mainPool))
     }
@@ -158,13 +158,13 @@ const Stake = (props) => {
         const finalAmt = (amount * stake1Data?.balance) / 100
         setStake1Data(await getStakeInputData(finalAmt, stake1Data.address))
         const stake = {
-            spartan: finalAmt,
-            token: stake2Data.input
+            baseAmt: finalAmt,
+            tokenAmt: stake2Data.input
         }
         setStakeUnits(getStakeUnits(stake, mainPool))
     }
 
-    const changeStake2Token = async (token) => {
+    const changeStake2Token = async (tokenAmt) => {
         console.log("changing sell tokens not enabled yet")
     }
 
@@ -172,8 +172,8 @@ const Stake = (props) => {
         const input = e.target.value
         setStake2Data(await getStakeInputData(convertToWei(input), ETH))
         const stake = {
-            spartan: stake1Data.input,
-            token: convertToWei(input)
+            baseAmt: stake1Data.input,
+            tokenAmt: convertToWei(input)
         }
         setStakeUnits(getStakeUnits(stake, mainPool))
     }
@@ -182,8 +182,8 @@ const Stake = (props) => {
         const finalAmt = (amount * stake2Data?.balance) / 100
         setStake2Data(await getStakeInputData(finalAmt, ETH))
         const stake = {
-            spartan: stake1Data.input,
-            token: finalAmt
+            baseAmt: stake1Data.input,
+            tokenAmt: finalAmt
         }
         setStakeUnits(getStakeUnits(stake, mainPool))
     }
@@ -195,8 +195,8 @@ const Stake = (props) => {
         // const finalAmt2 = (amount * stake2Data?.balance) / 100
         // setStake1Data(await getStakeInputData(finalAmt2, stake2Data.address))
         // const stake = {
-        //     spartan: finalAmt1,
-        //     token: finalAmt2
+        //     baseAmt: finalAmt1,
+        //     tokenAmt: finalAmt2
         // }
         // setStakeUnits(getStakeUnits(stake, mainPool))
     }
@@ -346,13 +346,13 @@ const Stake = (props) => {
                             </Row>
                             <Row style={rowStyles}>
                                 <Col xs={12}>
-                                    <Center><LabelGroup size={18} title={`${convertFromWei(estStakeUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${convertFromWei(estStakeUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                                 </Col>
                                 <Col xs={12}>
-                                    <Center><LabelGroup size={18} title={`${getEstShare()}%`} label={'ESTIMATED SHARE'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${getEstShare()}%`} label={'ESTIMATED SHARE'} /></Center>
                                 </Col>
                                 {/* <Col xs={8}>
-                                <Center><LabelGroup size={18} title={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
+                                <Center><LabelGroup size={18} element={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
                                 </Col> */}
                             </Row>
                             <Row>
@@ -395,13 +395,13 @@ const Stake = (props) => {
                             </Row>
                             <Row style={rowStyles}>
                                 {/* <Col xs={12}>
-                                    <Center><LabelGroup size={18} title={`${convertFromWei(estStakeUnits.toFixed(0))}`} label={'POOL UNITS'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${convertFromWei(estStakeUnits.toFixed(0))}`} label={'POOL UNITS'} /></Center>
                                 </Col>
                                 <Col xs={12}>
-                                    <Center><LabelGroup size={18} title={`${getEstShare()}%`} label={'POOL SHARE'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${getEstShare()}%`} label={'POOL SHARE'} /></Center>
                                 </Col> */}
                                 {/* <Col xs={8}>
-                                <Center><LabelGroup size={18} title={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
+                                <Center><LabelGroup size={18} element={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
                                 </Col> */}
                             </Row>
                             <br></br>

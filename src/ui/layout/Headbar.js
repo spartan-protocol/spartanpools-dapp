@@ -57,7 +57,8 @@ const Headbar = (props) => {
             // let poolArray = context.poolArray ? context.poolArray : await getListedPools()
             // let poolsData = context.poolsData ? context.poolsData : await getPoolsData(poolArray)
             // message.loading('Loading stake data', 3);
-            // let stakesData = context.stakesData ? context.stakesData : await getStakesData(accountConnected, poolArray)
+            let stakesData = context.stakesData ? context.stakesData : await getStakesData(account, tokenArray)
+            context.setContext({ 'stakesData': stakesData })
             // if (!context.poolsData) {
             //     context.setContext({ 'poolArray': poolArray })
             //     context.setContext({ 'poolsData': poolsData })
@@ -130,6 +131,9 @@ const Headbar = (props) => {
                         <Menu.Item key='5'>
                             <Link to={"/pools"}>POOLS</Link>
                         </Menu.Item>
+                        {/* <Menu.Item key='6'>
+                            <Link to={"/about"}>ABOUT</Link>
+                        </Menu.Item> */}
                         {/* <Menu.Item key="3">
                             <Link to={"/cdps"}>CDPs</Link>
                         </Menu.Item>

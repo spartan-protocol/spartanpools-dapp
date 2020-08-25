@@ -177,10 +177,10 @@ export const AddCollateralTab = () => {
                 <Row style={rowStyles}>
                     <Col xs={6}></Col>
                     <Col xs={6}>
-                        <Center><LabelGroup size={18} title={`${convertFromWei(addCollateralData.collateral)}`} label={'ESTIMATED TOTAL COLLATERAL'} /></Center>
+                        <Center><LabelGroup size={18} element={`${convertFromWei(addCollateralData.collateral)}`} label={'ESTIMATED TOTAL COLLATERAL'} /></Center>
                     </Col>
                     <Col xs={6}>
-                        <Center><LabelGroup size={18} title={`${convertFromWei(parseInt(getMAXMINT(addCollateralData.collateral, mainPool, 101)) - parseInt(context.accountCDP?.debt))}`} label={'ESTIMATED MAX MINTABLE'} /></Center>
+                        <Center><LabelGroup size={18} element={`${convertFromWei(parseInt(getMAXMINT(addCollateralData.collateral, mainPool, 101)) - parseInt(context.accountCDP?.debt))}`} label={'ESTIMATED MAX MINTABLE'} /></Center>
                     </Col>
                     <Col xs={6}></Col>
                 </Row>
@@ -229,10 +229,10 @@ export const RemintTab = () => {
                 <Row style={rowStyles}>
                     <Col xs={6}></Col>
                     <Col xs={6}>
-                        <Center><LabelGroup size={18} title={`${convertFromWei(context.accountCDP?.collateral)}`} label={'COLLATERAL'} /></Center>
+                        <Center><LabelGroup size={18} element={`${convertFromWei(context.accountCDP?.collateral)}`} label={'COLLATERAL'} /></Center>
                     </Col>
                     <Col xs={6}>
-                        <Center><LabelGroup size={18} title={`${convertFromWei(parseInt(getMAXMINT(context.accountCDP?.collateral, context.mainPool, 102)) - parseInt(context.accountCDP?.debt))}`} label={'MAX MINTABLE'} /></Center>
+                        <Center><LabelGroup size={18} element={`${convertFromWei(parseInt(getMAXMINT(context.accountCDP?.collateral, context.mainPool, 102)) - parseInt(context.accountCDP?.debt))}`} label={'MAX MINTABLE'} /></Center>
                     </Col>
                     <Col xs={6}></Col>
                 </Row>
@@ -253,7 +253,7 @@ export const RemintTab = () => {
                 <Row style={rowStyles}>
                     
                     <Col xs={24}>
-                        <Center><LabelGroup size={18} title={`${convertFromWei(getMAXMINT(context.accountCDP?.collateral, context.mainPool, setCR))}`} label={'ESTIMATED FINAL DEBT'} /></Center>
+                        <Center><LabelGroup size={18} element={`${convertFromWei(getMAXMINT(context.accountCDP?.collateral, context.mainPool, setCR))}`} label={'ESTIMATED FINAL DEBT'} /></Center>
                     </Col>
                     
                 </Row>
@@ -347,10 +347,10 @@ const precise = (x) => {
             <Row style={rowStyles}>
                     <Col xs={6}></Col>
                     <Col xs={6}>
-                        <Center><LabelGroup size={18} title={`${precise(convertFromWei((context.accountCDP?.collateral)*closeDebtData.input)/100)}`} label={'ESTIMATED COLLATERAL RECIEVING'} /></Center>
+                        <Center><LabelGroup size={18} element={`${precise(convertFromWei((context.accountCDP?.collateral)*closeDebtData.input)/100)}`} label={'ESTIMATED COLLATERAL RECIEVING'} /></Center>
                     </Col>
                     <Col xs={6}>
-                        <Center><LabelGroup size={18} title={`${precise(convertFromWei((context.accountCDP?.debt)*closeDebtData.input)/100)}`} label={'ESTIMATED DEBT SENDING'} /></Center>
+                        <Center><LabelGroup size={18} element={`${precise(convertFromWei((context.accountCDP?.debt)*closeDebtData.input)/100)}`} label={'ESTIMATED DEBT SENDING'} /></Center>
                     </Col>
                     <Col xs={6}></Col>
                 </Row>
@@ -373,7 +373,7 @@ const precise = (x) => {
                 <Row style={rowStyles}>
                     
                     <Col xs={24}>
-                        <Center><LabelGroup size={18} title={`${convertFromWei(parseInt(context.accountCDP?.debt)-parseInt(closeDebtData.debt))}`} label={'ESTIMATED REMAINING DEBT '} /></Center>
+                        <Center><LabelGroup size={18} element={`${convertFromWei(parseInt(context.accountCDP?.debt)-parseInt(closeDebtData.debt))}`} label={'ESTIMATED REMAINING DEBT '} /></Center>
                     </Col>
                    
                 </Row>
