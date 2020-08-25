@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
 import { SPARTA_ADDR, ROUTER_ADDR, BNB_ADDR, getTokenContract, getRouterContract, 
-    getAssetDetails, getTokenData } from '../../client/web3'
+    getTokenDetails, getTokenData } from '../../client/web3'
 
 
 import { Button, Row, Col, message, Input } from 'antd';
@@ -128,7 +128,7 @@ const SimpleStake = (props) => {
         message.success(`Transaction Sent!`, 2);
         setStartTx(false)
         setEndTx(true)
-        // context.setContext({ 'tokenDetailsArray': await getAssetDetails(context.walletData.address, context.tokenArray) })
+        // context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
     }
 
 

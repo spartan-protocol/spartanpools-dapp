@@ -9,28 +9,31 @@ import { BreadcrumbCombo, InputPane, CoinRow } from '../components/common'
 import { Center, Button } from '../components/elements'
 import { paneStyles, rowStyles, colStyles } from '../components/styles'
 
+
 // import { getStakeUnits } from '../../math'
 import {
-    ETH, SPARTA, POOLS_ADDR, getTokenContract, getPoolsContract,
-    getTokenData, getNewTokenData, getListedPools, getPoolsData, getStakesData, getWalletData
+    BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getRouterContract,
+    getTokenData, getNewTokenData, getAssets, getListedTokens, getListedPools, getPoolsData, 
+    getStakesData, getTokenDetails, getWalletData
 } from '../../client/web3'
 
 import { convertToWei } from '../../utils'
+var utils = require('ethers').utils;
 
 const CreatePool = (props) => {
 
     const context = useContext(Context)
 
-    const [addressSelected, setAddressSelected] = useState(SPARTA)
+    const [addressSelected, setAddressSelected] = useState(SPARTA_ADDR)
 
-    // const [tokenList, setTokenList] = useState([SPARTA])
-    // const [tokenShortList, setTokenShortList] = useState([SPARTA])
+    // const [tokenList, setTokenList] = useState([SPARTA_ADDR])
+    // const [tokenShortList, setTokenShortList] = useState([SPARTA_ADDR])
     const [checkFlag, setCheckFlag] = useState(false)
     const [tokenData, setTokenData] = useState(null)
     // const [mainPool, setMainPool] = useState({
     //     'symbol': 'XXX',
     //     'name': 'XXX',
-    //     'address': ETH,
+    //     'address': BNB_ADDR,
     //     'price': 0,
     //     'volume': 0,
     //     'spartan': 0,
@@ -43,13 +46,13 @@ const CreatePool = (props) => {
     // })
 
     const [stake1Data, setStake1Data] = useState({
-        address: SPARTA,
+        address: SPARTA_ADDR,
         symbol: 'XXX',
         balance: 0,
         input: 0,
     })
     const [stake2Data, setStake2Data] = useState({
-        address: ETH,
+        address: BNB_ADDR,
         symbol: 'XXX',
         balance: 0,
         input: 0,
@@ -75,9 +78,9 @@ const CreatePool = (props) => {
         // setTokenData(await getTokenData(tokenList[0], context.walletData))
         // setMainPool(await getTokenData(tokenList[0], context.walletData))
 
-        const inputTokenData = await getTokenData(SPARTA, context.walletData)
+        const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
         setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
-        // const outputTokenData = await getTokenData(ETH, context.walletData)
+        // const outputTokenData = await getTokenData(BNB_ADDR, context.walletData)
         // setStake2Data(await getStakeInputData(outputTokenData.balance, tokenList[0]))
 
     }
@@ -87,11 +90,11 @@ const CreatePool = (props) => {
     }
 
     const checkToken = async () => {
-        if(addressSelected !== SPARTA){
+        if(addressSelected !== SPARTA_ADDR){
             setApproval1(false)
             setApproval2(false)
     
-            var tokenData = await getNewTokenData(addressSelected, context.walletData)
+            var tokenData = await getNewTokenData(addressSelected, context.walletData.address)
             setTokenData(tokenData)
     
             if (+tokenData.balance > 0) {
@@ -99,7 +102,7 @@ const CreatePool = (props) => {
                 setStake2Data(await getStakeInputData(tokenData.balance, tokenData))
             }
     
-            checkApproval1(SPARTA)
+            checkApproval1(SPARTA_ADDR)
             checkApproval2(addressSelected)
         }
         
@@ -190,19 +193,19 @@ const CreatePool = (props) => {
 
     const checkApproval1 = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, POOLS_ADDR).call()
+        const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
         const tokenData = await getTokenData(address, context.walletData)
         if (+approval >= tokenData.balance) {
             setApproval1(true)
         }
     }
     const checkApproval2 = async (address) => {
-        if (address === ETH) {
+        if (address === BNB_ADDR) {
             setApproval2(true)
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, POOLS_ADDR).call()
-            var tokenData = await getNewTokenData(address, context.walletData)
+            const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+            var tokenData = await getNewTokenData(address, context.walletData.address)
             if (+approval >= +tokenData.balance) {
                 setApproval2(true)
             }
@@ -222,18 +225,23 @@ const CreatePool = (props) => {
     const unlockToken = async (address) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(POOLS_ADDR, supply).send({
+        await contract.methods.approve(ROUTER_ADDR, supply).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
         })
-        checkApproval1(SPARTA)
+        checkApproval1(SPARTA_ADDR)
         checkApproval2(address)
     }
 
     const createPool = async () => {
-        const poolContract = getPoolsContract()
-        await poolContract.methods.stake(stake1Data.input, stake2Data.input, addressSelected).send({
+        const poolContract = getRouterContract()
+        
+        // let inputBase = utils.formatEther(stake1Data.input)
+        // let inputToken = utils.formatEther(stake2Data.input)
+        // console.log(inputBase, inputToken, addressSelected)
+
+        await poolContract.methods.createPool(stake1Data.input, stake2Data.input, addressSelected).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -244,13 +252,19 @@ const CreatePool = (props) => {
     }
 
     const reloadData = async () => {
+        let assetArray = await getAssets()
+        let tokenArray = await getListedTokens()
+        var sortedTokens = [...new Set(assetArray.concat(tokenArray))].sort()
         let poolArray = await getListedPools()
-        let poolsData = await getPoolsData(poolArray)
-        let stakesData = await getStakesData(context.walletData.address, poolArray)
-        let walletData = await getWalletData(poolArray)
+        let poolsData = await getPoolsData(tokenArray)
+        // let stakesData = await getStakesData(context.walletData.address, poolArray)
+        let tokenDetailsArray = await getTokenDetails(context.walletData.address, sortedTokens)
+        let walletData = await getWalletData(context.walletData.address, tokenDetailsArray)
+        context.setContext({ 'tokenArray': tokenArray })
         context.setContext({ 'poolArray': poolArray })
         context.setContext({ 'poolsData': poolsData })
-        context.setContext({ 'stakesData': stakesData })
+        // context.setContext({ 'stakesData': stakesData })
+        context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
         context.setContext({ 'walletData': walletData })
     }
 

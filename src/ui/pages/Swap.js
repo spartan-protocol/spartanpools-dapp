@@ -14,7 +14,7 @@ import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../uti
 import { getSwapOutput, getSwapSlip } from '../../math'
 
 import {
-    ETH, SPARTA, POOLS_ADDR, getTokenContract, getPoolsContract,
+    BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getPoolsContract,
     getPoolData, getTokenData, filterTokensByPoolSelection,
     getListedPools, getPoolsData, getStakesData, getWalletData
 } from '../../client/web3'
@@ -25,7 +25,7 @@ const Swap = (props) => {
     const [mainPool, setMainPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
-        'address': ETH,
+        'address': BNB_ADDR,
         'price': 0,
         'volume': 0,
         'spartan': 0,
@@ -36,23 +36,23 @@ const Swap = (props) => {
         'units': 0,
         'fees': 0
     })
-    const [tokenList, setTokenList] = useState([SPARTA])
+    const [tokenList, setTokenList] = useState([SPARTA_ADDR])
 
     const [inputTokenData, setInputTokenData] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
         'balance': 0,
-        'address': ETH
+        'address': BNB_ADDR
     })
     const [outputTokenData, setOutputTokenData] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
         'balance': 0,
-        'address': ETH
+        'address': BNB_ADDR
     })
 
     const [buyData, setBuyData] = useState({
-        address: SPARTA,
+        address: SPARTA_ADDR,
         balance: 0,
         input: 0,
         symbol: "XXX",
@@ -61,7 +61,7 @@ const Swap = (props) => {
         slip: 0
     })
     const [sellData, setSellData] = useState({
-        address: ETH,
+        address: BNB_ADDR,
         balance: 0,
         input: 0,
         symbol: "XXX",
@@ -95,7 +95,7 @@ const Swap = (props) => {
 
         setTokenList(await filterTokensByPoolSelection(mainPool.address, context.poolsData, context.walletData))
 
-        const inputTokenData = await getTokenData(SPARTA, context.walletData)
+        const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
         const outputTokenData = await getTokenData(mainPool.address, context.walletData)
         setInputTokenData(inputTokenData)
         setOutputTokenData(outputTokenData)
@@ -103,7 +103,7 @@ const Swap = (props) => {
         setBuyData(await getSwapData(inputTokenData.balance, inputTokenData, outputTokenData, mainPool))
         setSellData(await getSwapData(outputTokenData.balance, outputTokenData, inputTokenData, mainPool))
 
-        checkApprovalBuy(SPARTA)
+        checkApprovalBuy(SPARTA_ADDR)
         checkApprovalSell(mainPool.address)
 
         console.log(buyFlag, loadedBuy, buyTx, sellFlag, loadedSell, sellTx)
@@ -146,7 +146,7 @@ const Swap = (props) => {
     const getSwapData = async (input, inputTokenData, outputTokenData, poolData) => {
 
         // var buyPool_
-        // if (inputAddress === SPARTA) {
+        // if (inputAddress === SPARTA_ADDR) {
         //     buyPool_ = await getPoolData(mainPool.address, context.poolsData)
         // } else {
         //     buyPool_ = await getPoolData(inputAddress, context.poolsData)
@@ -159,15 +159,15 @@ const Swap = (props) => {
         console.log(formatBN(output), formatBN(slip))
 
 
-        // if (inputAddress === SPARTA && outputAddress === mainPool.address) {
+        // if (inputAddress === SPARTA_ADDR && outputAddress === mainPool.address) {
         //     //single swap to params.pool
         //     output = getSwapOutput(input, mainPool, false)
         //     slip = getSwapSlip(input, mainPool, false)
-        // } else if (inputAddress !== SPARTA && outputAddress === mainPool.address) {
+        // } else if (inputAddress !== SPARTA_ADDR && outputAddress === mainPool.address) {
         //     // double swap to params.pool
         //     output = getDoubleSwapOutput(input, buyPool_, mainPool_)
         //     slip = getDoubleSwapSlip(input, buyPool_, mainPool_)
-        // } else if (inputAddress === mainPool.address && outputAddress === SPARTA) {
+        // } else if (inputAddress === mainPool.address && outputAddress === SPARTA_ADDR) {
         //     // single swap to sparta
         //     output = getSwapOutput(input, mainPool_, true)
         //     slip = getSwapSlip(input, mainPool_, true)
@@ -192,17 +192,17 @@ const Swap = (props) => {
 
     const checkApprovalBuy = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, POOLS_ADDR).call()
+        const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
         if (+approval >= +inputTokenData.balance) {
             setApprovalBuy(true)
         }
     }
     const checkApprovalSell = async (address) => {
-        if (address === ETH) {
+        if (address === BNB_ADDR) {
             setApprovalSell(true)
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, POOLS_ADDR).call()
+            const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
             if (+approval >= +outputTokenData.balance) {
                 setApprovalSell(true)
             }
@@ -221,7 +221,7 @@ const Swap = (props) => {
     const unlockToken = async (address) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(POOLS_ADDR, supply).send({
+        await contract.methods.approve(ROUTER_ADDR, supply).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -232,8 +232,8 @@ const Swap = (props) => {
         setBuyFlag(true)
         setLoadedBuy(false)
         const poolContract = getPoolsContract()
-        console.log(buyData.input, SPARTA, mainPool.address)
-        const tx = await poolContract.methods.swap(buyData.input, SPARTA, mainPool.address)
+        console.log(buyData.input, SPARTA_ADDR, mainPool.address)
+        const tx = await poolContract.methods.swap(buyData.input, SPARTA_ADDR, mainPool.address)
             .send({
                 from: context.walletData.address,
                 gasPrice: '',
@@ -249,10 +249,10 @@ const Swap = (props) => {
         setLoadedSell(false)
         setSellFlag(true)
         const poolContract = getPoolsContract()
-        console.log(sellData.input, SPARTA, mainPool.address)
+        console.log(sellData.input, SPARTA_ADDR, mainPool.address)
         let tx
-        if (sellData.address === ETH) {
-            tx = await poolContract.methods.swap(sellData.input, mainPool.address, SPARTA)
+        if (sellData.address === BNB_ADDR) {
+            tx = await poolContract.methods.swap(sellData.input, mainPool.address, SPARTA_ADDR)
                 .send({
                     from: context.walletData.address,
                     gasPrice: '',
@@ -260,7 +260,7 @@ const Swap = (props) => {
                     value: sellData.input
                 })
         } else {
-            tx = await poolContract.methods.swap(sellData.input, mainPool.address, SPARTA)
+            tx = await poolContract.methods.swap(sellData.input, mainPool.address, SPARTA_ADDR)
                 .send({
                     from: context.walletData.address,
                     gasPrice: '',
@@ -330,7 +330,7 @@ const Swap = (props) => {
                             <Text>Slip: {((buyData.slip) * 100).toFixed(2)}%</Text>
                             <br /><br />
                             {!approvalBuy &&
-                                <Center><Button type={'secondary'} onClick={unlockSparta}> UNLOCK SPARTA</Button></Center>
+                                <Center><Button type={'secondary'} onClick={unlockSparta}> UNLOCK SPARTA_ADDR</Button></Center>
                             }
                             {(approvalBuy && !loadedBuy) &&
                                 <Center><Button type={'primary'} onClick={buyAsset} icon={<LoadingOutlined />}>BUY {mainPool?.symbol}</Button></Center>

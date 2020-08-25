@@ -35,10 +35,10 @@ const PoolTable = (props) => {
 
     const getData = async () => {
         let tokenArray = await getListedTokens()
-        context.setContext({ tokenArray: tokenArray })
+        context.setContext({ 'tokenArray': tokenArray })
         let poolArray = await getListedPools()
-        context.setContext({ poolArray: poolArray })
-        context.setContext({ poolsData: await getPoolsData(tokenArray) })
+        context.setContext({ 'poolArray': poolArray })
+        context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
     }
 
     const columns = [

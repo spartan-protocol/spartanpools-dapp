@@ -1,21 +1,20 @@
 import Web3 from 'web3'
 
 import ERC20 from '../artifacts/ERC20.json'
-import SPARTA from '../artifacts/Sparta.json'
-import SROUTER from '../artifacts/SRouter.json'
-import POOLS from '../artifacts/SPOOL.json'
+import SPARTA from '../artifacts/Base.json'
+import SROUTER from '../artifacts/Router.json'
+import POOLS from '../artifacts/Pool.json'
 import UTILS from '../artifacts/Utils.json'
 
-export const ETH = '0x0000000000000000000000000000000000000000'
+// export const ETH = '0x0000000000000000000000000000000000000000'
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
 export const SPARTA_ADDR = '0x0C1d8c5911A1930ab68b3277D35f45eEd25e1F26'
 export const SPARTA_ABI = SPARTA.abi
-export const ROUTER_ADDR = '0x20d0270649c9f13c081FF98350148706A05557F8'
+export const ROUTER_ADDR = '0x15967D09bc67A1aafFC43D88CcD4F6196df3B259'
 export const ROUTER_ABI = SROUTER.abi
-export const POOLS_ADDR = '0xeEbAe10ead47F2aA115B4BA6f07A227F12A5AaB1'
 export const POOLS_ABI = POOLS.abi
 export const ERC20_ABI = ERC20.abi
-export const UTILS_ADDR = '0xC7b43AF5Deb54E62d2cdffa9eD1e9F58199ec75E'
+export const UTILS_ADDR = '0x696a6B50d7FC6213a566fCC197acced4c4dDefa2'
 export const UTILS_ABI = UTILS.abi
 
 export const getWeb3 = () => {
@@ -60,9 +59,9 @@ export const getSpartaContract = () => {
     return new web3.eth.Contract(SPARTA_ABI, SPARTA_ADDR)
 }
 
-export const getPoolsContract = () => {
+export const getPoolsContract = (address) => {
     var web3 = getWeb3()
-    return new web3.eth.Contract(POOLS_ABI, POOLS_ADDR)
+    return new web3.eth.Contract(POOLS_ABI)
 }
 
 export const getRouterContract = () => {
@@ -79,14 +78,14 @@ export const getAssets = async () => {
 }
 
 // Build out Asset Details, as long as have balance
-export const getAssetDetails = async (address, assetArray) => {
+export const getTokenDetails = async (address, assetArray) => {
     let assetDetailsArray = []
     for (let i = 0; i < assetArray.length; i++) {
         let utilsContract = getUtilsContract()
-        let assetDetails = await utilsContract.methods.getTokenDetailsWithBalance(assetArray[i], address).call()
-        if(+assetDetails.balance > 0){
+        let assetDetails = await utilsContract.methods.getTokenDetails(assetArray[i]).call()
+        // if(+assetDetails.balance > 0){
             assetDetailsArray.push(assetDetails)
-        }
+        // }
     }
     console.log({ assetDetailsArray })
     return assetDetailsArray
@@ -105,6 +104,14 @@ export const getListedTokens = async () => {
     console.log({ tokenArray })
     return tokenArray
 }
+
+export const getAlltokens = async () => {
+    let assetArray = await getAssets()
+    let tokenArray = await getListedTokens()
+    let allTokens= assetArray.concat(tokenArray)
+    var sortedTokens = [...new Set(allTokens)].sort()
+    return sortedTokens;
+}
 export const getListedPools= async () => {
     var contract = getUtilsContract()
     let poolArray = await contract.methods.allPools().call()
@@ -116,16 +123,12 @@ export const getPoolsData = async (tokenArray) => {
     var contract = getUtilsContract()
     let poolsData = []
     for (let i = 0; i < tokenArray.length; i++) {
-        var symbol; var name;
         let tokenDetails = await contract.methods.getTokenDetails(tokenArray[i]).call()
-        symbol = tokenDetails.symbol
-        name = tokenDetails.name
         let poolDataRaw = await contract.methods.getPoolData(tokenArray[i]).call()
         let apy = await contract.methods.getPoolAPY(tokenArray[i]).call()
-
         let poolData = {
-            'symbol': symbol,
-            'name': name,
+            'symbol': tokenDetails.symbol,
+            'name': tokenDetails.name,
             'address': tokenArray[i],
             'price': +poolDataRaw.baseAmt / +poolDataRaw.tokenAmt,
             'volume': +poolDataRaw.volume,
@@ -166,30 +169,32 @@ export const getNetworkData = async (poolsData) => {
 }
 
 export const getWalletData = async (address, tokenDetailsArray) => {
-    var accountBalance = await getBNBBalance(address)
+    // var accountBalance = await getBNBBalance(address)
     var tokens = []
+    console.log(tokenDetailsArray)
     var walletData = {
         'address': address,
         'tokens': tokens
     }
-    tokens.push({
-        'symbol': 'BNB',
-        'name': 'Binance Chain Token',
-        'balance': accountBalance,
-        'address': '0x0000000000000000000000000000000000000000'
-    })
+    // tokens.push({
+    //     'symbol': 'BNB',
+    //     'name': 'Binance Chain Token',
+    //     'balance': accountBalance,
+    //     'address': '0x0000000000000000000000000000000000000000'
+    // })
     tokens.push({
         'symbol': 'SPARTA',
         'name': 'Sparta',
         'balance': await getTokenContract(SPARTA_ADDR).methods.balanceOf(address).call(),
         'address': SPARTA_ADDR
     })
+
     for (let i = 0; i < tokenDetailsArray.length; i++) {
         var obj = tokenDetailsArray[i]
         tokens.push({
             'symbol': obj.symbol,
             'name': obj.name,
-            'balance': obj.balance,
+            'balance': obj.tokenAddress === BNB_ADDR ? await getBNBBalance(address) : await getTokenContract(obj.tokenAddress).methods.balanceOf(address).call(),
             'address': obj.tokenAddress
         })
     }
@@ -197,15 +202,13 @@ export const getWalletData = async (address, tokenDetailsArray) => {
     return walletData
 }
 
-export const getNewTokenData = async (address, walletData) => {
-    var contractToken = getTokenContract(address)
-    var tokenSymbol = await contractToken.methods.symbol().call()
-    var tokenName = await contractToken.methods.name().call()
-    var tokenBalance = await contractToken.methods.balanceOf(walletData.address).call()
+export const getNewTokenData = async (token, address) => {
+    var obj = await getUtilsContract().methods.getTokenDetails(token).call()
+    var tokenBalance = await getTokenContract(token).methods.balanceOf(address).call()
 
     var tokenData = {
-        'symbol': tokenSymbol,
-        'name': tokenName,
+        'symbol': obj.symbol,
+        'name': obj.name,
         'balance': tokenBalance,
         'address': address
     }
@@ -255,7 +258,7 @@ export const getStakesData = async (address, poolArray) => {
     let stakesData = []
     for (let i = 0; i < poolArray.length; i++) {
         var name; var symbol;
-        if (poolArray[i] === ETH) {
+        if (poolArray[i] === BNB_ADDR) {
             symbol = 'ETH'
             name = 'Ethereum'
         } else {

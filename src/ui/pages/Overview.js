@@ -29,7 +29,7 @@ const Overview = (props) => {
     const getData = async () => {
 
         var contract = getRouterContract()
-        let SPARTA = await contract.methods.SPARTA().call() 
+        let SPARTA = await contract.methods.BASE().call() 
         console.log(SPARTA)
 
         // let networkData = await getNetworkData(context.poolsData)

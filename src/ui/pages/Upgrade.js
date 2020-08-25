@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
-import { SPARTA_ADDR, getSpartaContract, getTokenContract, getAssetDetails, getWalletData } from '../../client/web3'
+import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getWalletData } from '../../client/web3'
 
 import { Button, Row, Col, message, Input, Table } from 'antd';
 import { paneStyles, colStyles } from '../components/styles'
@@ -75,7 +75,7 @@ const Upgrade = (props) => {
         message.success(`Transaction Sent!`,  2);
         setStartTx(false)
         setEndTx(true)
-        let tokenDetailsArray = await getAssetDetails(context.walletData.address, context.tokenArray)
+        let tokenDetailsArray = await getTokenDetails(context.walletData.address, context.tokenArray)
         context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
         let walletData = await getWalletData(context.walletData.address, tokenDetailsArray)
         context.setContext({ 'walletData': walletData })

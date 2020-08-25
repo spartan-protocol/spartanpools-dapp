@@ -12,7 +12,7 @@ import { message } from 'antd';
 
 import WalletDrawer from './WalletDrawer'
 import { getAddressShort, } from '../../utils'
-import { getAssets, getAssetDetails, getWalletData, getStakesData } from '../../client/web3'
+import { getAssets, getTokenDetails, getListedTokens, getWalletData, getStakesData } from '../../client/web3'
 
 const { Header } = Layout;
 
@@ -36,9 +36,18 @@ const Headbar = (props) => {
         const account= (await window.web3.eth.getAccounts())[0];
         if (account) {
             message.loading('Loading tokens', 3);
-            let tokenArray = context.tokenArray ? context.tokenArray : await getAssets()
+            let assetArray = context.assetArray ? context.assetArray : await getAssets()
+            context.setContext({ 'assetArray': assetArray })
+            // let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getTokenDetails(account, assetArray)
+            // context.setContext({ 'assetDetailsArray': assetDetailsArray })
+
+            let tokenArray = context.tokenArray ? context.tokenArray : await getListedTokens()
             context.setContext({ 'tokenArray': tokenArray })
-            let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getAssetDetails(account, tokenArray)
+
+            let allTokens= assetArray.concat(tokenArray)
+            var sortedTokens = [...new Set(allTokens)].sort()
+
+            let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getTokenDetails(account, sortedTokens)
             context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
 
             message.loading('Loading wallet data', 3);
@@ -58,7 +67,7 @@ const Headbar = (props) => {
             
             context.setContext({ 'connected': true })
             // console.log({walletData})
-            // await getSpartaPrice()
+            await getSpartaPrice()
             setConnecting(false)
             setConnected(true)
             message.success('Loaded!',  2);
@@ -79,12 +88,13 @@ const Headbar = (props) => {
         return false;
     }
 
-    // const getSpartaPrice = async () => {
-    //     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan&vs_currencies=usd')
-    //     console.log(resp.data.spartan.usd)
-    //     context.setContext({ 'spartanPrice': resp.data.spartan.usd })
-    //     return
-    // }
+    const getSpartaPrice = async () => {
+        // let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan&vs_currencies=usd')
+        // console.log(resp.data.spartan.usd)
+        // context.setContext({ 'spartanPrice': resp.data.spartan.usd })
+        context.setContext({ 'spartanPrice': 0.3 })
+        return
+    }
 
     const addr = () => {
         return getAddressShort(context.walletData?.address)

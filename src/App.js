@@ -20,8 +20,8 @@ import Pools from './ui/pages/Pools'
 // import About from './ui/pages/About'
 
 // import Stake from './ui/pages/Stake'
-// import Swap from './ui/pages/Swap'
-// import CreatePool from './ui/pages/CreatePool'
+import Swap from './ui/pages/Swap'
+import CreatePool from './ui/pages/CreatePool'
 // import ManageCDP from './ui/pages/manageCDP'
 // import OpenCDP from './ui/pages/openCDP'
 import { ContextProvider } from './context'
@@ -59,11 +59,11 @@ const App = () => {
 								{/* <Route path="/CDPs" exact component={CDPs} /> */}
 								{/* <Route path="/anchor" exact component={PriceAnchor} /> */}
 								{/* <Route path="/about" exact component={About} />
-								<Route path="/pool/stake" exact component={Stake} />
-								<Route path="/pool/swap" exact component={Swap} /> */}
+								<Route path="/pool/stake" exact component={Stake} /> */}
+								<Route path="/pool/swap" exact component={Swap} />
 								{/* <Route path="/cdp/manageCDP" exact component={ManageCDP}/> */}
 								{/* <Route path="/cdp/openCDP" exact component={OpenCDP}/> */}
-								{/* <Route path="/pool/create" exact component={CreatePool} /> */}
+								<Route path="/pool/create" exact component={CreatePool} />
 							</Switch>
 						</Content>
 						{/* <Footer style={{height:50}}/> */}

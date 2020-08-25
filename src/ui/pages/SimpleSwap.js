@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
-import { SPARTA_ADDR, getSpartaContract, getTokenContract, getAssetDetails, getTokenData } from '../../client/web3'
+import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getTokenData } from '../../client/web3'
 
 
 import { Button, Row, Col, message, Input } from 'antd';
@@ -94,7 +94,7 @@ const SimpleSwap = (props) => {
         message.success(`Transaction Sent!`, 2);
         setStartTx(false)
         setEndTx(true)
-        context.setContext({ 'tokenDetailsArray': await getAssetDetails(context.walletData.address, context.tokenArray) })
+        context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
     }
 
 
