@@ -89,6 +89,8 @@ const NewStake = (props) => {
         'share': 0
     })
 
+    const [unstakeAmount, setUnstakeAmount] = useState(0)
+
     useEffect(() => {
         if (context.connected) {
             getPools()
@@ -225,6 +227,19 @@ const NewStake = (props) => {
         setStakeUnits(getStakeUnits(stake, pool))
     }
 
+    const changeUnstakeAmount = async (amount) => {
+        setUnstakeAmount(amount)
+        // const finalAmt1 = (amount * stake1Data?.balance) / 100
+        // setStake1Data(await getStakeInputData(finalAmt1, stake1Data.address))
+        // const finalAmt2 = (amount * stake2Data?.balance) / 100
+        // setStake1Data(await getStakeInputData(finalAmt2, stake2Data.address))
+        // const stake = {
+        //     baseAmt: finalAmt1,
+        //     tokenAmt: finalAmt2
+        // }
+        // setStakeUnits(getStakeUnits(stake, mainPool))
+    }
+
     const getEstShare = () => {
         const newUnits = (bn(estStakeUnits)).plus(bn(pool.units))
         const share = ((bn(estStakeUnits)).div(newUnits)).toFixed(2)
@@ -256,11 +271,6 @@ const NewStake = (props) => {
         message.success(`Approved!`, 2);
     }
 
-    //0x7628a37d
-    //0000000000000000000000000000000000000000000000000de0b6b3a764
-    //0000000000000000000000000000000000000000000000000000002386f26fc1
-    //00000000000000000000000000000000000000000000000000000000000000000000
-
     const stake = async () => {
         setStartTx(true)
         let contract = getRouterContract()
@@ -279,20 +289,19 @@ const NewStake = (props) => {
     }
 
     const unstake = async () => {
-        setStartTx(true)
         let contract = getRouterContract()
-        console.log(stake1Data.input, outputTokenData.symbol)
-        await contract.methods.unstake(stake1Data.input, pool.address).send({
+        const tx = await contract.methods.unstake(unstakeAmount*100, pool.address).send({
             from: context.walletData.address,
             gasPrice: '',
-            gas: '',
-            value: stake1Data.input
+            gas: ''
         })
+        // setUnstakeTx(tx.transactionHash)
         message.success(`Transaction Sent!`, 2);
         setStartTx(false)
         setEndTx(true)
         updatePool()
         context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
+    
     }
 
     const updatePool = async () => {
@@ -345,7 +354,6 @@ const NewStake = (props) => {
                                         stake={stake}
                                         startTx={startTx}
                                         endTx={endTx}
-                                        type={"BUY"}
                                     />
                                 </TabPane>
                                 <TabPane tab={`UNSTAKE ${pool.symbol}`} key="2">
@@ -354,13 +362,12 @@ const NewStake = (props) => {
                                         pool={pool}
                                         // tradeData={sellData}
                                         // onTradeChange={onSellChange}
-                                        // changeUnstakeAmount={changeUnstakeAmount}
+                                        changeUnstakeAmount={changeUnstakeAmount}
                                         approval={approval}
                                         unlock={unlockToken}
-                                        // trade={sell}
+                                        unstake={unstake}
                                         startTx={startTx}
                                         endTx={endTx}
-                                        type={"SELL"}
                                     />
 
                                 </TabPane>
