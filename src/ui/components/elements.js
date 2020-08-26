@@ -9,15 +9,15 @@ export const Colour = (alpha) => {
     }
   } else {
     colour = {
-      "black": "#263238",
-      "dgrey": "#455a64",
-      "grey": "#607d8b",
-      "lgrey": "#cfd8dc",
-      "offwhite": '#eceff1',
+      "black": "#0A0001",
+      // "dgrey": "#455a64",
+      "grey": "#2F2D2D",
+      "lgrey": "#B3B1B1",
+      "offwhite": '#ECEAEA',
       "white": "#FFF",
-      "primary": "#2196f3",
-      "secondary": "#6ec6ff",
-      "accent": '#f44336'
+      "red": "#A80005",
+      // "secondary": "#6ec6ff",
+      "gold": '#C7692B'
     }
   }
   return colour
@@ -25,10 +25,10 @@ export const Colour = (alpha) => {
 
 export const H1 = (props) => {
   let styles = { ...props.style || {} }
-  styles.fontSize = '24px'
-  styles.fontColour = '#000000'
+  styles.fontSize = '32px'
+  // styles.fontColour = '#000000'
   styles.fontWeight = "bold"
-  styles.color = Colour().grey
+  styles.color = Colour().red
 
   if (props.margin) {
     styles.margin = props.margin
@@ -215,17 +215,32 @@ export const Button = (props) => {
   let styles = {...props.style || {}}
   // styles.fontSize = "16px"
   // styles.fontWeight = "bold"
-  // styles.color = Colour().gold
+
   // styles.textDecoration = "underline"
   // styles.marginTop = 30
   // styles.marginBottom = 30
   styles.margin = 10
-  // styles.backgroundColor = Colour().dgrey
-  // styles.borderColor = Colour().dgrey
+
   styles.display= "inline-block"
   // styles.borderBottom = "1px solid #D09800"
   // styles.height = "30px"
   // styles.padding = "0px 0px"
+
+  if(props.type==="secondary"){
+    styles.color = Colour().gold
+    styles.backgroundColor = Colour().white
+    styles.borderColor = Colour().gold
+  } else if (props.type==="text") {
+    styles.color = Colour().gold
+    styles.backgroundColor = Colour().white
+    styles.borderColor = Colour().white
+    styles.fontSize = 20
+    styles.fontWeight = 800
+  } else {
+    styles.color = Colour().white
+    styles.backgroundColor = Colour().gold
+    styles.borderColor = Colour().gold
+  }
 
   if (props.size) {
     styles.fontSize = props.size

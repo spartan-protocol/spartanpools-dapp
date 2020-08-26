@@ -8,12 +8,12 @@ import { Colour } from './ui/components/elements'
 import Headbar from './ui/layout/Headbar'
 // import Footer from './ui/layout/Footer'
 
-import SimpleSwap from './ui/pages/SimpleSwap'
-import SimpleStake from './ui/pages/SimpleStake'
+// import SimpleSwap from './ui/pages/SimpleSwap'
+// import SimpleStake from './ui/pages/SimpleStake'
 import Upgrade from './ui/pages/Upgrade'
 import Dao from './ui/pages/DAO'
 
-import Overview from './ui/pages/Overview'
+// import Overview from './ui/pages/Overview'
 import Pools from './ui/pages/Pools'
 //  import CDPs from './ui/pages/CDPs'
 // import PriceAnchor from './ui/pages/PriceAnchor'
@@ -51,10 +51,10 @@ const App = () => {
 							<Switch>
 								<Route path="/" exact component={Upgrade} />
 								<Route path="/upgrade" exact component={Upgrade} />
-								<Route path="/swap" exact component={SimpleSwap} />
-								<Route path="/stake" exact component={SimpleStake} />
+								{/* <Route path="/swap" exact component={SimpleSwap} />
+								<Route path="/stake" exact component={SimpleStake} /> */}
 								<Route path="/dao" exact component={Dao} />
-								<Route path="/overview" exact component={Overview} />
+								{/* <Route path="/overview" exact component={Overview} /> */}
 								<Route path="/pools" exact component={Pools} />
 								{/* <Route path="/CDPs" exact component={CDPs} /> */}
 								{/* <Route path="/anchor" exact component={PriceAnchor} /> */}

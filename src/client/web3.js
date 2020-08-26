@@ -2,20 +2,25 @@ import Web3 from 'web3'
 
 import ERC20 from '../artifacts/ERC20.json'
 import SPARTA from '../artifacts/Base.json'
-import SROUTER from '../artifacts/Router.json'
+import ROUTER from '../artifacts/Router.json'
 import POOLS from '../artifacts/Pool.json'
 import UTILS from '../artifacts/Utils.json'
+import DAO from '../artifacts/Dao.json'
 
-// export const ETH = '0x0000000000000000000000000000000000000000'
+const net = 'BSC';
+
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
-export const SPARTA_ADDR = '0x0C1d8c5911A1930ab68b3277D35f45eEd25e1F26'
+export const SPARTA_ADDR = net === 'BSC' ? '0xeD9E15523aA05Fa822dB42643682B9F8411310D3' : '0x0C1d8c5911A1930ab68b3277D35f45eEd25e1F26'
+export const UTILS_ADDR = net === 'BSC' ? '0xAfCe5dA566377D293a8e681cf2824f7Dc0C733C6' :'0x696a6B50d7FC6213a566fCC197acced4c4dDefa2'
+export const DAO_ADDR = net === 'BSC' ? '0x862138A5c5b85E34D599cF60B99f67ABeFaaA99f' : '0x862138A5c5b85E34D599cF60B99f67ABeFaaA99f'
+export const ROUTER_ADDR = net === 'BSC' ? '0x4D419c4c8d65788523373523615271115A6B815B' : '0x15967D09bc67A1aafFC43D88CcD4F6196df3B259'
+
 export const SPARTA_ABI = SPARTA.abi
-export const ROUTER_ADDR = '0x15967D09bc67A1aafFC43D88CcD4F6196df3B259'
-export const ROUTER_ABI = SROUTER.abi
+export const ROUTER_ABI = ROUTER.abi
 export const POOLS_ABI = POOLS.abi
 export const ERC20_ABI = ERC20.abi
-export const UTILS_ADDR = '0x696a6B50d7FC6213a566fCC197acced4c4dDefa2'
 export const UTILS_ABI = UTILS.abi
+export const DAO_ABI = DAO.abi
 
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
@@ -69,6 +74,11 @@ export const getRouterContract = () => {
     return new web3.eth.Contract(ROUTER_ABI, ROUTER_ADDR)
 }
 
+export const getDaoContract = () => {
+    var web3 = getWeb3()
+    return new web3.eth.Contract(DAO_ABI, DAO_ADDR)
+}
+
 // Get just an array of tokens that can be upgrade
 export const getAssets = async () => {
     var contract = getSpartaContract()
@@ -82,10 +92,10 @@ export const getTokenDetails = async (address, assetArray) => {
     let assetDetailsArray = []
     for (let i = 0; i < assetArray.length; i++) {
         let utilsContract = getUtilsContract()
-        let assetDetails = await utilsContract.methods.getTokenDetails(assetArray[i]).call()
-        // if(+assetDetails.balance > 0){
+        let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(assetArray[i], address).call()
+        if(+assetDetails.balance > 0){
             assetDetailsArray.push(assetDetails)
-        // }
+        }
     }
     console.log({ assetDetailsArray })
     return assetDetailsArray
@@ -100,7 +110,14 @@ export const getEligibleAssets = async (address, assetDetailsArray) => {
 
 export const getListedTokens = async () => {
     var contract = getUtilsContract()
-    let tokenArray = await contract.methods.allTokens().call()
+    console.log(contract)
+    let tokenArray = []
+    try {
+        tokenArray = await contract.methods.allTokens().call()
+    } catch (err) {
+        console.log(err)
+    }
+     
     console.log({ tokenArray })
     return tokenArray
 }
@@ -172,20 +189,20 @@ export const getNetworkData = async (poolsData) => {
     return (networkData)
 }
 
+export const getGlobalData = async ()  => {
+    var contract = getUtilsContract()
+    let globalData = await contract.methods.getGlobalDetails().call()
+    console.log({globalData})
+    return globalData
+}
+
 export const getWalletData = async (address, tokenDetailsArray) => {
-    // var accountBalance = await getBNBBalance(address)
     var tokens = []
     console.log(tokenDetailsArray)
     var walletData = {
         'address': address,
         'tokens': tokens
     }
-    // tokens.push({
-    //     'symbol': 'BNB',
-    //     'name': 'Binance Chain Token',
-    //     'balance': accountBalance,
-    //     'address': '0x0000000000000000000000000000000000000000'
-    // })
     tokens.push({
         'symbol': 'SPARTA',
         'name': 'Sparta',
@@ -206,15 +223,15 @@ export const getWalletData = async (address, tokenDetailsArray) => {
     return walletData
 }
 
-export const getNewTokenData = async (token, address) => {
-    var obj = await getUtilsContract().methods.getTokenDetails(token).call()
-    var tokenBalance = await getTokenContract(token).methods.balanceOf(address).call()
+export const getNewTokenData = async (token, member) => {
+    var obj = await getUtilsContract().methods.getTokenDetailsWithMember(token, member).call()
+    // var tokenBalance = await getTokenContract(token).methods.balanceOf(address).call()
 
     var tokenData = {
         'symbol': obj.symbol,
         'name': obj.name,
-        'balance': tokenBalance,
-        'address': address
+        'balance': obj.balance,
+        'address': token
     }
 
     console.log(tokenData)

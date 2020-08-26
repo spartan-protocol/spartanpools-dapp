@@ -1,24 +1,28 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 import { Link } from "react-router-dom";
-import { Row, Col, Button, Layout, Menu, Drawer } from 'antd';
+import { Row, Col, Layout, Menu, Drawer } from 'antd';
 import { UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import '../../App.css';
+import { Button, Colour } from '../components/elements'
 
 import Web3 from 'web3'
-import axios from 'axios'
+// import axios from 'axios'
 
 import { message } from 'antd';
 
+import logo from '../../assets/spartan-logo-white.png';
+
 import WalletDrawer from './WalletDrawer'
 import { getAddressShort, } from '../../utils'
-import { getAssets, getTokenDetails, getListedTokens, getWalletData, getStakesData } from '../../client/web3'
+import {
+    getAssets, getTokenDetails, getListedTokens,
+    getWalletData, getStakesData
+} from '../../client/web3'
 
 const { Header } = Layout;
 
 const Headbar = (props) => {
-
-
 
     const context = useContext(Context)
     const [connecting, setConnecting] = useState(false)
@@ -33,7 +37,7 @@ const Headbar = (props) => {
     const connectWallet = async () => {
         setConnecting(true)
         window.web3 = new Web3(window.ethereum);
-        const account= (await window.web3.eth.getAccounts())[0];
+        const account = (await window.web3.eth.getAccounts())[0];
         if (account) {
             message.loading('Loading tokens', 3);
             let assetArray = context.assetArray ? context.assetArray : await getAssets()
@@ -43,8 +47,9 @@ const Headbar = (props) => {
 
             let tokenArray = context.tokenArray ? context.tokenArray : await getListedTokens()
             context.setContext({ 'tokenArray': tokenArray })
+            // context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
 
-            let allTokens= assetArray.concat(tokenArray)
+            let allTokens = assetArray.concat(tokenArray)
             var sortedTokens = [...new Set(allTokens)].sort()
 
             let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getTokenDetails(account, sortedTokens)
@@ -54,24 +59,14 @@ const Headbar = (props) => {
             let walletData = await getWalletData(account, tokenDetailsArray)
             context.setContext({ 'walletData': walletData })
 
-            // let poolArray = context.poolArray ? context.poolArray : await getListedPools()
-            // let poolsData = context.poolsData ? context.poolsData : await getPoolsData(poolArray)
-            // message.loading('Loading stake data', 3);
             let stakesData = context.stakesData ? context.stakesData : await getStakesData(account, tokenArray)
             context.setContext({ 'stakesData': stakesData })
-            // if (!context.poolsData) {
-            //     context.setContext({ 'poolArray': poolArray })
-            //     context.setContext({ 'poolsData': poolsData })
-            //     context.setContext({ 'stakesData': stakesData })
-            // }
 
-            
             context.setContext({ 'connected': true })
-            // console.log({walletData})
             await getSpartaPrice()
             setConnecting(false)
             setConnected(true)
-            message.success('Loaded!',  2);
+            message.success('Loaded!', 2);
         } else {
             await ethEnabled()
             setConnected(false)
@@ -110,27 +105,31 @@ const Headbar = (props) => {
 
     return (
         <Header>
-            <Row>
-                <Col xs={20}>
+            <Row style={{ backgroundColor: Colour().black }}>
+                <Col xs={4}>
+                    <img src={logo} alt="Logo" style={{width:200}}/>
+                </Col>
+                <Col xs={16}>
                     <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['0']}>
-                        <Menu.Item key='0'>
+                        {/* <Menu.Item key='0'>
                             <Link to={"/overview"}>OVERVIEW</Link>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key='1'>
-                            <Link to={"/upgrade"}>UPGRADE</Link>
+                            <Link to={"/pools"}>POOLS</Link>
                         </Menu.Item>
                         <Menu.Item key='2'>
+                            <Link to={"/upgrade"}>UPGRADE</Link>
+                        </Menu.Item>
+                        {/* <Menu.Item key='2'>
                             <Link to={"/swap"}>SWAP</Link>
                         </Menu.Item>
                         <Menu.Item key='3'>
                             <Link to={"/stake"}>STAKE</Link>
-                        </Menu.Item>
-                        <Menu.Item key='4'>
+                        </Menu.Item> */}
+                        <Menu.Item key='3'>
                             <Link to={"/dao"}>DAO</Link>
                         </Menu.Item>
-                        <Menu.Item key='5'>
-                            <Link to={"/pools"}>POOLS</Link>
-                        </Menu.Item>
+
                         {/* <Menu.Item key='6'>
                             <Link to={"/about"}>ABOUT</Link>
                         </Menu.Item> */}
@@ -163,7 +162,7 @@ const Headbar = (props) => {
                 closable={false}
                 onClose={onClose}
                 visible={visible}
-                width={450}
+                width={350}
             >
                 <WalletDrawer />
             </Drawer>

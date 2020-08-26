@@ -7,7 +7,7 @@ import {
   rainbowStop, getIntFromName,
   convertFromWei, formatUSD,
 } from '../../utils'
-import { paneStyles, colStyles, rowStyles } from '../components/styles'
+import { paneStyles, colStyles } from '../components/styles'
 import { getTokenSymbol } from '../../client/web3'
 import { H1, HR, Colour, Text, Center, Label, Sublabel, LabelGroup } from '../components/elements'
 
@@ -280,16 +280,16 @@ export const PoolPaneSide = (props) => {
 
           <Row style={rowStylesPane}>
             <Col xs={12}>
-              <LabelGroup size={20} element={convertFromWei(props.pool.depth)} label={'DEPTH (SPARTA)'} />
+              <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.depth), props.price)} label={'DEPTH'} />
             </Col>
             <Col xs={12}>
-              <LabelGroup size={20} element={convertFromWei(props.pool.price)} label={'PRICE (SPARTA)'} />
+              <LabelGroup size={20} element={formatUSD(props.pool.price, props.price)} label={'PRICE'} />
             </Col>
           </Row>
 
           <Row style={rowStylesPane}>
             <Col xs={12}>
-              <LabelGroup size={20} element={convertFromWei(props.pool.volume)} label={'VOLUME (SPARTA)'} />
+              <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.volume), props.price)} label={'VOLUME'} />
             </Col>
             <Col xs={12}>
               <LabelGroup size={20} element={props.pool.txCount} label={'TX COUNT'} />
@@ -298,7 +298,7 @@ export const PoolPaneSide = (props) => {
 
           <Row style={rowStylesPane}>
             <Col xs={12}>
-              <LabelGroup size={20} element={convertFromWei(props.pool.fees)} label={'FEES (SPARTA)'} />
+              <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.fees), props.price)} label={'FEES'} />
             </Col>
             <Col xs={12}>
               <LabelGroup size={20} element={`${props.pool.apy} %`} label={'APY'} />
@@ -372,11 +372,8 @@ export const ColourCoin = (props) => {
   const coinName = symbol.length > 4 ? symbol.substr(0, 4) : symbol
 
   const coinStyle = {
-    fontWeight: '500',
-    letterSpacing: '0.3px',
-    textTransform: 'uppercase',
-    color: Colour().white,
-    fontSize: props.size / 4,
+
+
     position: 'relative',
     display: 'flex',
     justifyContent: 'center',
@@ -387,11 +384,20 @@ export const ColourCoin = (props) => {
     background: `linear-gradient(45deg, ${startCol}, ${stopCol})`,
   }
 
+  const textStyles = {
+    fontWeight: '800',
+    letterSpacing: '1px',
+    fontFamily: 'arial',
+    textTransform: 'uppercase',
+    color: Colour().white,
+    fontSize: props.size / 4,
+  }
+
   return (
     <div >
       <Row style={coinStyle}>
         <Col>
-          <span>{coinName}</span>
+          <span style={textStyles}>{coinName}</span>
         </Col>
       </Row>
     </div>

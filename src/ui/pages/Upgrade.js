@@ -2,10 +2,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
-import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getWalletData } from '../../client/web3'
+import { BNB_ADDR, SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getWalletData } from '../../client/web3'
 
-import { Button, Row, Col, message, Input, Table } from 'antd';
+import { Row, Col, message, Input, Table } from 'antd';
 import { paneStyles, colStyles } from '../components/styles'
+
+import { H1, H2, Button } from '../components/elements';
 
 import { LoadingOutlined } from '@ant-design/icons';
 var utils = require('ethers').utils;
@@ -18,9 +20,9 @@ const Upgrade = (props) => {
 
 
     const context = useContext(Context)
-    const [connecting, setConnecting] = useState(false)
-    const [connected, setConnected] = useState(false)
-    const [visible, setVisible] = useState(false);
+    // const [connecting, setConnecting] = useState(false)
+    // const [connected, setConnected] = useState(false)
+    // const [visible, setVisible] = useState(false);
 
     const [token, setAsset] = useState('0x0000000000000000000000000000000000000000');
     const [approval, setApproval] = useState(false)
@@ -43,11 +45,15 @@ const Upgrade = (props) => {
     }
 
     const checkApproval = async (address) => {
-        const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, SPARTA_ADDR).call()
-        console.log(approval)
-        if (+approval > 0) {
+        if (address === BNB_ADDR) {
             setApproval(true)
+        } else {
+            const contract = getTokenContract(address)
+            const approval = await contract.methods.allowance(context.walletData.address, SPARTA_ADDR).call()
+            console.log(approval)
+            if (+approval > 0) {
+                setApproval(true)
+            }
         }
     }
 
@@ -70,7 +76,8 @@ const Upgrade = (props) => {
         await contract.methods.upgrade(token).send({
             from: context.walletData.address,
             gasPrice: '',
-            gas: ''
+            gas: '',
+            // value: token === BNB_ADDR ? sellData.input : 0
         })
         message.success(`Transaction Sent!`,  2);
         setStartTx(false)
@@ -88,7 +95,7 @@ const Upgrade = (props) => {
 
     return (
         <div>
-            <h1>UPGRADE TO THE SPARTA PROTOCOL TOKEN</h1>
+            <H1>UPGRADE</H1>
             <p>A minimum of 300 members each from 30 Binance Chain projects can acquire SPARTA using Proof-Of-Burn. </p>
             <p><span>Acquiring SPARTA will destroy your previous tokens and mint SPARTA in accordance with the &nbsp;
             <a href="http://spartanprotocol.org/sparta" target="blank">
@@ -103,6 +110,7 @@ const Upgrade = (props) => {
                             <h2>UPGRADE</h2>
                             <Input onChange={changeToken}
                                 placeholder={'Enter BEP2E Asset Address'}
+                                size={'large'}
                                 >
                                 </Input>
                                 <br/><br/>
@@ -121,7 +129,7 @@ const Upgrade = (props) => {
                 </Col>
             </Row>
             <br/><br/>
-            <h2>ELIGIBLE TOKENS</h2>
+            <H2>ELIGIBLE TOKENS</H2>
             <p>The following tokens on your wallet can be upgraded to acquire SPARTA.</p>
             <BalanceTable />
         </div>

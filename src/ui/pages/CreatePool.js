@@ -3,7 +3,7 @@ import { Context } from '../../context'
 
 import { withRouter } from 'react-router-dom'
 import { Row, Col, Input } from 'antd'
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, UnlockOutlined } from '@ant-design/icons';
 
 import { BreadcrumbCombo, InputPane, CoinRow } from '../components/common'
 import { Center, Button, Sublabel } from '../components/elements'
@@ -14,11 +14,11 @@ import { paneStyles, rowStyles, colStyles } from '../components/styles'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getRouterContract,
     getTokenData, getNewTokenData, getAssets, getListedTokens, getListedPools, getPoolsData, 
-    getStakesData, getTokenDetails, getWalletData
+    getTokenDetails, getWalletData
 } from '../../client/web3'
 
-import { convertToWei } from '../../utils'
-var utils = require('ethers').utils;
+import { convertToWei, formatBN } from '../../utils'
+// var utils = require('ethers').utils;
 
 const CreatePool = (props) => {
 
@@ -81,7 +81,7 @@ const CreatePool = (props) => {
         const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
         setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
         // const outputTokenData = await getTokenData(BNB_ADDR, context.walletData)
-        // setStake2Data(await getStakeInputData(outputTokenData.balance, tokenList[0]))
+        // setStake2Data(await getStakeInputData(outputTokenData.balance, outputTokenData))
 
     }
 
@@ -96,14 +96,15 @@ const CreatePool = (props) => {
     
             var tokenData = await getNewTokenData(addressSelected, context.walletData.address)
             setTokenData(tokenData)
+            console.log(tokenData)
     
             if (+tokenData.balance > 0) {
                 setCheckFlag(true)
                 setStake2Data(await getStakeInputData(tokenData.balance, tokenData))
             }
     
-            checkApproval1(SPARTA_ADDR)
-            checkApproval2(addressSelected)
+            await checkApproval1(SPARTA_ADDR)
+            await checkApproval2(addressSelected)
         }
         
 
@@ -223,28 +224,34 @@ const CreatePool = (props) => {
     }
 
     const unlockToken = async (address) => {
+        console.log(ROUTER_ADDR, address)
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
+        console.log(ROUTER_ADDR, supply)
         await contract.methods.approve(ROUTER_ADDR, supply).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
         })
-        checkApproval1(SPARTA_ADDR)
-        checkApproval2(address)
+        await checkApproval1(SPARTA_ADDR)
+        await checkApproval2(address)
     }
+
+    //0x7fd8b9a2
+    //000000000000000000000000000000000000000000000001a055690d9db8
+    //00000000000000000000000000000000000000000000000000000de0b6b3a764
+    //00000000000000000000000000000000000000000000000000000000000000000000
 
     const createPool = async () => {
         const poolContract = getRouterContract()
         
-        // let inputBase = utils.formatEther(stake1Data.input)
-        // let inputToken = utils.formatEther(stake2Data.input)
-        // console.log(inputBase, inputToken, addressSelected)
+        console.log(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
 
-        await poolContract.methods.createPool(stake1Data.input, stake2Data.input, addressSelected).send({
+        await poolContract.methods.createPool(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected).send({
             from: context.walletData.address,
             gasPrice: '',
-            gas: ''
+            gas: '',
+            value: addressSelected === BNB_ADDR ? formatBN(stake2Data.input, 0) : 0
         })
         // setStakeTx(tx.transactionHash)
         await reloadData()
@@ -344,7 +351,7 @@ const CreatePool = (props) => {
                             <br></br>
                             <Col xs={8}>
                                 {!approval1 &&
-                                    <Center><Button type={'secondary'} onClick={unlockSparta}>UNLOCK {stake1Data.symbol}</Button></Center>
+                                    <Center><Button type={'secondary'} onClick={unlockSparta} icon={<UnlockOutlined />}>UNLOCK {stake1Data.symbol}</Button></Center>
                                 }
                             </Col>
                             <Col xs={8}>
@@ -354,7 +361,7 @@ const CreatePool = (props) => {
                             </Col>
                             <Col xs={8}>
                                 {!approval2 &&
-                                    <Center><Button type={'secondary'} onClick={unlockAsset}>UNLOCK {stake2Data.symbol}</Button></Center>
+                                    <Center><Button type={'secondary'} onClick={unlockAsset} icon={<UnlockOutlined />}>UNLOCK {stake2Data.symbol}</Button></Center>
                                 }
                             </Col>
                         </Col>

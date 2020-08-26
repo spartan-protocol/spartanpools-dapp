@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Context } from '../../context'
-import { Tabs, Button, Row, Col, message } from 'antd';
-import { LoadingOutlined, LeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
+import { Tabs, Row, Col, message } from 'antd';
+import { LoadingOutlined, LeftOutlined, DoubleRightOutlined, UnlockOutlined } from '@ant-design/icons';
 
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
@@ -9,6 +9,7 @@ import queryString from 'query-string';
 import { BreadcrumbCombo, InputPane, PoolPaneSide,  } from '../components/common'
 import '../../App.css';
 import { HR, Sublabel, LabelGroup } from '../components/elements';
+import { Button } from '../components/elements';
 import { paneStyles, colStyles } from '../components/styles'
 import { bn, formatBN, convertFromWei, convertToWei } from '../../utils'
 import { getSwapOutput, getSwapSlip } from '../../math'
@@ -241,12 +242,12 @@ const NewSwap = (props) => {
             <BreadcrumbCombo title={'SWAP'} parent={'POOLS'} link={'/pools'} child={'SWAP'}></BreadcrumbCombo>
             <HR></HR>
             <br />
-            <Button onClick={back} icon={<LeftOutlined />}>BACK</Button>
+            <Button onClick={back} icon={<LeftOutlined />} type={'text'} size={'large'}>BACK</Button>
 
             <Row>
                 <Col xs={8}>
 
-                    <PoolPaneSide pool={pool} />
+                    <PoolPaneSide pool={pool} price={context.spartanPrice} />
 
                 </Col>
                 <Col xs={16}>
@@ -321,7 +322,7 @@ const TradePane = (props) => {
 
                             <Row>
                                 <Col xs={12}>
-                                    <LabelGroup size={20} element={((props.tradeData.slip) * 100).toFixed(2)} label={'SLIP'} />
+                                    <LabelGroup size={20} element={`${((props.tradeData.slip) * 100).toFixed(0)}%`} label={'SLIP'} />
                                 </Col>
                                 {/* <Col xs={12}>
                                     <LabelGroup size={20} element={((props.tradeData.slip) * 100).toFixed(2)} label={'FEE'} />
@@ -336,7 +337,7 @@ const TradePane = (props) => {
                     <Row>
                         <Col xs={24}>
                             {!props.approval &&
-                                <Button onClick={props.unlock} type={'secondary'} style={{ float: "right" }}>APPROVE</Button>
+                                <Button onClick={props.unlock} type={'secondary'} style={{ float: "right" }} icon={<UnlockOutlined />}>UNLOCK</Button>
                             }
                             {props.approval && props.startTx && !props.endTx &&
                                 <Button onClick={props.trade} type={'primary'} icon={<LoadingOutlined />} style={{ float: "right" }}>{`${props.type} ${props.pool.symbol}`}</Button>

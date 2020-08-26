@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Context } from '../../context'
-import { Tabs, Button, Row, Col, message } from 'antd';
-import { LoadingOutlined, LeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
+import { Tabs, Row, Col, message } from 'antd';
+import { LoadingOutlined, LeftOutlined, UnlockOutlined } from '@ant-design/icons';
 
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
 import { BreadcrumbCombo, InputPane, PoolPaneSide, OutputPane } from '../components/common'
 import '../../App.css';
-import { HR, Sublabel, LabelGroup, Center } from '../components/elements';
+import { HR, LabelGroup, Center } from '../components/elements';
+import { Button } from '../components/elements';
 import { paneStyles, colStyles, rowStyles } from '../components/styles'
 import { bn, formatBN, convertFromWei, convertToWei } from '../../utils'
-import { getStakeUnits, getPoolShare } from '../../math'
+import { getStakeUnits } from '../../math'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,
     getPoolData, getTokenData, getTokenDetails,
-    getListedPools, getPoolsData, getPool, getStakeData
+    getListedPools, getPoolsData, getPool
 } from '../../client/web3'
 
 const { TabPane } = Tabs;
@@ -39,18 +40,18 @@ const NewStake = (props) => {
         'fees': 0
     })
 
-    const [inputTokenData, setInputTokenData] = useState({
-        'symbol': 'XXX',
-        'name': 'XXX',
-        'balance': 0,
-        'address': BNB_ADDR
-    })
-    const [outputTokenData, setOutputTokenData] = useState({
-        'symbol': 'XXX',
-        'name': 'XXX',
-        'balance': 0,
-        'address': BNB_ADDR
-    })
+    // const [inputTokenData, setInputTokenData] = useState({
+    //     'symbol': 'XXX',
+    //     'name': 'XXX',
+    //     'balance': 0,
+    //     'address': BNB_ADDR
+    // })
+    // const [outputTokenData, setOutputTokenData] = useState({
+    //     'symbol': 'XXX',
+    //     'name': 'XXX',
+    //     'balance': 0,
+    //     'address': BNB_ADDR
+    // })
 
     const [stake1Data, setStake1Data] = useState({
         address: SPARTA_ADDR,
@@ -66,28 +67,28 @@ const NewStake = (props) => {
     })
 
     const [estStakeUnits, setStakeUnits] = useState(0)
-    const [shareData, setShareData] = useState({
-        baseAmt: 0,
-        tokenAmt: 0
-    })
+    // const [shareData, setShareData] = useState({
+    //     baseAmt: 0,
+    //     tokenAmt: 0
+    // })
 
     const [approval, setApproval] = useState(false)
     const [approvalS, setApprovalS] = useState(false)
     const [startTx, setStartTx] = useState(false);
     const [endTx, setEndTx] = useState(false);
 
-    const [stakeData, setStakeData] = useState({
-        'symbol': 'XXX',
-        'name': 'XXX',
-        'address': BNB_ADDR,
-        'baseAmt': 0,
-        'tokenAmt': 0,
-        'baseStaked': 0,
-        'tokenStaked': 0,
-        'roi': 0,
-        'units': 0,
-        'share': 0
-    })
+    // const [stakeData, setStakeData] = useState({
+    //     'symbol': 'XXX',
+    //     'name': 'XXX',
+    //     'address': BNB_ADDR,
+    //     'baseAmt': 0,
+    //     'tokenAmt': 0,
+    //     'baseStaked': 0,
+    //     'tokenStaked': 0,
+    //     'roi': 0,
+    //     'units': 0,
+    //     'share': 0
+    // })
 
     const [unstakeAmount, setUnstakeAmount] = useState(0)
 
@@ -118,13 +119,13 @@ const NewStake = (props) => {
         const pool = await getPoolData(params.pool, context.poolsData)
         setPool(pool)
 
-        const stakeData = await getStakeData(params.pool, context.stakesData)
-        setStakeData(stakeData)
+        // const stakeData = await getStakeData(params.pool, context.stakesData)
+        // setStakeData(stakeData)
 
         const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
         const outputTokenData = await getTokenData(pool.address, context.walletData)
-        setInputTokenData(inputTokenData)
-        setOutputTokenData(outputTokenData)
+        // setInputTokenData(inputTokenData)
+        // setOutputTokenData(outputTokenData)
 
         setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
         setStake2Data(await getStakeInputData(outputTokenData.balance, outputTokenData))
@@ -135,12 +136,12 @@ const NewStake = (props) => {
         }
         const estStakeUnits = getStakeUnits(stake, pool)
         setStakeUnits(estStakeUnits)
-        const unitData = {
-            estStakeUnits: estStakeUnits,
-            totalUnits: pool.units
-        }
-        const share = getPoolShare(unitData, pool)
-        setShareData(share)
+        // const unitData = {
+        //     estStakeUnits: estStakeUnits,
+        //     totalUnits: pool.units
+        // }
+        // const share = getPoolShare(unitData, pool)
+        // setShareData(share)
 
         checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
         checkApproval(pool.address) ? setApproval(true) : setApproval(false)
@@ -295,7 +296,7 @@ const NewStake = (props) => {
             gasPrice: '',
             gas: ''
         })
-        // setUnstakeTx(tx.transactionHash)
+        console.log(tx.transactionHash)
         message.success(`Transaction Sent!`, 2);
         setStartTx(false)
         setEndTx(true)
@@ -324,12 +325,12 @@ const NewStake = (props) => {
             <BreadcrumbCombo title={'SWAP'} parent={'POOLS'} link={'/pools'} child={'SWAP'}></BreadcrumbCombo>
             <HR></HR>
             <br />
-            <Button onClick={back} icon={<LeftOutlined />}>BACK</Button>
+            <Button onClick={back} icon={<LeftOutlined />} type={'text'} size={'large'} >BACK</Button>
 
             <Row>
                 <Col xs={8}>
 
-                    <PoolPaneSide pool={pool} />
+                    <PoolPaneSide pool={pool} price={context.spartanPrice}  />
 
                 </Col>
                 <Col xs={16}>
@@ -431,7 +432,7 @@ const StakePane = (props) => {
                     <Row>
                         <Col xs={8}>
                             {!props.approval1 &&
-                                <Center><Button type={'secondary'} onClick={props.unlockSparta}>UNLOCK {props.stake1Data.symbol}</Button></Center>
+                                <Center><Button type={'secondary'} onClick={props.unlockSparta} icon={<UnlockOutlined />}>UNLOCK {props.stake1Data.symbol}</Button></Center>
                             }
                         </Col>
                         <Col xs={8}>
@@ -444,7 +445,7 @@ const StakePane = (props) => {
                         </Col>
                         <Col xs={8}>
                             {!props.approval2 &&
-                                <Center><Button type={'secondary'} onClick={props.unlockToken}>UNLOCK {props.stake2Data.symbol}</Button></Center>
+                                <Center><Button type={'secondary'} onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.stake2Data.symbol}</Button></Center>
                             }
                         </Col>
                     </Row>

@@ -2,15 +2,14 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
-import { getSpartaContract } from '../../client/web3'
+import { getSpartaContract, getDaoContract } from '../../client/web3'
 
-import { Button, Row, Col, message, Input, Table } from 'antd';
+import { Row, Col, Input } from 'antd';
 import { paneStyles, colStyles } from '../components/styles'
 
-import ERC20 from '../../artifacts/ERC20.json'
-var utils = require('ethers').utils;
+import { H1, Button } from '../components/elements';
 
-const ERC20_ABI = ERC20.abi
+var utils = require('ethers').utils;
 
 const DAO = (props) => {
 
@@ -20,13 +19,15 @@ const DAO = (props) => {
 
 
     const context = useContext(Context)
-    const [connecting, setConnecting] = useState(false)
-    const [connected, setConnected] = useState(false)
-    const [visible, setVisible] = useState(false);
+    // const [connecting, setConnecting] = useState(false)
+    // const [connected, setConnected] = useState(false)
+    // const [visible, setVisible] = useState(false);
 
-    const [token, setAsset] = useState(false);
+    const [asset, setAsset] = useState(false);
     const [maxClaim, setMaxClaim] = useState(false);
     const [claimRate, setClaimRate] = useState(false);
+    const [daoAddress, setDAOAddress] = useState(false);
+    const [routerAddress, setRouterAddress] = useState(false);
 
     useEffect(() => {
         getData()
@@ -34,7 +35,7 @@ const DAO = (props) => {
     }, [])
 
     const getData = async () => {
-        
+
     }
 
 
@@ -50,10 +51,30 @@ const DAO = (props) => {
         setClaimRate(wei.toString())
     }
 
+    const changeDAOAddress = (e) => {
+        setDAOAddress(e.target.value)
+    }
+
+    const changeRouterAddress = (e) => {
+        setRouterAddress(e.target.value)
+    }
+
     const listAsset = async () => {
         console.log('listAsset')
         let contract = getSpartaContract()
-        let tx = await contract.methods.listAssetWithClaim(token, maxClaim, claimRate).send({from:context.walletData.address})
+        let tx = await contract.methods.listAssetWithClaim(asset, maxClaim, claimRate).send({ from: context.walletData.address })
+        console.log(tx.transactionHash)
+    }
+    const listDAO = async () => {
+        console.log('listDAO')
+        let contract = getSpartaContract()
+        let tx = await contract.methods.changeDAO(daoAddress).send({ from: context.walletData.address })
+        console.log(tx.transactionHash)
+    }
+    const listRouter = async () => {
+        console.log('listRouter')
+        let contract = getDaoContract()
+        let tx = await contract.methods.setGenesisRouter(routerAddress).send({ from: context.walletData.address })
         console.log(tx.transactionHash)
     }
 
@@ -64,24 +85,51 @@ const DAO = (props) => {
 
     return (
         <div>
-            <h1>DAO Functions</h1>
+            <H1>DAO</H1>
             <p>The Spartan DAO can govern the contract.</p>
-            <br/><br/>
             <Row style={indentStyles}>
                 <Col xs={24}>
                     <Row style={paneStyles}>
                         <Col xs={24} style={colStyles}>
-                            <h2>LIST TOKEN</h2>
-                            <Input onChange={changeAsset}
-                                placeholder={'Enter BEP2E Asset Address'}
-                                allowClear={true}></Input>
-                            <Input onChange={changeMaxClaim}
-                                placeholder={'Enter Max Claim'}
-                                allowClear={true}></Input>
-                            <Input onChange={changeClaimRate}
-                                placeholder={'Enter Claim Rate'}
-                                allowClear={true}></Input>
-                            <Button onClick={listAsset} primary>LIST</Button>
+                            <Row>
+                                <Col xs={24}>
+                                    <h2>LIST ASSET IN SPARTA</h2>
+                                    <Input onChange={changeAsset}
+                                        placeholder={'Enter BEP2E Asset Address'}
+                                        allowClear={true}></Input>
+                                    <Input onChange={changeMaxClaim}
+                                        placeholder={'Enter Max Claim'}
+                                        allowClear={true}></Input>
+                                    <Input onChange={changeClaimRate}
+                                        placeholder={'Enter Claim Rate'}
+                                        allowClear={true}></Input>
+                                        <br />
+                                    <Button onClick={listAsset}  type={'primary'} style={{marginTop:10, float:"right"}}>LIST ASSET</Button>
+                                </Col>
+                            </Row>
+                            <br /><br />
+                            <Row>
+                                <Col xs={24}>
+                                    <h2>LIST DAO IN SPARTA</h2>
+                                    <Input onChange={changeDAOAddress}
+                                        placeholder={'Enter BEP2E Asset Address'}
+                                        allowClear={true}></Input>
+                                        <br />
+                                    <Button onClick={listDAO}  type={'primary'} style={{marginTop:10, float:"right"}}>LIST DAO</Button>
+                                </Col>
+                            </Row>
+                            <br /><br />
+                            <Row>
+                                <Col xs={24}>
+                                    <h2>LIST ROUTER IN DAO</h2>
+                                    <Input onChange={changeRouterAddress}
+                                        placeholder={'Enter BEP2E Asset Address'}
+                                        allowClear={true}></Input>
+                                        <br />
+                                    <Button onClick={listRouter} type={'primary'} style={{marginTop:10, float:"right"}}>LIST ROUTER</Button>
+                                </Col>
+                            </Row>
+
                         </Col>
                     </Row>
                 </Col>
