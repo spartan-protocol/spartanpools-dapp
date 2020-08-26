@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Row, Col, Layout, Menu, Drawer } from 'antd';
 import { UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import '../../App.css';
-import { Button, Colour } from '../components/elements'
+import { Button } from '../components/elements'
 
 import Web3 from 'web3'
 // import axios from 'axios'
@@ -105,7 +105,7 @@ const Headbar = (props) => {
 
     return (
         <Header>
-            <Row style={{ backgroundColor: Colour().black }}>
+            <Row>
                 <Col xs={4}>
                     <img src={logo} alt="Logo" style={{width:200}}/>
                 </Col>
