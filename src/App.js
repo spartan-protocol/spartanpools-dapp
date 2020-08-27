@@ -12,6 +12,7 @@ import Headbar from './ui/layout/Headbar'
 // import SimpleStake from './ui/pages/SimpleStake'
 import Upgrade from './ui/pages/Upgrade'
 import Dao from './ui/pages/DAO'
+import Earn from './ui/pages/Earn'
 
 // import Overview from './ui/pages/Overview'
 import Pools from './ui/pages/Pools'
@@ -54,7 +55,7 @@ const App = () => {
 								{/* <Route path="/swap" exact component={SimpleSwap} />
 								<Route path="/stake" exact component={SimpleStake} /> */}
 								<Route path="/dao" exact component={Dao} />
-								{/* <Route path="/overview" exact component={Overview} /> */}
+								<Route path="/earn" exact component={Earn} />
 								<Route path="/pools" exact component={Pools} />
 								{/* <Route path="/CDPs" exact component={CDPs} /> */}
 								{/* <Route path="/anchor" exact component={PriceAnchor} /> */}

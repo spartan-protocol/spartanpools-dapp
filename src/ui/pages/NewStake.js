@@ -40,19 +40,6 @@ const NewStake = (props) => {
         'fees': 0
     })
 
-    // const [inputTokenData, setInputTokenData] = useState({
-    //     'symbol': 'XXX',
-    //     'name': 'XXX',
-    //     'balance': 0,
-    //     'address': BNB_ADDR
-    // })
-    // const [outputTokenData, setOutputTokenData] = useState({
-    //     'symbol': 'XXX',
-    //     'name': 'XXX',
-    //     'balance': 0,
-    //     'address': BNB_ADDR
-    // })
-
     const [stake1Data, setStake1Data] = useState({
         address: SPARTA_ADDR,
         symbol: 'XXX',
@@ -67,28 +54,10 @@ const NewStake = (props) => {
     })
 
     const [estStakeUnits, setStakeUnits] = useState(0)
-    // const [shareData, setShareData] = useState({
-    //     baseAmt: 0,
-    //     tokenAmt: 0
-    // })
-
     const [approval, setApproval] = useState(false)
     const [approvalS, setApprovalS] = useState(false)
     const [startTx, setStartTx] = useState(false);
     const [endTx, setEndTx] = useState(false);
-
-    // const [stakeData, setStakeData] = useState({
-    //     'symbol': 'XXX',
-    //     'name': 'XXX',
-    //     'address': BNB_ADDR,
-    //     'baseAmt': 0,
-    //     'tokenAmt': 0,
-    //     'baseStaked': 0,
-    //     'tokenStaked': 0,
-    //     'roi': 0,
-    //     'units': 0,
-    //     'share': 0
-    // })
 
     const [unstakeAmount, setUnstakeAmount] = useState(0)
 
@@ -119,13 +88,8 @@ const NewStake = (props) => {
         const pool = await getPoolData(params.pool, context.poolsData)
         setPool(pool)
 
-        // const stakeData = await getStakeData(params.pool, context.stakesData)
-        // setStakeData(stakeData)
-
         const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
         const outputTokenData = await getTokenData(pool.address, context.walletData)
-        // setInputTokenData(inputTokenData)
-        // setOutputTokenData(outputTokenData)
 
         setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
         setStake2Data(await getStakeInputData(outputTokenData.balance, outputTokenData))
@@ -136,13 +100,6 @@ const NewStake = (props) => {
         }
         const estStakeUnits = getStakeUnits(stake, pool)
         setStakeUnits(estStakeUnits)
-        // const unitData = {
-        //     estStakeUnits: estStakeUnits,
-        //     totalUnits: pool.units
-        // }
-        // const share = getPoolShare(unitData, pool)
-        // setShareData(share)
-
         checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
         checkApproval(pool.address) ? setApproval(true) : setApproval(false)
 
@@ -157,22 +114,6 @@ const NewStake = (props) => {
         }
         return stakeData
     }
-
-    // const setShareUnitData = async () => {
-    //     const stake = {
-    //         baseAmt: inputTokenData.balance,
-    //         tokenAmt: outputTokenData.balance
-    //     }
-    //     const estStakeUnits = getStakeUnits(stake, pool)
-    //     setStakeUnits(estStakeUnits)
-    //     const unitData = {
-    //         estStakeUnits: estStakeUnits,
-    //         totalUnits: pool.units
-    //     }
-    //     const share = getPoolShare(unitData, pool)
-    //     setShareData(share)
-
-    // }
 
     const checkApproval = async (address) => {
         if (address === BNB_ADDR) {
@@ -230,15 +171,6 @@ const NewStake = (props) => {
 
     const changeUnstakeAmount = async (amount) => {
         setUnstakeAmount(amount)
-        // const finalAmt1 = (amount * stake1Data?.balance) / 100
-        // setStake1Data(await getStakeInputData(finalAmt1, stake1Data.address))
-        // const finalAmt2 = (amount * stake2Data?.balance) / 100
-        // setStake1Data(await getStakeInputData(finalAmt2, stake2Data.address))
-        // const stake = {
-        //     baseAmt: finalAmt1,
-        //     tokenAmt: finalAmt2
-        // }
-        // setStakeUnits(getStakeUnits(stake, mainPool))
     }
 
     const getEstShare = () => {
@@ -246,12 +178,6 @@ const NewStake = (props) => {
         const share = ((bn(estStakeUnits)).div(newUnits)).toFixed(2)
         return (share * 100).toFixed(2)
     }
-
-    // const getShare = () => {
-    //     const newUnits = (bn(stakeData.units)).plus(bn(pool.units))
-    //     const share = ((bn(stakeData.units)).div(newUnits)).toFixed(2)
-    //     return (share * 100).toFixed(2)
-    // }
 
     const unlockSparta = async () => {
         unlock(stake1Data.address)
@@ -361,8 +287,6 @@ const NewStake = (props) => {
 
                                     <UnstakePane
                                         pool={pool}
-                                        // tradeData={sellData}
-                                        // onTradeChange={onSellChange}
                                         changeUnstakeAmount={changeUnstakeAmount}
                                         approval={approval}
                                         unlock={unlockToken}
@@ -395,10 +319,8 @@ const StakePane = (props) => {
                         </Col>
                         <Col xs={9} style={{ marginRight: 30 }}>
                             <InputPane
-                                // tokenList={tokenList}
                                 paneData={props.stake1Data}
                                 onInputChange={props.onStake1Change}
-                                // changeToken={props.changeStake1Token}
                                 changeAmount={props.changeStake1Amount}
                             />
 
@@ -406,10 +328,8 @@ const StakePane = (props) => {
                         <Col xs={9} style={{ marginLeft: 30 }}>
 
                             <InputPane
-                                // tokenList={[ETH]}
                                 paneData={props.stake2Data}
                                 onInputChange={props.onStake2Change}
-                                // changeToken={props.changeStake2Token}
                                 changeAmount={props.changeStake2Amount} />
 
                             <br />
@@ -425,9 +345,7 @@ const StakePane = (props) => {
                         <Col xs={12}>
                             <Center><LabelGroup size={18} element={`${props.getEstShare()}%`} label={'ESTIMATED SHARE'} /></Center>
                         </Col>
-                        {/* <Col xs={8}>
-                                <Center><LabelGroup size={18} element={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
-                                </Col> */}
+
                     </Row>
                     <Row>
                         <Col xs={8}>
@@ -473,15 +391,6 @@ const UnstakePane = (props) => {
                         </Col>
                     </Row>
                     <Row style={rowStyles}>
-                        {/* <Col xs={12}>
-                                    <Center><LabelGroup size={18} element={`${convertFromWei(estStakeUnits.toFixed(0))}`} label={'POOL UNITS'} /></Center>
-                                </Col>
-                                <Col xs={12}>
-                                    <Center><LabelGroup size={18} element={`${getEstShare()}%`} label={'POOL SHARE'} /></Center>
-                                </Col> */}
-                        {/* <Col xs={8}>
-                                <Center><LabelGroup size={18} element={`${getValueOfShare()}`} label={'STAKED VALUE'} /></Center>
-                                </Col> */}
                     </Row>
                     <br></br>
                     <Center><Button type={'primary'} onClick={props.unstake}>WITHDRAW FROM POOL</Button></Center>

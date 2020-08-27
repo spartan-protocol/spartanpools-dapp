@@ -18,6 +18,18 @@
   src: local('Spartan'), url(./assets/font/Spartan-Regular.ttf) format('truetype');
 }
 
+body {
+  margin: 0;
+  font-family: 'Spartan', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -55,22 +67,14 @@ ul li {
   font-size: 20px;
   line-height: 2;
 }
-p,
-label,
-a,
-b,
-i {
+/* p,label,a,b,i {
   font-family: 'Spartan', sans-serif;
   font-size: 20px;
-}
-h1,
-h2,
-h3,
-h4,
-h5, span,
+} */
+
+h1,h2,h3,h4,h5,
 button {
-  font-family: 'Spartan', 'Spartan', sans-serif;
-  /* letter-spacing: 2.75px; */
+  font-family: 'Spartan', sans-serif;
 }
 
 h1 {

@@ -110,7 +110,6 @@ export const getEligibleAssets = async (address, assetDetailsArray) => {
 
 export const getListedTokens = async () => {
     var contract = getUtilsContract()
-    console.log(contract)
     let tokenArray = []
     try {
         tokenArray = await contract.methods.allTokens().call()
@@ -274,10 +273,10 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
     return tokensNotPool
 }
 
-export const getStakesData = async (member, tokenArray) => {
+export const getStakesData = async (member, poolArray) => {
     let stakesData = []
-    for (let i = 0; i < tokenArray.length; i++) {
-        stakesData.push(await getStake(member, tokenArray[i]))
+    for (let i = 0; i < poolArray.length; i++) {
+        stakesData.push(await getStake(member, poolArray[i]))
     }
     console.log({ stakesData })
     return stakesData
@@ -289,7 +288,7 @@ export const getStake = async (member, token) => {
     let tokenDetails = await contract.methods.getTokenDetails(poolAddress).call()
     let memberData = await contract.methods.getMemberShare(token, member).call()
     let stakeUnits = await getTokenContract(poolAddress).methods.balanceOf(member).call()
-    let apy = await contract.methods.getPoolAPY(token).call()
+    let locked = await getDaoContract().methods.mapMemberPool_Balance(member, poolAddress).call()
     let stake = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
@@ -297,8 +296,8 @@ export const getStake = async (member, token) => {
         'poolAddress':poolAddress,
         'baseAmt': memberData.baseAmt,
         'tokenAmt': memberData.tokenAmt,
-        'roi': +apy,
-        'units': +stakeUnits,
+        'locked': locked,
+        'units': stakeUnits,
         'share': +stakeUnits / +tokenDetails.totalSupply
     }
     return stake
@@ -307,4 +306,9 @@ export const getStake = async (member, token) => {
 export const getStakeData = async (address, stakesData) => {
     const stakeData = stakesData.find((item) => item.address === address)
     return (stakeData)
+}
+
+export const getRewards = async (member) => {
+    let locked = await getDaoContract().methods.calcCurrentReward(member).call()
+    return locked;
 }

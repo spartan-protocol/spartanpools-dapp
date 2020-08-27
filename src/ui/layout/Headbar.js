@@ -17,7 +17,7 @@ import WalletDrawer from './WalletDrawer'
 import { getAddressShort, } from '../../utils'
 import {
     getAssets, getTokenDetails, getListedTokens,
-    getWalletData, getStakesData
+    getWalletData, getStakesData, getListedPools
 } from '../../client/web3'
 
 const { Header } = Layout;
@@ -58,6 +58,9 @@ const Headbar = (props) => {
             message.loading('Loading wallet data', 3);
             let walletData = await getWalletData(account, tokenDetailsArray)
             context.setContext({ 'walletData': walletData })
+
+            let poolArray = context.poolArray ? context.poolArray : await getListedPools()
+            context.setContext({ 'poolArray': poolArray })
 
             let stakesData = context.stakesData ? context.stakesData : await getStakesData(account, tokenArray)
             context.setContext({ 'stakesData': stakesData })
@@ -127,6 +130,9 @@ const Headbar = (props) => {
                             <Link to={"/stake"}>STAKE</Link>
                         </Menu.Item> */}
                         <Menu.Item key='3'>
+                            <Link to={"/earn"}>EARN</Link>
+                        </Menu.Item>
+                        <Menu.Item key='4'>
                             <Link to={"/dao"}>DAO</Link>
                         </Menu.Item>
 

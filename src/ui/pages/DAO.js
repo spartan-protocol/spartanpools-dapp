@@ -28,6 +28,7 @@ const DAO = (props) => {
     const [claimRate, setClaimRate] = useState(false);
     const [daoAddress, setDAOAddress] = useState(false);
     const [routerAddress, setRouterAddress] = useState(false);
+    const [incentiveAddress, setIncentiveAddress] = useState(false);
 
     useEffect(() => {
         getData()
@@ -59,22 +60,40 @@ const DAO = (props) => {
         setRouterAddress(e.target.value)
     }
 
+    const changeIncentiveAddress = (e) => {
+        setIncentiveAddress(e.target.value)
+    }
+    
+
     const listAsset = async () => {
-        console.log('listAsset')
         let contract = getSpartaContract()
         let tx = await contract.methods.listAssetWithClaim(asset, maxClaim, claimRate).send({ from: context.walletData.address })
         console.log(tx.transactionHash)
     }
     const listDAO = async () => {
-        console.log('listDAO')
         let contract = getSpartaContract()
         let tx = await contract.methods.changeDAO(daoAddress).send({ from: context.walletData.address })
         console.log(tx.transactionHash)
     }
     const listRouter = async () => {
-        console.log('listRouter')
         let contract = getDaoContract()
         let tx = await contract.methods.setGenesisRouter(routerAddress).send({ from: context.walletData.address })
+        console.log(tx.transactionHash)
+    }
+    const changeIncentiveAddr= async () => {
+        let contract = getSpartaContract()
+        let tx = await contract.methods.changeIncentiveAddress(incentiveAddress).send({ from: context.walletData.address })
+        console.log(tx.transactionHash)
+    }
+
+    const startEmissions = async () => {
+        let contract = getSpartaContract()
+        let tx = await contract.methods.startEmissions().send({ from: context.walletData.address })
+        console.log(tx.transactionHash)
+    }
+    const stopEmissions = async () => {
+        let contract = getSpartaContract()
+        let tx = await contract.methods.stopEmissions().send({ from: context.walletData.address })
         console.log(tx.transactionHash)
     }
 
@@ -107,7 +126,7 @@ const DAO = (props) => {
                                     <Button onClick={listAsset}  type={'primary'} style={{marginTop:10, float:"right"}}>LIST ASSET</Button>
                                 </Col>
                             </Row>
-                            <br /><br />
+                            <br />
                             <Row>
                                 <Col xs={24}>
                                     <h2>LIST DAO IN SPARTA</h2>
@@ -118,7 +137,7 @@ const DAO = (props) => {
                                     <Button onClick={listDAO}  type={'primary'} style={{marginTop:10, float:"right"}}>LIST DAO</Button>
                                 </Col>
                             </Row>
-                            <br /><br />
+                            <br />
                             <Row>
                                 <Col xs={24}>
                                     <h2>LIST ROUTER IN DAO</h2>
@@ -127,6 +146,29 @@ const DAO = (props) => {
                                         allowClear={true}></Input>
                                         <br />
                                     <Button onClick={listRouter} type={'primary'} style={{marginTop:10, float:"right"}}>LIST ROUTER</Button>
+                                </Col>
+                            </Row>
+                            <br />
+                            <Row>
+                                <Col xs={24}>
+                                    <h2>CHANGE INCENTIVE ADDRESS</h2>
+                                    <Input onChange={changeIncentiveAddress}
+                                        placeholder={'Enter BEP2E Asset Address'}
+                                        allowClear={true}></Input>
+                                        <br />
+                                    <Button onClick={changeIncentiveAddr} type={'primary'} style={{marginTop:10, float:"right"}}>CHANGE INCENTIVE ADDRESS</Button>
+                                </Col>
+                            </Row>
+
+                            <br />
+
+                            <h2>EMISSIONS</h2>
+                            <Row>
+                                <Col xs={12}>
+                                    <Button onClick={startEmissions} type={'primary'}>START EMISSIONS</Button>
+                                </Col>
+                                <Col xs={12}>
+                                    <Button onClick={stopEmissions} type={'primary'}>STOP EMISSIONS</Button>
                                 </Col>
                             </Row>
 

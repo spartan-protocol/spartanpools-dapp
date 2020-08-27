@@ -26,9 +26,9 @@ const DrawerContent = (props) => {
                 <TabPane tab="TOKENS" key="1">
                     <AssetTable />
                 </TabPane>
-                {/* <TabPane tab="STAKES" key="2">
+                <TabPane tab="STAKES" key="2">
                     <StakeTable />
-                </TabPane> */}
+                </TabPane>
                 {/* <TabPane tab="CDPS" key="3">
                     <CDPTable />
                 </TabPane> */}

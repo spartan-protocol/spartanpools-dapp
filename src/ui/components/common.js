@@ -372,8 +372,7 @@ export const ColourCoin = (props) => {
   const coinName = symbol.length > 4 ? symbol.substr(0, 4) : symbol
 
   const coinStyle = {
-
-
+    marginTop:5,
     position: 'relative',
     display: 'flex',
     justifyContent: 'center',
@@ -386,7 +385,7 @@ export const ColourCoin = (props) => {
 
   const textStyles = {
     fontWeight: '800',
-    letterSpacing: '1px',
+    // letterSpacing: '1px',
     fontFamily: 'arial',
     textTransform: 'uppercase',
     color: Colour().white,
@@ -396,8 +395,8 @@ export const ColourCoin = (props) => {
   return (
     <div >
       <Row style={coinStyle}>
-        <Col>
-          <span style={textStyles}>{coinName}</span>
+        <Col style={{marginTop:5}}>
+          <p style={textStyles}>{coinName}</p>
         </Col>
       </Row>
     </div>
@@ -415,22 +414,22 @@ export const CoinRow = (props) => {
   return (
     <div>
       <Row style={rowStyles}>
-        <Col xs={4}>
+        <Col xs={4} style={{textAlign:"left"}}>
           <ColourCoin symbol={props.symbol} size={props.size} />
         </Col>
         <Col xs={20}>
           <Row>
             <Col xs={12}>
-              <Label size={props.size / 2.2}>{props.name}</Label><br />
+              <Label size={props.size / 1.8}>{props.symbol}</Label><br />
             </Col>
-            <Col xs={12}>
+            <Col xs={12} style={{textAlign:"right"}}>
               <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br />
               {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
             </Col>
           </Row>
           <Row>
             <Col xs={24}>
-              <Label size={props.size / 3.5}>{props.address}</Label>
+              <Label size={props.size / 2.2}>{props.name}</Label>
             </Col>
           </Row>
         </Col>
