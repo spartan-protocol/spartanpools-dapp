@@ -123,7 +123,7 @@ export const CDPTable = () => {
             )
         },
         {
-            title: 'Collateral Size (ETH)',
+            title: 'Collateral Size (BNB)',
             dataIndex: 'collateral',
             key: 'Collateral',
             render: (collateral) => (
@@ -192,7 +192,7 @@ export const CDPSafeTable = () => {
             )
         },
         {
-            title: 'Collateral Size (ETH)',
+            title: 'Collateral Size (BNB)',
             dataIndex: 'collateral',
             key: 'Collateral',
             render: (collateral) => (
@@ -250,7 +250,7 @@ export const CDPUnsafeTable = () => {
             )
         },
         {
-            title: 'Collateral Size (ETH)',
+            title: 'Collateral Size (BNB)',
             dataIndex: 'collateral',
             key: 'Collateral',
             render: (collateral) => (

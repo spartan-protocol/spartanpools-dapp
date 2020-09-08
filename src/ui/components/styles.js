@@ -4,13 +4,13 @@ export const paneStyles = {
     borderWidth: '1px',
     borderStyle: 'solid',
     borderRadius: 5,
-    borderColor: Colour().lgrey,
+    borderColor: Colour().dgrey,
     margin: 10,
 }
 
 export const colStyles = {
     padding: 20,
-    backgroundColor: Colour().offwhite
+    backgroundColor: Colour().black
 }
 
 

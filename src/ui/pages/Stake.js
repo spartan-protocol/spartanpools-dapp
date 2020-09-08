@@ -14,7 +14,7 @@ import { paneStyles, colStyles, rowStyles } from '../components/styles'
 import { getStakeUnits, getPoolShare } from '../../math'
 import { bn, convertToWei, convertFromWei, formatAPY } from '../../utils'
 import {
-    ETH, SPARTA, getPoolsContract, POOLS_ADDR, getPoolData,
+    BNB, SPARTA, getPoolsContract, POOLS_ADDR, getPoolData,
     getTokenData, filterTokensByPoolSelection, getTokenContract, getStakeData
 } from '../../client/web3'
 
@@ -27,7 +27,7 @@ const Stake = (props) => {
     const [mainPool, setMainPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
-        'address': ETH,
+        'address': BNB,
         'price': 0,
         'volume': 0,
         'baseAmt': 0,
@@ -47,7 +47,7 @@ const Stake = (props) => {
         input: 0,
     })
     const [stake2Data, setStake2Data] = useState({
-        address: ETH,
+        address: BNB,
         symbol: 'XXX',
         balance: 0,
         input: 0,
@@ -64,7 +64,7 @@ const Stake = (props) => {
     const [stakeData, setStakeData] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
-        'address': ETH,
+        'address': BNB,
         'baseAmt': 0,
         'tokenAmt': 0,
         'baseStaked': 0,
@@ -170,7 +170,7 @@ const Stake = (props) => {
 
     const onStake2Change = async (e) => {
         const input = e.target.value
-        setStake2Data(await getStakeInputData(convertToWei(input), ETH))
+        setStake2Data(await getStakeInputData(convertToWei(input), BNB))
         const stake = {
             baseAmt: stake1Data.input,
             tokenAmt: convertToWei(input)
@@ -180,7 +180,7 @@ const Stake = (props) => {
 
     const changeStake2Amount = async (amount) => {
         const finalAmt = (amount * stake2Data?.balance) / 100
-        setStake2Data(await getStakeInputData(finalAmt, ETH))
+        setStake2Data(await getStakeInputData(finalAmt, BNB))
         const stake = {
             baseAmt: stake1Data.input,
             tokenAmt: finalAmt
@@ -235,7 +235,7 @@ const Stake = (props) => {
         }
     }
     const checkApproval2 = async (address) => {
-        if (address === ETH) {
+        if (address === BNB) {
             setApproval2(true)
         } else {
             const contract = getTokenContract(address)
@@ -268,7 +268,7 @@ const Stake = (props) => {
 
     const stake = async () => {
         const poolContract = getPoolsContract()
-        const tx = await poolContract.methods.stake(stake1Data.input, stake2Data.input, ETH).send({
+        const tx = await poolContract.methods.stake(stake1Data.input, stake2Data.input, BNB).send({
             value: stake2Data.input,
             from: context.walletData.address,
             gasPrice: '',
@@ -279,7 +279,7 @@ const Stake = (props) => {
 
     const unstake = async () => {
         const poolContract = getPoolsContract()
-        const tx = await poolContract.methods.unstake(unstakeAmount*100, ETH).send({
+        const tx = await poolContract.methods.unstake(unstakeAmount*100, BNB).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -332,7 +332,7 @@ const Stake = (props) => {
                                 <Col xs={9} style={{ marginLeft: 30 }}>
 
                                     <InputPane
-                                        tokenList={[ETH]}
+                                        tokenList={[BNB]}
                                         paneData={stake2Data}
                                         onInputChange={onStake2Change}
                                         changeToken={changeStake2Token}

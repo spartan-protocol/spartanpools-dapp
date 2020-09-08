@@ -99,7 +99,7 @@ export const CreateCDP = (props) => {
         <div>
 
             <Form {...formItemLayout} >
-                <Form.Item label="ETH Amount" >
+                <Form.Item label="BNB Amount" >
                     <Input size={'large'} allowClear onChange={onEthAmountChange} placeholder={convertFromWei(context.tokenData?.balance) - 0.1} />
                 </Form.Item>
                 <Form.Item label="Collaterisation" >

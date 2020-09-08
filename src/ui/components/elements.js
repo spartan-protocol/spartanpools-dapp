@@ -10,13 +10,13 @@ export const Colour = (alpha) => {
   } else {
     colour = {
       "black": "#0A0001",
-      // "dgrey": "#455a64",
-      "grey": "#2F2D2D",
+      "dgrey": "#161616",
+      "grey": "#656565",
       "lgrey": "#B3B1B1",
       "offwhite": '#ECEAEA',
       "white": "#FFF",
       "red": "#A80005",
-      // "secondary": "#6ec6ff",
+      "yellow": "#D09800",
       "gold": '#C7692B'
     }
   }
@@ -222,7 +222,7 @@ export const Button = (props) => {
   styles.margin = 10
 
   styles.display= "inline-block"
-  // styles.borderBottom = "1px solid #D09800"
+  // styles.borderBottom = "1px solid #C7692B"
   // styles.height = "30px"
   // styles.padding = "0px 0px"
 

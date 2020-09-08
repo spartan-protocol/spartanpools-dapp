@@ -143,8 +143,8 @@ export const CDPTable = () => {
                 <Col span={24}>
                 <Divider><Label>Collateral</Label></Divider>
             <CDPDetails
-            symbol={"ETH"}
-            name={"Ethereum"}
+            symbol={"BNB"}
+            name={"Binance Smart Chain"}
             balance={context.accountCDP?.collateral}
             size={32}
             />

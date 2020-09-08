@@ -11,7 +11,7 @@ export const NetworkData = () => {
 export const PoolData = () => {
    return [
       {
-         'symbol': 'ETH',
+         'symbol': 'BNB',
          'address': '0x0000000000000000000000000000000000000000',
          'price': 200,
          'volume': '230001120000000000000000',
@@ -115,8 +115,8 @@ export const WalletData = () => {
          address: "0x31bb711de2e457066c6281f231fb473fc5c2afd3",
          tokens: [
             {
-               "symbol": "ETH",
-               "name": 'Ethereum',
+               "symbol": "BNB",
+               "name": 'Binance Smart Chain',
                "balance": '1120000000000000000',
                address: "0x0000000000000000000000000000000000000000",
                totalSupply: "1000000000000000000000000"
@@ -171,9 +171,9 @@ export const WalletData = () => {
 export const StakeData = () => {
    return [
       {
-         "symbol": "ETH",
+         "symbol": "BNB",
          'address': "0x0000000000000000000000000000000000000000",
-         "name": 'Ethereum',
+         "name": 'Binance Smart Chain',
          "units": '1120000000000000000'
       },
       {

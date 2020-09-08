@@ -73,7 +73,7 @@ export const CDPDETAILS = () => {
             <Row>
                 <CDPPane
                     name={"Collateral"}
-                    symbol={"ETH"}
+                    symbol={"BNB"}
                     balance={context.accountCDP?.collateral}
                 />
                 <CDPPane
@@ -98,7 +98,7 @@ export const AddCollateralTab = () => {
         input: 0
     })
     const [mainPool, setMainPool] = useState({
-        symbol: 'ETH',
+        symbol: 'BNB',
         address: '0x0000000000000000000000000000000000000000',
         depth: context.mainPool?.depth,
         balance: context.mainPool?.balance,
@@ -278,7 +278,7 @@ export const CloseDebtTab = () => {
         input: 50
     })
     // const [mainPool, setMainPool] = useState({
-    //     symbol: 'ETH',
+    //     symbol: 'BNB',
     //     address: '0x0000000000000000000000000000000000000000',
     //     depth: context.mainPool?.depth,
     //     balance: context.mainPool?.balance,

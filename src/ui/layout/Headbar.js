@@ -11,7 +11,7 @@ import Web3 from 'web3'
 
 import { message } from 'antd';
 
-import logo from '../../assets/spartan-logo-white.png';
+// import logo from '../../assets/spartan-logo-white.png';
 
 import WalletDrawer from './WalletDrawer'
 import { getAddressShort, } from '../../utils'
@@ -110,7 +110,7 @@ const Headbar = (props) => {
         <Header>
             <Row>
                 <Col xs={4}>
-                    <img src={logo} alt="Logo" style={{width:200}}/>
+                    {/* <img src={logo} alt="Logo" style={{width:200}}/> */}
                 </Col>
                 <Col xs={16}>
                     <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['0']}>

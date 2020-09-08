@@ -30,13 +30,13 @@ import { ContextProvider } from './context'
 const { Content } = Layout;
 
 const contentStyles = {
-	background: Colour().white,
-	color: '#000',
+	background: Colour().black,
+	color: '#fff',
 	// paddingLeft: 30,
 	// paddingTop: 20,
 	// paddingRight: 30,
 	// paddingBottom: 50,
-	padding:20,
+	padding:40,
 	// margin:40
 	// minHeight:'calc(100vh - 70px)'
 }

@@ -28,9 +28,9 @@ export const getWeb3 = () => {
 export const getExplorerURL = () => {
     return "https://explorer.binance.org/smart-testnet/"
 }
-export const getAccountArray = async () => {
+export const getAccount = async () => {
     var web3_ = getWeb3()
-    var accounts = await web3_.eth.getAccounts()
+    var accounts = await web3_.eth.getAccount()
     return accounts
 }
 
