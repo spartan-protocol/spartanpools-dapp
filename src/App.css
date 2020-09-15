@@ -23,7 +23,6 @@ body {
   font-family: 'Spartan', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #0A0001;
 }
 
 code {
@@ -32,7 +31,7 @@ code {
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #fff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -95,142 +94,10 @@ h1 {
   float: left;
 }
 
-.App-link {
-  color: #C7692B;
-  font-size: 14;
-}
-
-.ant-menu-inline .ant-menu-item::after{
-  border-right: 3px solid #C7692B;
-}
-
-.ant-menu-horizontal > .ant-menu-item-selected{
-  border-bottom: 3px solid #C7692B;
-}
-
-.ant-menu-horizontal > .ant-menu-item-active{
-  border-bottom: 3px solid #C7692B;
-}
-
-.ant-menu-horizontal > .ant-menu-item:hover{
-  border-bottom: 3px solid #C7692B;
-}
-
-.ant-menu {
-  background: #221D1D;
-}
-
-.ant-menu-root.ant-menu-inline{
-  background-color: #221D1D;
-}
-
-.ant-layout-header{
-  padding:0;
-  background: #0A0001;
-  height: 47;
-}
-.ant-menu-item{
-  width: 48;
-  padding:5
-}
-
-.ant-input{
-  background: #0A0001;
-  color:#C7692B;
-  border: 1px solid #C7692B;
-}
-
-.ant-input{
-  caret-color: #C7692B;
-}
-.ant-input:placeholder-shown{
-  color: #000
-}
-
-.ant-input:focus {
-  border-color: #C7692B;
-  outline: 0;
-  -webkit-box-shadow: 0 0 0 2px rgba(87,168,233, .2);
-  box-shadow: 0 0 0 2px rgba(87,168,233, .2);
-  caret-color: #C7692B;
-}
-
-.ant-input::selection {
-  border-color: #C7692B;
-  background: #C7692B;
-  caret-color: #C7692B;
-}
-
-::selection {
-  color: #fff;
-  background: #C7692B;
-}
-
-a:hover {
-  color: #C7692B;
-}
-
 .ant-tabs-nav-scroll {
   display: flex;
   justify-content: center;
 }
 
-.ant-table-thead > tr > th{
-  color: #ECEAEA;
-  font-weight: 800;
-  font-size: 20;
-  border-bottom: 1px solid #221D1D;
-  background: #0A0001;
-  margin-bottom:5;
-}
-.ant-table-tbody > tr > td{
-  color: #fff;
-  background-color: #0A0001;
-  border-bottom: 1px solid #221D1D;
-}
-
-.ant-table-placeholder {
-  background: #0A0001;
-}
-.ant-empty-description{
-  color:#221D1D
-}
-
-.ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
-.ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
-  background: #0A0001;
-}
-
-.ant-table-thead > tr > th {
-  color: rgba(0, 0, 0, 0.85);
-  font-weight: 500;
-  text-align: left;
-  background: #0A0001;
-  border-bottom: 1px solid #221D1D;
-  -webkit-transition: background 0.3s ease;
-  transition: background 0.3s ease;
-}
 
 
-/* .ant-layout-header {
-  height: 64px;
-  padding: 0 50px;
-  color: #0A0001;
-  line-height: 64px;
-  background: #0A0001;
-} */
-
-/* .ant-drawer-body {
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
-  padding: 0px;
-  overflow: auto;
-  font-size: 14px;
-  line-height: 1.5715;
-  word-wrap: break-word;
-}
-
-.ant-table-cell{
-  padding:'0px'
-} */
