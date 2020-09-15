@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 
 import { getDaoContract, getRewards } from '../../client/web3'
 
@@ -102,15 +102,14 @@ const Earn = (props) => {
             render: (record) => (
                 <div style={{ textAlign: 'right' }}>
                     <Button
-                        icon={<UnlockOutlined />} 
+                        icon={<LoginOutlined />}
+                        onClick={() => lock(record)}
+                    >DEPOSIT</Button>
+                    <Button
+                        icon={<LogoutOutlined />} 
                         type={'secondary'}
                         onClick={() => unlock(record)}
-                    >UNLOCK</Button>
-                    
-                    <Button
-                        icon={<LockOutlined />}
-                        onClick={() => lock(record)}
-                    >LOCK</Button>
+                    >WITHDRAW</Button>
                 </div>
 
             )
@@ -121,7 +120,7 @@ const Earn = (props) => {
     return (
         <div>
             <H1>EARN</H1>
-            <p>Earn rewards by locking in the SPARTAN DAO</p>
+            <p>Earn yield by depositing liquidity in the SPARTAN DAO.</p>
 
             <Row style={indentStyles}>
                 <Col xs={24}>

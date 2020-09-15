@@ -109,10 +109,10 @@ const Headbar = (props) => {
     return (
         <Header>
             <Row>
-                <Col xs={4}>
-                    {/* <img src={logo} alt="Logo" style={{width:200}}/> */}
-                </Col>
-                <Col xs={16}>
+                {/* <Col xs={4}>
+                    <img src={logo} alt="Logo" style={{width:200}}/>
+                </Col> */}
+                <Col xs={20}>
                     <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['0']}>
                         {/* <Menu.Item key='0'>
                             <Link to={"/overview"}>OVERVIEW</Link>
@@ -120,9 +120,9 @@ const Headbar = (props) => {
                         <Menu.Item key='1'>
                             <Link to={"/pools"}>POOLS</Link>
                         </Menu.Item>
-                        <Menu.Item key='2'>
+                        {/* <Menu.Item key='2'>
                             <Link to={"/upgrade"}>UPGRADE</Link>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         {/* <Menu.Item key='2'>
                             <Link to={"/swap"}>SWAP</Link>
                         </Menu.Item>
@@ -132,9 +132,9 @@ const Headbar = (props) => {
                         <Menu.Item key='3'>
                             <Link to={"/earn"}>EARN</Link>
                         </Menu.Item>
-                        <Menu.Item key='4'>
+                        {/* <Menu.Item key='4'>
                             <Link to={"/dao"}>DAO</Link>
-                        </Menu.Item>
+                        </Menu.Item> */}
 
                         {/* <Menu.Item key='6'>
                             <Link to={"/about"}>ABOUT</Link>

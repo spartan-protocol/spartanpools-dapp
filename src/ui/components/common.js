@@ -5,7 +5,7 @@ import { DownOutlined, } from '@ant-design/icons';
 // PlusCircleOutlined, MinusCircleOutlined, Tooltip
 import {
   rainbowStop, getIntFromName,
-  convertFromWei, formatUSD,
+  convertFromWei, formatUSD, formatAPY,
 } from '../../utils'
 import { paneStyles, colStyles } from '../components/styles'
 import { getTokenSymbol } from '../../client/web3'
@@ -301,7 +301,7 @@ export const PoolPaneSide = (props) => {
               <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.fees), props.price)} label={'FEES'} />
             </Col>
             <Col xs={12}>
-              <LabelGroup size={20} element={`${props.pool.apy} %`} label={'APY'} />
+              <LabelGroup size={20} element={formatAPY(props.pool.apy)} label={'APY'} />
             </Col>
           </Row>
 
