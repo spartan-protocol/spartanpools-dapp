@@ -5,7 +5,51 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "s",
+          "name": "units",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "member",
+          "type": "address"
+        }
+      ],
+      "name": "calcLiquidityShare",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "share",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "b",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "B",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "t",
           "type": "uint256"
         },
         {
@@ -15,15 +59,15 @@
         },
         {
           "internalType": "uint256",
-          "name": "A",
+          "name": "P",
           "type": "uint256"
         }
       ],
-      "name": "calcAsymmetricShare",
+      "name": "calcLiquidityUnits",
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "share",
+          "name": "units",
           "type": "uint256"
         }
       ],
@@ -77,40 +121,6 @@
         {
           "internalType": "uint256",
           "name": "share",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "a",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "A",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "v",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "S",
-          "type": "uint256"
-        }
-      ],
-      "name": "calcStakeUnits",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "units",
           "type": "uint256"
         }
       ],
@@ -181,13 +191,66 @@
           "internalType": "address",
           "name": "token",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
         }
       ],
-      "name": "getPoolAge",
+      "name": "calcValueInBase",
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "age",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "calcValueInBaseWithPool",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "calcValueInToken",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "value",
           "type": "uint256"
         }
       ],
@@ -211,12 +274,12 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "baseAmt",
+          "name": "baseAmount",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "tokenAmt",
+          "name": "tokenAmount",
           "type": "uint256"
         }
       ],
@@ -245,12 +308,12 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "baseAmt",
+          "name": "baseAmount",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "tokenAmt",
+          "name": "tokenAmount",
           "type": "uint256"
         },
         {

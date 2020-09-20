@@ -28,7 +28,7 @@ const Swap = (props) => {
         'address': BNB_ADDR,
         'price': 0,
         'volume': 0,
-        'baseAmt': 0,
+        'baseAmount': 0,
         'token': 0,
         'depth': 0,
         'txCount': 0,
@@ -305,7 +305,7 @@ const Swap = (props) => {
             <div style={{ marginTop: '-50px' }}>
                 <Center><PoolPane
                     symbol={mainPool?.symbol}
-                    balance={mainPool?.tokenAmt}
+                    balance={mainPool?.tokenAmount}
                     data={poolAttributes} /></Center>
             </div>
 

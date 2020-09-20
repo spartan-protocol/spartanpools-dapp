@@ -16,7 +16,7 @@ import { message } from 'antd';
 import WalletDrawer from './WalletDrawer'
 import { getAddressShort, } from '../../utils'
 import {
-    getAssets, getTokenDetails, getListedTokens,
+    getTokenDetails, getListedTokens,
     getWalletData, getStakesData, getListedPools
 } from '../../client/web3'
 
@@ -40,8 +40,8 @@ const Headbar = (props) => {
         const account = (await window.web3.eth.getAccounts())[0];
         if (account) {
             message.loading('Loading tokens', 3);
-            let assetArray = context.assetArray ? context.assetArray : await getAssets()
-            context.setContext({ 'assetArray': assetArray })
+            // let assetArray = context.assetArray ? context.assetArray : await getAssets()
+            // context.setContext({ 'assetArray': assetArray })
             // let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getTokenDetails(account, assetArray)
             // context.setContext({ 'assetDetailsArray': assetDetailsArray })
 
@@ -49,10 +49,10 @@ const Headbar = (props) => {
             context.setContext({ 'tokenArray': tokenArray })
             // context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
 
-            let allTokens = assetArray.concat(tokenArray)
-            var sortedTokens = [...new Set(allTokens)].sort()
+            // let allTokens = assetArray.concat(tokenArray)
+            // var sortedTokens = [...new Set(allTokens)].sort()
 
-            let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getTokenDetails(account, sortedTokens)
+            let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getTokenDetails(account, tokenArray)
             context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
 
             message.loading('Loading wallet data', 3);

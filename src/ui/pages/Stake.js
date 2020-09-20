@@ -11,7 +11,7 @@ import '../../App.css';
 import { Center, Button, LabelGroup } from '../components/elements';
 import { paneStyles, colStyles, rowStyles } from '../components/styles'
 
-import { getStakeUnits, getPoolShare } from '../../math'
+import { getLiquidityUnits, getPoolShare } from '../../math'
 import { bn, convertToWei, convertFromWei, formatAPY } from '../../utils'
 import {
     BNB, SPARTA, getPoolsContract, POOLS_ADDR, getPoolData,
@@ -30,8 +30,8 @@ const Stake = (props) => {
         'address': BNB,
         'price': 0,
         'volume': 0,
-        'baseAmt': 0,
-        'tokenAmt': 0,
+        'baseAmount': 0,
+        'tokenAmount': 0,
         'depth': 0,
         'txCount': 0,
         'apy': 0,
@@ -53,10 +53,10 @@ const Stake = (props) => {
         input: 0,
     })
     const [hideSubpane, setHideSubPane] = useState(true)
-    const [estStakeUnits, setStakeUnits] = useState(0)
+    const [estLiquidityUnits, setLiquidityUnits] = useState(0)
     const [shareData, setShareData] = useState({
-        baseAmt: 0,
-        tokenAmt: 0
+        baseAmount: 0,
+        tokenAmount: 0
     })
     const [approval1, setApproval1] = useState(false)
     const [approval2, setApproval2] = useState(false)
@@ -65,8 +65,8 @@ const Stake = (props) => {
         'symbol': 'XXX',
         'name': 'XXX',
         'address': BNB,
-        'baseAmt': 0,
-        'tokenAmt': 0,
+        'baseAmount': 0,
+        'tokenAmount': 0,
         'baseStaked': 0,
         'tokenStaked': 0,
         'roi': 0,
@@ -79,8 +79,8 @@ const Stake = (props) => {
      const [unstakeTx, setUnstakeTx] = useState(null)
 
     // PoolData {address, depth, balance}
-    // StakeData {baseAmt, tokenAmt}
-    // estStakeUnits, totalUnits
+    // StakeData {baseAmount, tokenAmount}
+    // estLiquidityUnits, totalUnits
 
     useEffect(() => {
         if (context.connected) {
@@ -105,18 +105,18 @@ const Stake = (props) => {
         const outputTokenData = await getTokenData(params.pool, context.walletData)
         setStake2Data(await getStakeInputData(outputTokenData.balance, params.pool))
         const stake = {
-            baseAmt: inputTokenData.balance,
-            tokenAmt: outputTokenData.balance
+            baseAmount: inputTokenData.balance,
+            tokenAmount: outputTokenData.balance
         }
-        const estStakeUnits = getStakeUnits(stake, mainPool)
-        setStakeUnits(estStakeUnits)
+        const estLiquidityUnits = getLiquidityUnits(stake, mainPool)
+        setLiquidityUnits(estLiquidityUnits)
         const unitData = {
-            estStakeUnits: estStakeUnits,
+            estLiquidityUnits: estLiquidityUnits,
             totalUnits: mainPool.units
         }
         const share = getPoolShare(unitData, mainPool)
         setShareData(share)
-        setHideSubPane(estStakeUnits > 0 ? false : true)
+        setHideSubPane(estLiquidityUnits > 0 ? false : true)
         checkApproval1(SPARTA)
         checkApproval2(params.pool)
 
@@ -138,33 +138,33 @@ const Stake = (props) => {
         const input = e.target.value
         setStake1Data(await getStakeInputData(convertToWei(input), stake1Data.address))
         const stake = {
-            baseAmt: convertToWei(input),
-            tokenAmt: stake2Data.input
+            baseAmount: convertToWei(input),
+            tokenAmount: stake2Data.input
         }
-        setStakeUnits(getStakeUnits(stake, mainPool))
+        setLiquidityUnits(getLiquidityUnits(stake, mainPool))
     }
 
-    const changeStake1Token = async (tokenAmt) => {
-        const inputTokenData = await getTokenData(tokenAmt)
-        setStake1Data(await getStakeInputData(inputTokenData.balance, tokenAmt))
+    const changeStake1Token = async (tokenAmount) => {
+        const inputTokenData = await getTokenData(tokenAmount)
+        setStake1Data(await getStakeInputData(inputTokenData.balance, tokenAmount))
         const stake = {
-            baseAmt: inputTokenData.balance,
-            tokenAmt: stake2Data.input
+            baseAmount: inputTokenData.balance,
+            tokenAmount: stake2Data.input
         }
-        setStakeUnits(getStakeUnits(stake, mainPool))
+        setLiquidityUnits(getLiquidityUnits(stake, mainPool))
     }
 
     const changeStake1Amount = async (amount) => {
         const finalAmt = (amount * stake1Data?.balance) / 100
         setStake1Data(await getStakeInputData(finalAmt, stake1Data.address))
         const stake = {
-            baseAmt: finalAmt,
-            tokenAmt: stake2Data.input
+            baseAmount: finalAmt,
+            tokenAmount: stake2Data.input
         }
-        setStakeUnits(getStakeUnits(stake, mainPool))
+        setLiquidityUnits(getLiquidityUnits(stake, mainPool))
     }
 
-    const changeStake2Token = async (tokenAmt) => {
+    const changeStake2Token = async (tokenAmount) => {
         console.log("changing sell tokens not enabled yet")
     }
 
@@ -172,20 +172,20 @@ const Stake = (props) => {
         const input = e.target.value
         setStake2Data(await getStakeInputData(convertToWei(input), BNB))
         const stake = {
-            baseAmt: stake1Data.input,
-            tokenAmt: convertToWei(input)
+            baseAmount: stake1Data.input,
+            tokenAmount: convertToWei(input)
         }
-        setStakeUnits(getStakeUnits(stake, mainPool))
+        setLiquidityUnits(getLiquidityUnits(stake, mainPool))
     }
 
     const changeStake2Amount = async (amount) => {
         const finalAmt = (amount * stake2Data?.balance) / 100
         setStake2Data(await getStakeInputData(finalAmt, BNB))
         const stake = {
-            baseAmt: stake1Data.input,
-            tokenAmt: finalAmt
+            baseAmount: stake1Data.input,
+            tokenAmount: finalAmt
         }
-        setStakeUnits(getStakeUnits(stake, mainPool))
+        setLiquidityUnits(getLiquidityUnits(stake, mainPool))
     }
 
     const changeUnstakeAmount = async (amount) => {
@@ -195,15 +195,15 @@ const Stake = (props) => {
         // const finalAmt2 = (amount * stake2Data?.balance) / 100
         // setStake1Data(await getStakeInputData(finalAmt2, stake2Data.address))
         // const stake = {
-        //     baseAmt: finalAmt1,
-        //     tokenAmt: finalAmt2
+        //     baseAmount: finalAmt1,
+        //     tokenAmount: finalAmt2
         // }
-        // setStakeUnits(getStakeUnits(stake, mainPool))
+        // setLiquidityUnits(getLiquidityUnits(stake, mainPool))
     }
 
     const getEstShare = () => {
-        const newUnits = (bn(estStakeUnits)).plus(bn(mainPool.units))
-        const share = ((bn(estStakeUnits)).div(newUnits)).toFixed(2)
+        const newUnits = (bn(estLiquidityUnits)).plus(bn(mainPool.units))
+        const share = ((bn(estLiquidityUnits)).div(newUnits)).toFixed(2)
         return (share * 100).toFixed(2)
     }
 
@@ -215,7 +215,7 @@ const Stake = (props) => {
 
     // const getValueShare = () => {
     //     const unitData =  {
-    //         estStakeUnits:estStakeUnits,
+    //         estLiquidityUnits:estLiquidityUnits,
     //         totalUnits:mainPool.units
     //     }
     //     const share = getPoolShare(unitData, mainPool)
@@ -268,7 +268,7 @@ const Stake = (props) => {
 
     const stake = async () => {
         const poolContract = getPoolsContract()
-        const tx = await poolContract.methods.stake(stake1Data.input, stake2Data.input, BNB).send({
+        const tx = await poolContract.methods.addLiquidity(stake1Data.input, stake2Data.input, BNB).send({
             value: stake2Data.input,
             from: context.walletData.address,
             gasPrice: '',
@@ -279,7 +279,7 @@ const Stake = (props) => {
 
     const unstake = async () => {
         const poolContract = getPoolsContract()
-        const tx = await poolContract.methods.unstake(unstakeAmount*100, BNB).send({
+        const tx = await poolContract.methods.removeLiquidity(unstakeAmount*100, BNB).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -308,7 +308,7 @@ const Stake = (props) => {
             <div style={{ marginTop: '-50px' }}>
                 <Center><PoolPane
                     symbol={mainPool?.symbol}
-                    balance={mainPool?.tokenAmt}
+                    balance={mainPool?.tokenAmount}
                     data={poolAttributes}
                     hideSubpane={hideSubpane} /></Center>
             </div>
@@ -346,7 +346,7 @@ const Stake = (props) => {
                             </Row>
                             <Row style={rowStyles}>
                                 <Col xs={12}>
-                                    <Center><LabelGroup size={18} element={`${convertFromWei(estStakeUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${convertFromWei(estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                                 </Col>
                                 <Col xs={12}>
                                     <Center><LabelGroup size={18} element={`${getEstShare()}%`} label={'ESTIMATED SHARE'} /></Center>
@@ -395,7 +395,7 @@ const Stake = (props) => {
                             </Row>
                             <Row style={rowStyles}>
                                 {/* <Col xs={12}>
-                                    <Center><LabelGroup size={18} element={`${convertFromWei(estStakeUnits.toFixed(0))}`} label={'POOL UNITS'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${convertFromWei(estLiquidityUnits.toFixed(0))}`} label={'POOL UNITS'} /></Center>
                                 </Col>
                                 <Col xs={12}>
                                     <Center><LabelGroup size={18} element={`${getEstShare()}%`} label={'POOL SHARE'} /></Center>

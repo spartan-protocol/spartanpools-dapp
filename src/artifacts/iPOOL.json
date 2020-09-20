@@ -3,7 +3,7 @@
   "abi": [
     {
       "inputs": [],
-      "name": "baseAmt",
+      "name": "baseAmount",
       "outputs": [
         {
           "internalType": "uint256",
@@ -16,7 +16,7 @@
     },
     {
       "inputs": [],
-      "name": "baseAmtStaked",
+      "name": "baseAmountPooled",
       "outputs": [
         {
           "internalType": "uint256",
@@ -137,7 +137,7 @@
           "type": "address"
         }
       ],
-      "name": "getBaseAmtStaked",
+      "name": "getBaseAmtPooled",
       "outputs": [
         {
           "internalType": "uint256",
@@ -156,7 +156,7 @@
           "type": "address"
         }
       ],
-      "name": "getTokenAmtStaked",
+      "name": "getTokenAmtPooled",
       "outputs": [
         {
           "internalType": "uint256",
@@ -169,7 +169,7 @@
     },
     {
       "inputs": [],
-      "name": "tokenAmt",
+      "name": "tokenAmount",
       "outputs": [
         {
           "internalType": "uint256",
@@ -182,7 +182,7 @@
     },
     {
       "inputs": [],
-      "name": "tokenAmtStaked",
+      "name": "tokenAmountPooled",
       "outputs": [
         {
           "internalType": "uint256",

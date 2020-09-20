@@ -10,7 +10,7 @@ import { Center, Button, Sublabel } from '../components/elements'
 import { paneStyles, rowStyles, colStyles } from '../components/styles'
 
 
-// import { getStakeUnits } from '../../math'
+// import { getLiquidityUnits } from '../../math'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getRouterContract,
     getTokenData, getNewTokenData, getAssets, getListedTokens, getListedPools, getPoolsData, 
@@ -36,8 +36,8 @@ const CreatePool = (props) => {
     //     'address': BNB_ADDR,
     //     'price': 0,
     //     'volume': 0,
-    //     'baseAmt': 0,
-    //     'tokenAmt': 0,
+    //     'baseAmount': 0,
+    //     'tokenAmount': 0,
     //     'depth': 0,
     //     'txCount': 0,
     //     'apy': 0,
@@ -57,7 +57,7 @@ const CreatePool = (props) => {
         balance: 0,
         input: 0,
     })
-    // const [stakeUnits, setStakeUnits] = useState(0)
+    // const [liquidityUnits, setLiquidityUnits] = useState(0)
 
     const [approval1, setApproval1] = useState(false)
     const [approval2, setApproval2] = useState(false)
@@ -118,33 +118,33 @@ const CreatePool = (props) => {
         const input = e.target.value
         setStake1Data(await getStakeInputData(convertToWei(input), stake1Data))
         // const stake = {
-        //     baseAmt: convertToWei(input),
-        //     tokenAmt: stake2Data.input
+        //     baseAmount: convertToWei(input),
+        //     tokenAmount: stake2Data.input
         // }
-        // setStakeUnits(getStakeUnits(stake, stake))
+        // setLiquidityUnits(getLiquidityUnits(stake, stake))
     }
 
-    // const changeStake1Token = async (tokenAmt) => {
-    //     const inputTokenData = await getTokenData(tokenAmt, context.walletData)
+    // const changeStake1Token = async (tokenAmount) => {
+    //     const inputTokenData = await getTokenData(tokenAmount, context.walletData)
     //     setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
     //     const stake = {
-    //         baseAmt: inputTokenData.balance,
-    //         tokenAmt: stake2Data.input
+    //         baseAmount: inputTokenData.balance,
+    //         tokenAmount: stake2Data.input
     //     }
-    //     setStakeUnits(getStakeUnits(stake, stake))
+    //     setLiquidityUnits(getLiquidityUnits(stake, stake))
     // }
 
     const changeStake1Amount = async (amount) => {
         const finalAmt = (amount * stake1Data?.balance) / 100
         setStake1Data(await getStakeInputData(finalAmt, stake1Data))
         // const stake = {
-        //     baseAmt: finalAmt,
-        //     tokenAmt: stake2Data.input
+        //     baseAmount: finalAmt,
+        //     tokenAmount: stake2Data.input
         // }
-        // setStakeUnits(getStakeUnits(stake, stake))
+        // setLiquidityUnits(getLiquidityUnits(stake, stake))
     }
 
-    // const changeStake2Token = async (tokenAmt) => {
+    // const changeStake2Token = async (tokenAmount) => {
     //     console.log("changing sell tokens not enabled yet")
     // }
 
@@ -152,24 +152,24 @@ const CreatePool = (props) => {
         const input = e.target.value
         setStake2Data(await getStakeInputData(convertToWei(input), stake2Data))
         // const stake = {
-        //     baseAmt: stake1Data.input,
-        //     tokenAmt: convertToWei(input)
+        //     baseAmount: stake1Data.input,
+        //     tokenAmount: convertToWei(input)
         // }
         // console.log(stake)
-        // setStakeUnits(getStakeUnits(stake, stake))
-        // console.log(formatBN(getStakeUnits(stake, stake)))
+        // setLiquidityUnits(getLiquidityUnits(stake, stake))
+        // console.log(formatBN(getLiquidityUnits(stake, stake)))
     }
 
     const changeStake2Amount = async (amount) => {
         const finalAmt = (amount * stake2Data?.balance) / 100
         setStake2Data(await getStakeInputData(finalAmt, stake2Data))
         // const stake = {
-        //     baseAmt: stake1Data.input,
-        //     tokenAmt: finalAmt
+        //     baseAmount: stake1Data.input,
+        //     tokenAmount: finalAmt
         // }
         // console.log(stake)
-        // setStakeUnits(getStakeUnits(stake, stake))
-        // console.log(formatBN(getStakeUnits(stake, stake)))
+        // setLiquidityUnits(getLiquidityUnits(stake, stake))
+        // console.log(formatBN(getLiquidityUnits(stake, stake)))
     }
 
     const getStakeInputData = async (input, inputTokenData) => {
@@ -183,7 +183,7 @@ const CreatePool = (props) => {
     }
 
     // const getShare = () => {
-    //     const share = (bn(stakeUnits).div(bn(mainPool.units))).toFixed(2)
+    //     const share = (bn(liquidityUnits).div(bn(mainPool.units))).toFixed(2)
     //     return (share*100).toFixed(2)
     // }
 
@@ -339,7 +339,7 @@ const CreatePool = (props) => {
                             </Row>
                             <Row style={rowStyles}>
                                 {/* <Col xs={12}>
-                                    <Center><LabelGroup size={18} element={`${convertFromWei(stakeUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
+                                    <Center><LabelGroup size={18} element={`${convertFromWei(liquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                                 </Col>
                                 <Col xs={12}>
                                     <Center><LabelGroup size={18} element={`100%`} label={'SHARE'} /></Center>

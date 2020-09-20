@@ -3,9 +3,9 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 import { LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 
-import { getDaoContract, getRewards } from '../../client/web3'
+import { getDaoContract, getRewards, getStakesData, getListedTokens } from '../../client/web3'
 
-import { Table, Row, Col } from 'antd';
+import { Table, Row, Col, message } from 'antd';
 import { paneStyles, colStyles } from '../components/styles'
 
 import { ColourCoin } from '../components/common'
@@ -46,18 +46,27 @@ const Earn = (props) => {
         let contract = getDaoContract()
         let tx = await contract.methods.lock(record.poolAddress, record.units).send({ from: context.walletData.address })
         console.log(tx.transactionHash)
+        await refreshData()
     }
 
     const unlock = async (record) => {
         let contract = getDaoContract()
         let tx = await contract.methods.unlock(record.poolAddress).send({ from: context.walletData.address })
         console.log(tx.transactionHash)
+        await refreshData()
     }
 
     const harvest = async () => {
         let contract = getDaoContract()
         let tx = await contract.methods.harvest().send({ from: context.walletData.address })
         console.log(tx.transactionHash)
+        await refreshData()
+    }
+
+    const refreshData = async () => {
+        let stakesData = await getStakesData(context.walletData.address, await getListedTokens())
+        context.setContext({ 'stakesData': stakesData })
+        message.success('Transaction Sent!', 2);
     }
 
 
