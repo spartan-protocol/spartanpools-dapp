@@ -14,7 +14,7 @@ const Overview = (props) => {
     const [networkData, setNetworkData] = useState({
         'pools' : 0,
         'totalVolume': 0,
-        'totalStaked': 0,
+        'totalPooled': 0,
         'totalTx': 0,
         'totalRevenue': 0,
     })
@@ -61,7 +61,7 @@ const Overview = (props) => {
                     <LabelGroup size={24}  label={'TOTAL TX'} element={networkData?.totalTx}/>
                 </Col>
                 <Col xs={6}>
-                    <LabelGroup size={24}  label={'TOTAL STAKED'} element={formatUSD(convertFromWei(networkData?.totalStaked), context.spartanPrice)} />
+                    <LabelGroup size={24}  label={'TOTAL STAKED'} element={formatUSD(convertFromWei(networkData?.totalPooled), context.spartanPrice)} />
                 </Col>
                 <Col xs={6}>
                     <LabelGroup size={24}  label={'TOTAL REVENUE'} element={formatUSD(convertFromWei(networkData?.totalRevenue), context.spartanPrice)} />

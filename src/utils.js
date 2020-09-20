@@ -38,7 +38,7 @@ export const getAddressShort = (address) => {
 }
 
 export const formatAPY = (input) =>{
-    const annual = ((+input-10000)/10000)*100
+    const annual = (((+input-10000)/10000)*100).toFixed(2)
     return `${annual}%`
 }
 

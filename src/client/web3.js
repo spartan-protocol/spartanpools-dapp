@@ -10,10 +10,11 @@ import DAO from '../artifacts/Dao.json'
 const net = 'BSC';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
-export const SPARTA_ADDR = net === 'BSC' ? '0xeD9E15523aA05Fa822dB42643682B9F8411310D3' : '0x0C1d8c5911A1930ab68b3277D35f45eEd25e1F26'
-export const UTILS_ADDR = net === 'BSC' ? '0x0D4d2c33480B5fe9360f581e43832b1F550Ff020' :'0x696a6B50d7FC6213a566fCC197acced4c4dDefa2'
-export const DAO_ADDR = net === 'BSC' ? '0xC241D694D51dB9E934b147130CFEfE8385813B86' : '0x862138A5c5b85E34D599cF60B99f67ABeFaaA99f'
-export const ROUTER_ADDR = net === 'BSC' ? '0xd92cf95aBaE1c681fD3d563e6Cd1A4946041d97e' : '0x15967D09bc67A1aafFC43D88CcD4F6196df3B259'
+export const WBNB_ADDR = '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd'
+export const SPARTA_ADDR = net === 'BSC' ? '0xfb0349F08e2078a2944Ae3205446D176c3b45373' : '0x0C1d8c5911A1930ab68b3277D35f45eEd25e1F26'
+export const UTILS_ADDR = net === 'BSC' ? '0x4587A698fD800006D88fc73d2DDa8e12e06128BB' :'0x696a6B50d7FC6213a566fCC197acced4c4dDefa2'
+export const DAO_ADDR = net === 'BSC' ? '0x4b38dCD3E3f422F33Ef1F49eD3A3F11c7A5d27bC' : '0x862138A5c5b85E34D599cF60B99f67ABeFaaA99f'
+export const ROUTER_ADDR = net === 'BSC' ? '0x94fFAD4568fF00D921C76aA158848b33D7Bd65d3' : '0x15967D09bc67A1aafFC43D88CcD4F6196df3B259'
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -26,7 +27,7 @@ export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
 }
 export const getExplorerURL = () => {
-    return "https://explorer.binance.org/smart-testnet/"
+    return "https://testnet.bscscan.com//"
 }
 export const getAccount = async () => {
     var web3_ = getWeb3()
@@ -88,11 +89,12 @@ export const getAssets = async () => {
 }
 
 // Build out Asset Details, as long as have balance
-export const getTokenDetails = async (address, assetArray) => {
+export const getTokenDetails = async (address, tokenArray) => {
     let assetDetailsArray = []
-    for (let i = 0; i < assetArray.length; i++) {
+    for (let i = 0; i < tokenArray.length; i++) {
         let utilsContract = getUtilsContract()
-        let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(assetArray[i], address).call()
+        let token = tokenArray[i] === WBNB_ADDR ? BNB_ADDR : tokenArray[i]
+        let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(token, address).call()
         if(+assetDetails.balance > 0){
             assetDetailsArray.push(assetDetails)
         }
@@ -146,18 +148,19 @@ export const getPoolsData = async (tokenArray) => {
 
 export const getPool = async (address) => {
     var contract = getUtilsContract()
-    let tokenDetails = await contract.methods.getTokenDetails(address).call()
-    let poolDataRaw = await contract.methods.getPoolData(address).call()
-    let apy = await contract.methods.getPoolAPY(address).call()
+    let token = address === WBNB_ADDR ? BNB_ADDR : address
+    let tokenDetails = await contract.methods.getTokenDetails(token).call()
+    let poolDataRaw = await contract.methods.getPoolData(token).call()
+    let apy = await contract.methods.getPoolAPY(token).call()
     let poolData = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
-        'address': address,
-        'price': +poolDataRaw.baseAmt / +poolDataRaw.tokenAmt,
+        'address': token,
+        'price': +poolDataRaw.baseAmount / +poolDataRaw.tokenAmount,
         'volume': +poolDataRaw.volume,
-        'baseAmt': +poolDataRaw.baseAmt,
-        'tokenAmt': +poolDataRaw.tokenAmt,
-        'depth': 2 * +poolDataRaw.baseAmt,
+        'baseAmount': +poolDataRaw.baseAmount,
+        'tokenAmount': +poolDataRaw.tokenAmount,
+        'depth': 2 * +poolDataRaw.baseAmount,
         'txCount': +poolDataRaw.txCount,
         'apy': +apy,
         'units': +poolDataRaw.poolUnits,
@@ -173,14 +176,14 @@ export const getPoolData = async (address, poolsData) => {
 
 export const getNetworkData = async (poolsData) => {
     let totalVolume = poolsData.reduce((accum, item) => accum+item.volume, 0)
-    let totalStaked = poolsData.reduce((accum, item) => accum+item.depth, 0)
+    let totalPooled = poolsData.reduce((accum, item) => accum+item.depth, 0)
     let totalTx = poolsData.reduce((accum, item) => accum+item.txCount, 0)
     let totalRevenue = poolsData.reduce((accum, item) => accum+item.fees, 0)
 
     const networkData = {
         'pools' : poolsData.length,
         'totalVolume': totalVolume,
-        'totalStaked': totalStaked,
+        'totalPooled': totalPooled,
         'totalTx': totalTx,
         'totalRevenue': totalRevenue,
     }
@@ -208,6 +211,12 @@ export const getWalletData = async (address, tokenDetailsArray) => {
         'balance': await getTokenContract(SPARTA_ADDR).methods.balanceOf(address).call(),
         'address': SPARTA_ADDR
     })
+    tokens.push({
+        'symbol': 'WBNB',
+        'name': 'Wrapped BNB',
+        'balance': await getTokenContract(WBNB_ADDR).methods.balanceOf(address).call(),
+        'address': WBNB_ADDR
+    })
 
     for (let i = 0; i < tokenDetailsArray.length; i++) {
         var obj = tokenDetailsArray[i]
@@ -222,7 +231,8 @@ export const getWalletData = async (address, tokenDetailsArray) => {
     return walletData
 }
 
-export const getNewTokenData = async (token, member) => {
+export const getNewTokenData = async (address, member) => {
+    let token = address === WBNB_ADDR ? BNB_ADDR : address
     var obj = await getUtilsContract().methods.getTokenDetailsWithMember(token, member).call()
     // var tokenBalance = await getTokenContract(token).methods.balanceOf(address).call()
 
@@ -287,18 +297,18 @@ export const getStake = async (member, token) => {
     let poolAddress = await contract.methods.getPool(token).call()
     let tokenDetails = await contract.methods.getTokenDetails(poolAddress).call()
     let memberData = await contract.methods.getMemberShare(token, member).call()
-    let stakeUnits = await getTokenContract(poolAddress).methods.balanceOf(member).call()
-    let locked = await getDaoContract().methods.mapMemberPool_Balance(member, poolAddress).call()
+    let liquidityUnits = await getTokenContract(poolAddress).methods.balanceOf(member).call()
+    let locked = await getDaoContract().methods.mapMemberPool_balance(member, poolAddress).call()
     let stake = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
         'address': token,
         'poolAddress':poolAddress,
-        'baseAmt': memberData.baseAmt,
-        'tokenAmt': memberData.tokenAmt,
+        'baseAmount': memberData.baseAmount,
+        'tokenAmount': memberData.tokenAmount,
         'locked': locked,
-        'units': stakeUnits,
-        'share': +stakeUnits / +tokenDetails.totalSupply
+        'units': liquidityUnits,
+        'share': +liquidityUnits / +tokenDetails.totalSupply
     }
     return stake
 }

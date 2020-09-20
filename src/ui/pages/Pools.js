@@ -16,7 +16,7 @@ const Pools = (props) => {
 
     const context = useContext(Context)
     const [globalData, setGlobalData] = useState({
-        totalStaked:0,
+        totalPooled:0,
         totalFees:0,
         totalVolume:0,
         stakeTx:0,
@@ -202,7 +202,7 @@ export const PoolsPaneSide = (props) => {
 
                     <Row>
                         <Col xs={6}  xl={24} style={rowStylesPane}>
-                            <LabelGroup size={20} element={formatUSD(convertFromWei(props.globalData?.totalStaked), context.spartanPrice)} label={'Total Staked'} />
+                            <LabelGroup size={20} element={formatUSD(convertFromWei(props.globalData?.totalPooled), context.spartanPrice)} label={'Total Staked'} />
                         </Col>
                         <Col xs={6}  xl={24} style={rowStylesPane}>
                             <LabelGroup size={20} element={formatUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)} label={'Total Volume'} />

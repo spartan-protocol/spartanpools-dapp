@@ -12,7 +12,7 @@ import { HR, LabelGroup, Center } from '../components/elements';
 import { Button } from '../components/elements';
 import { paneStyles, colStyles, rowStyles } from '../components/styles'
 import { bn, formatBN, convertFromWei, convertToWei } from '../../utils'
-import { getStakeUnits } from '../../math'
+import { getLiquidityUnits } from '../../math'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,
@@ -31,8 +31,8 @@ const NewStake = (props) => {
         'address': BNB_ADDR,
         'price': 0,
         'volume': 0,
-        'baseAmt': 0,
-        'tokenAmt': 0,
+        'baseAmount': 0,
+        'tokenAmount': 0,
         'depth': 0,
         'txCount': 0,
         'apy': 0,
@@ -62,14 +62,14 @@ const NewStake = (props) => {
     //     input: 0,
     // })
 
-    const [stakeData, setStakeData] = useState({
-        baseAmt: '',
-        tokenAmt: '',
+    const [liquidityData, setStakeData] = useState({
+        baseAmount: '',
+        tokenAmount: '',
     })
 
-    const [estStakeUnits, setStakeUnits] = useState(0)
-    const [approval, setApproval] = useState(false)
-    const [approvalS, setApprovalS] = useState(false)
+    const [estLiquidityUnits, setLiquidityUnits] = useState(0)
+    const [approvalToken, setApprovalToken] = useState(false)
+    const [approvalBase, setApprovalBase] = useState(false)
     const [startTx, setStartTx] = useState(false);
     const [endTx, setEndTx] = useState(false);
 
@@ -102,40 +102,42 @@ const NewStake = (props) => {
         const pool = await getPoolData(params.pool, context.poolsData)
         setPool(pool)
 
-        const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
-        const outputTokenData = await getTokenData(pool.address, context.walletData)
+        const baseData = await getTokenData(SPARTA_ADDR, context.walletData)
+        const tokenData = await getTokenData(pool.address, context.walletData)
 
-        let _userData =  {
-            'baseBalance': inputTokenData.balance,
-            'tokenBalance': outputTokenData.balance,
-            'address': inputTokenData.address,
-            'symbol': inputTokenData.symbol,
-            'balance': inputTokenData.balance,
+        let _userData = {
+            'baseBalance': baseData?.balance,
+            'tokenBalance': tokenData?.balance,
+            'address': tokenData?.address,
+            'symbol': tokenData?.symbol,
+            'balance': tokenData?.balance,
             'input': 0,
         }
 
         setUserData(_userData)
 
-        // setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
-        // setStake2Data(await getStakeInputData(outputTokenData.balance, outputTokenData))
+        // setStake1Data(await getStakeInputData(baseData.balance, baseData))
+        // setStake2Data(await getStakeInputData(tokenData.balance, tokenData))
 
-        let stake = getPairedAmount(inputTokenData.balance, outputTokenData.balance, pool)
-        setStakeData(stake)
-        const estStakeUnits = getStakeUnits(stake, pool)
-        setStakeUnits(estStakeUnits)
-        checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
-        checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+        console.log(baseData?.balance, tokenData?.balance)
+
+        let liquidityData = getPairedAmount(baseData?.balance, tokenData?.balance, pool)
+        setStakeData(liquidityData)
+        const estLiquidityUnits = getLiquidityUnits(liquidityData, pool)
+        setLiquidityUnits(estLiquidityUnits)
+        checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
+        checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
 
     }
 
-    // const getStakeInputData = async (input, inputTokenData) => {
-    //     const stakeData = {
-    //         address: inputTokenData.address,
-    //         symbol: inputTokenData.symbol,
-    //         balance: inputTokenData.balance,
+    // const getStakeInputData = async (input, baseData) => {
+    //     const liquidityData = {
+    //         address: baseData.address,
+    //         symbol: baseData.symbol,
+    //         balance: baseData.balance,
     //         input: formatBN(bn(input), 0),
     //     }
-    //     return stakeData
+    //     return liquidityData
     // }
 
     const checkApproval = async (address) => {
@@ -143,8 +145,8 @@ const NewStake = (props) => {
             return true
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
-            if (+approval > 0) {
+            const approvalToken = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+            if (+approvalToken > 0) {
                 return true
             } else {
                 return false
@@ -152,35 +154,74 @@ const NewStake = (props) => {
         }
     }
 
-    const onStake1Change = async (e) => {
+    const onAddTokenChange = async (e) => {
         const input = e.target.value
-        let stake = getPairedAmount(formatBN(convertToWei(input), 0), userData.tokenBalance, pool)
-        setStakeData(stake)
-        setStakeUnits(getStakeUnits(stake, pool))
-        let _userData =  {
+        let liquidityData = {
+            baseAmount: "0",
+            tokenAmount: formatBN(convertToWei(input), 0),
+        }
+        setStakeData(liquidityData)
+        setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
+        let _userData = {
             'baseBalance': userData.baseBalance,
             'tokenBalance': userData.tokenBalance,
             'address': userData.address,
             'symbol': userData.symbol,
             'balance': userData.balance,
-            'input':formatBN(bn(input), 0),
+            'input': formatBN(bn(input), 0),
         }
         setUserData(_userData)
     }
 
-    const changeStake1Amount = async (amount) => {
+    const changeTokenAmount = async (amount) => {
         const finalAmt = (bn(userData?.baseBalance)).times(amount).div(100)
         console.log(finalAmt, formatBN(finalAmt, 0))
-        let stake = getPairedAmount(formatBN(finalAmt, 0), userData.tokenBalance, pool)
-        setStakeData(stake)
-        setStakeUnits(getStakeUnits(stake, pool))
-        let _userData =  {
+        let liquidityData = {
+            baseAmount: "0",
+            tokenAmount: formatBN(finalAmt, 0),
+        }
+        setStakeData(liquidityData)
+        setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
+        let _userData = {
             'baseBalance': userData.baseBalance,
             'tokenBalance': userData.tokenBalance,
             'address': userData.address,
             'symbol': userData.symbol,
             'balance': userData.balance,
-            'input':formatBN(bn(finalAmt), 0),
+            'input': formatBN(bn(finalAmt), 0),
+        }
+        setUserData(_userData)
+    }
+
+    const onAddSymmChange = async (e) => {
+        const input = e.target.value
+        let liquidityData = getPairedAmount(userData.baseBalance, formatBN(convertToWei(input), 0), pool)
+        setStakeData(liquidityData)
+        setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
+        let _userData = {
+            'baseBalance': userData.baseBalance,
+            'tokenBalance': userData.tokenBalance,
+            'address': userData.address,
+            'symbol': userData.symbol,
+            'balance': userData.balance,
+            'input': formatBN(bn(input), 0),
+        }
+        setUserData(_userData)
+    }
+
+    const changeSymmAmount = async (amount) => {
+        const finalAmt = (bn(userData?.baseBalance)).times(amount).div(100)
+        console.log(finalAmt, formatBN(finalAmt, 0))
+        let liquidityData = getPairedAmount(formatBN(finalAmt, 0), userData.tokenBalance, pool)
+        setStakeData(liquidityData)
+        setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
+        let _userData = {
+            'baseBalance': userData.baseBalance,
+            'tokenBalance': userData.tokenBalance,
+            'address': userData.address,
+            'symbol': userData.symbol,
+            'balance': userData.balance,
+            'input': formatBN(bn(finalAmt), 0),
         }
         setUserData(_userData)
     }
@@ -188,45 +229,46 @@ const NewStake = (props) => {
     // const onStake2Change = async (e) => {
     //     const input = e.target.value
     //     setStake2Data(await getStakeInputData(convertToWei(input), stake2Data))
-    //     const stake = {
-    //         baseAmt: stake1Data.input,
-    //         tokenAmt: convertToWei(input)
+    //     const liquidityData = {
+    //         baseAmount: stake1Data.input,
+    //         tokenAmount: convertToWei(input)
     //     }
-    //     setStakeUnits(getStakeUnits(stake, pool))
+    //     setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
     // }
 
-    const getPairedAmount = (baseAmount, tokenBalance, pool) => {
+    const getPairedAmount = (baseBalance, tokenAmount, pool) => {
 
-        let price = pool.tokenAmt / pool.baseAmt  // 10:100 100/10 = 10
-        let tokenAmount = price * +baseAmount  // 10 * 1 = 10
+        let price = pool.baseAmount / pool.tokenAmount  // 10:100 100/10 = 10
+        let baseAmount = price * +tokenAmount  // 10 * 1 = 10
 
-        let stakeData = {
-            baseAmt : "",
-            tokenAmt: "",
+        let liquidityData = {
+            baseAmount: "",
+            tokenAmount: "",
         }
 
-        if (tokenAmount > tokenBalance) {
-            stakeData.baseAmt = tokenBalance / price  // 5 / 10 -> 0.5
-            stakeData.tokenAmt = formatBN(tokenBalance, 0) // 5
+        if (baseAmount > baseBalance) {
+            console.log({ baseBalance })
+            liquidityData.tokenAmount = (baseBalance / price)  // 5 / 10 -> 0.5
+            liquidityData.baseAmount = formatBN(bn(baseBalance), 0) // 5
         } else {
-            stakeData.baseAmt = baseAmount // 1
-            stakeData.tokenAmt = formatBN(tokenAmount, 0) // 10
+            liquidityData.tokenAmount = formatBN(bn(tokenAmount), 0) // 1
+            liquidityData.baseAmount = formatBN(bn(baseAmount), 0) // 10
         }
 
-        console.log(baseAmount, tokenBalance)
-        console.log(price, tokenAmount, stakeData)
+        console.log(baseBalance, tokenAmount)
+        console.log(price, tokenAmount, liquidityData)
 
-       return stakeData
+        return liquidityData
     }
 
     // const changeStake2Amount = async (amount) => {
     //     const finalAmt = (amount * stake2Data?.balance) / 100
     //     setStake2Data(await getStakeInputData(finalAmt, stake2Data))
-    //     const stake = {
-    //         baseAmt: stake1Data.input,
-    //         tokenAmt: finalAmt
+    //     const liquidityData = {
+    //         baseAmount: stake1Data.input,
+    //         tokenAmount: finalAmt
     //     }
-    //     setStakeUnits(getStakeUnits(stake, pool))
+    //     setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
     // }
 
     const changeUnstakeAmount = async (amount) => {
@@ -234,8 +276,8 @@ const NewStake = (props) => {
     }
 
     const getEstShare = () => {
-        const newUnits = (bn(estStakeUnits)).plus(bn(pool.units))
-        const share = ((bn(estStakeUnits)).div(newUnits)).toFixed(2)
+        const newUnits = (bn(estLiquidityUnits)).plus(bn(pool.units))
+        const share = ((bn(estLiquidityUnits)).div(newUnits)).toFixed(2)
         return (share * 100).toFixed(2)
     }
 
@@ -258,15 +300,15 @@ const NewStake = (props) => {
         message.success(`Approved!`, 2);
     }
 
-    const stake = async () => {
+    const addLiquidity = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        console.log(stakeData.baseAmt, stakeData.tokenAmt, pool.address)
-        await contract.methods.stake(stakeData.baseAmt, stakeData.tokenAmt, pool.address).send({
+        console.log(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address)
+        await contract.methods.addLiquidity(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: '',
-            value: pool.address === BNB_ADDR ? stakeData.tokenAmt : 0
+            value: pool.address === BNB_ADDR ? liquidityData.tokenAmount : 0
         })
         message.success(`Transaction Sent!`, 2);
         setStartTx(false)
@@ -277,7 +319,7 @@ const NewStake = (props) => {
 
     const unstake = async () => {
         let contract = getRouterContract()
-        const tx = await contract.methods.unstake(unstakeAmount*100, pool.address).send({
+        const tx = await contract.methods.removeLiquidity(unstakeAmount * 100, pool.address).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -288,7 +330,7 @@ const NewStake = (props) => {
         setEndTx(true)
         updatePool()
         context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
-    
+
     }
 
     const updatePool = async () => {
@@ -308,54 +350,82 @@ const NewStake = (props) => {
 
     return (
         <>
-            <BreadcrumbCombo title={'SWAP'} parent={'POOLS'} link={'/pools'} child={'SWAP'}></BreadcrumbCombo>
+            <BreadcrumbCombo title={'ADD LIQUIDITY'} parent={'POOLS'} link={'/pools'} child={'ADD LIQUIDITY'}></BreadcrumbCombo>
             <HR></HR>
             <br />
-            <Button onClick={back} icon={<LeftOutlined />} type={'text'} size={'large'} >BACK</Button>
+            <Row>
+                <Col xs={8}>
+                    <Button onClick={back} icon={<LeftOutlined />} type={'text'} size={'large'} >BACK</Button>
+
+                </Col>
+                <Col xs={16} style={{ textAlign: 'right' }}>
+                    <Button type="secondary" >REMOVE LIQUIDITY</Button>
+                </Col>
+            </Row>
 
             <Row>
                 <Col xs={8}>
 
-                    <PoolPaneSide pool={pool} price={context.spartanPrice}  />
+                    <PoolPaneSide pool={pool} price={context.spartanPrice} />
 
                 </Col>
                 <Col xs={16}>
                     <Row style={{ marginLeft: 20, marginRight: 20 }}>
                         <Col xs={24} >
                             <Tabs defaultActiveKey="1" onChange={changeTabs}>
-                                <TabPane tab={`STAKE ${pool.symbol}`} key="1">
-                                    <StakePane
+                                <TabPane tab={`ADD ${pool.symbol}`} key="1">
+                                    <AddAsymmPane
                                         pool={pool}
                                         userData={userData}
-                                        stakeData={stakeData}
-                                        onStake1Change={onStake1Change}
-                                        changeStake1Amount={changeStake1Amount}
+                                        liquidityData={liquidityData}
+                                        onAddChange={onAddTokenChange}
+                                        changeAmount={changeTokenAmount}
                                         // stake2Data={stake2Data}
                                         // onStake2Change={onStake2Change}
                                         // changeStake2Amount={changeStake2Amount}
-                                        estStakeUnits={estStakeUnits}
+                                        estLiquidityUnits={estLiquidityUnits}
                                         getEstShare={getEstShare}
-                                        approval1={approvalS}
-                                        approval2={approval}
+                                        approvalBase={approvalBase}
+                                        approvalToken={approvalToken}
                                         unlockSparta={unlockSparta}
                                         unlockToken={unlockToken}
-                                        stake={stake}
+                                        addLiquidity={addLiquidity}
                                         startTx={startTx}
                                         endTx={endTx}
                                     />
                                 </TabPane>
-                                <TabPane tab={`UNSTAKE ${pool.symbol}`} key="2">
+                                <TabPane tab={`ADD ${pool.symbol} + SPARTA`} key="2">
 
+                                    <AddSymmPane
+                                        pool={pool}
+                                        userData={userData}
+                                        liquidityData={liquidityData}
+                                        onAddChange={onAddSymmChange}
+                                        changeAmount={changeSymmAmount}
+                                        // stake2Data={stake2Data}
+                                        // onStake2Change={onStake2Change}
+                                        // changeStake2Amount={changeStake2Amount}
+                                        estLiquidityUnits={estLiquidityUnits}
+                                        getEstShare={getEstShare}
+                                        approvalBase={approvalBase}
+                                        approvalToken={approvalToken}
+                                        unlockSparta={unlockSparta}
+                                        unlockToken={unlockToken}
+                                        addLiquidity={addLiquidity}
+                                        startTx={startTx}
+                                        endTx={endTx}
+                                    />
+                                </TabPane>
+                                <TabPane tab={`REMOVE ${pool.symbol} + SPARTA`} key="3">
                                     <UnstakePane
                                         pool={pool}
                                         changeUnstakeAmount={changeUnstakeAmount}
-                                        approval={approval}
+                                        approvalToken={approvalToken}
                                         unlock={unlockToken}
                                         unstake={unstake}
                                         startTx={startTx}
                                         endTx={endTx}
                                     />
-
                                 </TabPane>
                             </Tabs>
                         </Col>
@@ -369,7 +439,7 @@ const NewStake = (props) => {
 
 export default withRouter(NewStake)
 
-const StakePane = (props) => {
+const AddSymmPane = (props) => {
 
     return (
         <>
@@ -381,8 +451,8 @@ const StakePane = (props) => {
                         <Col xs={9} style={{ marginRight: 30 }}>
                             <InputPane
                                 paneData={props.userData}
-                                onInputChange={props.onStake1Change}
-                                changeAmount={props.changeStake1Amount}
+                                onInputChange={props.onAddChange}
+                                changeAmount={props.changeAmount}
                             />
 
                         </Col>
@@ -391,9 +461,9 @@ const StakePane = (props) => {
                         </Col>
                         <Col xs={9} style={{ marginLeft: 30 }}>
 
-                        <LabelGroup size={30} 
-                        element={`${convertFromWei(props.stakeData.tokenAmt)}`} 
-                        label={`PAIRED AMOUNT (${props.pool.symbol})`} />
+                            <LabelGroup size={30}
+                                element={`${convertFromWei(props.liquidityData.baseAmount)}`}
+                                label={`PAIRED AMOUNT (SPARTA)`} />
 
                             {/* <InputPane
                                 paneData={props.stake2Data}
@@ -408,7 +478,7 @@ const StakePane = (props) => {
                     </Row>
                     <Row style={rowStyles}>
                         <Col xs={12}>
-                            <Center><LabelGroup size={18} element={`${convertFromWei(props.estStakeUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
+                            <Center><LabelGroup size={18} element={`${convertFromWei(props.estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                         </Col>
                         <Col xs={12}>
                             <Center><LabelGroup size={18} element={`${props.getEstShare()}%`} label={'ESTIMATED SHARE'} /></Center>
@@ -417,23 +487,75 @@ const StakePane = (props) => {
                     </Row>
                     <Row>
                         <Col xs={8}>
-                            {!props.approval1 &&
+                            {!props.approvalBase &&
                                 <Center><Button type={'secondary'} onClick={props.unlockSparta} icon={<UnlockOutlined />}>UNLOCK {props.userData.symbol}</Button></Center>
                             }
                         </Col>
                         <Col xs={8}>
-                            {props.approval1 && props.approval2 && props.startTx && !props.endTx &&
-                                <Center><Button type={'primary'} onClick={props.stake} icon={<LoadingOutlined />} >STAKE IN POOL</Button></Center>
+                            {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                                <Center><Button type={'primary'} onClick={props.addLiquidity} icon={<LoadingOutlined />} >ADD TO POOL</Button></Center>
                             }
-                            {props.approval1 && props.approval2 && !props.startTx &&
-                                <Center><Button type={'primary'} onClick={props.stake}>STAKE IN POOL</Button></Center>
+                            {props.approvalBase && props.approvalToken && !props.startTx &&
+                                <Center><Button type={'primary'} onClick={props.addLiquidity}>ADD TO POOL</Button></Center>
                             }
                         </Col>
                         <Col xs={8}>
-                            {!props.approval2 &&
+                            {!props.approvalToken &&
                                 <Center><Button type={'secondary'} onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.pool.symbol}</Button></Center>
                             }
                         </Col>
+                    </Row>
+                </Col>
+            </Row>
+        </>
+    )
+}
+
+const AddAsymmPane = (props) => {
+
+    return (
+        <>
+            <Row style={paneStyles}>
+                <Col xs={24} style={colStyles}>
+                    <Row >
+                        <Col xs={1}>
+                        </Col>
+                        <Col xs={22} style={{ marginRight: 30 }}>
+                            <InputPane
+                                paneData={props.userData}
+                                onInputChange={props.onAddChange}
+                                changeAmount={props.changeAmount}
+                            />
+
+                        </Col>
+
+                        <Col xs={1}>
+                        </Col>
+                    </Row>
+                    <Row style={rowStyles}>
+                        <Col xs={12}>
+                            <Center><LabelGroup size={18} element={`${convertFromWei(props.estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
+                        </Col>
+                        <Col xs={12}>
+                            <Center><LabelGroup size={18} element={`${props.getEstShare()}%`} label={'ESTIMATED SHARE'} /></Center>
+                        </Col>
+
+                    </Row>
+                    <Row>
+                        <Col xs={8}>
+                            {!props.approvalToken &&
+                                <Center><Button type={'secondary'} onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.pool.symbol}</Button></Center>
+                            }
+                        </Col>
+                        <Col xs={8}>
+                            {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                                <Center><Button type={'primary'} onClick={props.addLiquidity} icon={<LoadingOutlined />} >ADD TO POOL</Button></Center>
+                            }
+                            {props.approvalBase && props.approvalToken && !props.startTx &&
+                                <Center><Button type={'primary'} onClick={props.addLiquidity}>ADD TO POOL</Button></Center>
+                            }
+                        </Col>
+
                     </Row>
                 </Col>
             </Row>

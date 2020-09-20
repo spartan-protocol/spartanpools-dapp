@@ -3,8 +3,8 @@ import { one, bn, convertFromWei } from './utils'
 export const getSwapOutput = (inputAmount, pool, toBase) => {
   // formula: (x * X * Y) / (x + X) ^ 2
   const x = bn(inputAmount)
-  const X = toBase ? bn(pool.tokenAmt) : bn(pool.baseAmt) // input is token if toBase
-  const Y = toBase ? bn(pool.baseAmt) : bn(pool.tokenAmt) // output is baseAmt if toBase
+  const X = toBase ? bn(pool.tokenAmount) : bn(pool.baseAmount) // input is token if toBase
+  const Y = toBase ? bn(pool.baseAmount) : bn(pool.tokenAmount) // output is baseAmount if toBase
   const numerator = x.times(X).times(Y)
   const denominator = x.plus(X).pow(2)
   const result = numerator.div(denominator)
@@ -14,8 +14,8 @@ export const getSwapOutput = (inputAmount, pool, toBase) => {
 export const getSwapInput = (toBase, pool, outputAmount) => {
   // formula: (((X*Y)/y - 2*X) - sqrt(((X*Y)/y - 2*X)^2 - 4*X^2))/2
   // (part1 - sqrt(part1 - part2))/2
-  const X = toBase ? bn(pool.tokenAmt) : bn(pool.baseAmt) // input is token if toBase
-  const Y = toBase ? bn(pool.baseAmt) : bn(pool.tokenAmt) // output is base if toBase
+  const X = toBase ? bn(pool.tokenAmount) : bn(pool.baseAmount) // input is token if toBase
+  const Y = toBase ? bn(pool.baseAmount) : bn(pool.tokenAmount) // output is base if toBase
   const y = bn(outputAmount)
   const part1 = X.times(Y).div(y).minus(X.times(2))
   const part2 = X.pow(2).times(4)
@@ -26,7 +26,7 @@ export const getSwapInput = (toBase, pool, outputAmount) => {
 export const getSwapSlip = (inputAmount, pool, toBase) => {
   // formula: (x) / (x + X)
   const x = bn(inputAmount)
-  const X = toBase ? bn(pool.tokenAmt) : bn(pool.baseAmt) // input is token if toBase
+  const X = toBase ? bn(pool.tokenAmount) : bn(pool.baseAmount) // input is token if toBase
   const result = x.div(x.plus(X))
   return result
 }
@@ -34,8 +34,8 @@ export const getSwapSlip = (inputAmount, pool, toBase) => {
 export const getSwapFee = (inputAmount, pool, toBase) => {
   // formula: (x * x * Y) / (x + X) ^ 2
   const x = bn(inputAmount)
-  const X = toBase ? bn(bn(pool.tokenAmt)) : bn(pool.baseAmt) // input is token if toBase
-  const Y = toBase ? bn(pool.baseAmt) : bn(bn(pool.tokenAmt)) // output is base if toBase
+  const X = toBase ? bn(bn(pool.tokenAmount)) : bn(pool.baseAmount) // input is token if toBase
+  const Y = toBase ? bn(pool.baseAmount) : bn(bn(pool.tokenAmount)) // output is base if toBase
   const numerator = x.times(x).multipliedBy(Y)
   const denominator = x.plus(X).pow(2)
   const result = numerator.div(denominator)
@@ -78,8 +78,8 @@ export const getDoubleSwapFee = (inputAmount, pool1, pool2) => {
 export const getValueOfTokenInSparta = (input, pool) => {
   // formula: ((a * V) / A) => V per A (Spartaper$)
   const a = bn(input)
-  const V = bn(pool.baseAmt)
-  const A = bn(bn(pool.tokenAmt))
+  const V = bn(pool.baseAmount)
+  const A = bn(bn(pool.tokenAmount))
   const result = a.times(V).div(A)
   // console.log(formatBN(a), formatBN(A), formatBN(V))
   return result
@@ -88,8 +88,8 @@ export const getValueOfTokenInSparta = (input, pool) => {
 export const getValueOfSpartaInToken = (input, pool) => {
   // formula: ((v * A) / V) => A per V ($perSparta)
   const v = bn(input)
-  const V = bn(pool.baseAmt)
-  const A = bn(bn(pool.tokenAmt))
+  const V = bn(pool.baseAmount)
+  const A = bn(bn(pool.tokenAmount))
   const result = v.times(A).div(V)
   // console.log(formatBN(v), formatBN(A), formatBN(V))
   return result
@@ -103,13 +103,13 @@ export const getValueOfToken1InToken2 = (input, pool1, pool2) => {
   return result
 }
 
-export const getStakeUnits = (stake, pool) => {
+export const getLiquidityUnits = (stake, pool) => {
   // formula: ((V + T) (v T + V t))/(4 V T)
   // part1 * (part2 + part3) / denominator
-  const v = bn(stake.baseAmt)
-  const t = bn(stake.tokenAmt)
-  const V = bn(pool.baseAmt).plus(v) // Must add r first
-  const T = bn(pool.tokenAmt).plus(t) // Must add t first
+  const v = bn(stake.baseAmount)
+  const t = bn(stake.tokenAmount)
+  const V = bn(pool.baseAmount).plus(v) // Must add r first
+  const T = bn(pool.tokenAmount).plus(t) // Must add t first
   const part1 = V.plus(T)
   const part2 = v.times(T)
   const part3 = V.times(t)
@@ -120,18 +120,18 @@ export const getStakeUnits = (stake, pool) => {
 }
 
 export const getPoolShare = (unitData, pool) => {
-  // formula: (baseAmt * part) / total; (tokenAmt * part) / total
-  const units = bn(unitData.stakeUnits)
+  // formula: (baseAmount * part) / total; (tokenAmount * part) / total
+  const units = bn(unitData.liquidityUnits)
   const total = bn(unitData.totalUnits)
-  const V = bn(pool.baseAmt)
-  const T = bn(pool.tokenAmt)
-  const tokenAmt = T.times(units).div(total)
-  const baseAmt = V.times(units).div(total)
+  const V = bn(pool.baseAmount)
+  const T = bn(pool.tokenAmount)
+  const tokenAmount = T.times(units).div(total)
+  const baseAmount = V.times(units).div(total)
   const stakeData = {
-    tokenAmt: tokenAmt,
-    baseAmt: baseAmt,
+    tokenAmount: tokenAmount,
+    baseAmount: baseAmount,
   }
-  // console.log((stakeData.tokenAmt).toFixed(0), (stakeData.baseAmt).toFixed(0))
+  // console.log((stakeData.tokenAmount).toFixed(0), (stakeData.baseAmount).toFixed(0))
   return stakeData
 }
 
@@ -145,8 +145,8 @@ return y
 
 export const calcEtherPPinMAI = (collateral, pool) => {
   const amount = bn(collateral)
-  const etherBal = bn(pool.tokenAmt) 
-  const balMAI = bn(pool.baseAmt)  
+  const etherBal = bn(pool.tokenAmount) 
+  const balMAI = bn(pool.baseAmount)  
   console.log('EthPrice' + balMAI/etherBal)
   const outputMAI = calcCLPSwap(amount, etherBal, balMAI);
   console.log(convertFromWei(outputMAI))
