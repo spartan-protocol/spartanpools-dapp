@@ -68,9 +68,12 @@ const PoolTable = (props) => {
     const getData = async () => {
         let tokenArray = await getListedTokens()
         context.setContext({ 'tokenArray': tokenArray })
+        
         let poolArray = await getListedPools()
         context.setContext({ 'poolArray': poolArray })
+        
         context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
+        
     }
 
     const columns = [
@@ -144,12 +147,9 @@ const PoolTable = (props) => {
                             icon={<LoginOutlined />}>JOIN</Button>
                     </Link>
                     <Link to={`/pool/swap?pool=${record.address}`}>
-                        <Button
-                            icon={<SwapOutlined />}
-                        >TRADE</Button>
+                        <Button icon={<SwapOutlined />}>TRADE</Button>
                     </Link>
                 </div>
-
             )
         }
     ]
@@ -214,9 +214,7 @@ export const PoolsPaneSide = (props) => {
                         <Col xs={6} xl={24} style={rowStylesPane}>
                             <LabelGroup size={20} element={formatUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)} label={'Total Fees'} />
                         </Col>
-
                     </Row>
-
                 </Col>
             </Row>
         </div>

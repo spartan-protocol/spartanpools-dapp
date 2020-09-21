@@ -42,8 +42,8 @@ const Headbar = (props) => {
             message.loading('Loading tokens', 3);
             let assetArray = context.assetArray ? context.assetArray : await getAssets()
             context.setContext({ 'assetArray': assetArray })
-            // let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getTokenDetails(account, assetArray)
-            // context.setContext({ 'assetDetailsArray': assetDetailsArray })
+            //let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getTokenDetails(account, assetArray)
+            //context.setContext({ 'assetDetailsArray': assetDetailsArray })
 
             let tokenArray = context.tokenArray ? context.tokenArray : await getListedTokens()
             context.setContext({ 'tokenArray': tokenArray })

@@ -26,7 +26,7 @@ export const Colour = (alpha) => {
 export const H1 = (props) => {
   let styles = { ...props.style || {} }
   styles.fontSize = '32px'
-  // styles.fontColour = '#000000'
+  //styles.fontColour = '#FFFFFF'
   styles.fontWeight = "bold"
   styles.color = Colour().red
 

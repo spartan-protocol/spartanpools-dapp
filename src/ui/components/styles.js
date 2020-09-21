@@ -1,5 +1,7 @@
 import { Colour } from './elements';
 
+
+
 export const paneStyles = {
     borderWidth: '1px',
     borderStyle: 'solid',
@@ -10,7 +12,7 @@ export const paneStyles = {
 
 export const colStyles = {
     padding: 20,
-    backgroundColor: Colour().black
+    backgroundColor: Colour().white
 }
 
 
@@ -19,3 +21,4 @@ export const rowStyles = {
     alignItems: 'center',
     textAlign: 'center'
 }
+
