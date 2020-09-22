@@ -73,34 +73,3 @@ const App = () => {
 export default App;
 
 
-
-/*
-<div>
-    <div class='page-background'>
-        <Router>
-            <ContextProvider>
-                <Headbar />
-                <div class='column.middle'>
-                    <div class='border'>
-                        <div class='box'>
-                            <Switch>
-                                <Route path="/" exact component={SimpleSwap} />
-                                <Route path="/swap" exact component={SimpleSwap} />
-                            </Switch>
-                        </div>
-
-                    </div>
-                </div>
-
-            </ContextProvider>
-        </Router >
-    </div>
-    <div class='footer'>
-        <Footer />
-    </div>
-</div>
-
-    );
-}
-
-*/

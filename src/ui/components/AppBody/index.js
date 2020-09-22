@@ -115,24 +115,20 @@ const AppBody = (props) => {
             <Center>
                 <img src='favicon.png' />
             </Center>
-            <br /><br /><br /><br /><br />
-            <div class='outerContainer'>
-                <Container class='outerContainer'>
-                    <br />
-                    <br />
-                </Container>
-            </div>
+            <br /><br /><br /><br /><br /> 
             <br /><br />
             <div class='outerContainer'>
                 <Container>
+
+
+
                     <div class='container2'>
                         <Container>
                             <h1>&nbsp; Input</h1>
                             <div class='textBox'>
-                                <input /* onChange={changeToken} */ placeholder={'   Enter BEP2E Asset Address'}></input>
+                                <input onChange={changeToken} placeholder={'   Enter BEP2E Asset Address'}></input>
                             </div>
                             <h4>&nbsp; Balance: {utils.formatEther(tokenData?.balance, { commify: true })}</h4>
-
                         </Container>
                     </div>
                     <div class='arrow'>
@@ -143,14 +139,13 @@ const AppBody = (props) => {
                         <Container>
                             <h1>&nbsp; Output</h1>
                             <div class='textBox'>
-                                <input /*onChange={changeToken}*/ placeholder={'  Enter BEP2E Asset Address'}></input>
+                                <input onChange={changeToken}  placeholder={'  Enter BEP2E Asset Address'}></input>
                             </div>
                             <h4>&nbsp; Output: {utils.formatEther(swapData.output, { commify: true })}</h4>
                         </Container>
                     </div>
                     <h4>&nbsp; Slippage: {swapData.slip}%</h4>
                 </Container>
-
                 <br /><br />
                 {
                     !approval &&
@@ -164,10 +159,10 @@ const AppBody = (props) => {
                     approval && startTx && !endTx &&
                     <button1 onClick={swap}>UPGRADE</button1>
                 }
-
-            </div >
-
+            </div>
+            <br /><br /><br /><br /><br /><br /><br /><br /><br />
         </div>
+        
     )
 }
 export default AppBody

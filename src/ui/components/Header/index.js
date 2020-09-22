@@ -88,7 +88,7 @@ const Headbar = (props) => {
 
     const addr = () => {
         return getAddressShort(context.walletData?.address)
-    }
+    }     
 
     return (
         <div>
@@ -117,7 +117,7 @@ const Headbar = (props) => {
                     </HeaderSpan>
                 </MigrateBannerLarge>
             </HeaderFrame>
-            <Sidebar />           
+            <Sidebar />
         </div>
     )
 }

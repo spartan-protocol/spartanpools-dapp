@@ -407,8 +407,8 @@ export const CoinRow = (props) => {
 
   const rowStyles = {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'left',
+    alignItems: 'left',
   }
 
   return (

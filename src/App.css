@@ -47,6 +47,8 @@
 }
 
 
+
+
 @font-face {
     font-family: 'Spartan';
     src: local('Spartan'), url(./assets/font/Spartan-Regular.ttf) format('truetype');
@@ -174,7 +176,7 @@ button1 {
     text-align: center;
     font-size: 16px;
     padding: 12px 120px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);  
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 
@@ -210,13 +212,13 @@ header {
     transition: 0.5s;
     padding-top: 60px;
     border-radius: 1.25rem;
-    border: 4px solid var(--spartanRed);
+    border: 2px solid var(--spartanRed);
 }
 
     .sidepanel a {
         padding: 8px 8px 8px 32px;
         text-decoration: none;
-        font-size: 25px;
+        font-size: 35px;
         color: #818181;
         display: block;
         transition: 0.3s;
@@ -232,6 +234,11 @@ header {
         right: 15px;
         font-size: 15px;
     }
+
+.flexbox_1 {
+    display: flex;
+    justify-content: center;
+}
 
 
 /* Navigation Bar */
