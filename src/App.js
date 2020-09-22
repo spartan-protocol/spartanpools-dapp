@@ -4,14 +4,9 @@ import styled from 'styled-components'
 import { Layout } from 'antd';
 import './App.css';
 //import 'antd/dist/antd.css'
-import { Colour } from './ui/components/elements'
 import Headbar from './ui/components/Header'
 import SimpleSwap from './ui/pages/SimpleSwap'
-import Footer from './ui/layout/Footer'
 import { ContextProvider } from './context'
-import { FooterWrapper } from './ui/layout/theme';
-import Sidebar from './ui/layout/Sidebar';
-
 
 const { Content } = Layout;
 
@@ -23,9 +18,9 @@ const AppWrapper = styled.div`
 `
 
 const Body = styled.div`
-  max-width: 35rem;
-  width: 90%;
-   margin: 0 1.25rem 1.25rem 1.25rem; 
+  max-width: 50%;
+  width: 60%;
+   margin: 0; 
 `
 
 
@@ -44,14 +39,11 @@ const BodyWrapper = styled.div`
   align-items: center;
   flex: 1;
   overflow: auto;
-  background-color: var(--sandBland);
-`
-
-const contentStyles = {
-    background: Colour().black,
-    color: '#000',
-    padding: 150,
+  min-height: 10vh;
+  background-position: 0px 0vh;
+  background-image: var(--pageBackground);
 }
+`
 
 const App = () => {
     return (

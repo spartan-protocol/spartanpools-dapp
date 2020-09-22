@@ -1,15 +1,16 @@
-﻿import { Button, Container, Tabs, Input } from '../../layout/theme/components'
-import SVGArrowDown, { ArrowDown } from '../../../assets/svg/SVGArrowDown'
-import { paneStyles, colStyles, rowStyles } from '../styles'
+﻿import { Container } from '../../layout/theme/components'
+import SVGArrowDown from '../../../assets/svg/SVGArrowDown'
+
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../../context'
 import { LoadingOutlined } from '@ant-design/icons';
 import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getTokenData } from '../../../client/web3'
-import { message } from 'antd';
+import { message, Tabs, Row } from 'antd';
 import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../../utils'
 import { getSwapOutput, getSwapSlip } from '../../../math'
+import { Center } from '../elements';
 
-
+const { TabPane } = Tabs;
 var utils = require('ethers').utils;
 
 const AppBody = (props) => {
@@ -107,61 +108,65 @@ const AppBody = (props) => {
         context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
     }
 
-    const indentStyles = {
-        margin: 100,
-        minHeight: 400
-    }
-
-    const colStylesInner = {
-        padding: 50
-    }
 
     return (
         <div>
-            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br />
+            <Center>
+                <img src='favicon.png' />
+            </Center>
+            <br /><br /><br /><br /><br />
+            <div class='outerContainer'>
+                <Container class='outerContainer'>
+                    <br />
+                    <br />
+                </Container>
+            </div>
+            <br /><br />
             <div class='outerContainer'>
                 <Container>
-                    <div>
-                        <div class='container2'>
-                            <Container>
-                                <h1>&nbsp; Input</h1>
-                                <div class='textBox'>
-                                    <input /* onChange={changeToken} */ placeholder={'   Enter BEP2E Asset Address'}></input>
-                                </div>
-                                <h4>&nbsp; Balance: {utils.formatEther(tokenData?.balance, { commify: true })}</h4>
+                    <div class='container2'>
+                        <Container>
+                            <h1>&nbsp; Input</h1>
+                            <div class='textBox'>
+                                <input /* onChange={changeToken} */ placeholder={'   Enter BEP2E Asset Address'}></input>
+                            </div>
+                            <h4>&nbsp; Balance: {utils.formatEther(tokenData?.balance, { commify: true })}</h4>
 
-                            </Container>
-                        </div>
-                        <div class='arrow'>
-                            <SVGArrowDown />
-                        </div>
-                        <br />
-                        <div class='container2'>
-                            <Container>
-                                <h1>&nbsp; Output</h1>
-                                <div class='textBox'>
-                                    <input /*onChange={changeToken}*/ placeholder={'  Enter BEP2E Asset Address'}></input>
-                                </div>
-                                <h4>&nbsp; Output: {utils.formatEther(swapData.output, { commify: true })}</h4>
-                            </Container>
-                        </div>
+                        </Container>
+                    </div>
+                    <div class='arrow'>
+                        <SVGArrowDown />
+                    </div>
+                    <br />
+                    <div class='container2'>
+                        <Container>
+                            <h1>&nbsp; Output</h1>
+                            <div class='textBox'>
+                                <input /*onChange={changeToken}*/ placeholder={'  Enter BEP2E Asset Address'}></input>
+                            </div>
+                            <h4>&nbsp; Output: {utils.formatEther(swapData.output, { commify: true })}</h4>
+                        </Container>
                     </div>
                     <h4>&nbsp; Slippage: {swapData.slip}%</h4>
-                    <br /><br /><br />
-                    {
-                        !approval &&
-                        <button1 onClick={approve} type={'secondary'}>APPROVE</button1>
-                    }
-                    {
-                        approval && !startTx &&
-                        <button1 onClick={swap} type={'primary'} >UPGRADE</button1>
-                    }
-                    {
-                        approval && startTx && !endTx &&
-                        <button1 onClick={swap} type={'primary'} icon={<LoadingOutlined />}>UPGRADE</button1>
-                    }
                 </Container>
+
+                <br /><br />
+                {
+                    !approval &&
+                    <button1 onClick={approve}>APPROVE</button1>
+                }
+                {
+                    approval && !startTx &&
+                    <button1 onClick={swap}>UPGRADE</button1>
+                }
+                {
+                    approval && startTx && !endTx &&
+                    <button1 onClick={swap}>UPGRADE</button1>
+                }
+
             </div >
+
         </div>
     )
 }

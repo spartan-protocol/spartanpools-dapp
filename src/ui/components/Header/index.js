@@ -1,15 +1,13 @@
 ﻿import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../../context'
-import { Layout } from 'antd';
+import { Layout, message } from 'antd';
 import Web3 from 'web3'
-import { message } from 'antd';
 import { getAddressShort, } from '../../../utils'
 import { getAssets, getTokenDetails, getListedTokens, getWalletData, getStakesData, getListedPools} from '../../../client/web3'
 import { HeaderFrame, MigrateBannerLarge, HeaderElement, HeaderSpan } from './headerStyles'
 import '../../../App.css'
 import Sidebar, { openNav, closeNav } from '../../layout/Sidebar'
 import spinner from '../../../assets/images/spinner.svg' 
-
 import { SpinnerWrapper } from '../../layout/theme';
 
 const { Header } = Layout;
@@ -50,6 +48,7 @@ const Headbar = (props) => {
             message.loading('Loading wallet data', 3);
             let walletData = await getWalletData(account, tokenDetailsArray)
             context.setContext({ 'walletData': walletData })
+            console.log(walletData)
 
             let poolArray = context.poolArray ? context.poolArray : await getListedPools()
             context.setContext({ 'poolArray': poolArray })
@@ -103,23 +102,22 @@ const Headbar = (props) => {
                         </HeaderElement>
                         <HeaderElement>
                             {!connected && !connecting &&
-                                <button2 type="primary" onClick={connectWallet}>CONNECT</button2>
+                                <button2 onClick={connectWallet}>CONNECT</button2>
                             }
-                           
                             {connecting &&
-                                <div><SpinnerWrapper src={spinner} /><button2 type="primary" >&nbsp; CONNECTING</button2></div>
+                                <SpinnerWrapper src={spinner} />
                             }
-                            
+                            {connecting &&
+                                <button2>CONNECTING</button2>
+                            }   
                             {connected &&
-                                <button2 type="primary" onClick={openNav}>&nbsp;{addr()}</button2>
+                                <button2 onClick={openNav}>{addr()}</button2>
                             }
                         </HeaderElement>
                     </HeaderSpan>
                 </MigrateBannerLarge>
             </HeaderFrame>
-            <Sidebar>
-                <p>Wallet</p>
-            </Sidebar>
+            <Sidebar />           
         </div>
     )
 }

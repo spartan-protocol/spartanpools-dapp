@@ -42,12 +42,18 @@
     /* custom */
     --sandBland: #d2d2c9;
     --spartanRed: #6d031c;
+    --pageBackground: radial-gradient(50% 50%, rgba(255, 0, 0, 0.1) 0%, rgba(255, 143, 5, 0.1) 100%);
+    /*radial-gradient(50% 50%, rgba(255, 0, 122, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);*/
 }
 
 
 @font-face {
     font-family: 'Spartan';
     src: local('Spartan'), url(./assets/font/Spartan-Regular.ttf) format('truetype');
+}
+
+* {
+    box-sizing: border-box;
 }
 
 body {
@@ -108,56 +114,69 @@ h3, h4, h5 {
     margin-left: auto;
     margin-right: auto;
     display: block;
-    color: var();
+    color: white;
 }
 
 .outerContainer {
     color: var(--textColor);
-    background-color: var(--black);
+    background-color: #292c2f;
     margin: auto;
-    border-radius: 1.35rem;
-    border: 2px solid #e8e8e8;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 500px;
+    border-radius: 2rem;
+    border: 0.5px solid #292C2F;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /*box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.5), 0 6px 20px 0 rgba(255, 255, 255, 0.19);*/
 }
 
 .container2 {
     color: var(--textColor);
-    background-color: var(--spartanRed);
+    background-color: #202124;
     margin: 15px;
-    border-radius: 1.35rem;
-    border: 2px solid #e8e8e8;
+    border-radius: 2rem;
+    border: 0.5px solid #292C2F;
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
 }
 
 input {
-    width: 250px;
+    width: 300px;
+    height: 30px;
     border-radius: 0.7rem;
+}
+
+button3 {
+    background-color: #202124;
+    color: var(--textColor);
+    width: 0;
+    border-radius: 2rem;
+    border: 1px solid;
+    text-align: center;
+    font-size: 16px;
+    padding: 5px 50px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 button2 {
     background-color: var(--sandBland);
     color: var(--spartanRed);
-    width: 125px;
-    border-radius: 0.7rem;
+    width: 250px;
+    border-radius: 2rem;
     text-align: center;
     font-size: 18px;
-    padding: 10px 26px;
+    padding: 10px 0px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 button1 {
     background-color: var(--spartanRed);
     color: var(--textColor);
-    width: 125px;
-    border-radius: 0.7rem;
+    width: 0;
+    border-radius: 2rem;
     text-align: center;
     font-size: 16px;
-    padding: 12px 50px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 12px 120px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);  
 }
 
-dropDownList {
-    float: right;
-}
 
 footer {
     width: 100%;
@@ -177,12 +196,6 @@ header {
     text-align: center;
 }
 
-centered {
-    margin-left: 50%;
-}
-
-
-
 /* SIDEPANEL CODE */
 
 .sidepanel {
@@ -192,7 +205,7 @@ centered {
     height: 500px;
     top: 0;
     right: 0;
-    background-color: #333333;
+    background-color: #e8e8e8;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -217,11 +230,8 @@ centered {
         position: absolute;
         top: 10px;
         right: 15px;
-        font-size: 25px;
+        font-size: 15px;
     }
 
 
-
-    .openbtn:hover {
-        background-color: #444;
-    }
+/* Navigation Bar */
