@@ -3,11 +3,14 @@
     "",
     "\\public",
     "\\src",
-    "\\src\\assets",
+    "\\src\\artifacts",
     "\\src\\assets\\images",
     "\\src\\ui",
-    "\\src\\ui\\components"
+    "\\src\\ui\\components",
+    "\\src\\ui\\layout",
+    "\\src\\ui\\layout\\theme",
+    "\\src\\ui\\pages"
   ],
-  "SelectedNode": "\\src\\assets\\images\\spinner.svg",
+  "SelectedNode": "\\src\\ui\\layout\\theme\\components.js",
   "PreviewInSolutionExplorer": false
 }

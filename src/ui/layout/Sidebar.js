@@ -134,17 +134,14 @@ const Sidebar = (props) => {
 
     return (
         
-            <div id="mySidepanel" class="sidepanel">
+        <div id="mySidepanel" class="sidepanel">
+            <div>
                 <button class='closebtn' onClick={closeNav}>X</button>
                     <h1>Your Tokens</h1>
                     <br /> <br />
                 {connected && <AssetTable />}
             </div>
-           
-
-
-
-
+            </div>
     )
 }
 

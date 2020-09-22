@@ -3,14 +3,15 @@ import SVGArrowDown from '../../../assets/svg/SVGArrowDown'
 
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../../context'
-import { LoadingOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getTokenData } from '../../../client/web3'
-import { message, Tabs, Row } from 'antd';
+import { message, Row } from 'antd';
 import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../../utils'
 import { getSwapOutput, getSwapSlip } from '../../../math'
-import { Center } from '../elements';
+import { Center, dropdownMenu } from '../elements';
+import  menu  from '../../layout/DropdownMenu'
 
-const { TabPane } = Tabs;
+//const { TabPane } = Tabs;
 var utils = require('ethers').utils;
 
 const AppBody = (props) => {
@@ -108,61 +109,66 @@ const AppBody = (props) => {
         context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
     }
 
-
-    return (
-        <div>
-            <br /><br /><br /><br /><br /><br />
-            <Center>
-                <img src='favicon.png' />
-            </Center>
-            <br /><br /><br /><br /><br /> 
-            <br /><br />
-            <div class='outerContainer'>
-                <Container>
+    function callback(key) {
+        console.log(key);
+    }
 
 
+return (
+    <div>
+        <br /><br /><br /><br /><br /><br />
+        <Center>
+            <img src='favicon.png' />
+        </Center>
+        <br /><br /><br /><br /><br /> 
 
-                    <div class='container2'>
-                        <Container>
-                            <h1>&nbsp; Input</h1>
-                            <div class='textBox'>
-                                <input onChange={changeToken} placeholder={'   Enter BEP2E Asset Address'}></input>
-                            </div>
-                            <h4>&nbsp; Balance: {utils.formatEther(tokenData?.balance, { commify: true })}</h4>
-                        </Container>
-                    </div>
-                    <div class='arrow'>
-                        <SVGArrowDown />
-                    </div>
-                    <br />
-                    <div class='container2'>
-                        <Container>
-                            <h1>&nbsp; Output</h1>
-                            <div class='textBox'>
-                                <input onChange={changeToken}  placeholder={'  Enter BEP2E Asset Address'}></input>
-                            </div>
-                            <h4>&nbsp; Output: {utils.formatEther(swapData.output, { commify: true })}</h4>
-                        </Container>
-                    </div>
-                    <h4>&nbsp; Slippage: {swapData.slip}%</h4>
+
+        <div class='outerContainer'>
+            <Container>
+                <div class='container2'>
+                    <Container>
+                        <button3><DownOutlined/></button3>
+                        <h1>&nbsp; Input</h1>
+                                <div class='textBox'>
+                                    <input placeholder={'   Enter BEP2E Asset Address'}></input>
+                                </div>
+                                <h4>&nbsp; Balance: {utils.formatEther(tokenData?.balance, { commify: true })}</h4>
+                            </Container>
+                        </div>
+                        <div class='arrow'>
+                            <SVGArrowDown />
+                        </div>
+
+                        <br />
+                        <div class='container2'>
+                    <Container>
+                        <button3><DownOutlined /></button3>
+                                <h1>&nbsp; Output</h1>
+                                <div class='textBox'>
+                                    <input onChange={changeToken} placeholder={'  Enter BEP2E Asset Address'}></input>
+                                </div>
+                                <h4>&nbsp; Output: {utils.formatEther(swapData.output, { commify: true })}</h4>
+                            </Container>
+                        </div>
+                        <h4>&nbsp; Slippage: {swapData.slip}%</h4>
+                 
                 </Container>
-                <br /><br />
-                {
-                    !approval &&
-                    <button1 onClick={approve}>APPROVE</button1>
-                }
-                {
-                    approval && !startTx &&
-                    <button1 onClick={swap}>UPGRADE</button1>
-                }
-                {
-                    approval && startTx && !endTx &&
-                    <button1 onClick={swap}>UPGRADE</button1>
-                }
+                    <br /><br />
+                    {
+                        !approval &&
+                        <button1 onClick={approve}>APPROVE</button1>
+                    }
+                    {
+                        approval && !startTx &&
+                        <button1 onClick={swap}>UPGRADE</button1>
+                    }
+                    {
+                        approval && startTx && !endTx &&
+                        <button1 onClick={swap}>UPGRADE</button1>
+                    }
             </div>
-            <br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br /><br />
         </div>
-        
     )
 }
 export default AppBody

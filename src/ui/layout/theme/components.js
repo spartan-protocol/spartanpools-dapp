@@ -6,58 +6,9 @@ import { ReactComponent as Close } from '../../../assets/images/x.svg'
 import Toggle from 'react-switch'
 
 const white = '#FFFFFF'
-const black = '#000000'
-const textColor = white
-const greyText = white
 
 // for setting css on <html>
 const backgroundColor = '#333639'
-
-const modalBackground = 'rgba(0,0,0,0.6)'
-const inputBackground = '#202124'
-const placeholderGray = '#5F5F5F'
-const shadowColor = '#000'
-
-// grays
-const concreteGray = '#292C2F'
-const mercuryGray = '#333333'
-const silverGray = '#737373'
-const chaliceGray = '#7B7B7B'
-const doveGray = '#C4C4C4'
-const mineshaftGray = '#E1E1E1'
-const activeGray = '#292C2F'
-const buttonOutlineGrey = '#FAFAFA'
-const tokenRowHover = '#404040'
-
-//blacks
-const charcoalBlack = '#F2F2F2'
-// blues
-const zumthorBlue = '#212529'
-const malibuBlue = '#E67AEF'
-const royalBlue = '#DC6BE5'
-const loadingBlue = '#e4f0ff'
-
-// purples
-const wisteriaPurple = '#DC6BE5'
-// reds
-const salmonRed = '#FF6871'
-// orange
-const pizazzOrange = '#FF8F05'
-// yellows
-const warningYellow = '#FFE270'
-// pink
-const uniswapPink = '#DC6BE5'
-//green
-const connectedGreen = '#27AE60'
-
-//branded
-const metaMaskOrange = '#E8831D'
-
-//specific
-const textHover = uniswapPink
-
-// connect button when loggedout
-const buttonFaded = '#DC6BE5'
 
 
 
@@ -330,8 +281,7 @@ export const Container = styled.div`
   border-radius: 1.25rem;
   border: 0px solid ${({ error, theme }) => (error ? theme.salmonRed : theme.mercuryGray)};
   background-color: ${({ white })};
-  :focus-within {
-    border:1.0px solid ${({ theme }) => theme.malibuBlue};
+  
   }
 `
 

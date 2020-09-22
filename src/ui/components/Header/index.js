@@ -17,8 +17,7 @@ const Headbar = (props) => {
     const context = useContext(Context)
     const [connecting, setConnecting] = useState(false)
     const [connected, setConnected] = useState(false)
-    const [visible, setVisible] = useState(false);
-
+  
     useEffect(() => {
         connectWallet()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,12 +126,3 @@ export default Headbar
 
 
 
-/* <h1>Tokens on your wallet</h1>
-                {context.connected &&
-                    <AssetTable />
-                }
-                <h1>Tokens you can swap to</h1>
-                {context.connected &&
-                    <AssetTable />
-                }
-                 */
