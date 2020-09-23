@@ -114,7 +114,7 @@ const Sidebar = (props) => {
                             balance={record.balance}
                             address={record.address}
                             size={40} />
-                        <br />                        
+                        <br />
                     </div>
                 )
             }
@@ -133,15 +133,17 @@ const Sidebar = (props) => {
     }
 
     return (
-        
+
         <div id="mySidepanel" class="sidepanel">
             <div>
                 <button class='closebtn' onClick={closeNav}>X</button>
+                <div class='centerObject'>
                     <h1>Your Tokens</h1>
                     <br /> <br />
-                {connected && <AssetTable />}
+                    {connected && <AssetTable />}
+                    </div>
             </div>
-            </div>
+        </div>
     )
 }
 

@@ -3,7 +3,7 @@ import { Context } from '../../../context'
 import { Layout, message } from 'antd';
 import Web3 from 'web3'
 import { getAddressShort, } from '../../../utils'
-import { getAssets, getTokenDetails, getListedTokens, getWalletData, getStakesData, getListedPools} from '../../../client/web3'
+import { getAssets, getTokenDetails, getListedTokens, getWalletData, getStakesData, getListedPools, getPoolsData} from '../../../client/web3'
 import { HeaderFrame, MigrateBannerLarge, HeaderElement, HeaderSpan } from './headerStyles'
 import '../../../App.css'
 import Sidebar, { openNav, closeNav } from '../../layout/Sidebar'
@@ -36,7 +36,9 @@ const Headbar = (props) => {
 
             let tokenArray = context.tokenArray ? context.tokenArray : await getListedTokens()
             context.setContext({ 'tokenArray': tokenArray })
-            // context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
+
+            let poolsData = context.poolsData ? context.poolsData : await getPoolsData(tokenArray)
+            context.setContext({ 'poolsData': poolsData })
 
             let allTokens = assetArray.concat(tokenArray)
             var sortedTokens = [...new Set(allTokens)].sort()
@@ -88,6 +90,8 @@ const Headbar = (props) => {
     const addr = () => {
         return getAddressShort(context.walletData?.address)
     }     
+
+
 
     return (
         <div>

@@ -422,7 +422,7 @@ export const CoinRow = (props) => {
             <Col xs={12}>
               <Label size={props.size / 1.8}>{props.symbol}</Label><br />
             </Col>
-            <Col xs={12} style={{textAlign:"right"}}>
+            <Col xs={12} style={{textAlign:"left"}}>
               <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br />
               {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
             </Col>
