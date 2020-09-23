@@ -1,24 +1,26 @@
 import React from 'react'
-import { Layout } from 'antd'
+import { Row, Col } from 'antd'
+
+import AddressConn from '../components/AddressConn'
+import { useWindowSize } from '../components/common'
 
 const Footer = (props) => {
 
-    const footerStyles = {
-        // zIndex: 1,
-        // position: "absolute",
-        // padding:5,
-        // marginTop:20,
-        height: "50px",
-        // marginTop:"-50px"
-        // bottom:0
-    }
+  const size = useWindowSize();
+  const width = size.width;
 
     return (
-        <div style={{ footerStyles }}>
-            <div>Footer</div>
-        </div>
-
+      <div style={{ position:"fixed", right:"0", bottom:"0" }}>
+      { width < 768 &&
+        <Row>
+          <Col xs={24} md={0} style={{ textAlign: 'right' }}>
+            <AddressConn />
+          </Col>
+        </Row>
+      }
+      </div>
     )
+
 }
 
 export default Footer

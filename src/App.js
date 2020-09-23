@@ -6,7 +6,7 @@ import 'antd/dist/antd.css'
 import { Colour } from './ui/components/elements'
 
 import Headbar from './ui/layout/Headbar'
-// import Footer from './ui/layout/Footer'
+import Footer from './ui/layout/Footer'
 
 // import SimpleSwap from './ui/pages/SimpleSwap'
 // import SimpleStake from './ui/pages/SimpleStake'
@@ -42,6 +42,7 @@ const contentStyles = {
 }
 
 const App = () => {
+
 	return (
 		<Router>
 			<div>
@@ -67,7 +68,7 @@ const App = () => {
 								<Route path="/pool/create" exact component={CreatePool} />
 							</Switch>
 						</Content>
-						{/* <Footer style={{height:50}}/> */}
+						<Footer />
 					</Layout>
 				</ContextProvider>
 			</div>
