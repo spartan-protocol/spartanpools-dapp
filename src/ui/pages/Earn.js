@@ -115,7 +115,7 @@ const Earn = (props) => {
                         onClick={() => lock(record)}
                     >DEPOSIT</Button>
                     <Button
-                        icon={<LogoutOutlined />} 
+                        icon={<LogoutOutlined />}
                         type={'secondary'}
                         onClick={() => unlock(record)}
                     >WITHDRAW</Button>
@@ -128,11 +128,12 @@ const Earn = (props) => {
 
     return (
         <div>
-            <H1>EARN</H1>
-            <p>Earn yield by depositing liquidity in the SPARTAN DAO.</p>
-
             <Row style={indentStyles}>
-                <Col xs={24}>
+                <Col xs={24} className="cntr">
+                  <H1>Earn</H1>
+                  <h2>Earn yield by depositing liquidity in the SPARTAN DAO.</h2>
+                </Col>
+                <Col xs={24} className="cntr">
                     <Table
                         dataSource={context.stakesData}
                         columns={columns} pagination={false}
@@ -163,4 +164,3 @@ const Earn = (props) => {
 }
 
 export default Earn
-

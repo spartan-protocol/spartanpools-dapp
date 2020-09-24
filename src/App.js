@@ -4,8 +4,6 @@ import { Layout } from 'antd';
 import 'antd/dist/antd.css'
 import './App.css'
 
-import { Colour } from './ui/components/elements'
-
 import Headbar from './ui/layout/Headbar'
 import Footer from './ui/layout/Footer'
 
@@ -31,15 +29,14 @@ import { ContextProvider } from './context'
 const { Content } = Layout;
 
 const contentStyles = {
-	background: Colour().white,
 	color: '#000',
 	// paddingLeft: 30,
 	// paddingTop: 20,
 	// paddingRight: 30,
 	// paddingBottom: 50,
-	padding:40,
+	padding:'50px 10px 50px 10px',
 	// margin:40
-	// minHeight:'calc(100vh - 70px)'
+	minHeight:'auto'
 }
 
 const App = () => {
@@ -48,7 +45,7 @@ const App = () => {
 		<Router>
 			<div>
 				<ContextProvider>
-					<Layout style={{ height: "100vh", background:Colour().offwhite }}>
+					<Layout style={{ height: "100vh"}}>
 						<Headbar />
 						<Content style={contentStyles}>
 							<Switch>
