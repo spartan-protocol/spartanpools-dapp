@@ -7,7 +7,6 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
 import { BreadcrumbCombo, InputPane, PoolPaneSide,  } from '../components/common'
-import '../../App.css';
 import { HR, Sublabel, LabelGroup } from '../components/elements';
 import { Button } from '../components/elements';
 import { paneStyles, colStyles } from '../components/styles'
@@ -255,7 +254,7 @@ const NewSwap = (props) => {
                         <Col xs={24} >
                             <Tabs defaultActiveKey="1" onChange={changeTabs}>
                                 <TabPane tab={`BUY ${pool.symbol}`} key="1">
-                                        <TradePane 
+                                        <TradePane
                                             pool={pool}
                                             tradeData={buyData}
                                             onTradeChange={onBuyChange}
@@ -270,7 +269,7 @@ const NewSwap = (props) => {
                                 </TabPane>
                                 <TabPane tab={`SELL ${pool.symbol}`} key="2">
 
-                                        <TradePane 
+                                        <TradePane
                                             pool={pool}
                                             tradeData={sellData}
                                             onTradeChange={onSellChange}
@@ -345,7 +344,7 @@ const TradePane = (props) => {
                             {props.approval && !props.startTx &&
                                 <Button onClick={props.trade} type={'primary'} style={{ float: "right" }}>{`${props.type} ${props.pool.symbol}`}</Button>
                             }
-                            
+
                         </Col>
                     </Row>
 

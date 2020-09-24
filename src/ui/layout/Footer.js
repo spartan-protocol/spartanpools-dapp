@@ -11,9 +11,9 @@ const Footer = (props) => {
 
     return (
       <div style={{ position:"fixed", right:"0", bottom:"0" }}>
-      { width < 768 &&
+      { width < 576 &&
         <Row>
-          <Col xs={24} md={0} style={{ textAlign: 'right' }}>
+          <Col xs={24} sm={0} style={{ textAlign: 'right' }}>
             <AddressConn />
           </Col>
         </Row>

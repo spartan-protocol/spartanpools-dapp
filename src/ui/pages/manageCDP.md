@@ -3,7 +3,6 @@ import { Context } from '../../context'
 import { Button, Row, Col, Divider, Tabs, Input, Form } from 'antd';
 
 import { BreadcrumbCombo, InputPane, PercentButtonRow, InputPaneStatic, CDPPane, OutputPane } from '../components/common'
-import '../../App.css';
 import { Center, HR, Text, Label, LabelGroup } from '../components/elements';
 import { paneStyles, colStyles, rowStyles } from '../components/styles'
 import { formatBN, convertFromWei, convertToWei, ETH_ADDRESS, BASE_ADDRESS, formatUSD, bn } from '../../utils'
@@ -251,11 +250,11 @@ export const RemintTab = () => {
                 </Row>
 
                 <Row style={rowStyles}>
-                    
+
                     <Col xs={24}>
                         <Center><LabelGroup size={18} element={`${convertFromWei(getMAXMINT(context.accountCDP?.collateral, context.mainPool, setCR))}`} label={'ESTIMATED FINAL DEBT'} /></Center>
                     </Col>
-                    
+
                 </Row>
                 <br></br>
                 <Center><Button onClick={remintTOKEN} type={'primary'}>MINT MAI </Button></Center>
@@ -368,14 +367,14 @@ const precise = (x) => {
                         <br />
                     </Col>
                     <Col xs={6}></Col>
-                   
+
                 </Row>
                 <Row style={rowStyles}>
-                    
+
                     <Col xs={24}>
                         <Center><LabelGroup size={18} element={`${convertFromWei(parseInt(context.accountCDP?.debt)-parseInt(closeDebtData.debt))}`} label={'ESTIMATED REMAINING DEBT '} /></Center>
                     </Col>
-                   
+
                 </Row>
                 <br></br>
                 <Center><Button onClick={closeDebt} type={'primary'}>Close Debt</Button></Center>

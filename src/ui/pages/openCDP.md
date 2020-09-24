@@ -3,7 +3,6 @@ import { Context } from '../../context'
 import { Button, Row, Col, Form, Input } from 'antd';
 import { Link, Redirect,useHistory } from 'react-router-dom'
 import { BreadcrumbCombo, InputPane, PoolPane, CLTButtonRow } from '../components/common'
-import '../../App.css';
 import { Center, HR, Text, Label } from '../components/elements';
 import { paneStyles, colStyles } from '../components/styles'
 import {formatBN, convertFromWei, convertToWei, ETH_ADDRESS, SPARTA_ADDRESS, formatUSD} from '../../utils'
@@ -22,24 +21,24 @@ const context = useContext(Context)
 
     const checkCDPflag = async ()=>{
         if(context.transactionOPEN){
-            
+
             history.push("/CDPs")
         }
     }
- 
-   
-    return ( 
+
+
+    return (
         <div>
-            
+
             <BreadcrumbCombo title={'Open CDP'} parent={'CDPs'} link={'/cdps'} child={'Open CDP'}></BreadcrumbCombo>
             <br />
             <div >
-            <CreateCDP/> 
+            <CreateCDP/>
             </div>
 
 
-            
-            
+
+
         </div>
     )
 }
@@ -54,14 +53,14 @@ export const CreateCDP = (props) => {
     const [ethTx, setEthTx] = useState(null)
     const [loaded, setLoaded] = useState(null)
     const [setCR, setCollaterisation] = useState('Minimum 102%')
-    
+
     useEffect(() => {
         getBalances()
         getAccount()
     }, [context.wallet])
 
     const getBalances = async () => {
-       context.setContext({tokenData: await getWalletTokenData(ETH_ADDRESS)}) 
+       context.setContext({tokenData: await getWalletTokenData(ETH_ADDRESS)})
     }
     const getAccount = () => {
         setAccount(context.wallet?.address)
@@ -81,8 +80,8 @@ export const CreateCDP = (props) => {
 		  const cltRatio = setCR
 		  const tx = await contract.methods.openCDP(cltRatio).send({ from: account, value: amount })
          context.setContext({transactionOPEN : tx})
-         
-         
+
+
 	}
     const formItemLayout = {
         labelCol: {

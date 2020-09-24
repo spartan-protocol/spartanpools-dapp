@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Layout } from 'antd';
-import './App.css';
 import 'antd/dist/antd.css'
+import './App.css'
+
 import { Colour } from './ui/components/elements'
 
 import Headbar from './ui/layout/Headbar'

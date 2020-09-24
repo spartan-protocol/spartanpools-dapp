@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 import { Drawer } from 'antd';
 import { UserOutlined, LoadingOutlined } from '@ant-design/icons';
-import '../../App.css';
 import { Button } from '../components/elements'
 
 import Web3 from 'web3'
