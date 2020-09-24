@@ -7,7 +7,6 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
 import { BreadcrumbCombo, InputPane, PoolPane } from '../components/common'
-import '../../App.css';
 import { Center, HR, Text } from '../components/elements';
 import { paneStyles, colStyles } from '../components/styles'
 import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../utils'
