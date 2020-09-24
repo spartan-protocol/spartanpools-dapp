@@ -9,6 +9,7 @@ import '../../../App.css'
 import Sidebar, { openNav, closeNav } from '../../layout/Sidebar'
 import spinner from '../../../assets/images/spinner.svg' 
 import { SpinnerWrapper } from '../../layout/theme';
+import { CheckOutlined } from '@ant-design/icons'
 
 const { Header } = Layout;
 
@@ -114,7 +115,7 @@ const Headbar = (props) => {
                                 <button2>CONNECTING</button2>
                             }   
                             {connected &&
-                                <button2 onClick={openNav}>{addr()}</button2>
+                                <button2 onClick={openNav}><CheckOutlined /> &nbsp; {addr()}</button2>
                             }
                         </HeaderElement>
                     </HeaderSpan>

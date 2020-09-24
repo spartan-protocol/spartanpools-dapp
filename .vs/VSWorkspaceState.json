@@ -1,16 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\public",
     "\\src",
-    "\\src\\artifacts",
-    "\\src\\assets\\images",
+    "\\src\\client",
     "\\src\\ui",
     "\\src\\ui\\components",
+    "\\src\\ui\\components\\AppBody",
+    "\\src\\ui\\components\\Header",
     "\\src\\ui\\layout",
     "\\src\\ui\\layout\\theme",
     "\\src\\ui\\pages"
   ],
-  "SelectedNode": "\\src\\ui\\layout\\theme\\components.js",
+  "SelectedNode": "\\src\\ui\\components\\AppBody\\index.js",
   "PreviewInSolutionExplorer": false
 }

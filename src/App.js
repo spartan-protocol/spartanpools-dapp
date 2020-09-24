@@ -18,9 +18,8 @@ const AppWrapper = styled.div`
 `
 
 const Body = styled.div`
-  max-width: 50%;
   width: 60%;
-   margin: 0; 
+  margin: auto; 
 `
 
 
@@ -41,7 +40,8 @@ const BodyWrapper = styled.div`
   overflow: auto;
   min-height: 10vh;
   background-position: 0px 0vh;
-  background-image: var(--pageBackground);
+  background-color: #050303;
+  background-repeat: no-repeat;
 }
 `
 

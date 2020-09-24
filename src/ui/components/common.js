@@ -414,21 +414,21 @@ export const CoinRow = (props) => {
   return (
     <div>
       <Row style={rowStyles}>
-        <Col xs={4} style={{textAlign:"left"}}>
-          <ColourCoin symbol={props.symbol} size={props.size} />
+              <Col xs={4} xl={5} style={{textAlign:"left"}}>
+          <ColourCoin symbol={props.symbol} size={props.size} />&nbsp;
         </Col>
         <Col xs={20}>
           <Row>
             <Col xs={12}>
               <Label size={props.size / 1.8}>{props.symbol}</Label><br />
-            </Col>
-            <Col xs={12} style={{textAlign:"left"}}>
+                      </Col>
+                      <Col xs={12} style={{ textAlign: "left" }}>
               <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br />
               {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
             </Col>
           </Row>
           <Row>
-            <Col xs={24}>
+            <Col xs={10}>
               <Label size={props.size / 2.2}>{props.name}</Label>
             </Col>
           </Row>

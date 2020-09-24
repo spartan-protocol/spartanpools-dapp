@@ -3,14 +3,12 @@ import SVGArrowDown from '../../../assets/svg/SVGArrowDown'
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../../context'
 import { DownOutlined } from '@ant-design/icons';
-import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getTokenData } from '../../../client/web3'
+import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getTokenData, getWalletData } from '../../../client/web3'
 import { message, Row } from 'antd';
 import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../../utils'
 import { getSwapOutput, getSwapSlip } from '../../../math'
 import { Center } from '../elements';
 import { openNav, closeNav } from '../../layout/Sidebar'
-
-
 
 //const { TabPane } = Tabs;
 var utils = require('ethers').utils;
@@ -112,26 +110,22 @@ const AppBody = (props) => {
 
     return (
         <div>
-            <br /><br /><br /><br /><br /><br />
+            <br /><br /><br />
             <Center>
                 <img src='favicon.png' />
-                <br /><br />                
+                <br /><br />
             </Center>
             <br /><br />
-            
-            <br /><br /><br />
-
             <div class='outerContainer'>
                 <Container>
-                    <div class='centerObject'>
+                    <div class='centerObject2'>
                         <h1>Swap</h1>
-                        </div>
+                    </div>
                     <div class='container2'>
                         <Container>
-                            <button3 onClick={ openNav }><DownOutlined /></button3>&nbsp;
-                            <h1>&nbsp; Input</h1>
+                            <h2>&nbsp; Input</h2>
                             <div class='textBox'>
-                                <input onChange={changeToken} placeholder={'   Enter BEP2E Asset Address'}></input>
+                                <input onChange={changeToken} placeholder={'   Enter BEP2E Asset Address'}></input>&nbsp;<button3 onClick={openNav}><DownOutlined /></button3>
                             </div>
                             <h4>&nbsp; Balance: {utils.formatEther(tokenData?.balance, { commify: true })}&nbsp; {tokenData.symbol}</h4>
                         </Container>
@@ -143,10 +137,9 @@ const AppBody = (props) => {
                     <br />
                     <div class='container2'>
                         <Container>
-                            <button3 onClick={openNav}><DownOutlined /></button3>&nbsp;
-                                <h1>&nbsp; Output</h1>
+                            <h2>&nbsp; Output</h2>
                             <div class='textBox'>
-                                <input onChange={changeToken} placeholder={'  Enter BEP2E Asset Address'}></input>
+                                <input onChange={changeToken} placeholder={'  Enter BEP2E Asset Address'}></input>&nbsp;<button3 onClick={openNav}><DownOutlined /></button3>
                             </div>
                             <h4>&nbsp; Output: {utils.formatEther(swapData.output, { commify: true })}</h4>
                         </Container>
@@ -155,7 +148,7 @@ const AppBody = (props) => {
 
                 </Container>
                 <br /><br />
-                <div class='centerObject'>
+                <div class='centerObject2'>
                     {
                         !approval &&
                         <button1 onClick={approve}>APPROVE</button1>
@@ -170,7 +163,7 @@ const AppBody = (props) => {
                     }
                 </div>
             </div>
-            <br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br />
         </div>
     )
 }

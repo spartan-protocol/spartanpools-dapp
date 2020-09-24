@@ -430,8 +430,8 @@ export const StyledTokenName = styled.span`
 
 export const SpinnerWrapper = styled(Spinner)`
   margin: 0 0.75rem 0 0.75rem;
-  color: ${({ theme }) => theme.chaliceGray};
-  opacity: 0.6;
+  color: #DC6BE5;
+  opacity: 1;
 `
 
 

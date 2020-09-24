@@ -5,7 +5,7 @@ import { CoinRow } from '../components/common'
 import { Table, Drawer } from 'antd'
 import { getAssets, getTokenDetails, getListedTokens, getWalletData, getStakesData, getListedPools } from '../../client/web3'
 import Web3 from 'web3'
-import { message } from 'antd';
+import { message, Divider } from 'antd';
 
 export function openNav() {
     document.getElementById("mySidepanel").style.width = "350px";
@@ -122,7 +122,7 @@ const Sidebar = (props) => {
 
         return (
             <div>
-                <Table
+                <Table 
                     dataSource={context.walletData.tokens}
                     showHeader={false}
                     pagination={false}
@@ -139,8 +139,11 @@ const Sidebar = (props) => {
                 <button class='closebtn' onClick={closeNav}>X</button>
                 <div class='centerObject'>
                     <h1>Your Tokens</h1>
+                    
                     <br /> <br />
+
                     {connected && <AssetTable />}
+                   
                     </div>
             </div>
         </div>

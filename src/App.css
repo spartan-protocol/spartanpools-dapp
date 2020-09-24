@@ -1,6 +1,6 @@
 ﻿:root {
     --black: #000000;
-    --textColor: #d2d2c9;
+    --textColor: white;
     --greyText: white;
     /* for setting css on <html> */
     --backgroundColor: #333639;
@@ -41,9 +41,11 @@
     --metaMaskOrange: #E8831D;
     /* custom */
     --sandBland: #d2d2c9;
-    --spartanRed: #6d031c;
-    --pageBackground: radial-gradient(50% 50%, rgba(255, 0, 0, 0.1) 0%, rgba(255, 143, 5, 0.1) 100%);
+    --spartanRed: #a80005;
+    --pageBackground: #050303;
     /*radial-gradient(50% 50%, rgba(255, 0, 122, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);*/
+    --buttonOrange: #c7692b;
+    --spartanGrey: #110d01;
 }
 
 
@@ -93,11 +95,27 @@ p, label, a, b, i {
     font-size: 20px;
 }
 
-h1, h2, h3, h4, h5 {
+h1 {
+    font-family: "Spartan",sans-serif;
+    font-size: 40px;
+    color: var(--spartanRed);
+    font-weight: 700;
+}
+
+h2 {
+    font-family: "Spartan",sans-serif;
+    font-size: 40px;
+    color: var(--spartanRed);
+    font-weight: 700;
+}
+
+
+
+h3, h4, h5 {
     font-family: 'Spartan', sans-serif;
 }
 
-h1, h2, h5 {
+h2, h5 {
     font-size: 25px;
 }
 
@@ -121,18 +139,18 @@ h3, h4 {
 
 .outerContainer {
     color: var(--textColor);
-    background-color: #292c2f;
+    background-color: var(--pageBackground);
     margin: auto;
     width: 500px;
     border-radius: 2rem;
-    border: 0.5px solid #292C2F;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border: 0px solid #292C2F;
+    //box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     /*box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.5), 0 6px 20px 0 rgba(255, 255, 255, 0.19);*/
 }
 
 .container2 {
     color: var(--textColor);
-    background-color: #202124;
+    background-color: var(--spartanGrey);
     margin: 15px;
     border-radius: 2rem;
     border: 0.5px solid #292C2F;
@@ -146,37 +164,37 @@ input {
 }
 
 button3 {
-    background-color: #202124;
-    color: var(--textColor);
+    background-color: var(--spartanGrey);
+    color: var(--buttonOrange);
     width: 0;
     border-radius: 2rem;
-    border: 1px solid;   
+    border: 1px solid;
     font-size: 16px;
     padding: 5px 25px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    float:right;
     text-align: center;
 }
 
 button2 {
-    background-color: var(--sandBland);
-    color: var(--spartanRed);
-    width: 250px;
-    border-radius: 2rem;
+    background-color: var(--buttonOrange);
+    color: white;
+    width: 150px;
+    border-radius: 0rem;
     text-align: center;
     font-size: 18px;
-    padding: 10px 0px;
+    padding: 5px 0px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 button1 {
-    background-color: var(--spartanRed);
+    background-color: var(--spartanGrey);
     color: var(--textColor);
     width: 0;
-    border-radius: 2rem;
+    border-radius: 0rem;
+    border: 1px solid var(--buttonOrange);
     margin:auto;
     font-size: 16px;
-    padding: 12px 120px;
+    padding: 5px 50px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
@@ -185,7 +203,7 @@ footer {
     width: 100%;
     min-height: 40px;
     align-self: flex-end;
-    background-color: var(--spartanRed)
+    background-color: var(--spartanGrey)
 }
 
 header {
@@ -199,13 +217,13 @@ header {
     text-align: center;
 }
 
-/* SIDEPANEL CODE */
+/* SIDEPANEL CODE ______________________________________________________*/
 
 .sidepanel {
     width: 0;
     position: fixed;
     z-index: 1;
-    height: 500px;
+    height: 800px;
     top: 0;
     right: 0;
     background-color: #e8e8e8;
@@ -235,7 +253,7 @@ header {
         right: 15px;
         font-size: 15px;
     }
-
+/* ______________________________________________________*/
 .flexbox_1 {
     display: flex;
     justify-content: center;
@@ -243,48 +261,20 @@ header {
 
 .centerObject {
     text-align: center;
+    margin: auto;
+    border: 0px solid green;
+    width: 100%;
+    padding: 30px;
+}
+
+.centerObject2 {
+    text-align: center;
+}
+
+walletTable {
+    width: 100px;
+    text-align: center;
+    margin: auto;
 }
 
 /* Dropdown Button */
-.dropbtn {
-    background-color: #3498DB;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-    .dropbtn:hover, .dropbtn:focus {
-        background-color: #2980B9;
-    }
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-    .dropdown-content a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-    }
-
-.dropdown a:hover {
-    background-color: #ddd;
-}
-
-.show {
-    display: block;
-}
