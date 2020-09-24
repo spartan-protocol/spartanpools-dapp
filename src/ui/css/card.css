@@ -1,0 +1,22 @@
+.ant-card {
+  background-color: #FBFAFA;
+  border-radius: 20px;
+  border: 1px solid #EDEDED;
+  box-shadow: 0 1px 1px #F9F0E9,
+              0 2px 2px #F9F0E9,
+              0 4px 4px #F9F0E9,
+              0 8px 8px #F9F0E9,
+              0 16px 16px #F9F0E9;
+  text-align: center;
+  height:100%;
+  padding:15px;
+  margin-bottom: 15px;
+}
+
+.ant-card-body {
+  padding:10px;
+}
+
+.cntr {
+  text-align: center;
+}

@@ -1,0 +1,13 @@
+.ant-btn {
+  border-radius: 9px;
+  font-size: 1.15em;
+  height: auto;
+}
+
+button.ant-btn.ant-btn-primary[disabled] {
+  background-color: #FFF;
+}
+
+.no-shadow {
+  box-shadow: none;
+}

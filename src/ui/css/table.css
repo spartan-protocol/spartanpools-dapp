@@ -1,0 +1,11 @@
+.ant-table-wrapper {
+  width:auto;
+  max-width:none;
+  overflow-x:auto;
+  text-align-last: center;
+  border: 1px solid #EDEDED;
+}
+
+.ant-row {
+  margin: auto;
+}

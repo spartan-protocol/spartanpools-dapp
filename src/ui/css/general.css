@@ -1,3 +1,7 @@
+.ant-layout-content {
+  background: radial-gradient(45% 55% at 55% 45%, #F9F0E9 0%, #FFF 100%);
+}
+
 .App {
   text-align: center;
 }
