@@ -4,8 +4,14 @@
   overflow-x:auto;
   text-align-last: center;
   border: 1px solid #EDEDED;
+  border-radius: 5px;
 }
 
 .ant-row {
-  margin: auto;
+  margin: 10px auto;
+}
+
+.ant-table-thead > tr > th {
+  font-size: 1.3em;
+  font-weight: bold;
 }

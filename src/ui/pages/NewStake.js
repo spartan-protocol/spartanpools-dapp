@@ -8,7 +8,6 @@ import queryString from 'query-string';
 
 import { BreadcrumbCombo, InputPane, PoolPaneSide, OutputPane } from '../components/common'
 import { HR, LabelGroup, Center } from '../components/elements';
-import { Button } from '../components/elements';
 import { bn, formatBN, convertFromWei, convertToWei } from '../../utils'
 import { getLiquidityUnits } from '../../math'
 
@@ -348,27 +347,31 @@ const NewStake = (props) => {
 
     return (
         <>
+          <div className="wrapper">
             <BreadcrumbCombo title={'ADD LIQUIDITY'} parent={'POOLS'} link={'/pools'} child={'ADD LIQUIDITY'}></BreadcrumbCombo>
             <HR></HR>
             <br />
-            <Row>
-                <Col xs={8}>
-                    <Button onClick={back} icon={<LeftOutlined />} type={'text'} size={'large'} >BACK</Button>
 
+            <Row>
+                <Col xs={8} sm={6} md={6} onClick={back} className="btn primary" style={{ textAlign: 'left' }}>
+                    {<LeftOutlined />} BACK
                 </Col>
-                <Col xs={16} style={{ textAlign: 'right' }}>
-                    <Button type="secondary" >REMOVE LIQUIDITY</Button>
+                <Col xs={1} sm={6} md={12}>
+                </Col>
+                <Col xs={15} sm={10} md={6} className="btn primary" style={{ textAlign: 'right' }}>
+                    REMOVE LIQUIDITY
                 </Col>
             </Row>
 
-            <Row>
-                <Col xs={8}>
-
+            <Row type="flex" align="middle" justify="center">
+                <Col xs={24}>
                     <PoolPaneSide pool={pool} price={context.spartanPrice} />
 
                 </Col>
-                <Col xs={16}>
-                    <Row style={{ marginLeft: 20, marginRight: 20 }}>
+
+                <Col xs={24}>
+                  <div className="minimal-card ant-card-bordered">
+                    <Row>
                         <Col xs={24} >
                             <Tabs defaultActiveKey="1" onChange={changeTabs}>
                                 <TabPane tab={`ADD ${pool.symbol}`} key="1">
@@ -428,8 +431,10 @@ const NewStake = (props) => {
                             </Tabs>
                         </Col>
                     </Row>
+                  </div>
                 </Col>
             </Row>
+          </div>
 
         </>
     )
@@ -443,10 +448,8 @@ const AddSymmPane = (props) => {
         <>
             <Row>
                 <Col xs={24}>
-                    <Row >
-                        <Col xs={1}>
-                        </Col>
-                        <Col xs={9} style={{ marginRight: 30 }}>
+                    <Row className="cntr" align="middle" justify="center">
+                        <Col xs={10}>
                             <InputPane
                                 paneData={props.userData}
                                 onInputChange={props.onAddChange}
@@ -454,10 +457,10 @@ const AddSymmPane = (props) => {
                             />
 
                         </Col>
-                        <Col xs={1} style={{ display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                        <Col xs={4} style={{ display: 'flex', alignItems: 'center', justifyContent: "center" }}>
                             <PlusOutlined style={{ fontSize: 24 }} />
                         </Col>
-                        <Col xs={9} style={{ marginLeft: 30 }}>
+                        <Col xs={10}>
 
                             <LabelGroup size={30}
                                 element={`${convertFromWei(props.liquidityData.baseAmount)}`}
@@ -468,13 +471,12 @@ const AddSymmPane = (props) => {
                                 onInputChange={props.onStake2Change}
                                 changeAmount={props.changeStake2Amount} /> */}
 
-                            <br />
                         </Col>
 
                         <Col xs={1}>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row className="cntr">
                         <Col xs={12}>
                             <Center><LabelGroup size={18} element={`${convertFromWei(props.estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                         </Col>
@@ -484,22 +486,22 @@ const AddSymmPane = (props) => {
 
                     </Row>
                     <Row>
-                        <Col xs={8}>
+                        <Col xs={6}>
                             {!props.approvalBase &&
-                                <Center><Button type={'secondary'} onClick={props.unlockSparta} icon={<UnlockOutlined />}>UNLOCK {props.userData.symbol}</Button></Center>
+                                <div className="btn primary" onClick={props.unlockSparta} icon={<UnlockOutlined />}>UNLOCK {props.userData.symbol}</div>
                             }
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={12}>
                             {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                                <Center><Button type={'primary'} onClick={props.addLiquidity} icon={<LoadingOutlined />} >ADD TO POOL</Button></Center>
+                                <div className="btn primary diabled" onClick={props.addLiquidity} icon={<LoadingOutlined />}>ADD TO POOL</div>
                             }
                             {props.approvalBase && props.approvalToken && !props.startTx &&
-                                <Center><Button type={'primary'} onClick={props.addLiquidity}>ADD TO POOL</Button></Center>
+                                <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
                             }
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={6}>
                             {!props.approvalToken &&
-                                <Center><Button type={'secondary'} onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.pool.symbol}</Button></Center>
+                                <div className="btn primary" onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.pool.symbol}</div>
                             }
                         </Col>
                     </Row>
@@ -530,7 +532,7 @@ const AddAsymmPane = (props) => {
                         <Col xs={1}>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row className="cntr">
                         <Col xs={12}>
                             <Center><LabelGroup size={18} element={`${convertFromWei(props.estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                         </Col>
@@ -540,17 +542,17 @@ const AddAsymmPane = (props) => {
 
                     </Row>
                     <Row>
-                        <Col xs={8}>
+                        <Col xs={12}>
                             {!props.approvalToken &&
-                                <Center><Button type={'secondary'} onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.pool.symbol}</Button></Center>
+                                <div className="btn primary" onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.pool.symbol}</div>
                             }
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={12}>
                             {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                                <Center><Button type={'primary'} onClick={props.addLiquidity} icon={<LoadingOutlined />} >ADD TO POOL</Button></Center>
+                              <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined />}>ADD TO POOL</div>
                             }
                             {props.approvalBase && props.approvalToken && !props.startTx &&
-                                <Center><Button type={'primary'} onClick={props.addLiquidity}>ADD TO POOL</Button></Center>
+                                <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
                             }
                         </Col>
 
@@ -581,7 +583,7 @@ const UnstakePane = (props) => {
                     <Row>
                     </Row>
                     <br></br>
-                    <Center><Button type={'primary'} onClick={props.unstake}>WITHDRAW FROM POOL</Button></Center>
+                    <div className="btn primary" onClick={props.unstake}>WITHDRAW FROM POOL</div>
                 </Col>
             </Row>
         </>

@@ -5,10 +5,10 @@ import { LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 
 import { getDaoContract, getRewards, getStakesData, getListedTokens } from '../../client/web3'
 
-import { Table, Row, Col, message } from 'antd';
+import { Table, Row, Col, Card, message } from 'antd';
 
 import { ColourCoin } from '../components/common'
-import { H1, Button, Center } from '../components/elements';
+import { H1, Center } from '../components/elements';
 
 import { convertFromWei } from '../../utils'
 
@@ -71,13 +71,13 @@ const Earn = (props) => {
     const columns = [
         {
             render: (record) => (
-                <div>
+                <div className="tokenlogo">
                     <ColourCoin symbol={record.symbol} size={36} />
                 </div>
             )
         },
         {
-            title: 'Name',
+            title: 'NAME',
             dataIndex: 'name',
             key: 'name',
             render: (name) => (
@@ -85,34 +85,35 @@ const Earn = (props) => {
             )
         },
         {
-            title: 'Balance',
+            title: 'BALANCE',
             dataIndex: 'units',
             key: 'units',
             render: (units) => (
-                <p>{convertFromWei(units)}</p>
+                <h3>{convertFromWei(units)}</h3>
             )
         },
         {
-            title: 'Locked',
+            title: 'LOCKED',
             dataIndex: 'locked',
             key: 'locked',
             render: (locked) => (
-                <p>{convertFromWei(locked)}</p>
+                <h3>{convertFromWei(locked)}</h3>
             )
         },
         {
+            title: <Col xs={24} className="cntr btn secondary pool" onClick={harvest}>
+              <LogoutOutlined /> HARVEST YIELD
+            </Col>,
             render: (record) => (
-                <div style={{ textAlign: 'right' }}>
-                    <Button
-                        icon={<LoginOutlined />}
-                        onClick={() => lock(record)}
-                    >DEPOSIT</Button>
-                    <Button
-                        icon={<LogoutOutlined />}
-                        type={'secondary'}
-                        onClick={() => unlock(record)}
-                    >WITHDRAW</Button>
-                </div>
+
+                    <Row type="flex" justify="center" align="middle">
+                      <Col className="btn primary" onClick={() => lock(record)}>
+                            <LoginOutlined /> DEPOSIT
+                      </Col>
+                      <Col className="btn primary" onClick={() => unlock(record)}>
+                            <LogoutOutlined /> WITHDRAW
+                      </Col>
+                    </Row>
 
             )
         }
@@ -120,7 +121,7 @@ const Earn = (props) => {
 
 
     return (
-        <div>
+        <div className="wrapper">
             <Row>
                 <Col xs={24} className="cntr">
                   <h1>Earn</h1>
@@ -138,15 +139,17 @@ const Earn = (props) => {
             <Row>
                 <Col xs={24}>
                     <Row>
+                      <Card>
                         <Col xs={24}>
                             <Row>
                                 <Col xs={24}>
                                     <Center><h2>CLAIM REWARDS</h2></Center>
                                     <Center><H1>{convertFromWei(reward)}</H1></Center>
-                                    <Center><Button onClick={harvest} type={'primary'} style={{ marginTop: 10 }}>HARVEST YIELD</Button></Center>
+                                    <div className="btn primary" onClick={harvest}>HARVEST YIELD</div>
                                 </Col>
                             </Row>
                         </Col>
+                      </Card>
                     </Row>
                 </Col>
             </Row>

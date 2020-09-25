@@ -10,6 +10,11 @@
   color: #A80005;
 }
 
+.minimal-card {
+  background: #FFFFFF;
+  border-radius: 8px;
+}
+
 .ant-card-head {
   padding: 5px;
 }
@@ -36,4 +41,8 @@
   border-left:0;
   text-align: center;
   margin-right: 10%;
+}
+
+.bordered {
+  border: 1px solid #EDCCCD;
 }
