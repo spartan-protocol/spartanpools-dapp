@@ -7,9 +7,8 @@ import {
   rainbowStop, getIntFromName,
   convertFromWei, formatUSD, formatAPY,
 } from '../../utils'
-import { paneStyles, colStyles } from '../components/styles'
 import { getTokenSymbol } from '../../client/web3'
-import { H1, HR, Colour, Text, Center, Label, Sublabel, LabelGroup } from '../components/elements'
+import { H1, HR, Text, Center, Label, Sublabel, LabelGroup } from '../components/elements'
 
 // Check If Responsive
 export const useWindowSize = () => {
@@ -60,13 +59,8 @@ export const BreadcrumbCombo = (props) => {
 
 export const InputPane = (props) => {
 
-  const styles = {
-    marginLeft: 10
-  }
-
-
   return (
-    <div style={styles}>
+    <div>
       <Row>
         <Col xs={24}>
           <Input onChange={props.onInputChange}
@@ -91,11 +85,9 @@ export const InputPaneStatic = (props) => {
   //tokenList
   //paneData: {address, input, balance}
   //inputChange, changeToken, changeAmount
-  const styles = {
-    marginLeft: 10
-  }
+
   return (
-    <div style={styles}>
+    <div>
       <Row>
         <Col xs={24}>
           <Input onChange={props.onInputChange}
@@ -295,14 +287,10 @@ export const TokenSymbol = (props) => {
 
 export const PoolPaneSide = (props) => {
 
-  const rowStylesPane = {
-    marginTop: 20
-}
-
   return (
     <div>
-      <Row style={paneStyles}>
-        <Col xs={24} style={colStyles}>
+      <Row>
+        <Col xs={24}>
           <Row>
             <Col xs={12}>
               <ColourCoin symbol={props.pool.symbol} size={50} style={{ marginTop: 10 }} />
@@ -312,7 +300,7 @@ export const PoolPaneSide = (props) => {
             </Col>
           </Row>
 
-          <Row style={rowStylesPane}>
+          <Row>
             <Col xs={12}>
               <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.depth), props.price)} label={'DEPTH'} />
             </Col>
@@ -321,7 +309,7 @@ export const PoolPaneSide = (props) => {
             </Col>
           </Row>
 
-          <Row style={rowStylesPane}>
+          <Row>
             <Col xs={12}>
               <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.volume), props.price)} label={'VOLUME'} />
             </Col>
@@ -330,7 +318,7 @@ export const PoolPaneSide = (props) => {
             </Col>
           </Row>
 
-          <Row style={rowStylesPane}>
+          <Row>
             <Col xs={12}>
               <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.fees), props.price)} label={'FEES'} />
             </Col>
@@ -347,24 +335,9 @@ export const PoolPaneSide = (props) => {
 
 export const PoolPane = (props) => {
 
-  const poolStyles = {
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderRadius: 5,
-    borderColor: Colour().grey,
-    margin: 20,
-    padding: 10,
-    width: 400
-  }
-
-  const colStyles = {
-    display: 'flex',
-    textAlign: 'center'
-  }
-
   return (
     <div>
-      <Col xs={24} sm={24} xl={24} style={poolStyles}>
+      <Col xs={24} sm={24} xl={24}>
         <Row>
           <Col xs={24}>
             <ColourCoin symbol={props.symbol} size={40} />
@@ -375,7 +348,7 @@ export const PoolPane = (props) => {
             {!props.hideSubpane &&
               <div>
                 <HR />
-                <Row style={colStyles}>
+                <Row>
                   <Col xs={8}>
                     <Label>{props.data.field1.data}</Label><br />
                     <Sublabel>{props.data.field1.title}</Sublabel>
@@ -415,22 +388,13 @@ export const ColourCoin = (props) => {
     width: props.size,
     height: props.size,
     background: `linear-gradient(45deg, ${startCol}, ${stopCol})`,
-  }
-
-  const textStyles = {
-    fontWeight: '800',
-    // letterSpacing: '1px',
-    fontFamily: 'arial',
-    textTransform: 'uppercase',
-    color: Colour().white,
-    fontSize: props.size / 4,
-  }
+}
 
   return (
     <div >
-      <Row style={coinStyle}>
+       <Row style={coinStyle}>
         <Col style={{marginTop:5}}>
-          <p style={textStyles}>{coinName}</p>
+          <p>{coinName}</p>
         </Col>
       </Row>
     </div>
@@ -439,15 +403,9 @@ export const ColourCoin = (props) => {
 
 export const CoinRow = (props) => {
 
-  const rowStyles = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-
   return (
     <div>
-      <Row style={rowStyles}>
+      <Row>
         <Col xs={4} style={{textAlign:"left"}}>
           <ColourCoin symbol={props.symbol} size={props.size} />
         </Col>
@@ -473,17 +431,9 @@ export const CoinRow = (props) => {
 }
 export const CDPDetails = (props) => {
 
-  const rowStyles = {
-    display: 'flex',
-    marginTop: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-
-  }
-
   return (
     <div>
-      <Row style={rowStyles}>
+      <Row>
         <Col span={4}>
           <ColourCoin symbol={props.symbol} size={props.size} />
         </Col>
@@ -525,24 +475,9 @@ export const CLTButtonRow = (props) => {
 }
 export const CDPPane = (props) => {
 
-  const poolStyles = {
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderRadius: 5,
-    borderColor: Colour().grey,
-    margin: 20,
-    padding: 10,
-    width: 400
-  }
-
-  // const colStyles = {
-  //   display: 'flex',
-  //   textAlign: 'center'
-  // }
-
   return (
     <div>
-      <Col xs={24} sm={24} xl={24} style={poolStyles}>
+      <Col xs={24} sm={24} xl={24}>
         <Row>
           <Col xs={24}>
             <Divider><Label size={20}>{props.name}</Label> </Divider>

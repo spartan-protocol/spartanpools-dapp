@@ -3,7 +3,6 @@ import { Context } from '../../context'
 import {Link} from 'react-router-dom'
 import { Row, Col } from 'antd'
 import { HR, H1, H2, Text, LabelGroup, Button, Gap } from '../components/elements';
-import { rowStyles } from '../components/styles'
 
 import {getRouterContract} from '../../client/web3'
 import { formatUSD, convertFromWei } from '../../utils'
@@ -29,7 +28,7 @@ const Overview = (props) => {
     const getData = async () => {
 
         var contract = getRouterContract()
-        let SPARTA = await contract.methods.BASE().call() 
+        let SPARTA = await contract.methods.BASE().call()
         console.log(SPARTA)
 
         // let networkData = await getNetworkData(context.poolsData)
@@ -50,7 +49,7 @@ const Overview = (props) => {
             <h1>
 
             </h1>
-            {/* <Row  style={rowStyles}>
+            {/* <Row>
                 <Col xs={3}>
                     <LabelGroup size={24} label={'POOLS'} element={networkData?.pools} />
                 </Col>

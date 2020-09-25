@@ -8,7 +8,6 @@ import queryString from 'query-string';
 
 import { BreadcrumbCombo, InputPane, PoolPane } from '../components/common'
 import { Center, HR, Text } from '../components/elements';
-import { paneStyles, colStyles } from '../components/styles'
 import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../utils'
 import { getSwapOutput, getSwapSlip } from '../../math'
 
@@ -310,8 +309,8 @@ const Swap = (props) => {
 
             <HR></HR>
             <br />
-            <Row style={paneStyles}>
-                <Col xs={24} style={colStyles}>
+            <Row>
+                <Col xs={24}>
                     <Row >
                         <Col xs={2}>
                         </Col>

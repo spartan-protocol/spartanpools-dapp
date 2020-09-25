@@ -8,7 +8,6 @@ import queryString from 'query-string';
 
 import { BreadcrumbCombo, InputPane, PoolPane, OutputPane } from '../components/common'
 import { Center, Button, LabelGroup } from '../components/elements';
-import { paneStyles, colStyles, rowStyles } from '../components/styles'
 
 import { getLiquidityUnits, getPoolShare } from '../../math'
 import { bn, convertToWei, convertFromWei, formatAPY } from '../../utils'
@@ -313,8 +312,8 @@ const Stake = (props) => {
             </div>
             <Tabs defaultActiveKey="1">
                 <TabPane tab="STAKE" key="1">
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                             <Row >
                                 <Col xs={2}>
                                 </Col>
@@ -343,7 +342,7 @@ const Stake = (props) => {
                                 <Col xs={2}>
                                 </Col>
                             </Row>
-                            <Row style={rowStyles}>
+                            <Row>
                                 <Col xs={12}>
                                     <Center><LabelGroup size={18} element={`${convertFromWei(estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                                 </Col>
@@ -380,8 +379,8 @@ const Stake = (props) => {
                     </Row>
                 </TabPane>
                 <TabPane tab="WITHDRAW" key="2">
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                             <Row>
                                 <Col xs={6}>
                                 </Col>
@@ -392,7 +391,7 @@ const Stake = (props) => {
                                 <Col xs={6}>
                                 </Col>
                             </Row>
-                            <Row style={rowStyles}>
+                            <Row>
                                 {/* <Col xs={12}>
                                     <Center><LabelGroup size={18} element={`${convertFromWei(estLiquidityUnits.toFixed(0))}`} label={'POOL UNITS'} /></Center>
                                 </Col>

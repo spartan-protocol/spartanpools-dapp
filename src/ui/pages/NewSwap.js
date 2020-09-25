@@ -9,7 +9,6 @@ import queryString from 'query-string';
 import { BreadcrumbCombo, InputPane, PoolPaneSide,  } from '../components/common'
 import { HR, Sublabel, LabelGroup } from '../components/elements';
 import { Button } from '../components/elements';
-import { paneStyles, colStyles } from '../components/styles'
 import { bn, formatBN, convertFromWei, convertToWei } from '../../utils'
 import { getSwapOutput, getSwapSlip } from '../../math'
 
@@ -299,8 +298,8 @@ const TradePane = (props) => {
 
     return (
         <>
-            <Row style={paneStyles}>
-                <Col xs={24} style={colStyles}>
+            <Row>
+                <Col xs={24}>
 
                     <Row>
 

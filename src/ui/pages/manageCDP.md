@@ -4,7 +4,6 @@ import { Button, Row, Col, Divider, Tabs, Input, Form } from 'antd';
 
 import { BreadcrumbCombo, InputPane, PercentButtonRow, InputPaneStatic, CDPPane, OutputPane } from '../components/common'
 import { Center, HR, Text, Label, LabelGroup } from '../components/elements';
-import { paneStyles, colStyles, rowStyles } from '../components/styles'
 import { formatBN, convertFromWei, convertToWei, ETH_ADDRESS, BASE_ADDRESS, formatUSD, bn } from '../../utils'
 import { getSwapOutput, getSwapSlip, getDoubleSwapOutput, getDoubleSwapSlip, getMAXMINT } from '../../math'
 import { getPoolData, filterTokensByPoolSelection } from '../../client/web3_old'
@@ -158,8 +157,8 @@ export const AddCollateralTab = () => {
 
 
     return (<div>
-        <Row style={paneStyles}>
-            <Col xs={24} style={colStyles}>
+        <Row>
+            <Col xs={24}>
                 <Row >
                     <Col xs={8}></Col>
                     <Col xs={8}>
@@ -173,7 +172,7 @@ export const AddCollateralTab = () => {
                     <Col xs={8}>
                     </Col>
                 </Row>
-                <Row style={rowStyles}>
+                <Row>
                     <Col xs={6}></Col>
                     <Col xs={6}>
                         <Center><LabelGroup size={18} element={`${convertFromWei(addCollateralData.collateral)}`} label={'ESTIMATED TOTAL COLLATERAL'} /></Center>
@@ -223,9 +222,9 @@ export const RemintTab = () => {
 
 
     return (<div>
-        <Row style={paneStyles}>
-            <Col xs={24} style={colStyles}>
-                <Row style={rowStyles}>
+        <Row}>
+            <Col xs={24}>
+                <Row>
                     <Col xs={6}></Col>
                     <Col xs={6}>
                         <Center><LabelGroup size={18} element={`${convertFromWei(context.accountCDP?.collateral)}`} label={'COLLATERAL'} /></Center>
@@ -249,7 +248,7 @@ export const RemintTab = () => {
                     </Col>
                 </Row>
 
-                <Row style={rowStyles}>
+                <Row>
 
                     <Col xs={24}>
                         <Center><LabelGroup size={18} element={`${convertFromWei(getMAXMINT(context.accountCDP?.collateral, context.mainPool, setCR))}`} label={'ESTIMATED FINAL DEBT'} /></Center>
@@ -341,9 +340,9 @@ const precise = (x) => {
 
 
     return (<div>
-        <Row style={paneStyles}>
-            <Col xs={24} style={colStyles}>
-            <Row style={rowStyles}>
+        <Row>
+            <Col xs={24}>
+            <Row>
                     <Col xs={6}></Col>
                     <Col xs={6}>
                         <Center><LabelGroup size={18} element={`${precise(convertFromWei((context.accountCDP?.collateral)*closeDebtData.input)/100)}`} label={'ESTIMATED COLLATERAL RECIEVING'} /></Center>
@@ -369,7 +368,7 @@ const precise = (x) => {
                     <Col xs={6}></Col>
 
                 </Row>
-                <Row style={rowStyles}>
+                <Row>
 
                     <Col xs={24}>
                         <Center><LabelGroup size={18} element={`${convertFromWei(parseInt(context.accountCDP?.debt)-parseInt(closeDebtData.debt))}`} label={'ESTIMATED REMAINING DEBT '} /></Center>

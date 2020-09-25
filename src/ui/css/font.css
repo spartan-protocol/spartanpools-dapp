@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Spartan';
+  src: local('Spartan'), url(../../assets/font/Spartan-Regular.ttf) format('truetype');
+}
+
 h1 {
   font-size: 4em;
   color: #A80005;
@@ -10,4 +15,47 @@ h2 {
 
 h3 {
   font-size: 1.4em;
+}
+
+h4 {
+  font-size: 1.25em;
+}
+
+body {
+  margin: 0;
+  font-family: 'Spartan', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #FCFCFC;
+  color: white;
+}
+
+ul li {
+  font-family: 'Spartan', sans-serif;
+  font-size: 20px;
+  line-height: 2;
+}
+
+h1,h2,h3,h4,h5,
+button {
+  font-family: 'Spartan', sans-serif;
+}
+
+h1 {
+  color: '#A80005'
+}
+
+.strong {
+  font-weight: bold;
 }

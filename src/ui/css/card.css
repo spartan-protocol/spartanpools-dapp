@@ -1,16 +1,17 @@
 .ant-card {
-  background-color: #FBFAFA;
-  border-radius: 20px;
-  border: 1px solid #EDEDED;
-  box-shadow: 0 1px 1px #F9F0E9,
-              0 2px 2px #F9F0E9,
-              0 4px 4px #F9F0E9,
-              0 8px 8px #F9F0E9,
-              0 16px 16px #F9F0E9;
+  background: #FFFFFF;
+  border-radius: 8px;
   text-align: center;
-  height:100%;
-  padding:15px;
+  height: 100%;
+  padding: 10px;
   margin-bottom: 15px;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #A80005;
+}
+
+.ant-card-head {
+  padding: 5px;
 }
 
 .ant-card-body {
@@ -19,4 +20,20 @@
 
 .cntr {
   text-align: center;
+}
+
+.leftbar {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  text-align: center;
+  border-right: 0;
+  margin-left: 10%;
+}
+
+.rightbar {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-left:0;
+  text-align: center;
+  margin-right: 10%;
 }

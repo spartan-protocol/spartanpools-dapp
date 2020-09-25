@@ -2,13 +2,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
-import { SPARTA_ADDR, ROUTER_ADDR, BNB_ADDR, getTokenContract, getRouterContract, 
+import { SPARTA_ADDR, ROUTER_ADDR, BNB_ADDR, getTokenContract, getRouterContract,
     getTokenDetails, getTokenData } from '../../client/web3'
 
 
 import { Button, Row, Col, message, Input } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { paneStyles, colStyles } from '../components/styles'
 import { AssetTable } from '../layout/WalletDrawer'
 var utils = require('ethers').utils;
 
@@ -131,26 +130,15 @@ const SimpleStake = (props) => {
         // context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
     }
 
-
-
-    const indentStyles = {
-        margin: 100,
-        minHeight: 400
-    }
-
-    const colStylesInner = {
-        padding: 20
-    }
-
     return (
         <div>
-            <Row style={indentStyles}>
+            <Row>
                 <Col xs={24}>
 
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                         <Row>
-                                <Col xs={12} style={colStylesInner}>
+                                <Col xs={12}>
                                 <h1>Enter Token To Stake</h1>
                                     <Input
                                         onChange={changeToken}
@@ -164,8 +152,8 @@ const SimpleStake = (props) => {
                             </Row>
 
                             <Row>
-                                <Col xs={12} style={colStylesInner}>
-                                    
+                                <Col xs={12}>
+
                                     <h4>Balance: {utils.formatEther(tokenData?.balance, { commify: true })}</h4>
                                     <Input
                                         onChange={changeTokenAmount}
@@ -183,7 +171,7 @@ const SimpleStake = (props) => {
                                         <Button onClick={create} type={'primary'} icon={<LoadingOutlined />}>CREATE</Button>
                                     }
                                 </Col>
-                                <Col xs={12} style={colStylesInner}>
+                                <Col xs={12}>
                                 <h4>Balance: {utils.formatEther(tokenData?.balance, { commify: true })}</h4>
                                     <Input
                                         onChange={changeSpartaAmount}
@@ -201,14 +189,14 @@ const SimpleStake = (props) => {
                     </Row>
 
                     <Row>
-                        <Col xs={12} style={colStylesInner}>
+                        <Col xs={12}>
                             <h1>Tokens on your wallet</h1>
                             {context.connected &&
                                 <AssetTable />
                             }
                         </Col>
-                        <Col xs={12} style={colStylesInner}>
-                           
+                        <Col xs={12}>
+
                         </Col>
                     </Row>
 

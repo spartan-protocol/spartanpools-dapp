@@ -7,7 +7,6 @@ import { SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getT
 
 import { Button, Row, Col, message, Input } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { paneStyles, colStyles } from '../components/styles'
 import { AssetTable } from '../layout/WalletDrawer'
 
 import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../utils'
@@ -114,26 +113,15 @@ const SimpleSwap = (props) => {
         context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
     }
 
-
-
-    const indentStyles = {
-        margin: 100,
-        minHeight: 400
-    }
-
-    const colStylesInner = {
-        padding: 20
-    }
-
     return (
         <div>
-            <Row style={indentStyles}>
+            <Row>
                 <Col xs={24}>
 
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                             <Row>
-                                <Col xs={12} style={colStylesInner}>
+                                <Col xs={12}>
                                     <h1>Token From</h1>
                                     <Input
                                         // onChange={changeToken}
@@ -152,7 +140,7 @@ const SimpleSwap = (props) => {
                                         <Button onClick={swap} type={'primary'} icon={<LoadingOutlined />}>UPGRADE</Button>
                                     }
                                 </Col>
-                                <Col xs={12} style={colStylesInner}>
+                                <Col xs={12}>
                                     <h1>Token To</h1>
                                     <Input
                                         // onChange={changeToken}
@@ -169,13 +157,13 @@ const SimpleSwap = (props) => {
                     </Row>
 
                     <Row>
-                        <Col xs={12} style={colStylesInner}>
+                        <Col xs={12}>
                             <h1>Tokens on your wallet</h1>
                             {context.connected &&
                                 <AssetTable />
                             }
                         </Col>
-                        <Col xs={12} style={colStylesInner}>
+                        <Col xs={12}>
                             <h1>Tokens you can swap to</h1>
                             {context.connected &&
                                 <AssetTable />

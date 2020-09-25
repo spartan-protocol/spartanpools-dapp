@@ -11,13 +11,6 @@ import {
 
 const About = (props) => {
 
-    // const boxStyles = {
-    //     display: 'flex',
-    //     textAlign: "center",
-    //     justifyContent: "center",
-
-    // }
-
     return (
         <div>
             <Row>

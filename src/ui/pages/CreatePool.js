@@ -7,13 +7,12 @@ import { QuestionCircleOutlined, UnlockOutlined } from '@ant-design/icons';
 
 import { BreadcrumbCombo, InputPane, CoinRow } from '../components/common'
 import { Center, Button, Sublabel } from '../components/elements'
-import { paneStyles, rowStyles, colStyles } from '../components/styles'
 
 
 // import { getLiquidityUnits } from '../../math'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getRouterContract,
-    getTokenData, getNewTokenData, getAssets, getListedTokens, getListedPools, getPoolsData, 
+    getTokenData, getNewTokenData, getAssets, getListedTokens, getListedPools, getPoolsData,
     getTokenDetails, getWalletData
 } from '../../client/web3'
 
@@ -93,20 +92,20 @@ const CreatePool = (props) => {
         if(addressSelected !== SPARTA_ADDR){
             setApproval1(false)
             setApproval2(false)
-    
+
             var tokenData = await getNewTokenData(addressSelected, context.walletData.address)
             setTokenData(tokenData)
             console.log(tokenData)
-    
+
             if (+tokenData.balance > 0) {
                 setCheckFlag(true)
                 setStake2Data(await getStakeInputData(tokenData.balance, tokenData))
             }
-    
+
             await checkApproval1(SPARTA_ADDR)
             await checkApproval2(addressSelected)
         }
-        
+
 
     }
 
@@ -212,7 +211,7 @@ const CreatePool = (props) => {
             }
             console.log(address, +approval, +tokenData.balance)
         }
-       
+
     }
 
     const unlockSparta = async () => {
@@ -244,7 +243,7 @@ const CreatePool = (props) => {
 
     const createPool = async () => {
         const poolContract = getRouterContract()
-        
+
         console.log(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
 
         await poolContract.methods.createPool(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected).send({
@@ -279,10 +278,10 @@ const CreatePool = (props) => {
         <div>
             <BreadcrumbCombo title={'CREATE POOL'} parent={'POOLS'} link={'/pools'} child={'CREATE'}></BreadcrumbCombo>
             <br />
-            <Row style={rowStyles}>
+            <Row>
 
                 <Col xs={12}>
-                
+
                     <Input
                         placeholder={'enter token address'}
                         onChange={onInputChange}></Input>
@@ -312,8 +311,8 @@ const CreatePool = (props) => {
             </Row>
             {checkFlag &&
                 <div>
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                             <Row >
                                 <Col xs={12}>
                                 <Sublabel size={20}>{'INPUT SPARTA'}</Sublabel><br />
@@ -337,7 +336,7 @@ const CreatePool = (props) => {
                                 </Col>
 
                             </Row>
-                            <Row style={rowStyles}>
+                            <Row>
                                 {/* <Col xs={12}>
                                     <Center><LabelGroup size={18} element={`${convertFromWei(liquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                                 </Col>
