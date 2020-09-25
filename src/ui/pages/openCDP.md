@@ -4,7 +4,6 @@ import { Button, Row, Col, Form, Input } from 'antd';
 import { Link, Redirect,useHistory } from 'react-router-dom'
 import { BreadcrumbCombo, InputPane, PoolPane, CLTButtonRow } from '../components/common'
 import { Center, HR, Text, Label } from '../components/elements';
-import { paneStyles, colStyles } from '../components/styles'
 import {formatBN, convertFromWei, convertToWei, ETH_ADDRESS, SPARTA_ADDRESS, formatUSD} from '../../utils'
 import { getSwapOutput, getSwapSlip, getDoubleSwapOutput, getDoubleSwapSlip } from '../../math'
 import { getAccountCDP, getWalletTokenData, getWeb3, getContract  } from '../../client/web3'

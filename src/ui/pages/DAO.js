@@ -5,7 +5,6 @@ import { Context } from '../../context'
 import { getSpartaContract, getDaoContract } from '../../client/web3'
 
 import { Row, Col, Input } from 'antd';
-import { paneStyles, colStyles } from '../components/styles'
 
 import { H1, Button } from '../components/elements';
 
@@ -63,7 +62,7 @@ const DAO = (props) => {
     const changeIncentiveAddress = (e) => {
         setIncentiveAddress(e.target.value)
     }
-    
+
 
     const listAsset = async () => {
         let contract = getSpartaContract()
@@ -97,19 +96,14 @@ const DAO = (props) => {
         console.log(tx.transactionHash)
     }
 
-    const indentStyles = {
-        marginLeft: 100,
-        marginRight: 100,
-    }
-
     return (
         <div>
             <H1>DAO</H1>
             <p>The Spartan DAO can govern the contract.</p>
-            <Row style={indentStyles}>
+            <Row>
                 <Col xs={24}>
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                             <Row>
                                 <Col xs={24}>
                                     <h2>LIST ASSET IN SPARTA</h2>

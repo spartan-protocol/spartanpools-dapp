@@ -1,13 +1,41 @@
-.ant-btn {
-  border-radius: 9px;
+.btn {
+  border-radius: 15px;
+  border: 1px solid #dc999b;
   font-size: 1.15em;
   height: auto;
+  padding:5px 15px;
+  margin:auto;
+  cursor: pointer;
+  width:fit-content;
 }
 
-button.ant-btn.ant-btn-primary[disabled] {
-  background-color: #FFF;
+.btn.primary {
+  color: #A80006;
+  font-weight: bold;
+  background: #FFF;
 }
 
-.no-shadow {
-  box-shadow: none;
+.btn.primary a {
+  color: #A80006;
+  font-weight:bold;
+}
+
+.btn.secondary {
+  color: #0A0001;
+  font-weight: bold;
+  background: #E4B2B4;
+}
+
+.btn.secondary a {
+  color: #0A0001;
+  font-weight:bold;
+}
+
+.btn.disabled {
+  opacity:0.75;
+  cursor:no-drop;
+}
+
+.btn.shadow {
+  box-shadow: 1px 1px 2px 1px #dcdcdc;
 }

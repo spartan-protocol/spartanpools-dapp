@@ -6,7 +6,6 @@ import { LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 import { getDaoContract, getRewards, getStakesData, getListedTokens } from '../../client/web3'
 
 import { Table, Row, Col, message } from 'antd';
-import { paneStyles, colStyles } from '../components/styles'
 
 import { ColourCoin } from '../components/common'
 import { H1, Button, Center } from '../components/elements';
@@ -69,12 +68,6 @@ const Earn = (props) => {
         message.success('Transaction Sent!', 2);
     }
 
-
-    const indentStyles = {
-        marginLeft: 100,
-        marginRight: 100,
-    }
-
     const columns = [
         {
             render: (record) => (
@@ -128,9 +121,9 @@ const Earn = (props) => {
 
     return (
         <div>
-            <Row style={indentStyles}>
+            <Row>
                 <Col xs={24} className="cntr">
-                  <H1>Earn</H1>
+                  <h1>Earn</h1>
                   <h2>Earn yield by depositing liquidity in the SPARTAN DAO.</h2>
                 </Col>
                 <Col xs={24} className="cntr">
@@ -142,10 +135,10 @@ const Earn = (props) => {
             </Row>
             <br/>
 
-            <Row style={indentStyles}>
+            <Row>
                 <Col xs={24}>
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                             <Row>
                                 <Col xs={24}>
                                     <Center><h2>CLAIM REWARDS</h2></Center>

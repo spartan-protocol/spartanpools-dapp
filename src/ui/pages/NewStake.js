@@ -9,7 +9,6 @@ import queryString from 'query-string';
 import { BreadcrumbCombo, InputPane, PoolPaneSide, OutputPane } from '../components/common'
 import { HR, LabelGroup, Center } from '../components/elements';
 import { Button } from '../components/elements';
-import { paneStyles, colStyles, rowStyles } from '../components/styles'
 import { bn, formatBN, convertFromWei, convertToWei } from '../../utils'
 import { getLiquidityUnits } from '../../math'
 
@@ -442,8 +441,8 @@ const AddSymmPane = (props) => {
 
     return (
         <>
-            <Row style={paneStyles}>
-                <Col xs={24} style={colStyles}>
+            <Row>
+                <Col xs={24}>
                     <Row >
                         <Col xs={1}>
                         </Col>
@@ -475,7 +474,7 @@ const AddSymmPane = (props) => {
                         <Col xs={1}>
                         </Col>
                     </Row>
-                    <Row style={rowStyles}>
+                    <Row>
                         <Col xs={12}>
                             <Center><LabelGroup size={18} element={`${convertFromWei(props.estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                         </Col>
@@ -514,8 +513,8 @@ const AddAsymmPane = (props) => {
 
     return (
         <>
-            <Row style={paneStyles}>
-                <Col xs={24} style={colStyles}>
+            <Row>
+                <Col xs={24}>
                     <Row >
                         <Col xs={1}>
                         </Col>
@@ -531,7 +530,7 @@ const AddAsymmPane = (props) => {
                         <Col xs={1}>
                         </Col>
                     </Row>
-                    <Row style={rowStyles}>
+                    <Row>
                         <Col xs={12}>
                             <Center><LabelGroup size={18} element={`${convertFromWei(props.estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                         </Col>
@@ -567,8 +566,8 @@ const UnstakePane = (props) => {
 
     return (
         <>
-            <Row style={paneStyles}>
-                <Col xs={24} style={colStyles}>
+            <Row>
+                <Col xs={24}>
                     <Row>
                         <Col xs={6}>
                         </Col>
@@ -579,7 +578,7 @@ const UnstakePane = (props) => {
                         <Col xs={6}>
                         </Col>
                     </Row>
-                    <Row style={rowStyles}>
+                    <Row>
                     </Row>
                     <br></br>
                     <Center><Button type={'primary'} onClick={props.unstake}>WITHDRAW FROM POOL</Button></Center>

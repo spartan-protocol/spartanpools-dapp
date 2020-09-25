@@ -5,7 +5,6 @@ import { Context } from '../../context'
 import { BNB_ADDR, SPARTA_ADDR, getSpartaContract, getTokenContract, getTokenDetails, getWalletData } from '../../client/web3'
 
 import { Row, Col, message, Input, Table } from 'antd';
-import { paneStyles, colStyles } from '../components/styles'
 
 import { H1, H2, Button } from '../components/elements';
 
@@ -88,11 +87,6 @@ const Upgrade = (props) => {
         context.setContext({ 'walletData': walletData })
     }
 
-    const indentStyles = {
-        marginLeft: 100,
-        marginRight: 100,
-    }
-
     return (
         <div>
             <H1>UPGRADE</H1>
@@ -103,10 +97,10 @@ const Upgrade = (props) => {
             </a>
             </span></p>
             <br/><br/>
-            <Row style={indentStyles}>
+            <Row>
                 <Col xs={24}>
-                    <Row style={paneStyles}>
-                        <Col xs={24} style={colStyles}>
+                    <Row>
+                        <Col xs={24}>
                             <h2>UPGRADE</h2>
                             <Input onChange={changeToken}
                                 placeholder={'Enter BEP2E Asset Address'}
@@ -123,7 +117,7 @@ const Upgrade = (props) => {
                                 {approval && startTx && !endTx &&
                                     <Button onClick={upgrade} type={'primary'} icon={<LoadingOutlined/>}>UPGRADE</Button>
                                 }
-                                
+
                         </Col>
                     </Row>
                 </Col>
@@ -186,14 +180,9 @@ export const BalanceTable = () => {
         }
     ]
 
-    const tableStyles = {
-        margin: 0,
-        padding: 0
-    }
-
     return (
         <>
-            <Table style={tableStyles} dataSource={context.tokenDetailsArray} columns={columns} rowKey="symbol" />
+            <Table dataSource={context.tokenDetailsArray} columns={columns} rowKey="symbol" />
         </>
     )
 }
@@ -275,14 +264,9 @@ export const AllocationTable = () => {
 
     ]
 
-    const tableStyles = {
-        margin: 0,
-        padding: 0
-    }
-
     return (
         <>
-            <Table style={tableStyles} dataSource={allocationData} columns={columns} rowKey="symbol" />
+            <Table dataSource={allocationData} columns={columns} rowKey="symbol" />
         </>
     )
 }

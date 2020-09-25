@@ -33,7 +33,7 @@ const CDPs = () => {
         if(context.connected){
             const address = context.wallet?.address
             context.setContext({ accountCDP: await getAccountCDP(address) })
-            setConnected(true) 
+            setConnected(true)
         } else {
             setConnected(false)
         }
@@ -65,27 +65,27 @@ const alert = () => {
                     <CDPUnsafeTable />
                 </TabPane>
             </Tabs>
-            {connected && 
+            {connected &&
             <Row>
-            {CDPExist && 
+            {CDPExist &&
             <Link to={"/cdp/manageCDP"}><Button type="primary"icon={< EditOutlined/>}>Manage Your CDP</Button>
             </Link>
             }
-            {!CDPExist && 
+            {!CDPExist &&
             <Link to={"/cdp/openCDP"}><Button type="primary"icon={<PlusCircleOutlined />}>Open CDP</Button>
             </Link>
             }
             </Row>
             }
-            {!connected && 
+            {!connected &&
                 <Row>
-                <Button onClick={alert} type="primary" icon={<PlusCircleOutlined />}>Open CDP</Button> 
-                {visible && 
+                <Button onClick={alert} type="primary" icon={<PlusCircleOutlined />}>Open CDP</Button>
+                {visible &&
                     <Alert type="error" message="Please Connect Your Wallet" banner />
                     }
                   </Row>  
             }
-            
+
 
         </div>
     )
@@ -104,7 +104,7 @@ export const CDPTable = () => {
         context.setContext({ CDPData: await getAllCDPs() })
 
     }
-    
+
     const columns = [
         {
             title: 'CDP ',
@@ -149,14 +149,10 @@ export const CDPTable = () => {
         //     )
         //   }
     ]
-    const tableStyles = {
-        marginRight: 30,
-        padding: 0
-    }
 
     return (
         <div>
-            <Table style={tableStyles} dataSource={context.CDPData} columns={columns} rowKey="cdp" />
+            <Table dataSource={context.CDPData} columns={columns} rowKey="cdp" />
         </div>
     )
 }
@@ -207,14 +203,10 @@ export const CDPSafeTable = () => {
             )
         }
     ]
-    const tableStyles = {
-        marginRight: 30,
-        padding: 0
-    }
 
     return (
         <div>
-            <Table style={tableStyles} dataSource={context.SafeCDPData} columns={columns} rowKey="cdp" />
+            <Table dataSource={context.SafeCDPData} columns={columns} rowKey="cdp" />
         </div>
     )
 }
@@ -283,14 +275,10 @@ export const CDPUnsafeTable = () => {
             )
         }
     ]
-    const tableStyles = {
-        marginRight: 30,
-        padding: 0
-    }
 
     return (
         <div>
-            <Table style={tableStyles} dataSource={context.UnSafeCDPData} columns={columns} rowKey="cdp" />
+            <Table dataSource={context.UnSafeCDPData} columns={columns} rowKey="cdp" />
         </div>
     )
 }
