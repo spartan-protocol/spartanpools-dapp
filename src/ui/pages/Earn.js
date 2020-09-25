@@ -136,10 +136,10 @@ const Earn = (props) => {
             </Row>
             <br/>
 
+            <Card>
             <Row>
                 <Col xs={24}>
                     <Row>
-                      <Card>
                         <Col xs={24}>
                             <Row>
                                 <Col xs={24}>
@@ -149,10 +149,10 @@ const Earn = (props) => {
                                 </Col>
                             </Row>
                         </Col>
-                      </Card>
                     </Row>
                 </Col>
             </Row>
+          </Card>
 
         </div>
     )
