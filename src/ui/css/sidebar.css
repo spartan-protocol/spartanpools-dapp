@@ -2,13 +2,16 @@
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   background-color: #000;
-  top:42px;
+  position: fixed;
+  top:20px;
+  left:0px;
 }
 
 .ant-layout-sider {
   padding:20px 0px;
   background-color: #000;
   min-height: 100vh;
+  margin-top: 20px;
 }
 
 .ant-menu {

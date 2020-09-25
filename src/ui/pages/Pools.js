@@ -79,28 +79,6 @@ const PoolTable = (props) => {
             )
         },
         {
-            title: <a href="/pool/create">
-              <Col xs={24} className="cntr btn secondary">
-                <PlusCircleOutlined /> CREATE POOL
-              </Col>
-            </a>,
-            render: (record) => (
-                <Row type="flex" justify="center" align="middle">
-                  <Col className="btn primary">
-                    <Link to={`/pool/stake?pool=${record.address}`}>
-                        <LoginOutlined /> JOIN
-                    </Link>
-                  </Col>
-                  <Col className="btn primary">
-                    <Link to={`/pool/swap?pool=${record.address}`}>
-                        <SwapOutlined /> TRADE
-                    </Link>
-                  </Col>
-                </Row>
-
-            )
-        },
-        {
             title: 'PRICE',
             dataIndex: 'price',
             key: 'price',
@@ -144,13 +122,36 @@ const PoolTable = (props) => {
             render: (apy) => (
                 <h3>{formatAPY(apy)}</h3>
             )
-        }, {
+        },
+        {
             title: 'REVENUE',
             dataIndex: 'fees',
             key: 'fees',
             responsive: ['md'],
             render: (fees) => (
                 <h3>{formatUSD(convertFromWei(fees), context.spartanPrice)}</h3>
+            )
+        },
+        {
+            title: <a href="/pool/create">
+              <Col xs={24} className="cntr btn secondary pool">
+                <PlusCircleOutlined /> CREATE POOL
+              </Col>
+            </a>,
+            render: (record) => (
+                <Row type="flex" justify="center" align="middle">
+                  <Col className="btn primary">
+                    <Link to={`/pool/stake?pool=${record.address}`}>
+                        <LoginOutlined /> JOIN
+                    </Link>
+                  </Col>
+                  <Col className="btn primary">
+                    <Link to={`/pool/swap?pool=${record.address}`}>
+                        <SwapOutlined /> TRADE
+                    </Link>
+                  </Col>
+                </Row>
+
             )
         }
     ]
@@ -162,7 +163,7 @@ const PoolTable = (props) => {
             }
             {context.connected &&
                 <Row>
-                    <Col xs={24} style={{padding: 20}}>
+                    <Col xs={24}>
                         <Table
                         dataSource={context.poolsData}
                         columns={columns} pagination={false}
@@ -180,36 +181,36 @@ export const PoolsPaneSide = (props) => {
     const context = useContext(Context)
 
     return (
-        <div>
+        <div className="wrapper">
                     <Row type="flex" justify="center" align="middle">
-                        <Col md={4}>
-                        </Col>
-                        <Col xs={12} sm={6} md={4}>
-                          <Card className="leftbar">
-                            <h4 className="strong">TOTAL STAKED</h4>
-                            <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalPooled), context.spartanPrice)}</h4>
-                          </Card>
-                        </Col>
-                        <Col type="flex" xs={12} sm={6} md={4}>
-                          <Card className="rightbar">
-                            <h4 className="strong">TOTAL VOLUME</h4>
-                            <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h4>
-                          </Card>
-                        </Col>
-                        <Col xs={12} sm={6} md={4}>
-                          <Card className="leftbar">
-                            <h4 className="strong">TXN COUNT</h4>
-                            <h4 className="strong">{+props.globalData?.unstakeTx + +props.globalData?.stakeTx + +props.globalData?.swapTx}</h4>
-                          </Card>
-                        </Col>
-                        <Col xs={12} sm={6} md={4}>
-                          <Card className="rightbar">
-                            <h4 className="strong">TOTAL FEES</h4>
-                            <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
-                          </Card>
-                        </Col>
-                        <Col md={4}>
-                        </Col>
+                      <Col md={4}>
+                      </Col>
+                      <Col xs={12} sm={6} md={4}>
+                        <Card className="leftbar">
+                          <h4 className="strong">TOTAL STAKED</h4>
+                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData.totalPooled), context.spartanPrice)}</h4>
+                        </Card>
+                      </Col>
+                      <Col type="flex" xs={12} sm={6} md={4}>
+                        <Card className="rightbar">
+                          <h4 className="strong">TOTAL VOLUME</h4>
+                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h4>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm={6} md={4}>
+                        <Card className="leftbar">
+                          <h4 className="strong">TXN COUNT</h4>
+                          <h4 className="strong">{+props.globalData?.unstakeTx + +props.globalData?.stakeTx + +props.globalData?.swapTx}</h4>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm={6} md={4}>
+                        <Card className="rightbar">
+                          <h4 className="strong">TOTAL FEES</h4>
+                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
+                        </Card>
+                      </Col>
+                      <Col md={4}>
+                      </Col>
                     </Row>
         </div>
     )

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Row, Col, Breadcrumb, Button, Input, Dropdown, Menu, Divider } from 'antd'
+import { Row, Col, Breadcrumb, Button, Input, Dropdown, Menu, Divider, Card } from 'antd'
 import { DownOutlined, } from '@ant-design/icons';
 // PlusCircleOutlined, MinusCircleOutlined, Tooltip
 import {
@@ -8,7 +8,7 @@ import {
   convertFromWei, formatUSD, formatAPY,
 } from '../../utils'
 import { getTokenSymbol } from '../../client/web3'
-import { H1, HR, Text, Center, Label, Sublabel, LabelGroup } from '../components/elements'
+import { H1, HR, Text, Center, Label, Sublabel } from '../components/elements'
 
 // Check If Responsive
 export const useWindowSize = () => {
@@ -288,48 +288,52 @@ export const TokenSymbol = (props) => {
 export const PoolPaneSide = (props) => {
 
   return (
-    <div>
-      <Row>
+    <Card>
+      <Row type="flex" align="middle" className="cntr">
         <Col xs={24}>
           <Row>
             <Col xs={12}>
-              <ColourCoin symbol={props.pool.symbol} size={50} style={{ marginTop: 10 }} />
+              <h3>{props.pool.name}</h3>
+              <h2 className="strong">{props.pool.symbol}</h2>
             </Col>
             <Col xs={12}>
-              <LabelGroup size={30} element={props.pool.symbol} label={props.pool.name} />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col xs={12}>
-              <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.depth), props.price)} label={'DEPTH'} />
-            </Col>
-            <Col xs={12}>
-              <LabelGroup size={20} element={formatUSD(props.pool.price, props.price)} label={'PRICE'} />
+              <ColourCoin symbol={props.pool.symbol} size={50} />
             </Col>
           </Row>
 
           <Row>
-            <Col xs={12}>
-              <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.volume), props.price)} label={'VOLUME'} />
+            <Col xs={8}>
+              <h4>DEPTH</h4>
+              <h3 className="strong">{formatUSD(convertFromWei(props.pool.depth), props.price)}</h3>
             </Col>
-            <Col xs={12}>
-              <LabelGroup size={20} element={props.pool.txCount} label={'TX COUNT'} />
+            <Col xs={8}>
+              <h4>VOLUME</h4>
+              <h3 className="strong">{formatUSD(convertFromWei(props.pool.volume), props.price)}</h3>
+            </Col>
+            <Col xs={8}>
+              <h4>PRICE</h4>
+              <h3 className="strong">{formatUSD(props.pool.price, props.price)}</h3>
             </Col>
           </Row>
 
           <Row>
-            <Col xs={12}>
-              <LabelGroup size={20} element={formatUSD(convertFromWei(props.pool.fees), props.price)} label={'FEES'} />
+            <Col xs={8}>
+              <h4>TX COUNT</h4>
+              <h3 className="strong">{props.pool.txCount}</h3>
             </Col>
-            <Col xs={12}>
-              <LabelGroup size={20} element={formatAPY(props.pool.apy)} label={'APY'} />
+            <Col xs={8}>
+              <h4>FEES</h4>
+              <h3 className="strong">{formatUSD(convertFromWei(props.pool.fees), props.price)}</h3>
+            </Col>
+            <Col xs={8}>
+              <h4>APY</h4>
+              <h3 className="strong">{formatAPY(props.pool.apy)}</h3>
             </Col>
           </Row>
 
         </Col>
       </Row>
-    </div>
+    </Card>
   )
 }
 

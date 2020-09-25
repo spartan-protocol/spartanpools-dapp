@@ -5,6 +5,8 @@
   height: auto;
   padding:5px 15px;
   margin:auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
   cursor: pointer;
   width:fit-content;
 }
@@ -38,4 +40,8 @@
 
 .btn.shadow {
   box-shadow: 1px 1px 2px 1px #dcdcdc;
+}
+
+.btn.pool {
+  font-size: 1em;
 }
