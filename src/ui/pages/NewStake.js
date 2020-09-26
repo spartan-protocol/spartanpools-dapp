@@ -357,11 +357,11 @@ const NewStake = (props) => {
                 <Col xs={8} sm={6} md={6} onClick={back} className="btn primary" style={{ textAlign: 'left', maxWidth:'100px'}}>
                     {<LeftOutlined />} BACK
                 </Col>
-                <Col xs={1} sm={8} md={12}>
+                <Col xs={16} sm={18} md={18}>
                 </Col>
-                <Col xs={15} sm={10} md={6} className="btn primary" style={{ textAlign: 'right', maxWidth:'180px'}}>
+                {/* <Col xs={15} sm={10} md={6} className="btn primary" style={{ textAlign: 'right', maxWidth:'180px'}}>
                     REMOVE LIQUIDITY
-                </Col>
+                </Col> */}
 
                 <Col xs={24}>
                     <PoolPaneSide pool={pool} price={context.spartanPrice} />
