@@ -4,7 +4,7 @@ import { Layout, Menu, Row, Col } from 'antd';
 
 import {
   LoginOutlined,
-  DollarOutlined
+  // DollarOutlined
 } from '@ant-design/icons';
 
 import logo from '../../assets/spartan-swap-logo.png';
@@ -46,9 +46,9 @@ const Sidebar = (props) => {
             <Menu.Item key='3'>
                 <Link to={"/stake"}>STAKE</Link>
             </Menu.Item> */}
-            <Menu.Item key='3'>
+            {/* <Menu.Item key='3'>
                 <Link to={"/earn"}><DollarOutlined /> EARN</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             {/* <Menu.Item key='4'>
                 <Link to={"/dao"}>DAO</Link>
             </Menu.Item> */}

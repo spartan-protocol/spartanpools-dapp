@@ -23,6 +23,7 @@ const { TabPane } = Tabs;
 const NewSwap = (props) => {
 
     const context = useContext(Context)
+    const [poolURL, setPoolURL] = useState('')
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
@@ -99,6 +100,7 @@ const NewSwap = (props) => {
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
+        setPoolURL(params.pool)
         const pool = await getPoolData(params.pool, context.poolsData)
         setPool(pool)
 
@@ -191,7 +193,7 @@ const NewSwap = (props) => {
         setStartTx(true)
         let contract = getRouterContract()
         console.log(buyData.input, outputTokenData.symbol)
-        await contract.methods.buy(buyData.input, pool.address).send({
+        await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -207,7 +209,7 @@ const NewSwap = (props) => {
         setStartTx(true)
         let contract = getRouterContract()
         console.log(sellData.input, outputTokenData.symbol)
-        await contract.methods.sell(sellData.input, pool.address).send({
+        await contract.methods.swap(sellData.input, poolURL, SPARTA_ADDR).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: '',

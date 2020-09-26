@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Card, Table, Row, Col } from 'antd'
 
 import { getListedTokens, getListedPools, getPoolsData, getGlobalData } from '../../client/web3'
-import { formatUSD, formatAPY, convertFromWei } from '../../utils'
+import { formatUSD, convertFromWei } from '../../utils'
 
 import { PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined } from '@ant-design/icons';
 
@@ -115,15 +115,6 @@ const PoolTable = (props) => {
             )
         },
         {
-            title: 'APY',
-            dataIndex: 'apy',
-            key: 'apy',
-            responsive: ['md'],
-            render: (apy) => (
-                <h3>{formatAPY(apy)}</h3>
-            )
-        },
-        {
             title: 'REVENUE',
             dataIndex: 'fees',
             key: 'fees',
@@ -200,7 +191,7 @@ export const PoolsPaneSide = (props) => {
                       <Col xs={12} sm={6} md={4}>
                         <Card className="leftbar">
                           <h4 className="strong">TXN COUNT</h4>
-                          <h4 className="strong">{+props.globalData?.unstakeTx + +props.globalData?.stakeTx + +props.globalData?.swapTx}</h4>
+                          <h4 className="strong">{+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx}</h4>
                         </Card>
                       </Col>
                       <Col xs={12} sm={6} md={4}>
