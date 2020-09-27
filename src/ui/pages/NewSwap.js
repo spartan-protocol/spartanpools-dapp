@@ -8,7 +8,6 @@ import queryString from 'query-string';
 
 import { BreadcrumbCombo, InputPane, PoolPaneSide,  } from '../components/common'
 import { HR, Sublabel, LabelGroup } from '../components/elements';
-import { Button } from '../components/elements';
 import { bn, formatBN, convertFromWei, convertToWei } from '../../utils'
 import { getSwapOutput, getSwapSlip } from '../../math'
 
@@ -239,19 +238,21 @@ const NewSwap = (props) => {
 
     return (
         <>
+          <div className="wrapper">
             <BreadcrumbCombo title={'SWAP'} parent={'POOLS'} link={'/pools'} child={'SWAP'}></BreadcrumbCombo>
             <HR></HR>
             <br />
-            <Button onClick={back} icon={<LeftOutlined />} type={'text'} size={'large'}>BACK</Button>
+            <div className="btn primary" onClick={back} style={{ maxWidth:'100px'}}><LeftOutlined />BACK</div>
 
-            <Row>
-                <Col xs={8}>
+            <Row type="flex" align="middle" justify="center">
+                <Col xs={24}>
 
                     <PoolPaneSide pool={pool} price={context.spartanPrice} />
 
                 </Col>
-                <Col xs={16}>
-                    <Row style={{ marginLeft: 20, marginRight: 20 }}>
+                <Col xs={24}>
+                  <div className="minimal-card ant-card-bordered">
+                    <Row>
                         <Col xs={24} >
                             <Tabs defaultActiveKey="1" onChange={changeTabs}>
                                 <TabPane tab={`BUY ${pool.symbol}`} key="1">
@@ -287,8 +288,10 @@ const NewSwap = (props) => {
                             </Tabs>
                         </Col>
                     </Row>
+                  </div>
                 </Col>
             </Row>
+          </div>
 
         </>
     )
@@ -303,9 +306,9 @@ const TradePane = (props) => {
             <Row>
                 <Col xs={24}>
 
-                    <Row>
+                    <Row className="cntr" align="middle" justify="center">
 
-                        <Col xs={12}>
+                        <Col xs={10}>
                             <Sublabel size={20}>{'INPUT'}</Sublabel><br />
                             <InputPane
                                 pool={props.pool}
@@ -317,7 +320,7 @@ const TradePane = (props) => {
                         <Col xs={4} style={{ display: 'flex', alignItems: 'center', justifyContent: "center" }}>
                             <DoubleRightOutlined style={{ fontSize: 24 }} />
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={10}>
                             <LabelGroup size={30} element={`${convertFromWei(props.tradeData.output)}`} label={`OUTPUT (${props.tradeData.outputSymbol})`} />
 
                             <Row>
@@ -337,13 +340,13 @@ const TradePane = (props) => {
                     <Row>
                         <Col xs={24}>
                             {!props.approval &&
-                                <Button onClick={props.unlock} type={'secondary'} style={{ float: "right" }} icon={<UnlockOutlined />}>UNLOCK</Button>
+                                <div className="btn primary" onClick={props.unlock}><UnlockOutlined /> UNLOCK</div>
                             }
                             {props.approval && props.startTx && !props.endTx &&
-                                <Button onClick={props.trade} type={'primary'} icon={<LoadingOutlined />} style={{ float: "right" }}>{`${props.type} ${props.pool.symbol}`}</Button>
+                                <div className="btn primary" onClick={props.trade}><LoadingOutlined />{`${props.type} ${props.pool.symbol}`}</div>
                             }
                             {props.approval && !props.startTx &&
-                                <Button onClick={props.trade} type={'primary'} style={{ float: "right" }}>{`${props.type} ${props.pool.symbol}`}</Button>
+                                <div className="btn primary" onClick={props.trade}>{`${props.type} ${props.pool.symbol}`}</div>
                             }
 
                         </Col>
