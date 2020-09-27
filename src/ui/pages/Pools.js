@@ -74,7 +74,7 @@ const PoolTable = (props) => {
             title: 'POOL',
             render: (record) => (
                 <div>
-                    <ColourCoin symbol={record.symbol} size={36} />
+                    <ColourCoin symbol={record.symbol} size={42} />
                 </div>
             )
         },
