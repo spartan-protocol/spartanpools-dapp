@@ -1,0 +1,9 @@
+.wallet {
+  position: absolute;
+  top:0px;
+  width:100%;
+}
+
+.ontop {
+  z-index: 100;
+}

@@ -4,7 +4,7 @@ import { Layout } from 'antd';
 import 'antd/dist/antd.css'
 import './App.css'
 
-import Wallet from './ui/layout/Wallet'
+import Headbar from './ui/layout/Headbar'
 import Sidebar from './ui/layout/Sidebar'
 
 // import SimpleSwap from './ui/pages/SimpleSwap'
@@ -34,8 +34,8 @@ const App = () => {
 			<Layout>
 				<ContextProvider>
 					<Sidebar />
-					<Wallet />
 					<Layout>
+						<Headbar />
 						<Content>
 							<Switch>
 								<Route path="/" exact component={Pools} />
