@@ -302,30 +302,29 @@ export const PoolPaneSide = (props) => {
           </Row>
 
           <Row>
-            <Col xs={8}>
+            <Col xs={12} md={8}>
               <h4>DEPTH</h4>
-              <h3 className="strong">{convertFromWei(props.pool.depth)} ({props.pool.symbol}) | {convertFromWei(props.pool.baseAmount)} (SPARTA) </h3>
+              <h3 className="strong">{convertFromWei(props.pool.depth)} ({props.pool.symbol})</h3>
+              <h3 className="strong">{convertFromWei(props.pool.baseAmount)} (SPARTA)</h3>
             </Col>
-            <Col xs={8}>
+            <Col xs={12} md={8}>
               <h4>VOLUME</h4>
               <h3 className="strong">{formatUSD(convertFromWei(props.pool.volume), props.price)}</h3>
             </Col>
-            <Col xs={8}>
+            <Col xs={12} md={8}>
               <h4>PRICE</h4>
               <h3 className="strong">{formatUSD(props.pool.price, props.price)}</h3>
             </Col>
-          </Row>
 
-          <Row>
-            <Col xs={8}>
+            <Col xs={12} md={8}>
               <h4>TX COUNT</h4>
               <h3 className="strong">{props.pool.txCount}</h3>
             </Col>
-            <Col xs={8}>
+            <Col xs={12} md={8}>
               <h4>FEES</h4>
               <h3 className="strong">{formatUSD(convertFromWei(props.pool.fees), props.price)}</h3>
             </Col>
-            <Col xs={8}>
+            <Col xs={12} md={8}>
               <h4>APY</h4>
               <h3 className="strong">{formatAPY(props.pool.apy)}</h3>
             </Col>
