@@ -7,7 +7,7 @@ import AddressConn from '../components/AddressConn'
 const Wallet = (props) => {
 
     return (
-          <Row className="wallet" align="middle">
+          <Row className="wallet ontop" align="middle">
             <Col xs={24}>
               <AddressConn />
             </Col>
