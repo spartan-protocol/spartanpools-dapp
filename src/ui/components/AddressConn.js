@@ -119,7 +119,7 @@ const AddressConn = (props) => {
             closable={false}
             onClose={onClose}
             visible={visible}
-            width={350}
+            width={400}
         >
             <WalletDrawer />
         </Drawer>

@@ -7,7 +7,7 @@ import {
   // DollarOutlined
 } from '@ant-design/icons';
 
-import logo from '../../assets/spartan-swap-logo.png';
+import logo from '../../assets/spartan-pools-logo.png';
 
 const { Sider } = Layout;
 
