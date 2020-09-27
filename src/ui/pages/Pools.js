@@ -174,33 +174,33 @@ export const PoolsPaneSide = (props) => {
     return (
         <div className="wrapper">
                     <Row type="flex" justify="center" align="middle">
-                      <Col md={4}>
+                      <Col md={2}>
                       </Col>
-                      <Col xs={12} sm={6} md={4}>
+                      <Col xs={12} md={5}>
                         <Card className="leftbar">
-                          <h4 className="strong">TOTAL STAKED</h4>
+                          <h5 className="strong">TOTAL STAKED</h5>
                           <h4 className="strong">{formatUSD(convertFromWei(props.globalData.totalPooled), context.spartanPrice)}</h4>
                         </Card>
                       </Col>
-                      <Col type="flex" xs={12} sm={6} md={4}>
+                      <Col xs={12} md={5}>
                         <Card className="rightbar">
-                          <h4 className="strong">TOTAL VOLUME</h4>
+                          <h5 className="strong">TOTAL VOLUME</h5>
                           <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h4>
                         </Card>
                       </Col>
-                      <Col xs={12} sm={6} md={4}>
+                      <Col xs={12} md={5}>
                         <Card className="leftbar">
-                          <h4 className="strong">TXN COUNT</h4>
+                          <h5 className="strong">TXN COUNT</h5>
                           <h4 className="strong">{+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx}</h4>
                         </Card>
                       </Col>
-                      <Col xs={12} sm={6} md={4}>
+                      <Col xs={12} md={5}>
                         <Card className="rightbar">
-                          <h4 className="strong">TOTAL FEES</h4>
+                          <h5 className="strong">TOTAL FEES</h5>
                           <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
                         </Card>
                       </Col>
-                      <Col md={4}>
+                      <Col md={2}>
                       </Col>
                     </Row>
         </div>
