@@ -26,7 +26,7 @@ const DrawerContent = (props) => {
                 <TabPane tab="TOKENS" key="1">
                     <AssetTable />
                 </TabPane>
-                <TabPane tab="STAKES" key="2">
+                <TabPane tab="POOL SHARES" key="2">
                     <StakeTable />
                 </TabPane>
                 {/* <TabPane tab="CDPS" key="3">
@@ -100,7 +100,7 @@ export const StakeTable = () => {
                             symbol={record.symbol}
                             name={record.name}
                             balance={record.units}
-                            size={32} />
+                            size={42} />
                 </div>
             )
         }
