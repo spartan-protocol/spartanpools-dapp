@@ -19,7 +19,7 @@ import {
 
 const { TabPane } = Tabs;
 
-const NewStake = (props) => {
+const AddLiquidity = (props) => {
 
     const context = useContext(Context)
     const [pool, setPool] = useState({
@@ -46,20 +46,7 @@ const NewStake = (props) => {
         'input': 0,
     })
 
-    // const [stake1Data, setStake1Data] = useState({
-    //     address: SPARTA_ADDR,
-    //     symbol: 'XXX',
-    //     balance: 0,
-    //     input: 0,
-    // })
-    // const [stake2Data, setStake2Data] = useState({
-    //     address: BNB_ADDR,
-    //     symbol: 'XXX',
-    //     balance: 0,
-    //     input: 0,
-    // })
-
-    const [liquidityData, setStakeData] = useState({
+    const [liquidityData, setLiquidityData] = useState({
         baseAmount: '',
         tokenAmount: '',
     })
@@ -70,7 +57,7 @@ const NewStake = (props) => {
     const [startTx, setStartTx] = useState(false);
     const [endTx, setEndTx] = useState(false);
 
-    const [unstakeAmount, setUnstakeAmount] = useState(0)
+    const [withdrawAmount, setWithdrawAmount] = useState(0)
 
     useEffect(() => {
         if (context.connected) {
@@ -113,29 +100,16 @@ const NewStake = (props) => {
 
         setUserData(_userData)
 
-        // setStake1Data(await getStakeInputData(baseData.balance, baseData))
-        // setStake2Data(await getStakeInputData(tokenData.balance, tokenData))
-
         console.log(baseData?.balance, tokenData?.balance)
 
         let liquidityData = getPairedAmount(baseData?.balance, tokenData?.balance, pool)
-        setStakeData(liquidityData)
+        setLiquidityData(liquidityData)
         const estLiquidityUnits = getLiquidityUnits(liquidityData, pool)
         setLiquidityUnits(estLiquidityUnits)
         checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
         checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
 
     }
-
-    // const getStakeInputData = async (input, baseData) => {
-    //     const liquidityData = {
-    //         address: baseData.address,
-    //         symbol: baseData.symbol,
-    //         balance: baseData.balance,
-    //         input: formatBN(bn(input), 0),
-    //     }
-    //     return liquidityData
-    // }
 
     const checkApproval = async (address) => {
         if (address === BNB_ADDR) {
@@ -157,7 +131,7 @@ const NewStake = (props) => {
             baseAmount: "0",
             tokenAmount: formatBN(convertToWei(input), 0),
         }
-        setStakeData(liquidityData)
+        setLiquidityData(liquidityData)
         setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
         let _userData = {
             'baseBalance': userData.baseBalance,
@@ -177,7 +151,7 @@ const NewStake = (props) => {
             baseAmount: "0",
             tokenAmount: formatBN(finalAmt, 0),
         }
-        setStakeData(liquidityData)
+        setLiquidityData(liquidityData)
         setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
         let _userData = {
             'baseBalance': userData.baseBalance,
@@ -193,7 +167,7 @@ const NewStake = (props) => {
     const onAddSymmChange = async (e) => {
         const input = e.target.value
         let liquidityData = getPairedAmount(userData.baseBalance, formatBN(convertToWei(input), 0), pool)
-        setStakeData(liquidityData)
+        setLiquidityData(liquidityData)
         setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
         let _userData = {
             'baseBalance': userData.baseBalance,
@@ -210,7 +184,7 @@ const NewStake = (props) => {
         const finalAmt = (bn(userData?.baseBalance)).times(amount).div(100)
         console.log(finalAmt, formatBN(finalAmt, 0))
         let liquidityData = getPairedAmount(formatBN(finalAmt, 0), userData.tokenBalance, pool)
-        setStakeData(liquidityData)
+        setLiquidityData(liquidityData)
         setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
         let _userData = {
             'baseBalance': userData.baseBalance,
@@ -222,16 +196,6 @@ const NewStake = (props) => {
         }
         setUserData(_userData)
     }
-
-    // const onStake2Change = async (e) => {
-    //     const input = e.target.value
-    //     setStake2Data(await getStakeInputData(convertToWei(input), stake2Data))
-    //     const liquidityData = {
-    //         baseAmount: stake1Data.input,
-    //         tokenAmount: convertToWei(input)
-    //     }
-    //     setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
-    // }
 
     const getPairedAmount = (baseBalance, tokenAmount, pool) => {
 
@@ -258,18 +222,8 @@ const NewStake = (props) => {
         return liquidityData
     }
 
-    // const changeStake2Amount = async (amount) => {
-    //     const finalAmt = (amount * stake2Data?.balance) / 100
-    //     setStake2Data(await getStakeInputData(finalAmt, stake2Data))
-    //     const liquidityData = {
-    //         baseAmount: stake1Data.input,
-    //         tokenAmount: finalAmt
-    //     }
-    //     setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
-    // }
-
-    const changeUnstakeAmount = async (amount) => {
-        setUnstakeAmount(amount)
+    const changeWithdrawAmount = async (amount) => {
+        setWithdrawAmount(amount)
     }
 
     const getEstShare = () => {
@@ -316,7 +270,7 @@ const NewStake = (props) => {
 
     const unstake = async () => {
         let contract = getRouterContract()
-        const tx = await contract.methods.removeLiquidity(unstakeAmount * 100, pool.address).send({
+        const tx = await contract.methods.removeLiquidity(withdrawAmount * 100, pool.address).send({
             from: context.walletData.address,
             gasPrice: '',
             gas: ''
@@ -343,8 +297,6 @@ const NewStake = (props) => {
         setEndTx(false)
     }
 
-
-
     return (
         <>
           <div>
@@ -359,9 +311,6 @@ const NewStake = (props) => {
                 </Col>
                 <Col xs={16} sm={18} md={18}>
                 </Col>
-                {/* <Col xs={15} sm={10} md={6} className="btn primary" style={{ textAlign: 'right', maxWidth:'180px'}}>
-                    REMOVE LIQUIDITY
-                </Col> */}
 
                 <Col xs={24}>
                     <PoolPaneSide pool={pool} price={context.spartanPrice} />
@@ -380,9 +329,6 @@ const NewStake = (props) => {
                                         liquidityData={liquidityData}
                                         onAddChange={onAddTokenChange}
                                         changeAmount={changeTokenAmount}
-                                        // stake2Data={stake2Data}
-                                        // onStake2Change={onStake2Change}
-                                        // changeStake2Amount={changeStake2Amount}
                                         estLiquidityUnits={estLiquidityUnits}
                                         getEstShare={getEstShare}
                                         approvalBase={approvalBase}
@@ -402,9 +348,6 @@ const NewStake = (props) => {
                                         liquidityData={liquidityData}
                                         onAddChange={onAddSymmChange}
                                         changeAmount={changeSymmAmount}
-                                        // stake2Data={stake2Data}
-                                        // onStake2Change={onStake2Change}
-                                        // changeStake2Amount={changeStake2Amount}
                                         estLiquidityUnits={estLiquidityUnits}
                                         getEstShare={getEstShare}
                                         approvalBase={approvalBase}
@@ -419,7 +362,7 @@ const NewStake = (props) => {
                                 <TabPane tab={`REMOVE ${pool.symbol} + SPARTA`} key="3">
                                     <UnstakePane
                                         pool={pool}
-                                        changeUnstakeAmount={changeUnstakeAmount}
+                                        changeWithdrawAmount={changeWithdrawAmount}
                                         approvalToken={approvalToken}
                                         unlock={unlockToken}
                                         unstake={unstake}
@@ -439,7 +382,7 @@ const NewStake = (props) => {
     )
 }
 
-export default withRouter(NewStake)
+export default withRouter(AddLiquidity)
 
 const AddSymmPane = (props) => {
 
@@ -464,11 +407,6 @@ const AddSymmPane = (props) => {
                             <LabelGroup size={30}
                                 element={`${convertFromWei(props.liquidityData.baseAmount)}`}
                                 label={`PAIRED AMOUNT (SPARTA)`} />
-
-                            {/* <InputPane
-                                paneData={props.stake2Data}
-                                onInputChange={props.onStake2Change}
-                                changeAmount={props.changeStake2Amount} /> */}
 
                         </Col>
 
@@ -525,7 +463,6 @@ const AddAsymmPane = (props) => {
                                 onInputChange={props.onAddChange}
                                 changeAmount={props.changeAmount}
                             />
-
                         </Col>
 
                         <Col xs={1}>
@@ -564,7 +501,6 @@ const AddAsymmPane = (props) => {
 
 const UnstakePane = (props) => {
 
-
     return (
         <>
             <Row>
@@ -574,7 +510,7 @@ const UnstakePane = (props) => {
                         </Col>
                         <Col xs={12}>
                             <OutputPane
-                                changeAmount={props.changeUnstakeAmount} />
+                                changeAmount={props.changeWithdrawAmount} />
                         </Col>
                         <Col xs={6}>
                         </Col>

@@ -14,7 +14,7 @@ import WalletDrawer from '../layout/WalletDrawer'
 import { getAddressShort, } from '../../utils'
 import {
     getTokenDetails, getListedTokens,
-    getWalletData, getStakesData, getListedPools
+    getWalletData, getPoolSharesData, getListedPools
 } from '../../client/web3'
 
 const AddressConn = (props) => {
@@ -57,7 +57,7 @@ const AddressConn = (props) => {
             let poolArray = context.poolArray ? context.poolArray : await getListedPools()
             context.setContext({ 'poolArray': poolArray })
 
-            let stakesData = context.stakesData ? context.stakesData : await getStakesData(account, tokenArray)
+            let stakesData = context.stakesData ? context.stakesData : await getPoolSharesData(account, tokenArray)
             context.setContext({ 'stakesData': stakesData })
 
             context.setContext({ 'connected': true })

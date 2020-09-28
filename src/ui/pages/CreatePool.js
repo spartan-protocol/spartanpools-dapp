@@ -45,13 +45,13 @@ const CreatePool = (props) => {
     //     'fees': 0
     // })
 
-    const [stake1Data, setStake1Data] = useState({
+    const [stake1Data, setAddLiquidity1Data] = useState({
         address: SPARTA_ADDR,
         symbol: 'XXX',
         balance: 0,
         input: 0,
     })
-    const [stake2Data, setStake2Data] = useState({
+    const [stake2Data, setAddLiquidity2Data] = useState({
         address: BNB_ADDR,
         symbol: 'XXX',
         balance: 0,
@@ -61,7 +61,7 @@ const CreatePool = (props) => {
 
     const [approval1, setApproval1] = useState(false)
     const [approval2, setApproval2] = useState(false)
-    // const [stakeTx, setStakeTx] = useState(null)
+    // const [addLiquidityTx, setAddLiquidityTx] = useState(null)
 
     useEffect(() => {
         if (context.connected) {
@@ -79,9 +79,9 @@ const CreatePool = (props) => {
         // setMainPool(await getTokenData(tokenList[0], context.walletData))
 
         const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
-        setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
+        setAddLiquidity1Data(await getPoolSharesInputData(inputTokenData.balance, inputTokenData))
         // const outputTokenData = await getTokenData(BNB_ADDR, context.walletData)
-        // setStake2Data(await getStakeInputData(outputTokenData.balance, outputTokenData))
+        // setAddLiquidity2Data(await getPoolSharesInputData(outputTokenData.balance, outputTokenData))
 
     }
 
@@ -100,7 +100,7 @@ const CreatePool = (props) => {
 
             if (+tokenData.balance > 0) {
                 setCheckFlag(true)
-                setStake2Data(await getStakeInputData(tokenData.balance, tokenData))
+                setAddLiquidity2Data(await getPoolSharesInputData(tokenData.balance, tokenData))
             }
 
             await checkApproval1(SPARTA_ADDR)
@@ -113,9 +113,9 @@ const CreatePool = (props) => {
 
     // }
 
-    const onStake1Change = async (e) => {
+    const onAddLiquidity1Change = async (e) => {
         const input = e.target.value
-        setStake1Data(await getStakeInputData(convertToWei(input), stake1Data))
+        setAddLiquidity1Data(await getPoolSharesInputData(convertToWei(input), stake1Data))
         // const stake = {
         //     baseAmount: convertToWei(input),
         //     tokenAmount: stake2Data.input
@@ -123,9 +123,9 @@ const CreatePool = (props) => {
         // setLiquidityUnits(getLiquidityUnits(stake, stake))
     }
 
-    // const changeStake1Token = async (tokenAmount) => {
+    // const changeAddLiquidity1Token = async (tokenAmount) => {
     //     const inputTokenData = await getTokenData(tokenAmount, context.walletData)
-    //     setStake1Data(await getStakeInputData(inputTokenData.balance, inputTokenData))
+    //     setAddLiquidity1Data(await getPoolSharesInputData(inputTokenData.balance, inputTokenData))
     //     const stake = {
     //         baseAmount: inputTokenData.balance,
     //         tokenAmount: stake2Data.input
@@ -133,9 +133,9 @@ const CreatePool = (props) => {
     //     setLiquidityUnits(getLiquidityUnits(stake, stake))
     // }
 
-    const changeStake1Amount = async (amount) => {
+    const changeAddLiquidity1Amount = async (amount) => {
         const finalAmt = (amount * stake1Data?.balance) / 100
-        setStake1Data(await getStakeInputData(finalAmt, stake1Data))
+        setAddLiquidity1Data(await getPoolSharesInputData(finalAmt, stake1Data))
         // const stake = {
         //     baseAmount: finalAmt,
         //     tokenAmount: stake2Data.input
@@ -143,13 +143,13 @@ const CreatePool = (props) => {
         // setLiquidityUnits(getLiquidityUnits(stake, stake))
     }
 
-    // const changeStake2Token = async (tokenAmount) => {
+    // const changeAddLiquidity2Token = async (tokenAmount) => {
     //     console.log("changing sell tokens not enabled yet")
     // }
 
-    const onStake2Change = async (e) => {
+    const onAddLiquidity2Change = async (e) => {
         const input = e.target.value
-        setStake2Data(await getStakeInputData(convertToWei(input), stake2Data))
+        setAddLiquidity2Data(await getPoolSharesInputData(convertToWei(input), stake2Data))
         // const stake = {
         //     baseAmount: stake1Data.input,
         //     tokenAmount: convertToWei(input)
@@ -159,9 +159,9 @@ const CreatePool = (props) => {
         // console.log(formatBN(getLiquidityUnits(stake, stake)))
     }
 
-    const changeStake2Amount = async (amount) => {
+    const changeAddLiquidity2Amount = async (amount) => {
         const finalAmt = (amount * stake2Data?.balance) / 100
-        setStake2Data(await getStakeInputData(finalAmt, stake2Data))
+        setAddLiquidity2Data(await getPoolSharesInputData(finalAmt, stake2Data))
         // const stake = {
         //     baseAmount: stake1Data.input,
         //     tokenAmount: finalAmt
@@ -171,14 +171,14 @@ const CreatePool = (props) => {
         // console.log(formatBN(getLiquidityUnits(stake, stake)))
     }
 
-    const getStakeInputData = async (input, inputTokenData) => {
-        const stakeData = {
+    const getPoolSharesInputData = async (input, inputTokenData) => {
+        const liquidityData = {
             address: inputTokenData.address,
             symbol: inputTokenData.symbol,
             balance: inputTokenData.balance,
             input: input,
         }
-        return stakeData
+        return liquidityData
     }
 
     // const getShare = () => {
@@ -256,7 +256,7 @@ const CreatePool = (props) => {
             gas: '',
             value: addressSelected === BNB_ADDR ? formatBN(stake2Data.input, 0) : 0
         })
-        // setStakeTx(tx.transactionHash)
+        // setAddLiquidityTx(tx.transactionHash)
         await reloadData()
         props.history.push('/pools')
     }
@@ -267,7 +267,7 @@ const CreatePool = (props) => {
         var sortedTokens = [...new Set(assetArray.concat(tokenArray))].sort()
         let poolArray = await getListedPools()
         let poolsData = await getPoolsData(tokenArray)
-        // let stakesData = await getStakesData(context.walletData.address, poolArray)
+        // let stakesData = await getPoolSharesData(context.walletData.address, poolArray)
         let tokenDetailsArray = await getTokenDetails(context.walletData.address, sortedTokens)
         let walletData = await getWalletData(context.walletData.address, tokenDetailsArray)
         context.setContext({ 'tokenArray': tokenArray })
@@ -332,9 +332,9 @@ const CreatePool = (props) => {
                                         // mainPool={mainPool}
                                         // tokenList={tokenShortList}
                                         paneData={stake1Data}
-                                        onInputChange={onStake1Change}
-                                        // changeToken={changeStake1Token}
-                                        changeAmount={changeStake1Amount}
+                                        onInputChange={onAddLiquidity1Change}
+                                        // changeToken={changeAddLiquidity1Token}
+                                        changeAmount={changeAddLiquidity1Amount}
                                     />
                                 </Col>
                                 <Col xs={12}>
@@ -342,9 +342,9 @@ const CreatePool = (props) => {
                                     <InputPane
                                         // tokenList={[tokenData.address]}
                                         paneData={stake2Data}
-                                        onInputChange={onStake2Change}
-                                        // changeToken={changeStake2Token}
-                                        changeAmount={changeStake2Amount} />
+                                        onInputChange={onAddLiquidity2Change}
+                                        // changeToken={changeAddLiquidity2Token}
+                                        changeAmount={changeAddLiquidity2Amount} />
                                 </Col>
 
                             </Row>

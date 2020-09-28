@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context'
 import { LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 
-import { getDaoContract, getRewards, getStakesData, getListedTokens } from '../../client/web3'
+import { getDaoContract, getRewards, getPoolSharesData, getListedTokens } from '../../client/web3'
 
 import { Table, Row, Col, Card, message } from 'antd';
 
@@ -63,7 +63,7 @@ const Earn = (props) => {
     }
 
     const refreshData = async () => {
-        let stakesData = await getStakesData(context.walletData.address, await getListedTokens())
+        let stakesData = await getPoolSharesData(context.walletData.address, await getListedTokens())
         context.setContext({ 'stakesData': stakesData })
         message.success('Transaction Sent!', 2);
     }

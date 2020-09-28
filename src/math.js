@@ -127,12 +127,12 @@ export const getPoolShare = (unitData, pool) => {
   const T = bn(pool.tokenAmount)
   const tokenAmount = T.times(units).div(total)
   const baseAmount = V.times(units).div(total)
-  const stakeData = {
+  const liquidityData = {
     tokenAmount: tokenAmount,
     baseAmount: baseAmount,
   }
-  // console.log((stakeData.tokenAmount).toFixed(0), (stakeData.baseAmount).toFixed(0))
-  return stakeData
+  // console.log((liquidityData.tokenAmount).toFixed(0), (liquidityData.baseAmount).toFixed(0))
+  return liquidityData
 }
 
 export const calcCLPSwap = (x, X, Y) =>{
