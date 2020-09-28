@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Row, Col, Breadcrumb, Button, Input, Dropdown, Menu, Divider, Card } from 'antd'
+import { Row, Col, Breadcrumb, Button, Input, Dropdown, Menu, Divider, Card, Image } from 'antd'
 import { DownOutlined, } from '@ant-design/icons';
 // PlusCircleOutlined, MinusCircleOutlined, Tooltip
 import {
@@ -9,6 +9,8 @@ import {
 } from '../../utils'
 import { getTokenSymbol } from '../../client/web3'
 import { H1, HR, Text, Center, Label, Sublabel } from '../components/elements'
+
+import { BNB_ADDR } from '../../client/web3'
 
 // Check If Responsive
 export const useWindowSize = () => {
@@ -40,9 +42,6 @@ export const useWindowSize = () => {
 
   return windowSize;
 }
-
-
-
 
 export const BreadcrumbCombo = (props) => {
 
@@ -297,7 +296,17 @@ export const PoolPaneSide = (props) => {
               <h2 className="strong">{props.pool.symbol}</h2>
             </Col>
             <Col xs={12}>
-              <ColourCoin symbol={props.pool.symbol} size={50} />
+              { props.pool.address === BNB_ADDR &&
+                  <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"} style={{ height:50 }} alt='BNB' />
+              }
+              { props.pool.address !== BNB_ADDR &&
+                <Image
+                  width={50}
+                  height={50}
+                  src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + props.pool.address + "/logo.png"}
+                  fallback="../fallback.png"
+                />
+              }
             </Col>
           </Row>
 
@@ -408,15 +417,23 @@ export const CoinRow = (props) => {
 
   return (
     <div>
-      <Row align="middle">
-        <Row align="middle">
-          <Col xs={4}>
-            <ColourCoin symbol={props.symbol} size={props.size} />
+      <Row align="middle" justify="center" className="cntr">
+        <Col xs={12}>
+            { props.address === BNB_ADDR &&
+              <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"} style={{ height:40 }} alt='BNB' />
+            }
+            { props.address !== BNB_ADDR &&
+              <Image
+                width={40}
+                height={40}
+                src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + props.address + "/logo.png"}
+                fallback="../fallback.png"
+              />
+            }
           </Col>
-          <Col xs={20}>
+          <Col xs={12}>
             <Label size={props.size / 2.2}>{props.name}</Label>
           </Col>
-        </Row>
           <Col xs={12}>
             <Label size={props.size / 1.8}>{props.symbol}</Label><br />
           </Col>

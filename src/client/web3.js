@@ -27,7 +27,7 @@ export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
 }
 export const getExplorerURL = () => {
-    return "https://testnet.bscscan.com//"
+    return "https://bscscan.com/"
 }
 export const getAccount = async () => {
     var web3_ = getWeb3()
@@ -118,7 +118,7 @@ export const getListedTokens = async () => {
     } catch (err) {
         console.log(err)
     }
-     
+
     console.log({ tokenArray })
     return tokenArray
 }
