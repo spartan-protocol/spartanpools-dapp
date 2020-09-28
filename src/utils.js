@@ -17,12 +17,12 @@ export function formatBN(BN, n=2){
     return BN.toFixed(n)
 }
 
-export const one = 10**18
+export const one = 10**18;
 
 export function convertFromWei(number) {
     var num = new BigNumber(number)
     var final = num.div(10**18)
-    return final.toFixed(2)
+    return (final).toFixed(2);
 }
 
 export function convertToWei(number) {
@@ -44,7 +44,7 @@ export const formatAPY = (input) =>{
 
 export const formatUSD = (input, price) => {
     const value = input ? (bn(input).times( price )).toNumber() : 0
-    return `$${(value.toLocaleString())}`
+    return `$${(value.toFixed(0).toLocaleString())}`
 }
 
 export const rainbowStop = (h) => {

@@ -1,25 +1,25 @@
-import React, { useEffect, useContext, useState } from 'react'
-import { Context } from '../../context'
-import { Link } from 'react-router-dom'
-import { Card, Table, Row, Col, Image } from 'antd'
+import React, {useEffect, useContext, useState} from 'react'
+import {Context} from '../../context'
+import {Link} from 'react-router-dom'
+import {Card, Table, Row, Col, Image, Tooltip} from 'antd'
 
-import { getListedTokens, getListedPools, getPoolsData, getGlobalData } from '../../client/web3'
-import { formatUSD, convertFromWei } from '../../utils'
+import {getListedTokens, getListedPools, getPoolsData, getGlobalData} from '../../client/web3'
+import {formatUSD, convertFromWei} from '../../utils'
 
-import { PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined } from '@ant-design/icons';
+import {PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined} from '@ant-design/icons';
 
-import { BNB_ADDR } from '../../client/web3'
+import {BNB_ADDR} from '../../client/web3'
 
 const Pools = (props) => {
 
     const context = useContext(Context)
     const [globalData, setGlobalData] = useState({
-        totalPooled:0,
-        totalFees:0,
-        totalVolume:0,
-        addLiquidityTx:0,
-        removeLiquidityTx:0,
-        swapTx:0,
+        totalPooled: 0,
+        totalFees: 0,
+        totalVolume: 0,
+        addLiquidityTx: 0,
+        removeLiquidityTx: 0,
+        swapTx: 0,
     })
 
     useEffect(() => {
@@ -35,15 +35,15 @@ const Pools = (props) => {
 
     return (
         <>
-            <Row type="flex" justify="center" align="middle" style={{textAlign:"center"}}>
+            <Row type="flex" justify="center" align="middle" style={{textAlign: "center"}}>
                 <Col xs={24}>
-                  <h1>Pools</h1>
+                    <h1>Pools</h1>
                 </Col>
                 <Col xs={24}>
-                    <PoolsPaneSide globalData={globalData} />
+                    <PoolsPaneSide globalData={globalData}/>
                 </Col>
                 <Col xs={24}>
-                    <PoolTable />
+                    <PoolTable/>
                 </Col>
             </Row>
         </>
@@ -63,10 +63,10 @@ const PoolTable = (props) => {
 
     const getData = async () => {
         let tokenArray = await getListedTokens()
-        context.setContext({ 'tokenArray': tokenArray })
+        context.setContext({'tokenArray': tokenArray})
         let poolArray = await getListedPools()
-        context.setContext({ 'poolArray': poolArray })
-        context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
+        context.setContext({'poolArray': poolArray})
+        context.setContext({'poolsData': await getPoolsData(tokenArray)})
     }
 
     const columns = [
@@ -74,18 +74,20 @@ const PoolTable = (props) => {
             title: 'POOL',
             render: (record) => (
                 <div>
-                  { record.address === BNB_ADDR &&
-                   <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"} style={{ height:40 }} alt='BNB' />
-                  }
+                    {record.address === BNB_ADDR &&
+                    <img
+                        src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"}
+                        style={{height: 40}} alt='BNB'/>
+                    }
 
-                  { record.address !== BNB_ADDR &&
-                   <Image
-                     width={40}
-                     height={40}
-                     src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + record.address + "/logo.png"}
-                     fallback="../fallback.png"
-                   />
-                  }
+                    {record.address !== BNB_ADDR &&
+                    <Image
+                        width={40}
+                        height={40}
+                        src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + record.address + "/logo.png"}
+                        fallback="../fallback.png"
+                    />
+                    }
                 </div>
             )
         },
@@ -110,7 +112,11 @@ const PoolTable = (props) => {
             key: 'depth',
             responsive: ['sm'],
             render: (depth) => (
-                <h3>{formatUSD(convertFromWei(depth), context.spartanPrice)}</h3>
+                <h3><Tooltip placement="bottom" title={formatUSD(convertFromWei(depth), context.spartanPrice)}>
+                    <span>{formatUSD(convertFromWei(depth), context.spartanPrice)}</span>
+                </Tooltip></h3>
+
+
             )
         },
         {
@@ -142,22 +148,22 @@ const PoolTable = (props) => {
         },
         {
             title: <a href="/pool/create">
-              <Col xs={24} className="cntr btn secondary">
-                <PlusCircleOutlined /> CREATE POOL
-              </Col>
+                <Col xs={24} className="cntr btn secondary">
+                    <PlusCircleOutlined/> CREATE POOL
+                </Col>
             </a>,
             render: (record) => (
                 <Row type="flex" justify="center" align="middle">
-                  <Col className="btn primary">
-                    <Link to={`/pool/stake?pool=${record.address}`}>
-                        <LoginOutlined /> JOIN
-                    </Link>
-                  </Col>
-                  <Col className="btn primary">
-                    <Link to={`/pool/swap?pool=${record.address}`}>
-                        <SwapOutlined /> TRADE
-                    </Link>
-                  </Col>
+                    <Col className="btn primary">
+                        <Link to={`/pool/stake?pool=${record.address}`}>
+                            <LoginOutlined/> JOIN
+                        </Link>
+                    </Col>
+                    <Col className="btn primary">
+                        <Link to={`/pool/swap?pool=${record.address}`}>
+                            <SwapOutlined/> TRADE
+                        </Link>
+                    </Col>
                 </Row>
 
             )
@@ -167,19 +173,19 @@ const PoolTable = (props) => {
     return (
         <>
             {!context.connected &&
-                <LoadingOutlined />
+            <LoadingOutlined/>
             }
             {context.connected &&
-                <Row>
-                    <Col xs={24}>
-                        <Table
+            <Row>
+                <Col xs={24}>
+                    <Table
                         dataSource={context.poolsData}
                         columns={columns} pagination={false}
-                        rowKey="symbol" />
-                    </Col>
-                </Row>
+                        rowKey="symbol"/>
+                </Col>
+            </Row>
             }
-            <br />
+            <br/>
         </>
     )
 }
@@ -190,36 +196,39 @@ export const PoolsPaneSide = (props) => {
 
     return (
         <div>
-                    <Row type="flex" justify="center" align="middle">
-                      <Col md={2}>
-                      </Col>
-                      <Col xs={12} md={5}>
-                        <Card className="leftbar">
-                          <h5 className="strong">TOTAL POOLED</h5>
-                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h4>
-                        </Card>
-                      </Col>
-                      <Col xs={12} md={5}>
-                        <Card className="rightbar">
-                          <h5 className="strong">TOTAL VOLUME</h5>
-                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h4>
-                        </Card>
-                      </Col>
-                      <Col xs={12} md={5}>
-                        <Card className="leftbar">
-                          <h5 className="strong">TXN COUNT</h5>
-                          <h4 className="strong">{+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx}</h4>
-                        </Card>
-                      </Col>
-                      <Col xs={12} md={5}>
-                        <Card className="rightbar">
-                          <h5 className="strong">TOTAL FEES</h5>
-                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
-                        </Card>
-                      </Col>
-                      <Col md={2}>
-                      </Col>
-                    </Row>
+            <Row type="flex" justify="center" align="middle">
+                <Col md={2}>
+                </Col>
+                <Col xs={12} md={5}>
+                    <Card className="leftbar">
+                        <h5 className="strong">TOTAL POOLED</h5>
+
+                        <h4 className="strong">{formatUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h4>
+
+
+                    </Card>
+                </Col>
+                <Col xs={12} md={5}>
+                    <Card className="rightbar">
+                        <h5 className="strong">TOTAL VOLUME</h5>
+                        <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h4>
+                    </Card>
+                </Col>
+                <Col xs={12} md={5}>
+                    <Card className="leftbar">
+                        <h5 className="strong">TXN COUNT</h5>
+                        <h4 className="strong">{+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx}</h4>
+                    </Card>
+                </Col>
+                <Col xs={12} md={5}>
+                    <Card className="rightbar">
+                        <h5 className="strong">TOTAL FEES</h5>
+                        <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
+                    </Card>
+                </Col>
+                <Col md={2}>
+                </Col>
+            </Row>
         </div>
     )
 }
