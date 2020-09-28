@@ -3,10 +3,11 @@ import { Context } from '../../context'
 
 import { withRouter } from 'react-router-dom'
 import { Row, Col, Input } from 'antd'
+import { LeftOutlined } from '@ant-design/icons';
 import { QuestionCircleOutlined, UnlockOutlined } from '@ant-design/icons';
 
 import { BreadcrumbCombo, InputPane, CoinRow } from '../components/common'
-import { Center, Button, Sublabel } from '../components/elements'
+import { Sublabel } from '../components/elements'
 
 
 // import { getLiquidityUnits } from '../../math'
@@ -236,6 +237,10 @@ const CreatePool = (props) => {
         await checkApproval2(address)
     }
 
+    const back = () => {
+        props.history.push('/pools')
+    }
+
     //0x7fd8b9a2
     //000000000000000000000000000000000000000000000001a055690d9db8
     //00000000000000000000000000000000000000000000000000000de0b6b3a764
@@ -275,12 +280,18 @@ const CreatePool = (props) => {
     }
 
     return (
-        <div>
+        <div className="wrapper">
             <BreadcrumbCombo title={'CREATE POOL'} parent={'POOLS'} link={'/pools'} child={'CREATE'}></BreadcrumbCombo>
             <br />
-            <Row>
+            <Row type="flex" align="middle" justify="center">
 
-                <Col xs={12}>
+              <Col xs={8} sm={6} md={6} onClick={back} className="btn primary" style={{ textAlign: 'left', maxWidth:'100px'}}>
+                  {<LeftOutlined />} BACK
+              </Col>
+              <Col xs={16} sm={18} md={18}>
+              </Col>
+
+                <Col xs={16} md={12}>
 
                     <Input
                         placeholder={'enter token address'}
@@ -294,26 +305,28 @@ const CreatePool = (props) => {
                         //     tokenList={tokenList} />}
                     ></Input> */}
                 </Col>
-                <Col xs={4}>
-                    <Button icon={<QuestionCircleOutlined />}
-                        onClick={checkToken}
-                        type="outline">CHECK</Button>
+                <Col xs={8} md={4}>
+                    <div className="btn primary" onClick={checkToken}>{<QuestionCircleOutlined />}CHECK</div>
+                </Col>
+                <Col xs={0} md={6}>
                 </Col>
                 {checkFlag &&
-                    <Col xs={8}>
+                  <div className="minimal-card ant-card-bordered cntr">
+                    <Col xs={24}>
                         <CoinRow
                             symbol={tokenData.symbol}
                             name={tokenData.name}
                             balance={tokenData.balance}
-                            size={40} />
+                            size={30} />
                     </Col>
+                  </div>
                 }
             </Row>
             {checkFlag &&
-                <div>
-                    <Row>
+                <div className="minimal-card ant-card-bordered cntr">
+                    <Row type="flex" align="middle" justify="center">
                         <Col xs={24}>
-                            <Row >
+                            <Row type="flex" align="middle" justify="center">
                                 <Col xs={12}>
                                 <Sublabel size={20}>{'INPUT SPARTA'}</Sublabel><br />
                                     <InputPane
@@ -336,7 +349,7 @@ const CreatePool = (props) => {
                                 </Col>
 
                             </Row>
-                            <Row>
+                            <Row type="flex" align="middle" justify="center">
                                 {/* <Col xs={12}>
                                     <Center><LabelGroup size={18} element={`${convertFromWei(liquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                                 </Col>
@@ -348,21 +361,23 @@ const CreatePool = (props) => {
                                 </Col> */}
                             </Row>
                             <br></br>
-                            <Col xs={8}>
-                                {!approval1 &&
-                                    <Center><Button type={'secondary'} onClick={unlockSparta} icon={<UnlockOutlined />}>UNLOCK {stake1Data.symbol}</Button></Center>
-                                }
-                            </Col>
-                            <Col xs={8}>
-                                {(approval1 && approval2) &&
-                                    <Center><Button type={'primary'} onClick={createPool}> CREATE POOL</Button></Center>
-                                }
-                            </Col>
-                            <Col xs={8}>
-                                {!approval2 &&
-                                    <Center><Button type={'secondary'} onClick={unlockAsset} icon={<UnlockOutlined />}>UNLOCK {stake2Data.symbol}</Button></Center>
-                                }
-                            </Col>
+                            <Row type="flex" align="middle" justify="center">
+                              <Col xs={8}>
+                                  {!approval1 &&
+                                      <div className="btn primary" onClick={unlockSparta}><UnlockOutlined /> UNLOCK {stake1Data.symbol}</div>
+                                  }
+                              </Col>
+                              <Col xs={8}>
+                                  {(approval1 && approval2) &&
+                                      <div className="btn primary" onClick={createPool}>CREATE POOL</div>
+                                  }
+                              </Col>
+                              <Col xs={8}>
+                                  {!approval2 &&
+                                      <div className="btn primary" onClick={unlockAsset}><UnlockOutlined /> UNLOCK {stake2Data.symbol}</div>
+                                  }
+                              </Col>
+                            </Row>
                         </Col>
                     </Row>
                 </div>

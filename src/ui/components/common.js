@@ -408,27 +408,24 @@ export const CoinRow = (props) => {
 
   return (
     <div>
-      <Row>
-        <Col xs={4} style={{textAlign:"left"}}>
-          <ColourCoin symbol={props.symbol} size={props.size} />
-        </Col>
-        <Col xs={20}>
-          <Row>
-            <Col xs={12}>
-              <Label size={props.size / 1.8}>{props.symbol}</Label><br />
-            </Col>
-            <Col xs={12} style={{textAlign:"right"}}>
-              <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br />
-              {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={24}>
-              <Label size={props.size / 2.2}>{props.name}</Label>
-            </Col>
-          </Row>
-        </Col>
+      <Row align="middle">
+        <Row align="middle">
+          <Col xs={4}>
+            <ColourCoin symbol={props.symbol} size={props.size} />
+          </Col>
+          <Col xs={20}>
+            <Label size={props.size / 2.2}>{props.name}</Label>
+          </Col>
+        </Row>
+          <Col xs={12}>
+            <Label size={props.size / 1.8}>{props.symbol}</Label><br />
+          </Col>
+          <Col xs={12}>
+            <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br />
+            {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
+          </Col>
       </Row>
+
     </div>
   )
 }
