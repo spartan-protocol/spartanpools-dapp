@@ -47,7 +47,7 @@ export const formatUSD = (input, price) => {
     return `$${(value.toLocaleString())}`
 }
 
-export const formatUSDInfoBox = (input, price) => {
+export const formatUSDStatBoxes = (input, price) => {
     const value = input ? (bn(input).times( price )).toNumber() : 0
     return `$${(value.toFixed(0).toLocaleString())}`
 }
