@@ -347,7 +347,7 @@ const NewStake = (props) => {
 
     return (
         <>
-          <div className="wrapper">
+          <div>
             <BreadcrumbCombo title={'ADD LIQUIDITY'} parent={'POOLS'} link={'/pools'} child={'ADD LIQUIDITY'}></BreadcrumbCombo>
             <HR></HR>
             <br />

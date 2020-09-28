@@ -121,7 +121,7 @@ const Earn = (props) => {
 
 
     return (
-        <div className="wrapper">
+        <div>
             <Row>
                 <Col xs={24} className="cntr">
                   <h1>Earn</h1>

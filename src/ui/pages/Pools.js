@@ -8,8 +8,6 @@ import { formatUSD, convertFromWei } from '../../utils'
 
 import { PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined } from '@ant-design/icons';
 
-import { ColourCoin } from '../components/common'
-
 const Pools = (props) => {
 
     const context = useContext(Context)
@@ -74,8 +72,20 @@ const PoolTable = (props) => {
             title: 'POOL',
             render: (record) => (
                 <div>
-                    <ColourCoin symbol={record.symbol} size={42} />
+                  { record.address === '0x0000000000000000000000000000000000000000' &&
+                    <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"} style={{ height:30 }} alt={record.symbol} />
+                  }
+
+                  { record.address !== '0x0000000000000000000000000000000000000000' &&
+                    <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + record.address + "/logo.png"} style={{ height:30 }} alt={record.symbol} />
+                  }
                 </div>
+            )
+        },
+        {
+            title: 'SYMBOL',
+            render: (record) => (
+                <h3>{record.symbol}</h3>
             )
         },
         {
@@ -125,7 +135,7 @@ const PoolTable = (props) => {
         },
         {
             title: <a href="/pool/create">
-              <Col xs={24} className="cntr btn secondary pool">
+              <Col xs={24} className="cntr btn secondary">
                 <PlusCircleOutlined /> CREATE POOL
               </Col>
             </a>,
@@ -172,7 +182,7 @@ export const PoolsPaneSide = (props) => {
     const context = useContext(Context)
 
     return (
-        <div className="wrapper">
+        <div>
                     <Row type="flex" justify="center" align="middle">
                       <Col md={2}>
                       </Col>
