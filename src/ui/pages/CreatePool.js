@@ -107,7 +107,6 @@ const CreatePool = (props) => {
             await checkApproval2(addressSelected)
         }
 
-
     }
 
     // const changeToken = () => {
@@ -280,12 +279,12 @@ const CreatePool = (props) => {
     }
 
     return (
-        <div className="wrapper">
+        <div>
             <BreadcrumbCombo title={'CREATE POOL'} parent={'POOLS'} link={'/pools'} child={'CREATE'}></BreadcrumbCombo>
             <br />
             <Row type="flex" align="middle" justify="center">
 
-              <Col xs={8} sm={6} md={6} onClick={back} className="btn primary" style={{ textAlign: 'left', maxWidth:'100px'}}>
+              <Col xs={8} sm={6} md={6} onClick={back} className="btn primary" style={{ textAlign: 'left', maxWidth:'90px'}}>
                   {<LeftOutlined />} BACK
               </Col>
               <Col xs={16} sm={18} md={18}>
@@ -306,7 +305,7 @@ const CreatePool = (props) => {
                     ></Input> */}
                 </Col>
                 <Col xs={8} md={4}>
-                    <div className="btn primary" onClick={checkToken}>{<QuestionCircleOutlined />}CHECK</div>
+                    <div className="btn primary" onClick={checkToken}>{<QuestionCircleOutlined />} CHECK</div>
                 </Col>
                 <Col xs={0} md={6}>
                 </Col>

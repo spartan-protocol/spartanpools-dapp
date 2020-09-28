@@ -1,7 +1,7 @@
 .btn {
   border-radius: 15px;
   border: 1px solid #dc999b;
-  font-size: 1.15em;
+  font-size: 1em;
   height: auto;
   padding:5px 15px;
   margin:auto;
@@ -40,12 +40,4 @@
 
 .btn.shadow {
   box-shadow: 1px 1px 2px 1px #dcdcdc;
-}
-
-.btn.pool {
-  font-size: 1em;
-}
-
-.btn.pools {
-  font-size: 1em;
 }

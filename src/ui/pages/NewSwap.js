@@ -238,7 +238,7 @@ const NewSwap = (props) => {
 
     return (
         <>
-          <div className="wrapper">
+          <div>
             <BreadcrumbCombo title={'SWAP'} parent={'POOLS'} link={'/pools'} child={'SWAP'}></BreadcrumbCombo>
             <HR></HR>
             <br />

@@ -4,8 +4,7 @@ import { Layout } from 'antd';
 import 'antd/dist/antd.css'
 import './App.css'
 
-import Wallet from './ui/layout/Wallet'
-// import Headbar from './ui/layout/Headbar'
+import Headbar from './ui/layout/Headbar'
 import Sidebar from './ui/layout/Sidebar'
 
 // import SimpleSwap from './ui/pages/SimpleSwap'
@@ -35,25 +34,27 @@ const App = () => {
 			<Layout>
 				<ContextProvider>
 					<Sidebar />
-					<Wallet />
+					<Headbar />
 					<Layout>
 						<Content>
-							<Switch>
-								<Route path="/" exact component={Pools} />
-								{/* <Route path="/swap" exact component={SimpleSwap} />
-								<Route path="/stake" exact component={SimpleStake} /> */}
-								{/* <Route path="/dao" exact component={Dao} />
-								<Route path="/earn" exact component={Earn} /> */}
-								<Route path="/pools" exact component={Pools} />
-								{/* <Route path="/CDPs" exact component={CDPs} /> */}
-								{/* <Route path="/anchor" exact component={PriceAnchor} /> */}
-								{/* <Route path="/about" exact component={About} /> */}
-								<Route path="/pool/stake" exact component={Stake} />
-								<Route path="/pool/swap" exact component={Swap} />
-								{/* <Route path="/cdp/manageCDP" exact component={ManageCDP}/> */}
-								{/* <Route path="/cdp/openCDP" exact component={OpenCDP}/> */}
-								<Route path="/pool/create" exact component={CreatePool} />
-							</Switch>
+							<div className="wrapper">
+								<Switch>
+									<Route path="/" exact component={Pools} />
+									{/* <Route path="/swap" exact component={SimpleSwap} />
+									<Route path="/stake" exact component={SimpleStake} /> */}
+									{/* <Route path="/dao" exact component={Dao} />
+									<Route path="/earn" exact component={Earn} /> */}
+									<Route path="/pools" exact component={Pools} />
+									{/* <Route path="/CDPs" exact component={CDPs} /> */}
+									{/* <Route path="/anchor" exact component={PriceAnchor} /> */}
+									{/* <Route path="/about" exact component={About} /> */}
+									<Route path="/pool/stake" exact component={Stake} />
+									<Route path="/pool/swap" exact component={Swap} />
+									{/* <Route path="/cdp/manageCDP" exact component={ManageCDP}/> */}
+									{/* <Route path="/cdp/openCDP" exact component={OpenCDP}/> */}
+									<Route path="/pool/create" exact component={CreatePool} />
+								</Switch>
+							</div>
 					</Content>
 				</Layout>
 				</ContextProvider>
