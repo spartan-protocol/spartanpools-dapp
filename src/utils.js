@@ -44,6 +44,11 @@ export const formatAPY = (input) =>{
 
 export const formatUSD = (input, price) => {
     const value = input ? (bn(input).times( price )).toNumber() : 0
+    return `$${(value.toLocaleString())}`
+}
+
+export const formatUSDInfoBox = (input, price) => {
+    const value = input ? (bn(input).times( price )).toNumber() : 0
     return `$${(value.toFixed(0).toLocaleString())}`
 }
 

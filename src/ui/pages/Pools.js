@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 import {Card, Table, Row, Col, Image, Tooltip} from 'antd'
 
 import {getListedTokens, getListedPools, getPoolsData, getGlobalData} from '../../client/web3'
-import {formatUSD, convertFromWei} from '../../utils'
+import {formatUSD, convertFromWei, formatUSDInfoBox} from '../../utils'
 
 import {PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined} from '@ant-design/icons';
 
@@ -203,7 +203,7 @@ export const PoolsPaneSide = (props) => {
                     <Card className="leftbar">
                         <h5 className="strong">TOTAL POOLED</h5>
 
-                        <h4 className="strong">{formatUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h4>
+                        <h4 className="strong">{formatUSDInfoBox(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h4>
 
 
                     </Card>
@@ -211,7 +211,7 @@ export const PoolsPaneSide = (props) => {
                 <Col xs={12} md={5}>
                     <Card className="rightbar">
                         <h5 className="strong">TOTAL VOLUME</h5>
-                        <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h4>
+                        <h4 className="strong">{formatUSDInfoBox(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h4>
                     </Card>
                 </Col>
                 <Col xs={12} md={5}>
@@ -223,7 +223,7 @@ export const PoolsPaneSide = (props) => {
                 <Col xs={12} md={5}>
                     <Card className="rightbar">
                         <h5 className="strong">TOTAL FEES</h5>
-                        <h4 className="strong">{formatUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
+                        <h4 className="strong">{formatUSDInfoBox(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
                     </Card>
                 </Col>
                 <Col md={2}>
