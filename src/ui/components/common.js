@@ -304,7 +304,7 @@ export const PoolPaneSide = (props) => {
           <Row>
             <Col xs={12} md={8}>
               <h4>DEPTH</h4>
-              <h3 className="strong">{convertFromWei(props.pool.depth)} ({props.pool.symbol})</h3>
+              <h3 className="strong">{convertFromWei(props.pool.tokenAmount)} ({props.pool.symbol})</h3>
               <h3 className="strong">{convertFromWei(props.pool.baseAmount)} (SPARTA)</h3>
             </Col>
             <Col xs={12} md={8}>

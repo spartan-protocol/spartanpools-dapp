@@ -283,16 +283,16 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
     return tokensNotPool
 }
 
-export const getStakesData = async (member, poolArray) => {
+export const getPoolSharesData = async (member, poolArray) => {
     let stakesData = []
     for (let i = 0; i < poolArray.length; i++) {
-        stakesData.push(await getStake(member, poolArray[i]))
+        stakesData.push(await getPoolShares(member, poolArray[i]))
     }
     console.log({ stakesData })
     return stakesData
 }
 
-export const getStake = async (member, token) => {
+export const getPoolShares = async (member, token) => {
     var contract = getUtilsContract()
     let poolAddress = await contract.methods.getPool(token).call()
     let tokenDetails = await contract.methods.getTokenDetails(poolAddress).call()
@@ -313,9 +313,9 @@ export const getStake = async (member, token) => {
     return stake
 }
 
-export const getStakeData = async (address, stakesData) => {
-    const stakeData = stakesData.find((item) => item.address === address)
-    return (stakeData)
+export const getLiquidityData = async (address, stakesData) => {
+    const liquidityData = stakesData.find((item) => item.address === address)
+    return (liquidityData)
 }
 
 export const getRewards = async (member) => {

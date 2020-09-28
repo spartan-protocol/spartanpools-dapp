@@ -11,7 +11,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { AssetTable } from '../layout/WalletDrawer'
 var utils = require('ethers').utils;
 
-const SimpleStake = (props) => {
+const SimpleAddLiquidity = (props) => {
 
     const context = useContext(Context)
     const [connecting, setConnecting] = useState(false)
@@ -139,7 +139,7 @@ const SimpleStake = (props) => {
                         <Col xs={24}>
                         <Row>
                                 <Col xs={12}>
-                                <h1>Enter Token To Stake</h1>
+                                <h1>Enter Token To AddLiquidity</h1>
                                     <Input
                                         onChange={changeToken}
                                         placeholder={'Enter BEP2E Asset Address'}
@@ -214,4 +214,4 @@ const SimpleStake = (props) => {
 
 }
 
-export default SimpleStake
+export default SimpleAddLiquidity

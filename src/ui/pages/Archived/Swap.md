@@ -14,7 +14,7 @@ import { getSwapOutput, getSwapSlip } from '../../math'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getPoolsContract,
     getPoolData, getTokenData, filterTokensByPoolSelection,
-    getListedPools, getPoolsData, getStakesData, getWalletData
+    getListedPools, getPoolsData, getPoolSharesData, getWalletData
 } from '../../client/web3'
 
 const Swap = (props) => {
@@ -274,7 +274,7 @@ const Swap = (props) => {
     const reloadData = async () => {
         let poolArray = await getListedPools()
         let poolsData = await getPoolsData(poolArray)
-        let stakesData = await getStakesData(context.walletData.address, poolArray)
+        let stakesData = await getPoolSharesData(context.walletData.address, poolArray)
         let walletData = await getWalletData(poolArray)
         context.setContext({ 'poolArray': poolArray })
         context.setContext({ 'poolsData': poolsData })

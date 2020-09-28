@@ -1,6 +1,5 @@
 import React, { useEffect, useContext,useState } from 'react';
 import { Context } from '../../context'
-//  import { convertFromWei } from '../../utils'
 import { Tabs, Table, Row, Col, Button, Divider } from 'antd';
  import { Label, Center } from '../components/elements';
 import { CoinRow, CDPDetails } from '../components/common';
@@ -27,11 +26,9 @@ const DrawerContent = (props) => {
                     <AssetTable />
                 </TabPane>
                 <TabPane tab="POOL SHARES" key="2">
-                    <StakeTable />
+                    <PoolShareTable />
                 </TabPane>
-                {/* <TabPane tab="CDPS" key="3">
-                    <CDPTable />
-                </TabPane> */}
+                
             </Tabs>
         </>
     );
@@ -77,20 +74,15 @@ export const AssetTable = () => {
     )
 }
 
-export const StakeTable = () => {
+export const PoolShareTable = () => {
 
     const context = useContext(Context)
 
     useEffect(() => {
-        // getStakes()
+        // getPoolSharess()
         // console.log(context.stakes)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-    // const getStakes = async() => {
-
-    //     context.setContext({stakeData:await getStakeData(context.walletData.address, context.poolArray)})
-    // }
 
     const columns = [
         {
@@ -100,7 +92,7 @@ export const StakeTable = () => {
                             symbol={record.symbol}
                             name={record.name}
                             balance={record.units}
-                            size={42} />
+                            size={32} />
                 </div>
             )
         }
@@ -173,7 +165,6 @@ export const CDPTable = () => {
         </Center>
         </Link>
         }
-        
                 
         </div>
     )

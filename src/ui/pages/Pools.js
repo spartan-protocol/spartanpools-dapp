@@ -15,8 +15,8 @@ const Pools = (props) => {
         totalPooled:0,
         totalFees:0,
         totalVolume:0,
-        stakeTx:0,
-        unstakeTx:0,
+        addLiquidityTx:0,
+        removeLiquidityTx:0,
         swapTx:0,
     })
 
@@ -188,8 +188,8 @@ export const PoolsPaneSide = (props) => {
                       </Col>
                       <Col xs={12} md={5}>
                         <Card className="leftbar">
-                          <h5 className="strong">TOTAL STAKED</h5>
-                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData.totalPooled), context.spartanPrice)}</h4>
+                          <h5 className="strong">TOTAL POOLED</h5>
+                          <h4 className="strong">{formatUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h4>
                         </Card>
                       </Col>
                       <Col xs={12} md={5}>
