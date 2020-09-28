@@ -1,12 +1,14 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { Context } from '../../context'
 import { Link } from 'react-router-dom'
-import { Card, Table, Row, Col } from 'antd'
+import { Card, Table, Row, Col, Image } from 'antd'
 
 import { getListedTokens, getListedPools, getPoolsData, getGlobalData } from '../../client/web3'
 import { formatUSD, convertFromWei } from '../../utils'
 
 import { PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined } from '@ant-design/icons';
+
+import { BNB_ADDR } from '../../client/web3'
 
 const Pools = (props) => {
 
@@ -72,12 +74,16 @@ const PoolTable = (props) => {
             title: 'POOL',
             render: (record) => (
                 <div>
-                  { record.address === '0x0000000000000000000000000000000000000000' &&
-                    <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"} style={{ height:30 }} alt={record.symbol} />
+                  { record.address === BNB_ADDR &&
+                    <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"} style={{ height:40 }} alt='BNB' />
                   }
-
-                  { record.address !== '0x0000000000000000000000000000000000000000' &&
-                    <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + record.address + "/logo.png"} style={{ height:30 }} alt={record.symbol} />
+                  { record.address !== BNB_ADDR &&
+                    <Image
+                      width={40}
+                      height={40}
+                      src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + record.address + "/logo.png"}
+                      fallback="../fallback.png"
+                    />
                   }
                 </div>
             )

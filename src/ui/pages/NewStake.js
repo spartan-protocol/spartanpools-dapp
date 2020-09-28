@@ -492,7 +492,7 @@ const AddSymmPane = (props) => {
                         </Col>
                         <Col xs={12}>
                             {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                                <div className="btn primary diabled" onClick={props.addLiquidity} icon={<LoadingOutlined />}>ADD TO POOL</div>
+                                <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined />}>ADD TO POOL</div>
                             }
                             {props.approvalBase && props.approvalToken && !props.startTx &&
                                 <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
