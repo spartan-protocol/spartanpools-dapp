@@ -27,7 +27,7 @@ const AddressConn = (props) => {
     useEffect(() => {
         connectWallet()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [connected])
 
     const connectWallet = async () => {
         setConnecting(true)
