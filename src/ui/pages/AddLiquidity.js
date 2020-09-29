@@ -191,7 +191,7 @@ const AddLiquidity = (props) => {
     const changeSymmAmount = async (amount) => {
         const finalAmt = (bn(userData?.tokenBalance)).times(amount).div(100)
         console.log(finalAmt, formatBN(finalAmt, 0))
-        let liquidityData = getPairedAmount(formatBN(finalAmt, 0), userData.tokenBalance, pool)
+        let liquidityData = getPairedAmount(userData.baseBalance, formatBN(finalAmt, 0), pool)
         setLiquidityData(liquidityData)
         setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
         let _userData = {
