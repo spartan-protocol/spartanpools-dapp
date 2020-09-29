@@ -111,8 +111,10 @@ const NewSwap = (props) => {
         setBuyData(await getSwapData(inputTokenData?.balance, inputTokenData, outputTokenData, pool, false))
         setSellData(await getSwapData(outputTokenData?.balance, outputTokenData, inputTokenData, pool, true))
 
-        checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
-        checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+        await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
+        await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+
+        // console.log(await checkApproval(SPARTA_ADDR))
 
     }
 
@@ -170,11 +172,11 @@ const NewSwap = (props) => {
     }
 
     const unlockSparta = async () => {
-        unlock(buyData.address)
+        unlock(SPARTA_ADDR)
     }
 
     const unlockToken = async () => {
-        unlock(sellData.address)
+        unlock(pool.address)
     }
 
     const unlock = async (address) => {
@@ -186,12 +188,14 @@ const NewSwap = (props) => {
             gas: ''
         })
         message.success(`Approved!`, 2);
+        await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
+        await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
     }
 
     const buy = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        console.log(buyData.input, outputTokenData.symbol)
+        console.log(buyData.input, outputTokenData.symbol, poolURL)
         await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
             from: context.walletData.address,
             gasPrice: '',
@@ -207,7 +211,7 @@ const NewSwap = (props) => {
     const sell = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        console.log(sellData.input, outputTokenData.symbol)
+        console.log(sellData.input, outputTokenData.symbol, poolURL)
         await contract.methods.swap(sellData.input, poolURL, SPARTA_ADDR).send({
             from: context.walletData.address,
             gasPrice: '',
