@@ -13,7 +13,7 @@ import { getSwapOutput, getSwapSlip } from '../../math'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,
-    getPoolData, getTokenData, getTokenDetails,
+    getPoolData, getNewTokenData, getTokenDetails,
     getListedPools, getPoolsData, getPool
 } from '../../client/web3'
 
@@ -42,7 +42,7 @@ const NewSwap = (props) => {
         'symbol': 'XXX',
         'name': 'XXX',
         'balance': 0,
-        'address': BNB_ADDR
+        'address': SPARTA_ADDR
     })
     const [outputTokenData, setOutputTokenData] = useState({
         'symbol': 'XXX',
@@ -103,13 +103,13 @@ const NewSwap = (props) => {
         const pool = await getPoolData(params.pool, context.poolsData)
         setPool(pool)
 
-        const inputTokenData = await getTokenData(SPARTA_ADDR, context.walletData)
-        const outputTokenData = await getTokenData(pool.address, context.walletData)
+        const inputTokenData = await getNewTokenData(SPARTA_ADDR, context.walletData.address)
+        const outputTokenData = await getNewTokenData(pool.address, context.walletData.address)
         setInputTokenData(inputTokenData)
         setOutputTokenData(outputTokenData)
 
-        setBuyData(await getSwapData(inputTokenData.balance, inputTokenData, outputTokenData, pool, false))
-        setSellData(await getSwapData(outputTokenData.balance, outputTokenData, inputTokenData, pool, true))
+        setBuyData(await getSwapData(inputTokenData?.balance, inputTokenData, outputTokenData, pool, false))
+        setSellData(await getSwapData(outputTokenData?.balance, outputTokenData, inputTokenData, pool, true))
 
         checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
         checkApproval(pool.address) ? setApproval(true) : setApproval(false)
@@ -125,11 +125,11 @@ const NewSwap = (props) => {
 
         const swapData = {
             address: poolData.address,
-            balance: inputTokenData.balance,
+            balance: inputTokenData?.balance,
             input: formatBN(bn(input), 0),
-            symbol: inputTokenData.symbol,
+            symbol: inputTokenData?.symbol,
             output: formatBN(output, 0),
-            outputSymbol: outputTokenData.symbol,
+            outputSymbol: outputTokenData?.symbol,
             slip: formatBN(slip)
         }
         console.log(swapData)
@@ -339,13 +339,13 @@ const TradePane = (props) => {
 
                     <Row>
                         <Col xs={24}>
-                            {!props.approval &&
+                            {!props.approval && 
                                 <div className="btn primary" onClick={props.unlock}><UnlockOutlined /> UNLOCK</div>
                             }
                             {props.approval && props.startTx && !props.endTx &&
                                 <div className="btn primary" onClick={props.trade}><LoadingOutlined />{`${props.type} ${props.pool.symbol}`}</div>
                             }
-                            {props.approval && !props.startTx &&
+                            {props.approval && !props.startTx && (props.tradeData.balance > 0) &&
                                 <div className="btn primary" onClick={props.trade}>{`${props.type} ${props.pool.symbol}`}</div>
                             }
 
