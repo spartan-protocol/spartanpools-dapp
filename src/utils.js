@@ -42,6 +42,11 @@ export const formatAPY = (input) =>{
     return `${annual}%`
 }
 
+export const formatUnits = (input) =>{
+    const units = (bn(input).toFixed(2).toString())
+    return `${units.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+}
+
 export const formatUSD = (input, price) => {
     const value = input ? (bn(input).times( price )).toNumber() : 0
     return `$${(value.toLocaleString())}`
