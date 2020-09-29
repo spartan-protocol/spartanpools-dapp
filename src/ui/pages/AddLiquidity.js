@@ -191,7 +191,7 @@ const AddLiquidity = (props) => {
     const changeSymmAmount = async (amount) => {
         const finalAmt = (bn(userData?.tokenBalance)).times(amount).div(100)
         console.log(finalAmt, formatBN(finalAmt, 0))
-        let liquidityData = getPairedAmount(formatBN(finalAmt, 0), userData.tokenBalance, pool)
+        let liquidityData = getPairedAmount(userData.baseBalance, formatBN(finalAmt, 0), pool)
         setLiquidityData(liquidityData)
         setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
         let _userData = {
@@ -336,13 +336,13 @@ const AddLiquidity = (props) => {
                             <Row>
                                 <Col xs={24} >
                                     <Tabs defaultActiveKey="1" onChange={changeTabs}>
-                                        <TabPane tab={`ADD ${pool.symbol}`} key="1">
-                                            <AddAsymmPane
+                                        <TabPane tab={`ADD ${pool.symbol} + SPARTA`} key="1">
+                                            <AddSymmPane
                                                 pool={pool}
                                                 userData={userData}
                                                 liquidityData={liquidityData}
-                                                onAddChange={onAddTokenChange}
-                                                changeAmount={changeTokenAmount}
+                                                onAddChange={onAddSymmChange}
+                                                changeAmount={changeSymmAmount}
                                                 estLiquidityUnits={estLiquidityUnits}
                                                 getEstShare={getEstShare}
                                                 approvalBase={approvalBase}
@@ -354,14 +354,13 @@ const AddLiquidity = (props) => {
                                                 endTx={endTx}
                                             />
                                         </TabPane>
-                                        <TabPane tab={`ADD ${pool.symbol} + SPARTA`} key="2">
-
-                                            <AddSymmPane
+                                        <TabPane tab={`ADD ${pool.symbol}`} key="2">
+                                            <AddAsymmPane
                                                 pool={pool}
                                                 userData={userData}
                                                 liquidityData={liquidityData}
-                                                onAddChange={onAddSymmChange}
-                                                changeAmount={changeSymmAmount}
+                                                onAddChange={onAddTokenChange}
+                                                changeAmount={changeTokenAmount}
                                                 estLiquidityUnits={estLiquidityUnits}
                                                 getEstShare={getEstShare}
                                                 approvalBase={approvalBase}
@@ -438,13 +437,13 @@ const AddSymmPane = (props) => {
 
                     </Row>
                     <Row>
-                        <Col xs={6}>
+                        <Col xs={8}>
                             {!props.approvalToken &&
                                 <div className="btn primary" onClick={props.unlockToken} icon={<UnlockOutlined />}>UNLOCK {props.pool.symbol}</div>
                             }
                         </Col>
 
-                        <Col xs={12}>
+                        <Col xs={8}>
                             {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
                                 <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined />}>ADD TO POOL</div>
                             }
@@ -452,7 +451,7 @@ const AddSymmPane = (props) => {
                                 <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
                             }
                         </Col>
-                        <Col xs={6}>
+                        <Col xs={8}>
                             {!props.approvalBase &&
                                 <div className="btn primary" onClick={props.unlockSparta} icon={<UnlockOutlined />}>UNLOCK SPARTA</div>
                             }
@@ -470,21 +469,24 @@ const AddAsymmPane = (props) => {
         <>
             <Row>
                 <Col xs={24}>
-                    <Row >
+                    <Row className="cntr" align="middle" justify="center">
+                        <Col xs={22} style={{ marginRight: 30 }}>
+                          <p>PLEASE ENSURE YOU UNDERSTAND THE RISKS RELATED TO ASYMMETRIC STAKING OF ASSETS!</p>
+                          <p>IF IN DOUBT, REASEARCH 'IMPERMANENT LOSS' OR ASK ADMIN FOR ADVICE</p>
+                        </Col>
                         <Col xs={1}>
                         </Col>
-                        <Col xs={22} style={{ marginRight: 30 }}>
+                        <Col xs={22} className="cntr">
                             <InputPane
                                 paneData={props.userData}
                                 onInputChange={props.onAddChange}
                                 changeAmount={props.changeAmount}
                             />
                         </Col>
-
                         <Col xs={1}>
                         </Col>
                     </Row>
-                    <Row className="cntr">
+                    <Row className="cntr" align="middle" justify="center">
                         <Col xs={12}>
                             <Center><LabelGroup size={18} element={`${convertFromWei(props.estLiquidityUnits.toFixed(0))}`} label={'ESTIMATED UNITS'} /></Center>
                         </Col>

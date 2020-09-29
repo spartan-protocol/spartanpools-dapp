@@ -4,14 +4,14 @@ import { Row, Col, Breadcrumb, Button, Input, Dropdown, Menu, Divider, Card, Ima
 import { DownOutlined, } from '@ant-design/icons';
 // PlusCircleOutlined, MinusCircleOutlined, Tooltip
 import {
-  rainbowStop, getIntFromName,
-  convertFromWei, formatUSD, 
+  rainbowStop, getIntFromName, formatUnits,
+  convertFromWei, formatUSD, formatUSDStatBoxes, 
   // formatAPY,
 } from '../../utils'
 import { getTokenSymbol } from '../../client/web3'
 import { H1, HR, Text, Center, Label, Sublabel } from '../components/elements'
 
-import { BNB_ADDR } from '../../client/web3'
+import { BNB_ADDR, SPARTA_ADDR } from '../../client/web3'
 
 // Check If Responsive
 export const useWindowSize = () => {
@@ -291,12 +291,9 @@ export const PoolPaneSide = (props) => {
     <Card>
       <Row type="flex" align="middle" className="cntr">
         <Col xs={24}>
-          <Row>
+          <Row type="flex" align="middle" className="cntr">
             <Col xs={12}>
-              <h3>{props.pool.name}</h3>
               <h2 className="strong">{props.pool.symbol}</h2>
-            </Col>
-            <Col xs={12}>
               { props.pool.address === BNB_ADDR &&
                   <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"} style={{ height:50 }} alt='BNB' />
               }
@@ -309,17 +306,21 @@ export const PoolPaneSide = (props) => {
                 />
               }
             </Col>
+            <Col xs={12}>
+              <h2 className="strong">SPARTA</h2>
+              <img src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + SPARTA_ADDR + "/logo.png"} style={{ height:50 }} alt='SPARTA' />
+            </Col>
           </Row>
 
           <Row>
             <Col xs={12} md={8}>
-              <h4>DEPTH</h4>
-              <h3 className="strong">{convertFromWei(props.pool.tokenAmount)} ({props.pool.symbol})</h3>
-              <h3 className="strong">{convertFromWei(props.pool.baseAmount)} (SPARTA)</h3>
+              <h4>VOLUME</h4>
+              <h3 className="strong">{formatUSDStatBoxes(convertFromWei(props.pool.volume), props.price)}</h3>
             </Col>
             <Col xs={12} md={8}>
-              <h4>VOLUME</h4>
-              <h3 className="strong">{formatUSD(convertFromWei(props.pool.volume), props.price)}</h3>
+              <h4>DEPTH</h4>
+              <h4 className="strong">{formatUnits(convertFromWei(props.pool.tokenAmount))} {props.pool.symbol}</h4>
+              <h4 className="strong">{formatUnits(convertFromWei(props.pool.baseAmount))} SPARTA</h4>
             </Col>
             <Col xs={12} md={8}>
               <h4>PRICE</h4>
@@ -332,7 +333,7 @@ export const PoolPaneSide = (props) => {
             </Col>
             <Col xs={12} md={8}>
               <h4>FEES</h4>
-              <h3 className="strong">{formatUSD(convertFromWei(props.pool.fees), props.price)}</h3>
+              <h3 className="strong">{formatUSDStatBoxes(convertFromWei(props.pool.fees), props.price)}</h3>
             </Col>
             <Col xs={12} md={8}>
               {/* <h4>APY</h4>
