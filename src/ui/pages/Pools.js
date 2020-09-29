@@ -1,7 +1,7 @@
 import React, {useEffect, useContext, useState} from 'react'
 import {Context} from '../../context'
 import {Link} from 'react-router-dom'
-import {Card, Table, Row, Col, Image, Tooltip} from 'antd'
+import {Card, Table, Row, Col, Image} from 'antd'
 
 import {getListedTokens, getListedPools, getPoolsData, getGlobalData} from '../../client/web3'
 import {formatUSD, convertFromWei, formatUSDStatBoxes} from '../../utils'
@@ -112,9 +112,7 @@ const PoolTable = (props) => {
             key: 'depth',
             responsive: ['sm'],
             render: (depth) => (
-                <h3><Tooltip placement="bottom" title={formatUSD(convertFromWei(depth), context.spartanPrice)}>
-                    <span>{formatUSD(convertFromWei(depth), context.spartanPrice)}</span>
-                </Tooltip></h3>
+                <h3>{formatUSDStatBoxes(convertFromWei(depth), context.spartanPrice)}</h3>
 
 
             )
@@ -125,7 +123,7 @@ const PoolTable = (props) => {
             key: 'volume',
             responsive: ['sm'],
             render: (volume) => (
-                <h3>{formatUSD(convertFromWei(volume), context.spartanPrice)}</h3>
+                <h3>{formatUSDStatBoxes(convertFromWei(volume), context.spartanPrice)}</h3>
             )
         },
         {
@@ -143,7 +141,7 @@ const PoolTable = (props) => {
             key: 'fees',
             responsive: ['md'],
             render: (fees) => (
-                <h3>{formatUSD(convertFromWei(fees), context.spartanPrice)}</h3>
+                <h3>{formatUSDStatBoxes(convertFromWei(fees), context.spartanPrice)}</h3>
             )
         },
         {

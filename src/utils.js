@@ -49,17 +49,17 @@ export const formatUSD = (input, price) => {
 
 export const formatUSDStatBoxes = (input, price) => {
     const value = input ? (bn(input).times( price )).toNumber() : 0
-    return `$${(value.toFixed(0).toLocaleString())}`
+    return `$${value.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
 }
 
 export const rainbowStop = (h) => {
     const f = (n, k = (n + h * 12) % 12) => 0.5 - 0.5 * Math.max(Math.min(k - 3, 9 - k, 1), -1)
     return rgb2hex(Math.floor(f(0) * 255), Math.floor(f(8) * 255), Math.floor(f(4) * 255))
   }
-  
+
   export const rgb2hex = (r, g, b) =>
     `#${((r << 16) + (g << 8) + b).toString(16).padStart(6, '0')}`
-  
+
   export const getIntFromName = (str) => {
     const inputStr = String(str).toUpperCase()
     const div = 22
