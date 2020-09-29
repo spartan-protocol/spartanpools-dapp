@@ -14,7 +14,7 @@ import { getLiquidityUnits } from '../../math'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,
     getPoolData, getTokenData, getTokenDetails,
-    getListedPools, getPoolsData, getPool
+    getListedPools, getPoolsData, getPool, getPoolShares
 } from '../../client/web3'
 
 const { TabPane } = Tabs;
@@ -47,8 +47,13 @@ const AddLiquidity = (props) => {
     })
 
     const [liquidityData, setLiquidityData] = useState({
-        baseAmount: '',
-        tokenAmount: '',
+        'baseAmount': '',
+        'tokenAmount': '',
+    })
+
+    const [withdrawData, setWithdrawData] = useState({
+        'baseAmount': '',
+        'tokenAmount': '',
     })
 
     const [estLiquidityUnits, setLiquidityUnits] = useState(0)
@@ -224,7 +229,13 @@ const AddLiquidity = (props) => {
 
     const changeWithdrawAmount = async (amount) => {
         setWithdrawAmount(amount)
-    }
+        let poolShare = await getPoolShares(context.walletData.address, pool.address)
+        let withdrawData = {
+            'baseAmount': (+poolShare.baseAmount * amount) / 100,
+            'tokenAmount': (+poolShare.tokenAmount * amount) / 100,
+        }
+        setWithdrawData(withdrawData)
+        }
 
     const getEstShare = () => {
         const newUnits = (bn(estLiquidityUnits)).plus(bn(pool.units))
@@ -268,7 +279,7 @@ const AddLiquidity = (props) => {
         context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
     }
 
-    const unstake = async () => {
+    const removeLiquidity = async () => {
         let contract = getRouterContract()
         const tx = await contract.methods.removeLiquidity(withdrawAmount * 100, pool.address).send({
             from: context.walletData.address,
@@ -360,12 +371,13 @@ const AddLiquidity = (props) => {
                                     />
                                 </TabPane>
                                 <TabPane tab={`REMOVE ${pool.symbol} + SPARTA`} key="3">
-                                    <UnstakePane
+                                    <RemoveLiquidityPane
                                         pool={pool}
                                         changeWithdrawAmount={changeWithdrawAmount}
                                         approvalToken={approvalToken}
                                         unlock={unlockToken}
-                                        unstake={unstake}
+                                        removeLiquidity={removeLiquidity}
+                                        withdrawData={withdrawData}
                                         startTx={startTx}
                                         endTx={endTx}
                                     />
@@ -499,7 +511,7 @@ const AddAsymmPane = (props) => {
     )
 }
 
-const UnstakePane = (props) => {
+const RemoveLiquidityPane = (props) => {
 
     return (
         <>
@@ -516,9 +528,15 @@ const UnstakePane = (props) => {
                         </Col>
                     </Row>
                     <Row>
+                    <Col xs={12}>
+                            <Center><LabelGroup size={18} element={`${convertFromWei(props.withdrawData.tokenAmount)}`} label={`ESTIMATED ${props.pool.symbol}`} /></Center>
+                        </Col>
+                        <Col xs={12}>
+                            <Center><LabelGroup size={18} element={`${convertFromWei(props.withdrawData.baseAmount)}`} label={'ESTIMATED SPARTA'} /></Center>
+                        </Col>
                     </Row>
                     <br></br>
-                    <div className="btn primary" onClick={props.unstake}>WITHDRAW FROM POOL</div>
+                    <div className="btn primary" onClick={props.removeLiquidity}>WITHDRAW FROM POOL</div>
                 </Col>
             </Row>
         </>
