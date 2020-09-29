@@ -239,7 +239,7 @@ export const getNewTokenData = async (address, member) => {
     var tokenData = {
         'symbol': obj.symbol,
         'name': obj.name,
-        'balance': obj.balance,
+        'balance': token === BNB_ADDR ? await getBNBBalance(member) : obj.balance,
         'address': token
     }
 
