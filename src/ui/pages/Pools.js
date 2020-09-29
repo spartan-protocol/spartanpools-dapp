@@ -111,6 +111,8 @@ const PoolTable = (props) => {
             dataIndex: 'depth',
             key: 'depth',
             responsive: ['sm'],
+            sorter: (a, b) => a.depth - b.depth,
+            sortOrder: 'descend',
             render: (depth) => (
                 <h3>{formatUSDStatBoxes(convertFromWei(depth), context.spartanPrice)}</h3>
 
