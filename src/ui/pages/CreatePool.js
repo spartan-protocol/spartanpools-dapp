@@ -3,6 +3,10 @@ import { Context } from '../../context'
 
 import { withRouter } from 'react-router-dom'
 import { Row, Col, Input } from 'antd'
+
+import { message } from 'antd';
+
+
 import { LeftOutlined } from '@ant-design/icons';
 import { QuestionCircleOutlined, UnlockOutlined } from '@ant-design/icons';
 
@@ -94,17 +98,23 @@ const CreatePool = (props) => {
             setApproval1(false)
             setApproval2(false)
 
-            var tokenData = await getNewTokenData(addressSelected, context.walletData.address)
-            setTokenData(tokenData)
-            console.log(tokenData)
-
-            if (+tokenData.balance > 0) {
-                setCheckFlag(true)
-                setAddLiquidity2Data(await getPoolSharesInputData(tokenData.balance, tokenData))
+            try {
+                var tokenData = await getNewTokenData(addressSelected, context.walletData.address)
+                setTokenData(tokenData)
+                console.log(tokenData)
+                if (+tokenData.balance > 0) {
+                    setCheckFlag(true)
+                    setAddLiquidity2Data(await getPoolSharesInputData(tokenData.balance, tokenData))
+                } else {
+                    message.error('You do not have that token on your address', 2);
+                }
+    
+                await checkApproval1(SPARTA_ADDR)
+                await checkApproval2(addressSelected)
+            } catch(err){
+                message.error('Not a valid token', 2);
             }
-
-            await checkApproval1(SPARTA_ADDR)
-            await checkApproval2(addressSelected)
+            
         }
 
     }
