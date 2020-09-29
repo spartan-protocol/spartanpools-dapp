@@ -111,8 +111,9 @@ const AddLiquidity = (props) => {
         setLiquidityData(liquidityData)
         const estLiquidityUnits = getLiquidityUnits(liquidityData, pool)
         setLiquidityUnits(estLiquidityUnits)
-        checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
-        checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
+        
+        await checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
+        await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
 
     }
 
