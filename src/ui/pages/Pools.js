@@ -222,7 +222,7 @@ export const PoolsPaneSide = (props) => {
                 </Col>
                 <Col xs={12} md={5}>
                     <Card className="rightbar">
-                        <h5 className="strong">TOTAL FEES</h5>
+                        <h5 className="strong">TOTAL EARNINGS</h5>
                         <h4 className="strong">{formatUSDStatBoxes(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h4>
                     </Card>
                 </Col>
