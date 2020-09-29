@@ -4,7 +4,7 @@ import { Drawer } from 'antd';
 import { WalletOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import Web3 from 'web3'
-// import axios from 'axios'
+import axios from 'axios'
 
 import { message } from 'antd';
 
@@ -89,10 +89,10 @@ const AddressConn = (props) => {
     }
 
     const getSpartaPrice = async () => {
-        // let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan&vs_currencies=usd')
-        // console.log(resp.data.spartan.usd)
-        // context.setContext({ 'spartanPrice': resp.data.spartan.usd })
-        context.setContext({ 'spartanPrice': 0.3 })
+        let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
+        console.log(resp.data["spartan-protocol-token"].usd)
+        context.setContext({ 'spartanPrice': resp.data["spartan-protocol-token"].usd })
+        // context.setContext({ 'spartanPrice': 0.3 })
         return
     }
 
