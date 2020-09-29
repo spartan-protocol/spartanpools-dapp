@@ -6,7 +6,9 @@ import {Card, Table, Row, Col, Image} from 'antd'
 import {getListedTokens, getListedPools, getPoolsData, getGlobalData} from '../../client/web3'
 import {formatUSD, convertFromWei, formatUSDStatBoxes} from '../../utils'
 
-import {PlusCircleOutlined, SwapOutlined, LoginOutlined, LoadingOutlined} from '@ant-design/icons';
+import {
+    // PlusCircleOutlined, 
+    SwapOutlined, LoginOutlined, LoadingOutlined} from '@ant-design/icons';
 
 import {BNB_ADDR} from '../../client/web3'
 
@@ -147,11 +149,11 @@ const PoolTable = (props) => {
             )
         },
         {
-            title: <a href="/pool/create">
-                <Col xs={24} className="cntr btn secondary">
-                    <PlusCircleOutlined/> CREATE POOL
-                </Col>
-            </a>,
+            // title: <a href="/pool/create">
+            //     <Col xs={24} className="cntr btn secondary">
+            //         <PlusCircleOutlined/> CREATE POOL
+            //     </Col>
+            // </a>,
             render: (record) => (
                 <Row type="flex" justify="center" align="middle">
                     <Col className="btn primary">
