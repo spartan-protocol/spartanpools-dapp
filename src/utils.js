@@ -37,13 +37,18 @@ export const getAddressShort = (address) => {
     return addrShort
 }
 
-export const formatAPY = (input) =>{
+export const formatAPY = (input) => {
     const annual = (((+input-10000)/10000)*100).toFixed(2)
     return `${annual}%`
 }
 
-export const formatUnits = (input) =>{
+export const formatUnits = (input) => {
     const units = (bn(input).toFixed(2).toString())
+    return `${units.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+}
+
+export const formatNoDec = (input) => {
+    const units = (bn(input).toFixed(0).toString())
     return `${units.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
 }
 
@@ -60,15 +65,15 @@ export const formatUSDStatBoxes = (input, price) => {
 export const rainbowStop = (h) => {
     const f = (n, k = (n + h * 12) % 12) => 0.5 - 0.5 * Math.max(Math.min(k - 3, 9 - k, 1), -1)
     return rgb2hex(Math.floor(f(0) * 255), Math.floor(f(8) * 255), Math.floor(f(4) * 255))
-  }
+}
 
-  export const rgb2hex = (r, g, b) =>
+export const rgb2hex = (r, g, b) =>
     `#${((r << 16) + (g << 8) + b).toString(16).padStart(6, '0')}`
 
-  export const getIntFromName = (str) => {
+export const getIntFromName = (str) => {
     const inputStr = String(str).toUpperCase()
     const div = 22
     const firstInt = (inputStr.charCodeAt(0) - 'A'.charCodeAt(0)) / div
     const secondInt = inputStr.length > 1 ? (inputStr.charCodeAt(1) - 'A'.charCodeAt(0)) / div : 0
     return [Number(firstInt.toFixed(2)), Number(secondInt.toFixed(2))]
-  }
+}
