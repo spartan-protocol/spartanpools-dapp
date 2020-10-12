@@ -661,7 +661,7 @@ const RemoveLiquidityPane = (props) => {
             <br/>
             <br/>
             <div className="text-center">
-                {!props.approvalToken &&
+                {props.approvalToken &&
                     <button 
                     color="success" 
                     type="button" 
