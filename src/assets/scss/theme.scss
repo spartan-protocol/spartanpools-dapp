@@ -2,14 +2,21 @@
 @import "./icons.scss";
 
 // Light Theme
+@import "./bootstrap.scss";
+@import "./app.scss";
 
-//@import "./bootstrap.scss";
-//@import "./app.scss";
+
+html[data-theme = 'light'] {
+    @import "./bootstrap.scss";
+    @import "./app.scss";
+}
+
 
 // Dark Theme
-
-@import "./bootstrap-dark.scss";
-@import "./app-dark.scss";
+html[data-theme = 'dark'] {
+    @import "./bootstrap-dark.scss";
+    @import "./app-dark.scss";
+}
 
 #sidebar-menu {
     ul {
