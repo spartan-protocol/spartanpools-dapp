@@ -52,7 +52,7 @@ export const TradePane = (props) => {
                 </table>
             </div>
             <br/><br/>
-            <div className="text-left">
+            <div className="text-center">
                 {!props.approval &&
                 <Button size="lg" color="success" onClick={props.unlock}><UnlockOutlined/>{props.t("Unlock")}</Button>
                 }

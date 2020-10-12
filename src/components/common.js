@@ -103,7 +103,7 @@ export const OutputPane = (props) => {
     // }
 
     return (
-        <div style={{margin: 0}}>
+        <div className="text-center">
 
             <PercentButtonRow changeAmount={props.changeAmount}/>
                 {/* // eslint-disable-next-line
@@ -163,6 +163,7 @@ export const PercentButtonRow = (props) => {
     const btnStyle = {
         marginRight: 3.5,
         marginTop: 10,
+        minWidth: '15%',
     }
     return (
         <>

@@ -1,7 +1,4 @@
-
-
 import {InputPane} from "./InputPane";
-
 
 import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
 import {convertFromWei} from "../utils";
@@ -13,7 +10,6 @@ import {withNamespaces} from "react-i18next";
 
 import {
    Col,
-
 } from "reactstrap";
 import withRouter from "react-router-dom/es/withRouter";
 

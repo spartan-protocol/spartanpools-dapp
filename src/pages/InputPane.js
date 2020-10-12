@@ -45,7 +45,7 @@ export const InputPane = (props) => {
                 </InputGroup>
             </div>
             <br/>
-            <div className="text-left">
+            <div className="text-center">
                 <PercentButtonRow changeAmount={props.changeAmount}/>
             </div>
             <br/>

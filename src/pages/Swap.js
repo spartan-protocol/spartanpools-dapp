@@ -296,9 +296,9 @@ const NewSwap = (props) => {
 
                                     <Card>
                                         <CardBody>
-                                            <h4 className="card-title mb-4">{props.t("Buy/Sell")}</h4>
+                                            <h4 className="card-title mb-4 text-center">{props.t("Buy/Sell")}</h4>
                                             <Nav pills className="bg-light rounded" role="tablist">
-                                                <NavItem>
+                                                <NavItem className="text-center w-50">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '1'})}
                                                         onClick={() => {
@@ -308,7 +308,7 @@ const NewSwap = (props) => {
                                                         {props.t("Buy")} {pool.symbol}
                                                     </NavLink>
                                                 </NavItem>
-                                                <NavItem>
+                                                <NavItem className="text-center w-50">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '2'})}
                                                         onClick={() => {

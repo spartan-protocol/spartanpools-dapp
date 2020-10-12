@@ -19,7 +19,7 @@ const PoolPaneSide = (props) => {
     return (
         <Card>
             <CardBody>
-                <h4 className="card-title mb-4">{props.t("Overview")}</h4>
+                <h4 className="card-title mb-4 text-center">{props.t("Overview")}</h4>
 
                 <Row>
                     <Col xs="6">

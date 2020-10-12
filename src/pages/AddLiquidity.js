@@ -366,7 +366,7 @@ const AddLiquidity = (props) => {
                                         <CardBody>
                                             <h4 className="card-title mb-4">{props.t("Add Liquidity")}</h4>
                                             <Nav pills className="bg-light rounded" role="tablist">
-                                                <NavItem>
+                                                <NavItem className="text-center w-33">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '1'})}
                                                         onClick={() => {
@@ -376,7 +376,7 @@ const AddLiquidity = (props) => {
                                                         {`${props.t("Add")} ${pool.symbol} + SPARTA`}
                                                     </NavLink>
                                                 </NavItem>
-                                                <NavItem>
+                                                <NavItem className="text-center w-33">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '2'})}
                                                         onClick={() => {
@@ -386,7 +386,7 @@ const AddLiquidity = (props) => {
                                                         {`${props.t("Add")} ${pool.symbol}`}
                                                     </NavLink>
                                                 </NavItem>
-                                                <NavItem>
+                                                <NavItem className="text-center w-33">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '3'})}
                                                         onClick={() => {
@@ -473,7 +473,9 @@ const AddSymmPane = (props) => {
                 changeAmount={props.changeAmount}
             />
             <br/>
-            <PlusOutlined style={{fontSize: 24}}/>
+            <div className="text-center">
+                <PlusOutlined style={{fontSize: 24}}/>
+            </div>
             <br/>
             <br/>
 
@@ -514,35 +516,35 @@ const AddSymmPane = (props) => {
                 </table>
             </div>
             <br/>
-            <Col xs={12}>
-                {!props.approvalToken &&
-                <button color="success" type="button"
-                        className="btn btn-success btn-lg btn-block waves-effect waves-light"
-                        onClick={props.unlockToken}>
-                    <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
-                </button>
-                }
-            </Col>
-            <Col xs={12}>
-                <br/>
-                {!props.approvalBase &&
-                <button color="success" type="button"
-                        className="btn btn-success btn-lg btn-block waves-effect waves-light"
-                        onClick={props.unlockSparta}>
-                    <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock SPARTA</button>
-                }
-            </Col>
-            <Col xs={8}>
-                {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
-                    POOL</div>
-                }
-                {props.approvalBase && props.approvalToken && !props.startTx &&
-                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
-                }
-            </Col>
-
-
+            <div className="text-center">
+                <Col xs={12}>
+                    {!props.approvalToken &&
+                    <button color="success" type="button"
+                            className="btn btn-success btn-lg btn-block waves-effect waves-light"
+                            onClick={props.unlockToken}>
+                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
+                    </button>
+                    }
+                </Col>
+                <Col xs={12}>
+                    <br/>
+                    {!props.approvalBase &&
+                    <button color="success" type="button"
+                            className="btn btn-success btn-lg btn-block waves-effect waves-light"
+                            onClick={props.unlockSparta}>
+                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock SPARTA</button>
+                    }
+                </Col>
+                <Col xs={12}>
+                    {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
+                        POOL</div>
+                    }
+                    {props.approvalBase && props.approvalToken && !props.startTx &&
+                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
+                    }
+                </Col>
+            </div>
         </>
     )
 };
@@ -593,29 +595,30 @@ const AddAsymmPane = (props) => {
             </div>
 
             <Row>
-                <Col xs={12}>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    {!props.approvalToken &&
-                    <button color="success" type="button"
-                            className="btn btn-success btn-lg btn-block waves-effect waves-light"
-                            onClick={props.unlockToken}>
-                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
-                    </button>
-                    }
-                </Col>
-                <Col xs={12}>
-                    {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                    <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
-                        POOL</div>
-                    }
-                    {props.approvalBase && props.approvalToken && !props.startTx &&
-                    <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
-                    }
-                </Col>
+                <div className="text-center">
+                    <Col xs={12}>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        {!props.approvalToken &&
+                        <button color="success" type="button"
+                                className="btn btn-success btn-lg btn-block waves-effect waves-light"
+                                onClick={props.unlockToken}>
+                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
+                        </button>
+                        }
+                    </Col>
+                    <Col xs={12}>
+                        {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                            <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO POOL</div>
+                        }
 
+                        {props.approvalBase && props.approvalToken && !props.startTx &&
+                            <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
+                        }
+                    </Col>
+                </div>
             </Row>
 
         </>
@@ -634,20 +637,20 @@ const RemoveLiquidityPane = (props) => {
                     <tbody>
                     <tr>
                         <td>
-                            <p className="mb-0">Estimated</p>
+                            <p className="mb-0 text-left">Estimated</p>
                         </td>
                         <td>
-                            <h5 className="mb-0">{convertFromWei(props.withdrawData.tokenAmount)}</h5>
+                            <h5 className="mb-0 text-right">{convertFromWei(props.withdrawData.tokenAmount)}</h5>
                         </td>
                         <td>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <p className="mb-0">Estimated SPARTA</p>
+                            <p className="mb-0 text-left">Estimated SPARTA</p>
                         </td>
                         <td>
-                            <h5 className="mb-0">{convertFromWei(props.withdrawData.baseAmount)}</h5>
+                            <h5 className="mb-0 text-right">{convertFromWei(props.withdrawData.baseAmount)}</h5>
                         </td>
                         <td>
                         </td>
@@ -657,12 +660,17 @@ const RemoveLiquidityPane = (props) => {
             </div>
             <br/>
             <br/>
-            {!props.approvalToken &&
-            <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light"
+            <div className="text-center">
+                {!props.approvalToken &&
+                    <button 
+                    color="success" 
+                    type="button" 
+                    className="btn btn-success btn-lg btn-block waves-effect waves-light"
                     onClick={props.removeLiquidity}>
-                <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Withdraw From
-                Pool {props.pool.symbol}</button>
-            }
+                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Withdraw From Pool {props.pool.symbol}
+                    </button>
+                }
+            </div>
         </>
     )
 }
