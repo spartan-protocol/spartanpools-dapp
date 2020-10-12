@@ -20,7 +20,7 @@ const Layout = (props) => {
 
   const toggleNav = () => {
     setNavIsOpen(!navIsOpen)
-  }
+  };
 
   const title = props.location.pathname;
   let currentage = title.charAt(1).toUpperCase() + title.slice(2);
