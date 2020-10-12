@@ -113,21 +113,21 @@ export const PoolsPaneSide = (props) => {
                     </Col>
                 </Row>
                 <Row>
-                    <Col sm="12" md="6" lg="3">
+                    <Col sm="12" md="6" lg="6" xl="3">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
                                     className={"bx bx-coin h1 text-warning align-middle mb-0 mr-3"}/>{props.t("Total Pooled")}
                                 </h5>
                                 <Row>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
-                                            <h3>{formatAllUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h3>
-                                            {/*<p className="text-muted text-truncate mb-0">0,0%<i*/}
-                                            {/*    className="mdi mdi-arrow-up ml-1 text-success"/></p>*/}
+                                            <h3 className="ml-20">{formatAllUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h3>
+                                            {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
+                                            {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
                                         </div>
                                     </Col>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
                                                 <ReactApexChart options={options1} series={series1} type="area"
@@ -139,21 +139,21 @@ export const PoolsPaneSide = (props) => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="12" md="6" lg="3">
+                    <Col sm="12" md="6" lg="6" xl="3">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
                                     className={"bx bx-coin-stack h1 text-primary align-middle mb-0 mr-3"}/>{props.t("Total Volume")}
                                 </h5>
                                 <Row>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
                                             <h3>{formatAllUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h3>
                                             {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
                                             {/*    className="mdi mdi-arrow-up ml-1 text-success"/></p>*/}
                                         </div>
                                     </Col>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
                                                 <ReactApexChart options={options2} series={series2} type="area"
@@ -165,21 +165,21 @@ export const PoolsPaneSide = (props) => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="12" md="6" lg="3">
+                    <Col sm="12" md="6" lg="6" xl="3">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
                                     className={"bx bx-rotate-right h1 text-secondary align-middle mb-0 mr-3"}></i>{props.t("TXN Count")}
                                 </h5>
                                 <Row>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
                                             <h3>{formatAllUnits(+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx)}</h3>
                                             {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
                                             {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
                                         </div>
                                     </Col>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
                                                 <ReactApexChart options={options3} series={series3} type="area"
@@ -191,21 +191,21 @@ export const PoolsPaneSide = (props) => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="12" md="6" lg="3">
+                    <Col sm="12" md="6" lg="6" xl="3">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
                                     className={"bx bx-trending-up h1 text-success align-middle mb-0 mr-3"}></i>{props.t("Total Earnings")}
                                 </h5>
                                 <Row>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
                                             <h3>{formatAllUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h3>
                                             {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
                                             {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
                             </div>
                                     </Col>
-                                    <Col xs="6">
+                                    <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
                                                 <ReactApexChart options={options4} series={series4} type="area"
