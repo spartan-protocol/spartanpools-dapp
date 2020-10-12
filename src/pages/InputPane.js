@@ -9,7 +9,8 @@ import {
     Label,
     InputGroup,
     InputGroupAddon,
-
+    Col,
+    Row,
 } from "reactstrap";
 import withRouter from "react-router-dom/es/withRouter";
 
@@ -18,12 +19,15 @@ export const InputPane = (props) => {
     return (
         <div>
             <div>
-                <p className="text-muted mb-2">
-                    <i className="bx bx-wallet mr-1" />
-                    {props.t("Wallet Balance")}
-                </p>
-                <h5>{convertFromWei(props.paneData?.balance)} {props.paneData?.symbol}</h5>
-                <br/>
+                <Row>
+                <Col xs="6">
+                    <p className="mb-2 mt-2 text-left" style={{fontSize:'1.2em'}}><i className="bx bx-wallet mr-1" />{props.t("Wallet Balance")}</p>
+                </Col>
+                <Col xs="6">
+                    <h5 className="mb-2 mt-2 text-right" >{convertFromWei(props.paneData?.balance)} {props.paneData?.symbol}</h5>
+                </Col>
+                </Row>
+
                 <Label>{props.t("Add Amount :")}</Label>
                 <InputGroup className="mb-3">
                     <InputGroupAddon addonType="prepend">
@@ -41,7 +45,9 @@ export const InputPane = (props) => {
                 </InputGroup>
             </div>
             <br/>
-            <PercentButtonRow changeAmount={props.changeAmount}/>
+            <div className="text-left">
+                <PercentButtonRow changeAmount={props.changeAmount}/>
+            </div>
             <br/>
         </div>
     )

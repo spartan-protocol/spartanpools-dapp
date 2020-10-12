@@ -482,7 +482,7 @@ const AddSymmPane = (props) => {
                     <tbody>
                     <tr>
                         <td>
-                            <p className="mb-0">Estimated Units</p>
+                            <p className="mb-0 text-left">Estimated Units</p>
                         </td>
                         <td>
                             <h5 className="mb-0">{convertFromWei(props.estLiquidityUnits.toFixed(0))}</h5>
@@ -492,7 +492,7 @@ const AddSymmPane = (props) => {
                     </tr>
                     <tr>
                         <td>
-                            <p className="mb-0">Estimated Share</p>
+                            <p className="mb-0 text-left">Estimated Share</p>
                         </td>
                         <td>
                             <h5 className="mb-0">{`${props.getEstShare()}%`}</h5>
@@ -502,7 +502,7 @@ const AddSymmPane = (props) => {
                     </tr>
                     <tr>
                         <td style={{width: "100%"}}>
-                            <p className="mb-0">Paired Amount (SPARTA)</p>
+                            <p className="mb-0 text-left">Paired Amount (SPARTA)</p>
                         </td>
                         <td style={{width: "10%"}}>
                             <h2 className="mb-0">{convertFromWei(props.liquidityData.baseAmount)}</h2>
@@ -534,11 +534,11 @@ const AddSymmPane = (props) => {
             </Col>
             <Col xs={8}>
                 {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
+                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
                     POOL</div>
                 }
                 {props.approvalBase && props.approvalToken && !props.startTx &&
-                <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
+                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
                 }
             </Col>
 

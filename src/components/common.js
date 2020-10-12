@@ -105,41 +105,41 @@ export const OutputPane = (props) => {
     return (
         <div style={{margin: 0}}>
 
-
             <PercentButtonRow changeAmount={props.changeAmount}/>
+                {/* // eslint-disable-next-line
+                <Center>
+                    {!secondToken &&
+                        <div>
+                            <Row>
+                                <Col xs={18}>
+                                    <TokenDropDown />
+                                </Col>
+                                <Col xs={6}>
+                                    <Tooltip title="Withdraw simultaneously to a second token">
+                                    <Button style={{ marginLeft: 10 }} onClick={handleSecondToken} icon={<PlusCircleOutlined />}></Button>
+                                    </Tooltip>
+                                </Col>
+                            </Row>
+                        </div>
+                    }
 
-
-            {/* <Center>
-        {!secondToken &&
-          <div>
-            <Row>
-              <Col xs={18}>
-                <TokenDropDown />
-              </Col>
-              <Col xs={6}>
-                <Tooltip title="Withdraw simultaneously to a second token">
-                  <Button style={{ marginLeft: 10 }} onClick={handleSecondToken} icon={<PlusCircleOutlined />}></Button>
-                </Tooltip>
-              </Col>
-            </Row>
-          </div>
-        }
-        {secondToken &&
-          <div>
-            <Row>
-              <Col xs={8} style={{ marginLeft: 10 }}>
-                <TokenDropDown />
-              </Col>
-              <Col xs={8} style={{ marginLeft: 10 }}>
-                <TokenDropDown />
-              </Col>
-              <Col xs={4} style={{ marginLeft: 10 }}>
-                <Button onClick={handleSecondToken} icon={<MinusCircleOutlined />}></Button>
-              </Col>
-            </Row>
-          </div>
-        }
-      </Center> */}
+                    {secondToken &&
+                        <div>
+                            <Row>
+                            <Col xs={8} style={{ marginLeft: 10 }}>
+                                <TokenDropDown />
+                            </Col>
+                            <Col xs={8} style={{ marginLeft: 10 }}>
+                                <TokenDropDown />
+                            </Col>
+                            <Col xs={4} style={{ marginLeft: 10 }}>
+                                <Button onClick={handleSecondToken} icon={<MinusCircleOutlined />}></Button>
+                            </Col>
+                            </Row>
+                        </div>
+                    }
+                </Center>
+            */}
             <br/>
         </div>
     )
@@ -178,7 +178,7 @@ export const PercentButtonRow = (props) => {
         </>
     )
 }
-
+// eslint-disable-next-line
 {/*
 export const TokenDropDown = (props) => {
 
