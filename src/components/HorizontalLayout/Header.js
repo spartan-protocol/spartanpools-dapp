@@ -16,11 +16,8 @@ import logoDark from "../../assets/images/logo-dark.png";
 
 // import images
 import github from "../../assets/images/brands/github.png";
-import bitbucket from "../../assets/images/brands/bitbucket.png";
-import dribbble from "../../assets/images/brands/dribbble.png";
-import dropbox from "../../assets/images/brands/dropbox.png";
-import mail_chimp from "../../assets/images/brands/mail_chimp.png";
-import slack from "../../assets/images/brands/slack.png";
+import twitter from "../../assets/images/brands/twitter.png";
+import medium from "../../assets/images/brands/medium.png";
 
 //i18n
 import { withNamespaces } from 'react-i18next';
@@ -110,42 +107,22 @@ const Header = (props) => {
                 <div className="px-lg-2">
                   <Row className="no-gutters">
                     <Col>
-                      <Link className="dropdown-icon-item" to="#">
+                      <a className="dropdown-icon-item" target="_blank" href="https://github.com/spartan-protocol" rel="noopener noreferrer">
                         <img src={github} alt="Github" />
                         <span>GitHub</span>
-                      </Link>
+                      </a>
                     </Col>
                     <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={bitbucket} alt="bitbucket" />
-                        <span>Bitbucket</span>
-                      </Link>
+                      <a className="dropdown-icon-item" target="_blank" href="https://medium.com/spartanprotocol" rel="noopener noreferrer">
+                        <img src={medium} alt="Medium" />
+                        <span>Medium</span>
+                      </a>
                     </Col>
                     <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={dribbble} alt="dribbble" />
-                        <span>Dribbble</span>
-                      </Link>
-                    </Col>
-                  </Row>
-                  <Row className="no-gutters">
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={dropbox} alt="dropbox" />
-                        <span>Dropbox</span>
-                      </Link>
-                    </Col>
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={mail_chimp} alt="mail_chimp" />
-                        <span>Mail Chimp</span>
-                      </Link>
-                    </Col>
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={slack} alt="slack" />
-                        <span>Slack</span>
-                      </Link>
+                      <a className="dropdown-icon-item" target="_blank" href="https://twitter.com/SpartanProtocol" rel="noopener noreferrer">
+                        <img src={twitter} alt="Twitter" />
+                        <span>Twitter</span>
+                      </a>
                     </Col>
                   </Row>
                 </div>
