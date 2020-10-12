@@ -1,5 +1,7 @@
 ## SPARTAN POOLS DAPP
 
+### 'yarn'
+Installs required files
 
 ### `yarn start`
 

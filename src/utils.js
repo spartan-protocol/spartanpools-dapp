@@ -37,38 +37,50 @@ export const getAddressShort = (address) => {
     return addrShort
 }
 
-export const formatAPY = (input) =>{
+export const formatAPY = (input) => {
     const annual = (((+input-10000)/10000)*100).toFixed(2)
     return `${annual}%`
 }
 
-export const formatUnits = (input) =>{
-    const units = (bn(input).toFixed(2).toString())
-    return `${units.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+export const formatAllUnits = (input) => {
+    var units = (bn(input).toString())
+    if (input === 0) {units = (bn(input).toFixed(0).toString())}
+    else if (input < 0.0001) {units = (bn(input).toFixed(6).toString())}
+    else if (input < 0.001) {units = (bn(input).toFixed(5).toString())}
+    else if (input < 0.01) {units = (bn(input).toFixed(4).toString())}
+    else if (input < 0.1) {units = (bn(input).toFixed(3).toString())}
+    else if (input < 1000) {units = (bn(input).toFixed(2).toString())}
+    else if (input < 1000000) {units = (bn(input).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}
+    else if (input >= 1000000) {units = ((bn(input).toFixed(0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  // ADD: Divide by 1m and add 'M' string
+    return `${units}`
 }
 
-export const formatUSD = (input, price) => {
+export const formatAllUSD = (input, price) => {
+    var valueNew = (bn(input).times( price )).toNumber()
     const value = input ? (bn(input).times( price )).toNumber() : 0
-    return `$${(value.toLocaleString())}`
-}
-
-export const formatUSDStatBoxes = (input, price) => {
-    const value = input ? (bn(input).times( price )).toNumber() : 0
-    return `$${value.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+    if (value === 0) {valueNew = (bn(value).toFixed(0).toString())}
+    else if (input < 0.0001) {valueNew = (bn(value).toFixed(6).toString())}
+    else if (input < 0.001) {valueNew = (bn(value).toFixed(5).toString())}
+    else if (input < 0.01) {valueNew = (bn(value).toFixed(4).toString())}
+    else if (input < 0.1) {valueNew = (bn(value).toFixed(3).toString())}
+    else if (input < 1000) {valueNew = (bn(value).toFixed(2).toString())}
+    else if (input < 1000000) {valueNew = (bn(value).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}
+    else if (input >= 1000000) {valueNew = (bn(value).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))} // ADD: Divide by 1m and add 'M' string
+    return `$${valueNew}`
 }
 
 export const rainbowStop = (h) => {
     const f = (n, k = (n + h * 12) % 12) => 0.5 - 0.5 * Math.max(Math.min(k - 3, 9 - k, 1), -1)
     return rgb2hex(Math.floor(f(0) * 255), Math.floor(f(8) * 255), Math.floor(f(4) * 255))
-  }
+}
 
-  export const rgb2hex = (r, g, b) =>
+export const rgb2hex = (r, g, b) =>
     `#${((r << 16) + (g << 8) + b).toString(16).padStart(6, '0')}`
 
-  export const getIntFromName = (str) => {
+export const getIntFromName = (str) => {
     const inputStr = String(str).toUpperCase()
     const div = 22
     const firstInt = (inputStr.charCodeAt(0) - 'A'.charCodeAt(0)) / div
     const secondInt = inputStr.length > 1 ? (inputStr.charCodeAt(1) - 'A'.charCodeAt(0)) / div : 0
     return [Number(firstInt.toFixed(2)), Number(secondInt.toFixed(2))]
-  }
+}

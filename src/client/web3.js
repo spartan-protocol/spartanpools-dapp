@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import axios from 'axios'
 
 import ERC20 from '../artifacts/ERC20.json'
 import SPARTA from '../artifacts/Base.json'
@@ -39,6 +40,12 @@ export const getBNBBalance = async (acc) => {
     var web3_ = getWeb3()
     var bal_ = await web3_.eth.getBalance(acc)
     return bal_
+}
+
+export const getSpartaPrice = async () => {
+    let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
+    console.log(resp.data["spartan-protocol-token"].usd)
+    return resp.data["spartan-protocol-token"].usd
 }
 
 export const getTokenContract = (address) => {
