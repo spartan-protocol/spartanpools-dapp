@@ -49,7 +49,7 @@ const RightSidebar = (props) => {
               <div className="p-4">
               <div className="radio-toolbar">
                 <Nav tabs>
-                  <NavItem>
+                  <NavItem className="text-center w-50">
                     <NavLink
                       className={classnames({ active: activeTab === '1' })}
                       onClick={() => { toggle('1'); }}
@@ -57,7 +57,7 @@ const RightSidebar = (props) => {
                     Assets
                     </NavLink>
                   </NavItem>
-                  <NavItem>
+                  <NavItem className="text-center w-50">
                     <NavLink
                       className={classnames({ active: activeTab === '2' })}
                       onClick={() => { toggle('2'); }}
@@ -119,7 +119,7 @@ export const AssetTable = (props) => {
               <div style={{textAlign:"center"}}><LoadingOutlined/></div>
             }
             {context.connected &&
-              <Table>
+              <Table className="text-center">
                 <thead>
                   <tr>
                     <th>Symbol</th>
@@ -181,7 +181,7 @@ export const PoolShareTable = (props) => {
               <div style={{textAlign:"center"}}><LoadingOutlined/></div>
             }
             {context.stakesData &&
-              <Table>
+              <Table className="text-center">
                 <thead>
                   <tr>
                     <th>Symbol</th>
