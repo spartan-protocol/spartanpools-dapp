@@ -28,11 +28,6 @@ const ThemeSwitch = (props) => {
     const [switchValue, setSwitch] = useState(theme === "light")
 
     function toggleTheme() {
-        // Obtains an array of all <link>
-        // elements.
-        // Select your element using indexing.
-        // var themetest = document.getElementsByTagName('page-topbar')[0];
-        // theme  = "dark"
         theme = switchValue ? "dark" : "light"
         setSwitch(!switchValue)
         localStorage.setItem("thememode", theme)
@@ -52,7 +47,6 @@ const ThemeSwitch = (props) => {
 
                     />
                     <span className="align-middle">
-
                         <FormGroup>
                             <CustomInput
                                 label={theme}
@@ -60,7 +54,6 @@ const ThemeSwitch = (props) => {
                                 id="CustomSwitch"
                                 name="customSwitch"
                                 onChange={toggleTheme}/>
-
 
                     </FormGroup>
                     </span>
