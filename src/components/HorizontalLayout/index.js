@@ -8,7 +8,11 @@ import {
   changeLayoutWidth,
 } from "../../store/actions";
 
-
+// Other Layout related Component
+import Navbar from "./Navbar";
+import Header from "./Header";
+import Footer from "./Footer";
+import Rightbar from "../CommonForBoth/Rightbar";
 
 const Layout = (props) => {
 
