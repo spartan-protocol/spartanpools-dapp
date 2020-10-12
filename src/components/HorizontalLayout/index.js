@@ -16,13 +16,10 @@ import Rightbar from "../CommonForBoth/Rightbar";
 
 const Layout = (props) => {
 
-  const [isMenuOpened,SetIsMenuOpened] = useState('false')
+  const [navIsOpen,setNavIsOpen] = useState(true)
 
-  /**
-  * Opens the menu - mobile
-  */
-  const openMenu = (e) => {
-    SetIsMenuOpened(!isMenuOpened);
+  const toggleNav = () => {
+    setNavIsOpen(!navIsOpen)
   }
 
   const title = props.location.pathname;
@@ -44,10 +41,10 @@ const Layout = (props) => {
     <React.Fragment>
 
       <div id="layout-wrapper">
-        <Header theme={props.topbarTheme}
-          isMenuOpened={isMenuOpened}
-          openLeftMenuCallBack={openMenu} />
-        <Navbar menuOpen={isMenuOpened} />
+        <Header theme={props.topbarTheme} toggleNav={toggleNav} />
+        {navIsOpen &&
+          <Navbar />
+        }
         <div className="main-content">
           {props.children}
         </div>

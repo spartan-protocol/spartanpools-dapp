@@ -129,6 +129,7 @@ export const AssetTable = (props) => {
                 <tbody>
                       {context.walletData.tokens.map(c =>
                         <AssetItem 
+                          key={c.address}
                           symbol={c.symbol}
                           address={c.address}
                           balance={c.balance}
@@ -191,6 +192,7 @@ export const PoolShareTable = (props) => {
                 <tbody>
                       {context.stakesData.map(c =>
                         <PoolItem 
+                          key={c.address}
                           symbol={c.symbol}
                           address={c.address}
                           units={c.units}

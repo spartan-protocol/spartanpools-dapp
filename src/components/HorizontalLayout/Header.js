@@ -31,13 +31,6 @@ import AddressConn from '../CommonForBoth/AddressConn';
 
 const Header = (props) => {
 
-  /**
-   * Toggle navbar
-   */
-  const toggleMenu = () => {
-    props.openLeftMenuCallBack();
-  }
-
   const toggleFullscreen = () => {
     if (
       !document.fullscreenElement &&
@@ -97,7 +90,7 @@ const Header = (props) => {
             <button
               type="button"
               className="btn btn-sm px-3 font-size-16 d-lg-none header-item waves-effect waves-light"
-              onClick={toggleMenu}
+              onClick={props.toggleNav}
               >
               <i className="fa fa-fw fa-bars"></i>
             </button>
@@ -108,9 +101,6 @@ const Header = (props) => {
             </div>
 
             <LanguageDropdown />
-
-            <div clacustom-control custom-switch mb-3>
-            </div>
 
             <UncontrolledDropdown className="d-none d-lg-inline-block ml-1">
               <DropdownToggle className="btn header-item noti-icon waves-effect" caret tag="button">
@@ -176,11 +166,8 @@ const Header = (props) => {
 
             <NotificationDropdown />
 
-            <div className="dropdown d-inline-block">
-              <button type="button" className="btn header-item waves-effect">
+            <div>
                 <AddressConn />
-              </button>
-
             </div>
           </div>
         </div>

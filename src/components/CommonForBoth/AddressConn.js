@@ -113,15 +113,15 @@ const AddressConn = (props) => {
                 type={notifyType}
                 message={notifyMessage}
             />
-            <div >
+            <div className="w-auto m-3 btn btn-success btn-lg btn-block waves-effect waves-light">
                 {!connected && !connecting &&
-                    <div onClick={connectWallet}><i className="bx bx-wallet" /> CONNECT</div>
+                    <div onClick={connectWallet}><h6 className="m-0" ><i className="bx bx-wallet" /> CONNECT</h6></div>
                 }
                 {connecting &&
-                    <div onClick={toggleRightbar}><i className="bx bx-wallet" /> Connecting <i className="bx bx-loader-alt bx-spin" /></div>
+                    <div onClick={toggleRightbar}><h6 className="m-0" ><i className="bx bx-wallet" /> Connecting <i className="bx bx-loader-alt bx-spin" /></h6></div>
                 }
                 {connected &&
-                    <div onClick={toggleRightbar}><i className="bx bx-wallet" /> {addr()}</div>
+                    <div onClick={toggleRightbar}><h6 className="m-0" ><i className="bx bx-wallet" /> {addr()}</h6></div>
                 }
             </div>
         </>

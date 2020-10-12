@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Collapse } from "reactstrap";
 import { Link, withRouter } from "react-router-dom";
 import classname from "classnames";
 
@@ -31,33 +30,31 @@ const Navbar = (props) => {
             <div className="topnav">
                 <div className="container-fluid">
                     <nav className="navbar navbar-light navbar-expand-lg topnav-menu" id="navigation">
-                        <Collapse isOpen={props.menuOpen} className="navbar-collapse" id="topnav-menu-content">
-                            <ul className="navbar-nav">
-                                <li className="nav-item dropdown">
-                                    <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown1} to="#">
-                                        <i className="bx bx-customize mr-2"></i>{props.t('Apps')} <div className="arrow-down"></div>
-                                    </Link>
-                                    <div className={classname("dropdown-menu", { show: !isDropdown1 })}>
-                                        <Link to="/pools" className="dropdown-item" onClick={closeDropdowns}>{props.t('Pools')}</Link>
-                                        {/*
-                                        <Link to="/share" className="dropdown-item" onClick={closeDropdowns}>{props.t('Shares')}</Link>
-                                        <Link to="/dao" className="dropdown-item" onClick={closeDropdowns}>{props.t('Dao')}</Link>
-                                        <Link to="/earn" className="dropdown-item" onClick={closeDropdowns}>{props.t('Earn')}</Link>
-                                        <Link to="/swap" className="dropdown-item" onClick={closeDropdowns}>{props.t('Swap')}</Link>
-                                        */}
-                                    </div>
-                                </li>
-                                <li className="nav-item dropdown">
-                                    <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown2} to="#">
-                                        <i className="bx bx-info-circle mr-2"></i>{props.t('Info')} <div className="arrow-down"></div>
-                                    </Link>
-                                    <div className={classname("dropdown-menu", { show: !isDropdown2  })}>
-                                        {/*<Link to="start" className="dropdown-item">{props.t('How to start?')}</Link>*/}
-                                        <Link to="/faq" className="dropdown-item" onClick={closeDropdowns}>{props.t('FAQ')}</Link>
-                                    </div>
-                                </li>
-                            </ul>
-                        </Collapse>
+                        <ul className="navbar-nav">
+                            <li className="nav-item dropdown">
+                                <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown1} to="#">
+                                    <i className="bx bx-customize mr-2"></i>{props.t('Apps')} <div className="arrow-down ml-2"></div>
+                                </Link>
+                                <div className={classname("dropdown-menu", { show: !isDropdown1 })}>
+                                    <Link to="/pools" className="dropdown-item" onClick={closeDropdowns}>{props.t('Pools')}</Link>
+                                    {/*
+                                    <Link to="/share" className="dropdown-item" onClick={closeDropdowns}>{props.t('Shares')}</Link>
+                                    <Link to="/dao" className="dropdown-item" onClick={closeDropdowns}>{props.t('Dao')}</Link>
+                                    <Link to="/earn" className="dropdown-item" onClick={closeDropdowns}>{props.t('Earn')}</Link>
+                                    <Link to="/swap" className="dropdown-item" onClick={closeDropdowns}>{props.t('Swap')}</Link>
+                                    */}
+                                </div>
+                            </li>
+                            <li className="nav-item dropdown">
+                                <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown2} to="#">
+                                    <i className="bx bx-info-circle mr-2"></i>{props.t('Info')} <div className="arrow-down ml-2"></div>
+                                </Link>
+                                <div className={classname("dropdown-menu", { show: !isDropdown2  })}>
+                                    {/*<Link to="start" className="dropdown-item">{props.t('How to start?')}</Link>*/}
+                                    <Link to="/faq" className="dropdown-item" onClick={closeDropdowns}>{props.t('FAQ')}</Link>
+                                </div>
+                            </li>
+                        </ul>
                     </nav>
                 </div>
             </div>

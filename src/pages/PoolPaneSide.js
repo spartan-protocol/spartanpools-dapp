@@ -2,7 +2,7 @@ import {convertFromWei, formatUnits, formatUSD, formatUSDStatBoxes} from "../uti
 import {SPARTA_ADDR} from "../client/web3";
 
 import {withNamespaces} from "react-i18next";
-import withRouter from "react-router-dom/es/withRouter";
+import { withRouter } from "react-router-dom";
 
 
 import React from "react";

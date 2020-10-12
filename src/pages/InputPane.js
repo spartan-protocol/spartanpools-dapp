@@ -12,7 +12,7 @@ import {
     Col,
     Row,
 } from "reactstrap";
-import withRouter from "react-router-dom/es/withRouter";
+import { withRouter } from "react-router-dom";
 
 export const InputPane = (props) => {
 
@@ -37,7 +37,7 @@ export const InputPane = (props) => {
                            placeholder={convertFromWei(props.paneData?.input)}
                            size={'large'}
                         // defaultValue={convertFromWei(props.paneData?.input)}
-                           allowClear={true}
+                        //   allowClear={true}
                         // addonAfter={<TokenDropDown default={props.paneData?.address}
                         //   changeToken={props.changeToken}
                         //   tokenList={props.tokenList} />}

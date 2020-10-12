@@ -4,7 +4,7 @@ import { Row, Col, Card } from "reactstrap";
 //Import Image
 import features from "../../assets/images/crypto/features-img/img-1.png"
 import {withNamespaces} from 'react-i18next';
-import withRouter from "react-router-dom/es/withRouter";
+import { withRouter } from "react-router-dom";
 
 class CardWelcome extends Component {
     render() {

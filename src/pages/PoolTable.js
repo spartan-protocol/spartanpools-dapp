@@ -15,7 +15,7 @@ import {
 import {withNamespaces} from 'react-i18next';
 
 import PoolTableItem from "./PoolTableItem";
-import withRouter from "react-router-dom/es/withRouter";
+import { withRouter } from "react-router-dom";
 
 const PoolTable = (props) => {
 
@@ -66,14 +66,16 @@ const PoolTable = (props) => {
                                     </thead>
                                     <tbody>
                                     {context.poolsData.map(c =>
-                                        <PoolTableItem scope="row"
-                                                       address={c.address}
-                                                       symbol={c.symbol}
-                                                       price={c.price}
-                                                       depth={c.depth}
-                                                       volume={c.volume}
-                                                       txCount={c.txCount}
-                                                       fees={c.fees}
+                                        <PoolTableItem 
+                                        key={c.address}
+                                        scope="row"
+                                        address={c.address}
+                                        symbol={c.symbol}
+                                        price={c.price}
+                                        depth={c.depth}
+                                        volume={c.volume}
+                                        txCount={c.txCount}
+                                        fees={c.fees}
                                         />
                                     )}
                                     </tbody>

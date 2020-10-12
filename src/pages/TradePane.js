@@ -11,7 +11,7 @@ import {
 } from "reactstrap"
 
 import {withNamespaces} from "react-i18next";
-import withRouter from "react-router-dom/es/withRouter";
+import { withRouter } from "react-router-dom";
 
 
 
