@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import {Context} from "../context";
 import {TokenIcon} from "../components/common";
-import {convertFromWei, formatUSD, formatUSDStatBoxes} from "../utils";
+import {convertFromWei, formatAllUSD} from "../utils";
 import Button from "antd/es/button";
 
 
@@ -27,19 +27,19 @@ export const PoolTableItem = (props) => {
                     {props.symbol}
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatUSD(props.price, context.spartanPrice)}
+                    {formatAllUSD(props.price, context.spartanPrice)}
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatUSDStatBoxes(convertFromWei(props.depth), context.spartanPrice)}
+                    {formatAllUSD(convertFromWei(props.depth), context.spartanPrice)}
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatUSDStatBoxes(convertFromWei(props.volume), context.spartanPrice)}
+                    {formatAllUSD(convertFromWei(props.volume), context.spartanPrice)}
                 </td>
                 <td className="d-none d-lg-table-cell">
                     {props.txCount.toLocaleString()}
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatUSDStatBoxes(convertFromWei(props.fees), context.spartanPrice)}
+                    {formatAllUSD(convertFromWei(props.fees), context.spartanPrice)}
                 </td>
                 <td>
                     <Link to={`/pool/stake?pool=${props.address}`}>

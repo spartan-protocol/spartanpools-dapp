@@ -8,7 +8,7 @@ import {LoadingOutlined} from '@ant-design/icons';
 import { connect } from "react-redux";
 import { hideRightSidebar } from "../../store/actions";
 
-import {convertFromWei, formatNoDec, formatUnits} from '../../utils'
+import {convertFromWei, formatAllUnits} from '../../utils'
 
 import { manageBodyClass, TokenIcon } from '../common';
 
@@ -154,7 +154,7 @@ export const AssetItem = (props) => {
           <TokenIcon address={props.address}/>
         </td>
         <td>
-          <h5>{formatUnits(convertFromWei(props.balance))}</h5>
+          <h5>{formatAllUnits(convertFromWei(props.balance))}</h5>
           <h6>{props.symbol}</h6>
         </td>
       </tr>
@@ -217,7 +217,7 @@ export const PoolItem = (props) => {
           <TokenIcon address={props.address}/>
         </td>
         <td>
-          <h5>{formatUnits(convertFromWei(props.units))}</h5>
+          <h5>{formatAllUnits(convertFromWei(props.units))}</h5>
           <h6>{props.symbol}</h6>
         </td>
       </tr>

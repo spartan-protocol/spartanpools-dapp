@@ -1,4 +1,4 @@
-import {convertFromWei, formatUnits, formatUSD, formatUSDStatBoxes} from "../utils";
+import {convertFromWei, formatAllUnits, formatAllUSD} from "../utils";
 import {SPARTA_ADDR} from "../client/web3";
 
 import {withNamespaces} from "react-i18next";
@@ -29,7 +29,7 @@ const PoolPaneSide = (props) => {
                             </div>
                             <h4>{props.pool.symbol}</h4>
                             <p>{props.t("Price")}</p>
-                            <h4 className="strong">{formatUSD(props.pool.price, props.price)}</h4>
+                            <h4 className="strong">{formatAllUSD(props.pool.price, props.price)}</h4>
                         </div>
                     </Col>
                     <Col xs="6">
@@ -39,7 +39,7 @@ const PoolPaneSide = (props) => {
                             </div>
                             <h4>SPARTA</h4>
                             <p>{props.t("Price")}</p>
-                            <h4 className="strong">{formatUSD(props.price, 1)}</h4>
+                            <h4 className="strong">{formatAllUSD(props.price, 1)}</h4>
                         </div>
                     </Col>
                 </Row>
@@ -52,7 +52,7 @@ const PoolPaneSide = (props) => {
                                 <p className="mb-0 text-left">{props.t("Volume")}</p>
                             </td>
                             <td style={{width: "50%"}}>
-                                <h5 className="mb-0 text-right">{formatUSDStatBoxes(convertFromWei(props.pool.volume), props.price)}</h5>
+                                <h5 className="mb-0 text-right">{formatAllUSD(convertFromWei(props.pool.volume), props.price)}</h5>
                             </td>
                         </tr>
                         <tr>
@@ -60,7 +60,7 @@ const PoolPaneSide = (props) => {
                                 <p className="mb-0 text-left">{props.t("Tx Count")}</p>
                             </td>
                             <td>
-                                <h5 className="mb-0 text-right">{props.pool.txCount}</h5>
+                                <h5 className="mb-0 text-right">{formatAllUnits(props.pool.txCount)}</h5>
                             </td>
                         </tr>
                         <tr>
@@ -68,7 +68,7 @@ const PoolPaneSide = (props) => {
                                 <p className="mb-0 text-left">{props.t("Fees")}</p>
                             </td>
                             <td>
-                                <h5 className="mb-0 text-right">{formatUSDStatBoxes(convertFromWei(props.pool.fees), props.price)}</h5>
+                                <h5 className="mb-0 text-right">{formatAllUSD(convertFromWei(props.pool.fees), props.price)}</h5>
                             </td>
                         </tr>
                         <tr>
@@ -77,9 +77,9 @@ const PoolPaneSide = (props) => {
                             </td>
                             <td>
                                 <br/>
-                                <h5 className="mb-0 text-right">{formatUnits(convertFromWei(props.pool.tokenAmount))}</h5>
+                                <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.pool.tokenAmount))}</h5>
                                 <p className="mb-0 text-right">{props.pool.symbol}</p>
-                                <h5 className="mb-0 text-right">{formatUnits(convertFromWei(props.pool.baseAmount))}</h5>
+                                <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.pool.baseAmount))}</h5>
                                 <p className="mb-0 text-right">SPARTA</p>
                             </td>
                         </tr>

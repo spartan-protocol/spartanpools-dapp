@@ -1,11 +1,10 @@
 import React, {useContext} from "react";
 import {Context} from "../context";
-import {convertFromWei, formatNoDec, formatUSDStatBoxes} from "../utils";
+import {convertFromWei, formatAllUnits, formatAllUSD} from "../utils";
 import CardWelcome from "./Utility/card-welcome";
 import ReactApexChart from "react-apexcharts";
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
-
 
 import {
     Row,
@@ -15,15 +14,13 @@ import {
 
 } from "reactstrap"
 
-
 export const PoolsPaneSide = (props) => {
 
         const context = useContext(Context);
 
-
         const series1 = [{
             name: "Pooled",
-            data: [0, formatUSDStatBoxes(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice).slice(1)]
+            data: [0, formatAllUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice).slice(1)]
         }];
         const options1 = {
             chart: {sparkline: {enabled: !0}},
@@ -45,7 +42,7 @@ export const PoolsPaneSide = (props) => {
 
         const series2 = [{
             name: "Volume",
-            data: [0, formatUSDStatBoxes(convertFromWei(props.globalData?.totalVolume), context.spartanPrice).slice(1)]
+            data: [0, formatAllUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice).slice(1)]
         }];
         const options2 = {
             chart: {sparkline: {enabled: !0}},
@@ -88,7 +85,7 @@ export const PoolsPaneSide = (props) => {
 
         const series4 = [{
             name: "Earnings",
-            data: [0, formatUSDStatBoxes(convertFromWei(props.globalData?.totalFees), context.spartanPrice).slice(1)]
+            data: [0, formatAllUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice).slice(1)]
         }];
         const options4 = {
             chart: {sparkline: {enabled: !0}},
@@ -125,7 +122,7 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="6">
                                         <div>
-                                            <h3>{formatUSDStatBoxes(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h3>
+                                            <h3>{formatAllUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h3>
                                             {/*<p className="text-muted text-truncate mb-0">0,0%<i*/}
                                             {/*    className="mdi mdi-arrow-up ml-1 text-success"/></p>*/}
                                         </div>
@@ -151,7 +148,7 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="6">
                                         <div>
-                                            <h3>{formatUSDStatBoxes(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h3>
+                                            <h3>{formatAllUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h3>
                                             {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
                                             {/*    className="mdi mdi-arrow-up ml-1 text-success"/></p>*/}
                                         </div>
@@ -177,7 +174,7 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="6">
                                         <div>
-                                            <h3>{formatNoDec(+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx)} TXN</h3>
+                                            <h3>{formatAllUnits(+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx)}</h3>
                                             {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
                                             {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
                                         </div>
@@ -203,7 +200,7 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="6">
                                         <div>
-                                            <h3>{formatUSDStatBoxes(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h3>
+                                            <h3>{formatAllUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h3>
                                             {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
                                             {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
                             </div>

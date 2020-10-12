@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 //import {Menu} from 'antd'
 // PlusCircleOutlined, MinusCircleOutlined, Tooltip
 import {
-    rainbowStop, getIntFromName, convertFromWei, formatUSD,
+    rainbowStop, getIntFromName, convertFromWei, formatAllUSD,
     // formatAPY,
 } from '../utils'
 import {H1, HR, Text, Center, Sublabel} from './elements'
@@ -424,7 +424,7 @@ export const CDPDetails = (props) => {
                 </Col>
                 <Col span={6}>
                     <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br/>
-                    <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text>
+                    <Text size={props.size / 3}>({formatAllUSD(convertFromWei(props.balance))})</Text>
                 </Col>
 
             </Row>

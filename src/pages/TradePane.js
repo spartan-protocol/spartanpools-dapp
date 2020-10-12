@@ -2,7 +2,7 @@ import React from "react";
 
 import InputPane from "./InputPane";
 
-import {convertFromWei} from "../utils";
+import {convertFromWei, formatAllUnits} from "../utils";
 import {LoadingOutlined, UnlockOutlined} from "@ant-design/icons";
 
 
@@ -43,7 +43,7 @@ export const TradePane = (props) => {
                             <p className="mb-0 text-left">{props.t("Output")}</p>
                         </td>
                         <td style={{width: "10%"}}>
-                            <h3 className="mb-0 text-right"> {convertFromWei(props.tradeData.output)} {props.tradeData.outputSymbol}</h3>
+                            <h3 className="mb-0 text-right"> {formatAllUnits(convertFromWei(props.tradeData.output))} {props.tradeData.outputSymbol}</h3>
                         </td>
                     </tr>
 

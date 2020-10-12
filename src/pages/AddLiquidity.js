@@ -8,7 +8,7 @@ import queryString from 'query-string';
 import InputPane from "./InputPane";
 
 import {OutputPane} from '../components/common'
-import {bn, formatBN, convertFromWei, convertToWei} from '../utils'
+import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits} from '../utils'
 import {getLiquidityUnits} from '../math'
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import Notification from '../components/CommonForBoth/notification'
@@ -487,7 +487,7 @@ const AddSymmPane = (props) => {
                             <p className="mb-0 text-left">Estimated Units</p>
                         </td>
                         <td>
-                            <h5 className="mb-0">{convertFromWei(props.estLiquidityUnits.toFixed(0))}</h5>
+                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits.toFixed(0)))}</h5>
                         </td>
                         <td>
                         </td>
@@ -507,7 +507,7 @@ const AddSymmPane = (props) => {
                             <p className="mb-0 text-left">Paired Amount (SPARTA)</p>
                         </td>
                         <td style={{width: "10%"}}>
-                            <h2 className="mb-0">{convertFromWei(props.liquidityData.baseAmount)}</h2>
+                            <h2 className="mb-0">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))}</h2>
                         </td>
                         <td>
                         </td>
@@ -575,7 +575,7 @@ const AddAsymmPane = (props) => {
                             <p className="mb-0">Estimated Units</p>
                         </td>
                         <td>
-                            <h5 className="mb-0">{convertFromWei(props.estLiquidityUnits.toFixed(0))}</h5>
+                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits.toFixed(0)))}</h5>
                         </td>
                         <td>
                         </td>
@@ -640,7 +640,7 @@ const RemoveLiquidityPane = (props) => {
                             <p className="mb-0 text-left">Estimated</p>
                         </td>
                         <td>
-                            <h5 className="mb-0 text-right">{convertFromWei(props.withdrawData.tokenAmount)}</h5>
+                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.withdrawData.tokenAmount))}</h5>
                         </td>
                         <td>
                         </td>
@@ -650,7 +650,7 @@ const RemoveLiquidityPane = (props) => {
                             <p className="mb-0 text-left">Estimated SPARTA</p>
                         </td>
                         <td>
-                            <h5 className="mb-0 text-right">{convertFromWei(props.withdrawData.baseAmount)}</h5>
+                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.withdrawData.baseAmount))}</h5>
                         </td>
                         <td>
                         </td>

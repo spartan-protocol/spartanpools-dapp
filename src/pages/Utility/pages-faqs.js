@@ -49,15 +49,6 @@ class PagesFaqs extends Component {
                                                 className={classnames({ active: this.state.activeTab === '2' })}
                                                 onClick={() => { this.toggleTab('2'); }}
                                             >
-                                                <i className="bx bx-check-shield d-block check-nav-icon mt-4 mb-2"></i>
-                                                <p className="font-weight-bold mb-4">Privacy Policy</p>
-                                            </NavLink>
-                                        </NavItem>
-                                        <NavItem>
-                                            <NavLink
-                                                className={classnames({ active: this.state.activeTab === '3' })}
-                                                onClick={() => { this.toggleTab('3'); }}
-                                            >
                                                 <i className="bx bx-support d-block check-nav-icon mt-4 mb-2"></i>
                                                 <p className="font-weight-bold mb-4">Support</p>
                                             </NavLink>
@@ -205,56 +196,8 @@ class PagesFaqs extends Component {
                                                         </Media>
                                                     </Media>
                                                 </TabPane>
+                                                
                                                 <TabPane tabId="2">
-                                                    <CardTitle className="mb-5">Privacy Policy</CardTitle>
-
-                                                    <Media className="faq-box mb-4">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">Where does it come from?</h5>
-                                                            <p className="text-muted">Everyone realizes why a new common language would be desirable one could refuse to pay expensive translators.</p>
-                                                        </Media>
-                                                    </Media>
-                                                    <Media className="faq-box mb-4">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">Where can I get some?</h5>
-                                                            <p className="text-muted">To an English person, it will seem like simplified English, as a skeptical Cambridge friend of mine told me what Occidental</p>
-                                                        </Media>
-                                                    </Media>
-                                                    <Media className="faq-box mb-4">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">What is Lorem Ipsum?</h5>
-                                                            <p className="text-muted">New common language will be more simple and regular than the existing European languages. It will be as simple as occidental.</p>
-                                                        </Media>
-                                                    </Media>
-                                                    <Media className="faq-box mb-4">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">Why do we use it?</h5>
-                                                            <p className="text-muted">Their separate existence is a myth. For science, music, sport, etc, Europe uses the same vocabulary.</p>
-                                                        </Media>
-                                                    </Media>
-                                                    <Media className="faq-box">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">Where can I get some?</h5>
-                                                            <p className="text-muted">If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages.</p>
-                                                        </Media>
-                                                    </Media>
-                                                </TabPane>
-                                                <TabPane tabId="3">
                                                     <CardTitle className="mb-5">Support</CardTitle>
 
                                                     <Media className="faq-box mb-4">
@@ -262,46 +205,8 @@ class PagesFaqs extends Component {
                                                             <i className="bx bx-help-circle font-size-20 text-success"></i>
                                                         </div>
                                                         <Media body>
-                                                            <h5 className="font-size-15">Where can I get some?</h5>
-                                                            <p className="text-muted">To an English person, it will seem like simplified English, as a skeptical Cambridge friend of mine told me what Occidental</p>
-                                                        </Media>
-                                                    </Media>
-                                                    <Media className="faq-box mb-4">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">Where does it come from?</h5>
-                                                            <p className="text-muted">Everyone realizes why a new common language would be desirable one could refuse to pay expensive translators.</p>
-                                                        </Media>
-                                                    </Media>
-
-                                                    <Media className="faq-box mb-4">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">Why do we use it?</h5>
-                                                            <p className="text-muted">Their separate existence is a myth. For science, music, sport, etc, Europe uses the same vocabulary.</p>
-                                                        </Media>
-                                                    </Media>
-                                                    <Media className="faq-box mb-4">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">Where can I get some?</h5>
-                                                            <p className="text-muted">If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages.</p>
-                                                        </Media>
-                                                    </Media>
-
-                                                    <Media className="faq-box">
-                                                        <div className="faq-icon mr-3">
-                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
-                                                        </div>
-                                                        <Media body>
-                                                            <h5 className="font-size-15">What is Lorem Ipsum?</h5>
-                                                            <p className="text-muted">New common language will be more simple and regular than the existing European languages. It will be as simple as occidental.</p>
+                                                            <h5 className="font-size-15">Please help!</h5>
+                                                            <p className="text-muted">SP is a community project, feel free to reach out to the community for support at <a href="t.me/SpartanProtocolOrg">Official Telegram Community Channel</a></p>
                                                         </Media>
                                                     </Media>
                                                 </TabPane>
