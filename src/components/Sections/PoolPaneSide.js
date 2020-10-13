@@ -1,12 +1,12 @@
-import {convertFromWei, formatAllUnits, formatAllUSD} from "../utils";
-import {SPARTA_ADDR} from "../client/web3";
+import {convertFromWei, formatAllUnits, formatAllUSD} from "../../utils";
+import {SPARTA_ADDR} from "../../client/web3";
 
 import {withNamespaces} from "react-i18next";
 import { withRouter } from "react-router-dom";
 
 
 import React from "react";
-import {TokenIcon} from "../components/common";
+import {TokenIcon} from "../common";
 import {
     Card,
     CardBody,

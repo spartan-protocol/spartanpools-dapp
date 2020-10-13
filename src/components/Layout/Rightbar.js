@@ -17,7 +17,7 @@ import SimpleBar from "simplebar-react";
 
 import { Link } from "react-router-dom";
 
-import "./rightbar.scss";
+import "../../assets/scss/custom/components/_rightbar.scss";
 
 const RightSidebar = (props) => {
   const [activeTab, setActiveTab] = useState('1');

@@ -4,15 +4,15 @@ import {Context} from '../context'
 import {withNamespaces} from 'react-i18next';
 import {withRouter} from 'react-router-dom';
 import queryString from 'query-string';
-import TradePane from "./TradePane";
+import TradePane from "../components/Sections/TradePane";
 
-import PoolPaneSide from './PoolPaneSide';
+import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
 
 import {bn, formatBN, convertToWei} from '../utils'
 import {getSwapOutput, getSwapSlip} from '../math'
 
-import Notification from '../components/CommonForBoth/notification'
+import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,

@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 
-import InputPane from "./InputPane";
+import InputPane from "../Sections/InputPane";
 
-import {convertFromWei, formatAllUnits} from "../utils";
+import {convertFromWei, formatAllUnits} from "../../utils";
 import {LoadingOutlined, UnlockOutlined} from "@ant-design/icons";
 
 

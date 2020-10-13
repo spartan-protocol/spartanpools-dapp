@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
-import {Context} from "../context";
-import {convertFromWei, formatAllUnits, formatAllUSD} from "../utils";
-import CardWelcome from "./Utility/card-welcome";
+import {Context} from "../../context";
+import {convertFromWei, formatAllUnits, formatAllUSD} from "../../utils";
+import CardWelcome from "../../pages/Utility/card-welcome";
 import ReactApexChart from "react-apexcharts";
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";

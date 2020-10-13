@@ -1,6 +1,6 @@
-import {convertFromWei, formatAllUnits} from "../utils";
+import {convertFromWei, formatAllUnits} from "../../utils";
 import React from "react";
-import {PercentButtonRow} from "../components/common";
+import {PercentButtonRow} from "../common";
 
 import {withNamespaces} from "react-i18next";
 

@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
-import {Context} from "../context";
-import {TokenIcon} from "../components/common";
-import {convertFromWei, formatAllUSD} from "../utils";
+import {Context} from "../../context";
+import {TokenIcon} from "../common";
+import {convertFromWei, formatAllUSD} from "../../utils";
 import Button from "antd/es/button";
 
 

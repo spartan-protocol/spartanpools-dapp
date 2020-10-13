@@ -12,7 +12,7 @@ import {
 import Navbar from "./Navbar";
 import Header from "./Header";
 import Footer from "./Footer";
-import Rightbar from "../CommonForBoth/Rightbar";
+import Rightbar from "./Rightbar";
 
 const Layout = (props) => {
 
@@ -43,7 +43,7 @@ const Layout = (props) => {
       <div id="layout-wrapper">
         <Header theme={props.topbarTheme} toggleNav={toggleNav} />
         {navIsOpen &&
-          <Navbar />
+          <Navbar toggleNav={toggleNav}/>
         }
         <div className="main-content">
           {props.children}

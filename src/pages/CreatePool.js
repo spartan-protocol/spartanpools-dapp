@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react'
 import {Context} from '../context'
 
 import {withRouter} from 'react-router-dom'
-import InputPane from "./InputPane";
+import InputPane from "../components/Sections/InputPane";
 
 import {
     Input,
@@ -10,7 +10,7 @@ import {
     Col,
 } from "reactstrap";
 
-import Notification from '../components/CommonForBoth/notification'
+import Notification from '../components/Common/notification'
 
 import {LeftOutlined} from '@ant-design/icons';
 import {QuestionCircleOutlined, UnlockOutlined} from '@ant-design/icons';
