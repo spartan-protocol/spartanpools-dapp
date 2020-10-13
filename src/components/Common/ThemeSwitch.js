@@ -4,7 +4,7 @@ import {withNamespaces} from 'react-i18next';
 import FormGroup from "reactstrap/es/FormGroup";
 import CustomInput from "reactstrap/es/CustomInput";
 
-import {Context} from '../../../context'
+import {Context} from '../../context'
 
 const ThemeSwitch = (props) => {
 

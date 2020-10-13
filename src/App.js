@@ -1,5 +1,5 @@
 import React from "react";
-import HorizontalLayout from "./components/HorizontalLayout/";
+import Layout from "./components/Layout";
 import "./assets/scss/app-dark.scss";
 import Pools from './pages/Pools.js'
 import Shares from './pages/Shares'
@@ -16,7 +16,7 @@ const App = () => {
     return (
         <Router>
             <ContextProvider>
-                <HorizontalLayout/>
+                <Layout/>
                     <div className="wrapper">
                         <Switch>
                             <Route path="/" exact component={Pools}/>

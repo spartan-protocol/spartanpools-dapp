@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import { Row, Col, DropdownToggle, DropdownMenu, UncontrolledDropdown } from "reactstrap";
 
 // Import menuDropdown
-import LanguageDropdown from "../CommonForBoth/TopbarDropdown/LanguageDropdown";
-import NotificationDropdown from "../CommonForBoth/TopbarDropdown/NotificationDropdown";
+import LanguageDropdown from "../Common/LanguageDropdown";
+import NotificationDropdown from "../Common/NotificationDropdown";
 
 import logo from "../../assets/images/logo-sm-light.png";
 import logoLight from "../../assets/images/logo-light.png";
@@ -23,9 +23,9 @@ import medium from "../../assets/images/brands/medium.png";
 import { withNamespaces } from 'react-i18next';
 
 //import components
-import AddressConn from '../CommonForBoth/AddressConn';
-import ThemeSwitch from "../CommonForBoth/TopbarDropdown/ThemeSwitch";
-//import ThemeSwitch from "../CommonForBoth/TopbarDropdown/ThemeSwitch";
+import AddressConn from '../Common/AddressConn';
+import ThemeSwitch from "../Common/ThemeSwitch";
+//import ThemeSwitch from "../Common/ThemeSwitch";
 
 const Header = (props) => {
 

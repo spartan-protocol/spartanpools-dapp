@@ -7,15 +7,15 @@ import {
 } from "reactstrap";
 
 //i18n
-import i18n from '../../../i18n';
+import i18n from '../../i18n';
 import { withNamespaces } from 'react-i18next';
 
 // falgs
-import usFlag from "../../../assets/images/flags/united-states.png";
-import china from "../../../assets/images/flags/china.png";
-import russia from "../../../assets/images/flags/russia.png";
-import turkey from "../../../assets/images/flags/turkey.png";
-import vietnam from "../../../assets/images/flags/vietnam.png";
+import usFlag from "../../assets/images/flags/united-states.png";
+import china from "../../assets/images/flags/china.png";
+import russia from "../../assets/images/flags/russia.png";
+import turkey from "../../assets/images/flags/turkey.png";
+import vietnam from "../../assets/images/flags/vietnam.png";
 
 const LanguageDropdown = (props) => {
 

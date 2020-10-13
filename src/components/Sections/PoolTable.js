@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from "react";
-import {Context} from "../context";
-import {getListedPools, getListedTokens, getPoolsData} from "../client/web3";
+import {Context} from "../../context";
+import {getListedPools, getListedTokens, getPoolsData} from "../../client/web3";
 import {LoadingOutlined} from "@ant-design/icons";
 import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 import {withNamespaces} from 'react-i18next';
 
-import PoolTableItem from "./PoolTableItem";
+import PoolTableItem from "../Sections/PoolTableItem";
 import { withRouter } from "react-router-dom";
 
 const PoolTable = (props) => {

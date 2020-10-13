@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { getDaoContract, getRewards, getPoolSharesData, getListedTokens } from '../client/web3'
 
-import Notification from '../components/CommonForBoth/notification'
+import Notification from '../components/Common/notification'
 
 import { TokenIcon } from '../components/common';
 

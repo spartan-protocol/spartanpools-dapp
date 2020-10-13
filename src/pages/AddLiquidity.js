@@ -5,13 +5,13 @@ import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
 import {withRouter} from 'react-router-dom';
 import queryString from 'query-string';
 
-import InputPane from "./InputPane";
+import InputPane from "../components/Sections/InputPane";
 
 import {OutputPane} from '../components/common'
 import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits} from '../utils'
 import {getLiquidityUnits} from '../math'
 import Breadcrumbs from "../components/Common/Breadcrumb";
-import Notification from '../components/CommonForBoth/notification'
+import Notification from '../components/Common/notification'
 
 import {
     Container,
@@ -34,7 +34,7 @@ import {
     getListedPools, getPoolsData, getPool, getPoolShares, WBNB_ADDR
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
-import PoolPaneSide from "./PoolPaneSide";
+import PoolPaneSide from "../components/Sections/PoolPaneSide"
 
 
 const AddLiquidity = (props) => {

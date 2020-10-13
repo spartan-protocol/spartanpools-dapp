@@ -13,8 +13,8 @@ import {
     Col,
 } from "reactstrap";
 import {withNamespaces} from 'react-i18next';
-import PoolTable from "./PoolTable";
-import PoolsPaneSide from "./PoolsPaneSide";
+import PoolTable from "../components/Sections/PoolTable";
+import PoolsPaneSide from "../components/Sections/PoolsPaneSide";
 
 
 const Pools = (props) => {

@@ -1,7 +1,7 @@
-import {InputPane} from "./InputPane";
+import {InputPane} from "../Sections/InputPane";
 
 import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
-import {convertFromWei} from "../utils";
+import {convertFromWei} from "../../utils";
 import React from "react";
 
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
