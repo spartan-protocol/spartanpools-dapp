@@ -36,3 +36,7 @@
       left: auto;
     }
   }
+
+  .custom-control-label::before {
+    background-color: $body-bg;
+  }

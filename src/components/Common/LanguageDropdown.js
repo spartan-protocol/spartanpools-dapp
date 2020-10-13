@@ -17,11 +17,15 @@ import russia from "../../assets/images/flags/russia.png";
 import turkey from "../../assets/images/flags/turkey.png";
 import vietnam from "../../assets/images/flags/vietnam.png";
 
+import {useCurrentWidth} from "../Common/useCurrentWidth"
+
 const LanguageDropdown = (props) => {
 
   const [menu,setMenu] = useState(false);
   const [lng,setLng] = useState("English");
   const [flag,setFlag] = useState(usFlag);
+
+  let width = useCurrentWidth();
 
   const changeLanguageAction = (lng) => {
 
@@ -76,7 +80,9 @@ const LanguageDropdown = (props) => {
             height="16"
             className="mr-1"
           />
+          {width > 450 &&
               <span className="align-middle">{lng}</span>
+          }
         </DropdownToggle>
         <DropdownMenu className="language-switch" right>
           <DropdownItem tag="a" href="#" onClick={() => changeLanguageAction('eng')} className={`notify-item ${lng === 'English' ? 'active' : 'none'}`}>
