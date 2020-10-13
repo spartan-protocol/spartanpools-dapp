@@ -9,7 +9,6 @@ import Notification from './notification'
 // import logo from '../../assets/spartan-logo-white.png';
 import { manageBodyClass } from '../common';
 
-import { getAddressShort, } from '../../utils'
 import {
     getTokenDetails, getListedTokens,
     getWalletData, getPoolSharesData, getListedPools
@@ -96,10 +95,6 @@ const AddressConn = (props) => {
         return
     }
 
-    const addr = () => {
-        return getAddressShort(context.walletData?.address)
-    }
-
     /**
    * Toggles the sidebar
    */
@@ -115,13 +110,13 @@ const AddressConn = (props) => {
             />
             <div className="btn">
                 {!connected && !connecting &&
-                    <div onClick={connectWallet} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> Connect</h6></div>
+                    <div onClick={connectWallet} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light mt-1"><i className="bx bx-wallet" style={{fontSize:22}}/><i className="bx bx-x-circle bx-spin ml-1" style={{fontSize:18}}/></div>
                 }
                 {connecting &&
-                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> Connecting <i className="bx bx-loader-alt bx-spin" /></h6></div>
+                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light mt-1"><i className="bx bx-wallet" style={{fontSize:22}}/><i className="bx bx-loader-alt bx-spin ml-1" style={{fontSize:18}}/></div>
                 }
                 {connected &&
-                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> {addr()}</h6></div>
+                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light mt-1"><i className="bx bx-wallet" style={{fontSize:22}}/><i className="bx bx-check-circle ml-1" style={{fontSize:18}}/></div>
                 }
             </div>
         </>

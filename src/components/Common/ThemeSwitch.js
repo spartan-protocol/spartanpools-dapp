@@ -30,7 +30,7 @@ const ThemeSwitch = (props) => {
                 >
                     <FormGroup className="m-0">
                         <CustomInput
-                            label={<i className="bx bx-moon"></i>}
+                            label={<i className="bx bx-sun"></i>}
                             type="switch"
                             id="CustomSwitch"
                             name="customSwitch"
