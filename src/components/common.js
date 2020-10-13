@@ -18,7 +18,7 @@ import {
     Breadcrumb,
 } from "reactstrap";
 
-import {BNB_ADDR} from '../client/web3'
+import { TokenIcon } from './Common/TokenIcon'
 
 // Check If Responsive
 export const useWindowSize = () => {
@@ -284,40 +284,6 @@ export const TokenSymbol = (props) => {
     )
 
 }
-
-export const TokenIcon = ({address}) => {
-
-    const addr = address
-    const [isFallback, setIsFallback] = useState("https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/" + addr + "/logo.png");
-
-    // https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56/logo.png
-
-    const onFallback = () => {
-        setIsFallback(process.env.PUBLIC_URL + "/fallback.png")
-    }
-
-    return (
-        <>
-            {addr === BNB_ADDR &&
-            <img
-                src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"}
-                style={{height: 40}}
-                alt="BNB Token Icon"
-            />
-            }
-            {addr !== BNB_ADDR &&
-            <img
-                src={isFallback}
-                width={40}
-                height={40}
-                onError={onFallback}
-                alt={addr + " Token Icon"}
-            />
-            }
-        </>
-    );
-}
-
 
 export const PoolPane = (props) => {
 

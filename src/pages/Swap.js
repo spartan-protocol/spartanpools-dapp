@@ -17,7 +17,7 @@ import Notification from '../components/Common/notification'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,
     getPoolData, getNewTokenData, getTokenDetails,
-    getListedPools, getPoolsData, getPool
+    getListedPools, getPoolsData, getPool, WBNB_ADDR
 } from '../client/web3'
 
 import {
@@ -169,19 +169,20 @@ const NewSwap = (props) => {
     };
 
     const checkApproval = async (address) => {
-        if (address === BNB_ADDR) {
+        console.log({address})
+        if (address === BNB_ADDR || address === WBNB_ADDR) {
+            console.log("BNB")
             return true
         } else {
             const contract = getTokenContract(address)
             const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
-            console.log(approval, address)
             if (+approval > 0) {
                 return true
             } else {
                 return false
             }
         }
-    };
+    }
 
     const onBuyChange = async (e) => {
         setBuyData(await getSwapData(convertToWei(e.target.value), inputTokenData, outputTokenData, pool, false))

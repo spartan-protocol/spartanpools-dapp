@@ -44,7 +44,6 @@ const Pools = (props) => {
         <React.Fragment>
             <div className="page-content">
                 <Container fluid>
-                    {/* Render Breadcrumb */}
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Liquidity Pools")}/>
                     <Row>
                         <Col xs="12">
