@@ -75,7 +75,7 @@ export const TradePane = (props) => {
             <br/><br/>
             <div className="text-center">
                 {!props.approval && (props.tradeData.balance > 0) &&
-                    <Button size="lg" color="success" onClick={props.unlock}><UnlockOutlined/>{props.t("Unlock")}</Button>
+                    <Button size="lg" color="success" onClick={props.unlock}><UnlockOutlined/>{props.t("Approve")}</Button>
                 }
 
                 {props.approval && props.startTx && !props.endTx &&

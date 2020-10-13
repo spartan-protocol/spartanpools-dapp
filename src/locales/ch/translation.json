@@ -40,12 +40,9 @@
   "LP Shares":"流动资金池份额",
   "Balance":"平衡",
   "Action": "行動",
-
   "Back" :"背部",
   "Swap" :"交換",
   "Buy" :"購買",
   "Sell" :"賣",
-  "Unlock" :"賣"
-
-
+  "Approve" :"批准"
 }

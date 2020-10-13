@@ -523,7 +523,7 @@ const AddSymmPane = (props) => {
                         <button color="success" type="button"
                                 className="btn btn-success btn-lg btn-block waves-effect waves-light"
                                 onClick={props.unlockToken}>
-                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
+                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Approve {props.pool.symbol}
                         </button>
                         }
                     </Col>
@@ -533,7 +533,7 @@ const AddSymmPane = (props) => {
                         <button color="success" type="button"
                                 className="btn btn-success btn-lg btn-block waves-effect waves-light"
                                 onClick={props.unlockSparta}>
-                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock SPARTA</button>
+                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Approve SPARTA</button>
                         }
                     </Col>
                     <Col xs={12}>

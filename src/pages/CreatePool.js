@@ -392,7 +392,7 @@ const CreatePool = (props) => {
                             <Col xs={8}>
                                 {!approval1 &&
                                 <div className="btn primary" onClick={unlockSparta}>
-                                    <UnlockOutlined/> UNLOCK {stake1Data.symbol}</div>
+                                    <UnlockOutlined/> Approve {stake1Data.symbol}</div>
                                 }
                             </Col>
                             <Col xs={8}>
@@ -403,7 +403,7 @@ const CreatePool = (props) => {
                             <Col xs={8}>
                                 {!approval2 &&
                                 <div className="btn primary" onClick={unlockAsset}>
-                                    <UnlockOutlined/> UNLOCK {stake2Data.symbol}</div>
+                                    <UnlockOutlined/> Approve {stake2Data.symbol}</div>
                                 }
                             </Col>
                         </Row>
