@@ -345,7 +345,6 @@ const AddLiquidity = (props) => {
                 <React.Fragment>
                     <div className="page-content">
                         <Container fluid>
-                            {/* Render Breadcrumb */}
                             <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Join")}/>
                             <Row>
                                 <Col>
@@ -359,7 +358,7 @@ const AddLiquidity = (props) => {
                             </Row>
                             <Row>
                                 <Col lg="4">
-                                    <PoolPaneSide pool={pool} price={context.spartanPrice}/>
+                                    <PoolPaneSide pool={pool} price={context.spartanPrice} />
                                 </Col>
                                 <Col lg="6">
                                     <Card>

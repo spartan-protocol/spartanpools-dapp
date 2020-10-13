@@ -7,7 +7,7 @@ import { getDaoContract, getRewards, getPoolSharesData, getListedTokens } from '
 
 import Notification from '../components/Common/notification'
 
-import { TokenIcon } from '../components/common';
+import TokenIcon from '../components/Common/TokenIcon';
 
 import {
     Row,

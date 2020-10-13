@@ -10,7 +10,9 @@ import { hideRightSidebar } from "../../store/actions";
 
 import {convertFromWei, formatAllUnits} from '../../utils'
 
-import { manageBodyClass, TokenIcon } from '../common';
+import { manageBodyClass } from '../common';
+
+import { TokenIcon } from '../Common/TokenIcon'
 
 //SimpleBar
 import SimpleBar from "simplebar-react";

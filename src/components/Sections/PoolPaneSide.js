@@ -6,7 +6,7 @@ import { withRouter } from "react-router-dom";
 
 
 import React from "react";
-import {TokenIcon} from "../common";
+import { TokenIcon } from '../Common/TokenIcon'
 import {
     Card,
     CardBody,

@@ -3,7 +3,7 @@ import React from 'react'
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
-import { TokenIcon } from '../components/common';
+import { TokenIcon } from '../components/Common/TokenIcon';
 
 import {convertFromWei} from '../utils'
 

@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import {Context} from "../../context";
 import {convertFromWei, formatAllUnits, formatAllUSD} from "../../utils";
-import CardWelcome from "../../pages/Utility/card-welcome";
+// import CardWelcome from "../../pages/Utility/card-welcome";
 import ReactApexChart from "react-apexcharts";
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
@@ -107,11 +107,13 @@ export const PoolsPaneSide = (props) => {
 
         return (
             <React.Fragment>
+                {/*
                 <Row>
                     <Col sm={12} md={12}>
                         <CardWelcome/>
                     </Col>
                 </Row>
+                */}
                 <Row>
                     <Col sm="12" md="6" lg="6" xl="3">
                         <Card>
