@@ -517,33 +517,35 @@ const AddSymmPane = (props) => {
             </div>
             <br/>
             <div className="text-center">
-                <Col xs={12}>
-                    {!props.approvalToken &&
-                    <button color="success" type="button"
-                            className="btn btn-success btn-lg btn-block waves-effect waves-light"
-                            onClick={props.unlockToken}>
-                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
-                    </button>
-                    }
-                </Col>
-                <Col xs={12}>
-                    <br/>
-                    {!props.approvalBase &&
-                    <button color="success" type="button"
-                            className="btn btn-success btn-lg btn-block waves-effect waves-light"
-                            onClick={props.unlockSparta}>
-                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock SPARTA</button>
-                    }
-                </Col>
-                <Col xs={12}>
-                    {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
-                        POOL</div>
-                    }
-                    {props.approvalBase && props.approvalToken && !props.startTx &&
-                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
-                    }
-                </Col>
+                <Row>
+                    <Col xs={12}>
+                        {!props.approvalToken &&
+                        <button color="success" type="button"
+                                className="btn btn-success btn-lg btn-block waves-effect waves-light"
+                                onClick={props.unlockToken}>
+                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
+                        </button>
+                        }
+                    </Col>
+                    <Col xs={12}>
+                        <br/>
+                        {!props.approvalBase &&
+                        <button color="success" type="button"
+                                className="btn btn-success btn-lg btn-block waves-effect waves-light"
+                                onClick={props.unlockSparta}>
+                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock SPARTA</button>
+                        }
+                    </Col>
+                    <Col xs={12}>
+                        {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
+                            POOL</div>
+                        }
+                        {props.approvalBase && props.approvalToken && !props.startTx &&
+                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
+                        }
+                    </Col>
+                </Row>
             </div>
         </>
     )
@@ -593,33 +595,32 @@ const AddAsymmPane = (props) => {
                     </tbody>
                 </table>
             </div>
+            <div className="text-center">
+                <Row>
+                        <Col xs={12}>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            {!props.approvalToken &&
+                            <button color="success" type="button"
+                                    className="btn btn-success btn-lg btn-block waves-effect waves-light"
+                                    onClick={props.unlockToken}>
+                                <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
+                            </button>
+                            }
+                        </Col>
+                        <Col xs={12}>
+                            {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO POOL</div>
+                            }
 
-            <Row>
-                <div className="text-center">
-                    <Col xs={12}>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        {!props.approvalToken &&
-                        <button color="success" type="button"
-                                className="btn btn-success btn-lg btn-block waves-effect waves-light"
-                                onClick={props.unlockToken}>
-                            <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
-                        </button>
-                        }
-                    </Col>
-                    <Col xs={12}>
-                        {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                            <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO POOL</div>
-                        }
-
-                        {props.approvalBase && props.approvalToken && !props.startTx &&
-                            <div className="btn primary" onClick={props.addLiquidity}>ADD TO POOL</div>
-                        }
-                    </Col>
-                </div>
-            </Row>
+                            {props.approvalBase && props.approvalToken && !props.startTx &&
+                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
+                            }
+                        </Col>
+                </Row>
+            </div>
 
         </>
     )
@@ -637,7 +638,7 @@ const RemoveLiquidityPane = (props) => {
                     <tbody>
                     <tr>
                         <td>
-                            <p className="mb-0 text-left">Estimated</p>
+                            <p className="mb-0 text-left">Estimated {props.pool.symbol}</p>
                         </td>
                         <td>
                             <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.withdrawData.tokenAmount))}</h5>
