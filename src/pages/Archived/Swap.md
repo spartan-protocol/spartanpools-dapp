@@ -328,7 +328,7 @@ const Swap = (props) => {
                             <Text>Slip: {((buyData.slip) * 100).toFixed(2)}%</Text>
                             <br /><br />
                             {!approvalBuy &&
-                                <Center><Button type={'secondary'} onClick={unlockSparta}> UNLOCK SPARTA_ADDR</Button></Center>
+                                <Center><Button type={'secondary'} onClick={unlockSparta}> Approve SPARTA_ADDR</Button></Center>
                             }
                             {(approvalBuy && !loadedBuy) &&
                                 <Center><Button type={'primary'} onClick={buyAsset} icon={<LoadingOutlined />}>BUY {mainPool?.symbol}</Button></Center>
@@ -350,7 +350,7 @@ const Swap = (props) => {
                             <Text>Slip: {((sellData.slip) * 100).toFixed(2)}%</Text>
                             <br /><br />
                             {!approvalSell &&
-                                <Center><Button type={'secondary'} onClick={unlockAsset}> UNLOCK {mainPool?.symbol}</Button></Center>
+                                <Center><Button type={'secondary'} onClick={unlockAsset}> Approve {mainPool?.symbol}</Button></Center>
                             }
                             {(approvalSell && !loadedSell) &&
                                 <Center><Button type={'primary'} onClick={sellAsset} icon={<LoadingOutlined />} danger>SELL {mainPool?.symbol}</Button></Center>

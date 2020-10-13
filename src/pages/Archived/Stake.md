@@ -356,7 +356,7 @@ const AddLiquidity = (props) => {
                             <Row>
                                 <Col xs={8}>
                                     {!approval1 &&
-                                        <Center><Button type={'secondary'} onClick={unlockSparta}>UNLOCK {stake1Data.symbol}</Button></Center>
+                                        <Center><Button type={'secondary'} onClick={unlockSparta}>Approve {stake1Data.symbol}</Button></Center>
                                     }
                                 </Col>
                                 <Col xs={8}>
@@ -366,7 +366,7 @@ const AddLiquidity = (props) => {
                                 </Col>
                                 <Col xs={8}>
                                     {!approval2 &&
-                                        <Center><Button type={'secondary'} onClick={unlockAsset}>UNLOCK {stake2Data.symbol}</Button></Center>
+                                        <Center><Button type={'secondary'} onClick={unlockAsset}>Approve {stake2Data.symbol}</Button></Center>
                                     }
                                 </Col>
                             </Row>
