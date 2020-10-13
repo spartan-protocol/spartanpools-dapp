@@ -115,13 +115,13 @@ const AddressConn = (props) => {
             />
             <div className="btn">
                 {!connected && !connecting &&
-                    <div onClick={connectWallet} className="w-auto btn btn-success btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> CONNECT</h6></div>
+                    <div onClick={connectWallet} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> Connect</h6></div>
                 }
                 {connecting &&
-                    <div onClick={toggleRightbar} className="w-auto btn btn-success btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> Connecting <i className="bx bx-loader-alt bx-spin" /></h6></div>
+                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> Connecting <i className="bx bx-loader-alt bx-spin" /></h6></div>
                 }
                 {connected &&
-                    <div onClick={toggleRightbar} className="w-auto btn btn-success btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> {addr()}</h6></div>
+                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light"><h6 className="m-0" ><i className="bx bx-wallet" /> {addr()}</h6></div>
                 }
             </div>
         </>

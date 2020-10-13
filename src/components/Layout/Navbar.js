@@ -5,22 +5,36 @@ import classname from "classnames";
 //i18n
 import { withNamespaces } from 'react-i18next';
 
+import {useCurrentWidth} from "../Common/useCurrentWidth"
+
 const Navbar = (props) => {
 
     const [isDropdown1,setIsDropdown1] = useState('false')
     const [isDropdown2,setIsDropdown2] = useState('false')
 
+    let width = useCurrentWidth();
+
     const toggleDropdown1 = () => {
-        setIsDropdown1(!isDropdown1);
-        setIsDropdown2('false');
+        console.log(width)
+        if (width < 450) {
+            setIsDropdown1(!isDropdown1);
+            setIsDropdown2('false');
+        }
     }
 
     const toggleDropdown2 = () => {
-        setIsDropdown2(!isDropdown2);
-        setIsDropdown1('false');
+        console.log(width)
+        if (width < 450) {
+            setIsDropdown2(!isDropdown2);
+            setIsDropdown1('false');
+        }
     }
 
     const closeDropdowns = () => {
+        console.log(width)
+        if (width < 450) {
+            props.setNavIsOpen(false)
+        }
         setIsDropdown2('false');
         setIsDropdown1('false');
     }

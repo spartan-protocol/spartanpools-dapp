@@ -133,7 +133,7 @@ class PagesFaqs extends Component {
                                                             <h5 className="font-size-15">How to obtain SPARTA tokens?
                                                             </h5>
                                                             <p className="text-muted">Spartan Protocol starts decentralised from day one. To acquire SPARTA you will need to send your tokens through a smart contract on the Spartan Protocol DApp. The tokens you send through this contract will be ‘burnt’.<br/><br/>
-                                                                Your tokens will be sent to a this burn address (0x000000000000000000000000000000000000dEaD) and will no longer be usable by anyone. The smart contract will then send your freshly minted SPARTA of equivalent value to your BSC address once the old tokens have been confirmed burned.<br/><br/>
+                                                                Your tokens will be sent to a burn address and will no longer be usable by anyone. The smart contract will then send your freshly minted SPARTA of equivalent value to your BSC address once the old tokens have been confirmed burned.<br/><br/>
                                                                 There is minimal wait compared to smart contracts on Ethereum, most processes take only 1–5 seconds</p>
                                                         </Media>
                                                     </Media>

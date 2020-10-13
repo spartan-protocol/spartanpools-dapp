@@ -19,3 +19,8 @@ button,a {
 .btn-outline-light{
   color: $gray-900;
 }
+
+.btn-wallet {
+  background-color: $btn-header-bg;
+  color: $btn-header-secondary;
+}
