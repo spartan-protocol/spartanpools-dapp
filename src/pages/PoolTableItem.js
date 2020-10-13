@@ -44,14 +44,14 @@ export const PoolTableItem = (props) => {
                 <td>
                     <Link to={`/pool/stake?pool=${props.address}`}>
                         <Button color="primary"
-                                className="btn btn-primary waves-effect waves-light m-1">
+                                className="btn btn-primary waves-effect waves-light m-1 w-75">
                             <i className="bx bx-log-in-circle"></i> {props.t("Join")}
                         </Button>
                     </Link>
                     <Link to={`/pool/swap?pool=${props.address}`}>
                         <button type="button"
-                                className="btn btn-primary waves-effect waves-light m-1">
-                            <i className="bx bx-transfer-alt"></i> {props.t("Trade")}
+                                className="btn btn-primary waves-effect waves-light m-1 w-75">
+                            <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
                         </button>
                     </Link>
                 </td>
