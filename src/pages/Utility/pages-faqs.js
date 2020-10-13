@@ -86,10 +86,10 @@ class PagesFaqs extends Component {
                                                             <i className="bx bx-help-circle font-size-20 text-success"></i>
                                                         </div>
                                                         <Media body>
-                                                            <h5 className="font-size-15">Is the team anoynous?</h5>
-                                                            <p className="text-muted">That's a tough question but thankfully, our team is on it. Please bear with us while we're investigating.Yes, the Spartan Protocol is a community driven initiative with a wide and varied source of contributors. It draws inspiration from Thorchain and other projects that elected to go anonymous in line with the world’s most known token, Bitcoin.<br/><br/>
+                                                            <h5 className="font-size-15">Is the team anonymous?</h5>
+                                                            <p className="text-muted">That's a tough question but thankfully, our team is on it. Please bear with us while we're investigating.Yes, the Spartan Protocol is a community driven initiative with a wide and varied source of contributors. It draws inspiration from THORchain and other projects that elected to go anonymous in line with the world’s most known token, Bitcoin.<br/><br/>
                                                                 This is done to protect the project and it’s users to assist in ensuring it can be more decentralised from its outset. The focus should be on the project, its code and the community that drives it, these are transparent and verifiable.
-                                                                <br/><br/>Don’t trust, verify! <a href="https://github.com/spartan-protocol">Github</a></p>
+                                                                <br/><br/>Don’t trust, verify! <a target="_blank" href="https://github.com/spartan-protocol" rel="noopener noreferrer">Github</a></p>
                                                         </Media>
                                                     </Media>
                                                     <Media className="faq-box mb-4">
@@ -121,7 +121,7 @@ class PagesFaqs extends Component {
                                                             <h5 className="font-size-15">I see this is a community project, so how can I contribute or influence the direction of Spartan Protocol?
                                                             </h5>
                                                             <p className="text-muted">Right now you can contribute by being a part of these community channels and asking good questions. What is said in these channels directly influences what happens leading up to launch as each of you are a part of the decentralised team.<br/><br/>
-                                                                Please see the Report Bug/Suggest Feature tab for how to raise BitHub issue for the developeres to address directly whilst working on the code. This will help keep a clean and clear set of priorities for the devs to work on. If you know how already, head over to Spartan Protocol Github and submit your issues now. Thankyou.<br/><br/>
+                                                                Please see the Report Bug/Suggest Feature tab for how to raise BitHub issue for the developers to address directly whilst working on the code. This will help keep a clean and clear set of priorities for the devs to work on. If you know how already, head over to Spartan Protocol Github and submit your issues now. Thankyou.<br/><br/>
                                                                 If you are not, contribute your words or put your hand up for other jobs in the community channels at the bottom of this page. This FAQ was curated by the community, many hands make light work!</p>
                                                         </Media>
                                                     </Media>
@@ -206,7 +206,7 @@ class PagesFaqs extends Component {
                                                         </div>
                                                         <Media body>
                                                             <h5 className="font-size-15">Please help!</h5>
-                                                            <p className="text-muted">SP is a community project, feel free to reach out to the community for support at <a href="t.me/SpartanProtocolOrg">Official Telegram Community Channel</a></p>
+                                                            <p className="text-muted">SP is a community project, feel free to reach out to the community for support at <a target="_blank" href="https://t.me/SpartanProtocolOrg" rel="noopener noreferrer">Official Telegram Community Channel</a></p>
                                                         </Media>
                                                     </Media>
                                                 </TabPane>
