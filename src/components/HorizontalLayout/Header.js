@@ -29,33 +29,6 @@ import ThemeSwitch from "../CommonForBoth/TopbarDropdown/ThemeSwitch";
 
 const Header = (props) => {
 
-  const toggleFullscreen = () => {
-    if (
-        !document.fullscreenElement &&
-        /* alternative standard method */ !document.mozFullScreenElement &&
-        !document.webkitFullscreenElement
-    ) {
-      // current working methods
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.mozRequestFullScreen) {
-        document.documentElement.mozRequestFullScreen();
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen(
-            Element.ALLOW_KEYBOARD_INPUT
-        );
-      }
-    } else {
-      if (document.cancelFullScreen) {
-        document.cancelFullScreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitCancelFullScreen) {
-        document.webkitCancelFullScreen();
-      }
-    }
-  }
-
   return (
       <React.Fragment>
         <header id="page-topbar">
@@ -81,10 +54,6 @@ const Header = (props) => {
                 </Link>
               </div>
 
-
-
-
-
               <button
                   type="button"
                   className="btn btn-sm px-3 font-size-16 d-lg-none header-item waves-effect waves-light"
@@ -93,7 +62,7 @@ const Header = (props) => {
                 <i className="fa fa-fw fa-bars"></i>
               </button>
 
-
+              <ThemeSwitch className="d-flex" />
 
             </div>
 
@@ -101,13 +70,9 @@ const Header = (props) => {
               <div className="dropdown d-inline-block d-lg-none ml-2">
               </div>
 
-
               <LanguageDropdown />
 
-              <ThemeSwitch/>
-
-
-              <UncontrolledDropdown className="d-none d-lg-inline-block ml-1">
+              <UncontrolledDropdown className="d-flex d-none d-lg-inline-block ml-1">
                 <DropdownToggle className="btn header-item noti-icon waves-effect" caret tag="button">
                   <i className="bx bx-customize"></i>
                 </DropdownToggle>
@@ -137,23 +102,9 @@ const Header = (props) => {
                 </DropdownMenu>
               </UncontrolledDropdown>
 
-
-              <div className="dropdown d-none d-lg-inline-block ml-1">
-                <button
-                    type="button"
-                    className="btn header-item noti-icon waves-effect"
-                    onClick={toggleFullscreen}
-                    data-toggle="fullscreen"
-                >
-                  <i className="bx bx-fullscreen"></i>
-                </button>
-
-              </div>
-
               <NotificationDropdown />
 
-
-              <div>
+              <div className="d-flex justify-content-center align-items-center">
                 <AddressConn />
               </div>
             </div>
