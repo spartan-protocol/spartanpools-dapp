@@ -64,8 +64,16 @@ const Navbar = (props) => {
                                     <i className="bx bx-info-circle mr-2"></i>{props.t('Info')} <div className="arrow-down ml-2"></div>
                                 </Link>
                                 <div className={classname("dropdown-menu", { show: !isDropdown2  })}>
-                                    {/*<Link to="start" className="dropdown-item">{props.t('How to start?')}</Link>*/}
                                     <Link to="/faq" className="dropdown-item" onClick={closeDropdowns}>{props.t('FAQ')}</Link>
+                                    <a className="dropdown-item" target="_blank" href="https://github.com/spartan-protocol" rel="noopener noreferrer" onClick={closeDropdowns}>
+                                        <span>GitHub</span>
+                                    </a>
+                                    <a className="dropdown-item" target="_blank" href="https://medium.com/spartanprotocol" rel="noopener noreferrer" onClick={closeDropdowns}>
+                                        <span>Medium</span>
+                                    </a>
+                                    <a className="dropdown-item" target="_blank" href="https://twitter.com/SpartanProtocol" rel="noopener noreferrer" onClick={closeDropdowns}>
+                                        <span>Twitter</span>
+                                    </a>
                                 </div>
                             </li>
                         </ul>

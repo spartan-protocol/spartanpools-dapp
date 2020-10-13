@@ -48,7 +48,6 @@ const Pools = (props) => {
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Liquidity Pools")}/>
                     <Row>
                         <Col xs="12">
-                            <h1>{props.t('Pools')}</h1>
                             <PoolsPaneSide globalData={globalData}/>
                         </Col>
                         <Col xs="12">
