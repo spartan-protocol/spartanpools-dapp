@@ -14,12 +14,9 @@ import { withNamespaces } from 'react-i18next';
 //import components
 import AddressConn from '../Common/AddressConn';
 import ThemeSwitch from "../Common/ThemeSwitch";
-import {useCurrentWidth} from "../Common/useCurrentWidth"
 //import ThemeSwitch from "../Common/ThemeSwitch";
 
 const Header = (props) => {
-
-  let width = useCurrentWidth();
 
   return (
       <React.Fragment>
@@ -27,16 +24,12 @@ const Header = (props) => {
           <div className="navbar-header">
             <div className="d-flex">
               <div className="pl-3 pr-1">
-                { width < 510 &&
-                  <Link to="/" className="logo">
-                    <img src={logoLightSvg} alt="" height="40" />
-                  </Link>
-                }
-                { width > 509 &&
-                  <Link to="/" className="logo">
-                    <img src={logoLight} alt="" height="55" />
-                  </Link>
-                }
+                <Link to="/" className="logo d-block d-sm-none">
+                  <img src={logoLightSvg} alt="" height="40" />
+                </Link>
+                <Link to="/" className="logo d-none d-sm-block">
+                  <img src={logoLight} alt="" height="55" />
+                </Link>
               </div>
 
               <button
