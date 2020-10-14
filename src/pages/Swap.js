@@ -10,7 +10,7 @@ import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
 
 import {bn, formatBN, convertToWei} from '../utils'
-import {getSwapOutput, getSwapSlip} from '../math'
+import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip} from '../math'
 
 import Notification from '../components/Common/notification'
 
@@ -48,8 +48,7 @@ const NewSwap = (props) => {
     const toggle = tab => {
         if (activeTab !== tab) setActiveTab(tab);
     };
-
-
+    
     const context = useContext(Context)
     const [poolURL, setPoolURL] = useState('')
     const [pool, setPool] = useState({
@@ -87,7 +86,9 @@ const NewSwap = (props) => {
         symbol: "XXX",
         output: 0,
         outputSymbol: "XXX",
-        slip: 0
+        slip: 0,
+        actualSlip: 0,
+        fee: 0
     });
     const [sellData, setSellData] = useState({
         address: BNB_ADDR,
@@ -96,7 +97,9 @@ const NewSwap = (props) => {
         symbol: "XXX",
         output: 0,
         outputSymbol: "XXX",
-        slip: 0
+        slip: 0,
+        actualSlip: 0,
+        fee: 0
     });
 
     const [approval, setApproval] = useState(false)
@@ -147,13 +150,33 @@ const NewSwap = (props) => {
 
     };
 
+    // MAKE SURE THESE ARE ALL VISIBLE TO USER:
+    // SWAP FEE | ACTUAL SLIP | SPOT RATE | OUTPUT | INPUT
+
+    // ACTUAL SLIP ALGO -> {props.tradeData.actualSlip}
+    // SLIP = (( X / ( y / x )) - 1)
+    // X = {pool.price} SPOT RATE
+    // y = {output} OUTPUT
+    // x = {input} INPUT
+
+    // SWAP FEE ALGO -> {props.tradeData.fee}
+    // FEE = (x * x * Y) / (x + X)^2
+    // x = {input} INPUT
+    // Y = {pool.baseAmount} SPARTA AMOUNT IN POOL
+    // X = {pool.tokenAmount} TOKEN AMOUNT IN POOL
+
     const getSwapData = async (input, inputTokenData, outputTokenData, poolData, toBase) => {
 
         var output;
         var slip
+        var fee
+        var actualSlip
         output = getSwapOutput(input, poolData, toBase)
         slip = getSwapSlip(input, poolData, toBase)
         console.log(formatBN(output), formatBN(slip))
+        fee = getSwapFee(input, poolData, toBase)
+        actualSlip = getActualSwapSlip(poolData, output, input, toBase)
+        console.log(formatBN(fee), formatBN(actualSlip))
 
         const swapData = {
             address: poolData.address,
@@ -162,7 +185,9 @@ const NewSwap = (props) => {
             symbol: inputTokenData?.symbol,
             output: formatBN(output, 0),
             outputSymbol: outputTokenData?.symbol,
-            slip: formatBN(slip)
+            slip: formatBN(slip),
+            fee: formatBN(fee),
+            actualSlip: formatBN(actualSlip),
         };
         console.log(swapData)
         return swapData
