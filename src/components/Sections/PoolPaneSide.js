@@ -2,11 +2,11 @@ import {convertFromWei, formatAllUnits, formatAllUSD} from "../../utils";
 import {SPARTA_ADDR} from "../../client/web3";
 
 import {withNamespaces} from "react-i18next";
-import { withRouter } from "react-router-dom";
+import {withRouter} from "react-router-dom";
 
 
 import React from "react";
-import { TokenIcon } from '../Common/TokenIcon'
+import {TokenIcon} from '../Common/TokenIcon'
 import {
     Card,
     CardBody,
@@ -16,9 +16,14 @@ import {
 
 const PoolPaneSide = (props) => {
 
+    const back = () => {
+        props.history.push('/pools')
+    }
+
     return (
         <Card>
             <CardBody>
+
                 <h4 className="card-title mb-4 text-center">{props.t("Overview")}</h4>
 
                 <Row>
@@ -87,6 +92,13 @@ const PoolPaneSide = (props) => {
                         </tbody>
                     </table>
                 </div>
+                <Col >
+                    <br/>
+                    <button onClick={back} type="button"
+                            className="btn btn-outline-secondary btn-md btn-block waves-effect waves-light">
+                        <i className="bx bx-arrow-back font-size-12 align-middle"></i> {props.t("Back")}
+                    </button>
+                </Col>
             </CardBody>
         </Card>
         //           {/* <h4>APY</h4>
