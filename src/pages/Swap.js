@@ -288,9 +288,6 @@ const NewSwap = (props) => {
         setPool(await getPool(pool.address))
     };
 
-    const back = () => {
-        props.history.push('/pools')
-    };
 
     return (
         <>
@@ -305,22 +302,12 @@ const NewSwap = (props) => {
                             {/* Render Breadcrumb */}
                             <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Swap")}/>
                             <Row>
-                                <Col>
-                                    <button onClick={back} type="button"
-                                            className="btn btn-secondary waves-effect waves-light">
-                                        <i className="bx bx-arrow-back font-size-16 align-middle mr-2Input"></i> {props.t("Back")}
-                                    </button>
-                                    <br/>
-                                    <br/>
-                                </Col>
-                            </Row>
-                            <Row>
                                 <Col lg="4">
                                     <PoolPaneSide pool={pool} price={context.spartanPrice}/>
                                 </Col>
                                 <Col lg="6">
 
-                                    <Card>
+                                    <Card className="h-100">
                                         <CardBody>
                                             <h4 className="card-title mb-4 text-center">{props.t("Buy/Sell")}</h4>
                                             <Nav pills className="bg-light rounded" role="tablist">

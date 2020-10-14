@@ -50,7 +50,7 @@ const RightSidebar = (props) => {
 
               <div className="p-4">
               <div className="radio-toolbar">
-                <Nav tabs>
+                <Nav  className="nav nav-pills nav-fill bg-light rounded" role="tablist">
                   <NavItem className="text-center w-50">
                     <NavLink
                       className={classnames({ active: activeTab === '1' })}

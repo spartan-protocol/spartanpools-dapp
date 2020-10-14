@@ -349,7 +349,7 @@ const AddLiquidity = (props) => {
                                     <PoolPaneSide pool={pool} price={context.spartanPrice} />
                                 </Col>
                                 <Col lg="6">
-                                    <Card>
+                                    <Card className="h-100">
                                         <CardBody>
                                             <h4 className="card-title mb-4">{props.t("Add Liquidity")}</h4>
                                             <Nav  className="nav nav-pills nav-fill bg-light rounded" role="tablist">

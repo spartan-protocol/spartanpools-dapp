@@ -21,7 +21,7 @@ const PoolPaneSide = (props) => {
     }
 
     return (
-        <Card>
+        <Card className="h-100">
             <CardBody>
 
                 <h4 className="card-title mb-4 text-center">{props.t("Overview")}</h4>
@@ -93,6 +93,8 @@ const PoolPaneSide = (props) => {
                     </table>
                 </div>
                 <Col >
+                    <br/>
+                    <br/>
                     <br/>
                     <button onClick={back} type="button"
                             className="btn btn-outline-secondary btn-md btn-block waves-effect waves-light">
