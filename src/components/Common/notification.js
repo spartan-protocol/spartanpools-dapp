@@ -11,9 +11,9 @@ const Notification = (props) => {
     const { type, message } = props;
 
     useEffect((visible) => {
-        if (!visible) {
+        if (!visible && message.length > 0) {
             setVisible(true);
-            setTimeout(onDismiss, 6000);
+            setTimeout(onDismiss, 5000);
             console.log("settimeout");
         }
     }, [message])

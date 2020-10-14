@@ -20,15 +20,14 @@ export const TokenIcon = ({address}) => {
             {addr === BNB_ADDR &&
             <img
                 src={"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png"}
-                style={{height: 40}}
+                style={{height:40,borderRadius:21}}
                 alt="BNB Token Icon"
             />
             }
             {addr !== BNB_ADDR &&
             <img
                 src={isFallback}
-                width={40}
-                height={40}
+                style={{height:40,borderRadius:21}}
                 onError={onFallback}
                 alt={addr + " Token Icon"}
             />
