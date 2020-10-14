@@ -24,21 +24,22 @@ const ThemeSwitch = (props) => {
 
     return (
         <React.Fragment>
-                <div
-                    className="d-flex justify-content-center align-items-center header-item waves-effect"
-                    tag="button"
-                >
-                    <FormGroup className="m-0">
-                        <CustomInput
-                            label={<i className="bx bx-sun"></i>}
-                            type="switch"
-                            id="CustomSwitch"
-                            name="customSwitch"
-                            onChange={toggleTheme}
-                            className="btn"
-                        />
-                    </FormGroup>
-                </div>
+
+            <div
+                className="d-flex justify-content-center align-items-center header-item waves-effect"
+                tag="button"
+            ><i className="bx bx-moon mr-2"></i>
+                <FormGroup className="m-0">
+                    <CustomInput
+                        label={<i style={{color: "white"}} className="bx bx-sun"></i>}
+                        type="switch"
+                        id="CustomSwitch"
+                        name="customSwitch"
+                        onChange={toggleTheme}
+                        className="btn"
+                    />
+                </FormGroup>
+            </div>
         </React.Fragment>
 
     );
