@@ -31,6 +31,16 @@ export const getSwapSlip = (inputAmount, pool, toBase) => {
   return result
 }
 
+export const getActualSwapSlip = (pool, output, input, toBase) => {
+  // formula: ( X / ( y / x )) - 1
+  const X = bn(pool.price)
+  const y = toBase ? bn(output) : bn(input) // input is token if toBase
+  const x = toBase ? bn(input) : bn(output) // input is token if toBase
+  const result = (X.div(y.div(x))).minus(1)
+  const endResult = result.times(-1)
+  return endResult
+}
+
 export const getSwapFee = (inputAmount, pool, toBase) => {
   // formula: (x * x * Y) / (x + X) ^ 2
   const x = bn(inputAmount)

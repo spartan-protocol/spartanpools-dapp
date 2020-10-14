@@ -5,7 +5,6 @@ import InputPane from "../Sections/InputPane";
 import {convertFromWei, formatAllUnits} from "../../utils";
 import {LoadingOutlined, UnlockOutlined} from "@ant-design/icons";
 
-
 import {
     Button,
     Modal,
@@ -15,9 +14,7 @@ import {
 } from "reactstrap"
 
 import {withNamespaces} from "react-i18next";
-import { withRouter } from "react-router-dom";
-
-
+import {withRouter} from "react-router-dom";
 
 export const TradePane = (props) => {
 
@@ -29,6 +26,7 @@ export const TradePane = (props) => {
         if (props.tradeData.symbol === 'BNB') { // if input Symbol is BNB
             if (convertFromWei(props.tradeData.balance - props.tradeData.input) < 0.05) {   //if (wallet BNB balance) minus (transaction BNB amount) < 0.05
                 setShowModal(true)
+                console.log(props)
             }    
             else props.trade()
         }
@@ -48,20 +46,46 @@ export const TradePane = (props) => {
             />
             <br/>
 
+                    {/*
+                    // MAKE SURE THESE ARE ALL VISIBLE TO USER:
+                    // SWAP FEE | {props.tradeData.fee}
+                    // ACTUAL SLIP | {props.tradeData.actualSlip}
+                    // SPOT RATE | {pool.price}
+                    // OUTPUT | {output}
+                    // INPUT | {input}
+                    */}
+
             <div className="table-responsive mt-6">
                 <table className="table table-centered table-nowrap mb-0">
                     <tbody>
+
+                    <tr>
+                        <td style={{width: "100%"}}>
+                            <p className="mb-0 text-left">{props.t("Spot Price")}</p>
+                        </td>
+                        <td style={{width: "10%"}}>
+                            <h5 className="mb-0 text-right"> {formatAllUnits(props.pool.price)} SPARTA</h5>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
-                            <p className="mb-0 text-left">{props.t("Slip")}</p>
+                            <p className="mb-0 text-left">{props.t("Est. Slip")}</p>
                         </td>
                         <td>
-                            <h5 className="mb-0 text-right">{`${((props.tradeData.slip) * 100).toFixed(0)}%`}</h5>
+                            <h5 className="mb-0 text-right"> {`${((props.tradeData.slip) * 100).toFixed(0)}%`}</h5>
                         </td>
                     </tr>
                     <tr>
                         <td style={{width: "100%"}}>
-                            <p className="mb-0 text-left">{props.t("Output")}</p>
+                            <p className="mb-0 text-left">{props.t("Est. Fee")}</p>
+                        </td>
+                        <td style={{width: "10%"}}>
+                            <h5 className="mb-0 text-right"> {formatAllUnits(convertFromWei(props.tradeData.fee))} {props.tradeData.outputSymbol}</h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style={{width: "100%"}}>
+                            <p className="mb-0 text-left">{props.t("Est. Output")}</p>
                         </td>
                         <td style={{width: "10%"}}>
                             <h3 className="mb-0 text-right"> {formatAllUnits(convertFromWei(props.tradeData.output))} {props.tradeData.outputSymbol}</h3>
