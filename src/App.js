@@ -11,6 +11,7 @@ import CreatePool from './pages/CreatePool'
 import {ContextProvider} from './context'
 import PagesStarter from "./pages/Utility/pages-starter";
 import PagesFaqs from "./pages/Utility/pages-faqs";
+import ScrollToTop from "./components/Common/ScrollToTop"
 
 const App = () => {
     return (
@@ -18,6 +19,7 @@ const App = () => {
             <ContextProvider>
                 <Layout/>
                     <div className="wrapper">
+                        <ScrollToTop />
                         <Switch>
                             <Route path="/" exact component={Pools}/>
                             <Route path="/pools" exact component={Pools}/>
