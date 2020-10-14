@@ -331,9 +331,7 @@ const AddLiquidity = (props) => {
         setPool(await getPool(pool.address))
     }
 
-    const back = () => {
-        props.history.push('/pools')
-    }
+
 
     return (
         <>
@@ -347,25 +345,15 @@ const AddLiquidity = (props) => {
                         <Container fluid>
                             <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Join")}/>
                             <Row>
-                                <Col>
-                                    <button onClick={back} type="button"
-                                            className="btn btn-secondary waves-effect waves-light">
-                                        <i className="bx bx-arrow-back font-size-16 align-middle mr-2"></i> {props.t("Back")}
-                                    </button>
-                                    <br/>
-                                    <br/>
-                                </Col>
-                            </Row>
-                            <Row>
                                 <Col lg="4">
                                     <PoolPaneSide pool={pool} price={context.spartanPrice} />
                                 </Col>
                                 <Col lg="6">
-                                    <Card>
+                                    <Card className="h-100">
                                         <CardBody>
                                             <h4 className="card-title mb-4">{props.t("Add Liquidity")}</h4>
-                                            <Nav pills className="bg-light rounded" role="tablist">
-                                                <NavItem className="text-center w-33">
+                                            <Nav  className="nav nav-pills nav-fill bg-light rounded" role="tablist">
+                                                <NavItem className="text-center ">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '1'})}
                                                         onClick={() => {
@@ -375,7 +363,7 @@ const AddLiquidity = (props) => {
                                                         {`${props.t("Add")} ${pool.symbol} + SPARTA`}
                                                     </NavLink>
                                                 </NavItem>
-                                                <NavItem className="text-center w-33">
+                                                <NavItem className="text-center">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '2'})}
                                                         onClick={() => {
@@ -385,7 +373,7 @@ const AddLiquidity = (props) => {
                                                         {`${props.t("Add")} ${pool.symbol}`}
                                                     </NavLink>
                                                 </NavItem>
-                                                <NavItem className="text-center w-33">
+                                                <NavItem className="text-center">
                                                     <NavLink
                                                         className={classnames({active: activeTab === '3'})}
                                                         onClick={() => {
@@ -662,9 +650,9 @@ const RemoveLiquidityPane = (props) => {
             <br/>
             <div className="text-center">
                 {props.approvalToken &&
-                    <button 
-                    color="success" 
-                    type="button" 
+                    <button
+                    color="success"
+                    type="button"
                     className="btn btn-success btn-lg btn-block waves-effect waves-light"
                     onClick={props.removeLiquidity}>
                         <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Withdraw From Pool {props.pool.symbol}
