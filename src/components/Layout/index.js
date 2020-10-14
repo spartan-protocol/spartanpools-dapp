@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
@@ -10,26 +10,14 @@ import {
 
 // Other Layout related Component
 import Navbar from "./Navbar";
+import MobileNavbar from "./MobileNavbar"
 import Header from "./Header";
 import Footer from "./Footer";
 import Rightbar from "./Rightbar";
 
-import {useCurrentWidth} from "../Common/useCurrentWidth"
-
 const Layout = (props) => {
 
-  const [navIsOpen,setNavIsOpen] = useState(true)
-
-  let width = useCurrentWidth();
-  console.log(width)
-
-  useEffect (() => {
-    if (width < 450) {
-      setNavIsOpen(false)
-    }
-    else {setNavIsOpen(true)}
-    // eslint-disable-next-line
-  },[])
+  const [navIsOpen,setNavIsOpen] = useState(false)
 
   const toggleNav = () => {
     setNavIsOpen(!navIsOpen)
@@ -56,8 +44,9 @@ const Layout = (props) => {
       <div id="layout-wrapper">
         <Header theme={props.topbarTheme} toggleNav={toggleNav} />
         {navIsOpen &&
-          <Navbar toggleNav={toggleNav} setNavIsOpen={setNavIsOpen}/>
+          <MobileNavbar setNavIsOpen={setNavIsOpen} />
         }
+        <Navbar />
         <div className="main-content">
           {props.children}
         </div>

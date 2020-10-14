@@ -115,11 +115,11 @@ export const PoolsPaneSide = (props) => {
                 </Row>
                 */}
                 <Row>
-                    <Col sm="12" md="6" lg="6" xl="3">
+                    <Col xs="12" md="6" lg="6" xl="3">
                         <Card>
                             <CardBody>
-                                <h5 className="text-muted mb-4"><i
-                                    className={"bx bx-coin h1 text-warning align-middle mb-0 mr-3"}/>{props.t("Total Pooled")}
+                                <h5 className="text-muted mb-4">
+                                    <i className={"bx bx-coin h1 text-warning align-middle mb-0 mr-3"}/>{props.t("Total Pooled")}
                                 </h5>
                                 <Row>
                                     <Col xs="12">
@@ -141,7 +141,7 @@ export const PoolsPaneSide = (props) => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="12" md="6" lg="6" xl="3">
+                    <Col xs="12" md="6" lg="6" xl="3">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
@@ -167,11 +167,11 @@ export const PoolsPaneSide = (props) => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="12" md="6" lg="6" xl="3">
+                    <Col md="6" lg="6" xl="3" className="d-none d-md-block">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
-                                    className={"bx bx-rotate-right h1 text-secondary align-middle mb-0 mr-3"}></i>{props.t("TXN Count")}
+                                    className={"bx bx-rotate-right h1 text-secondary align-middle mb-0 mr-3"}></i>{props.t("Txn Count")}
                                 </h5>
                                 <Row>
                                     <Col xs="12">
@@ -193,7 +193,7 @@ export const PoolsPaneSide = (props) => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="12" md="6" lg="6" xl="3">
+                    <Col md="6" lg="6" xl="3" className="d-none d-md-block">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
