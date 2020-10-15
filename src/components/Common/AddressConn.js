@@ -44,7 +44,7 @@ const AddressConn = (props) => {
     }
 
     const enableMetaMask = async () => {
-        console.log('connecting')
+        //console.log('connecting')
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
             window.ethereum.enable();
@@ -90,7 +90,7 @@ const AddressConn = (props) => {
 
     const getSpartaPrice = async () => {
         let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
-        console.log(resp.data["spartan-protocol-token"].usd)
+        //console.log(resp.data["spartan-protocol-token"].usd)
         context.setContext({ 'spartanPrice': resp.data["spartan-protocol-token"].usd })
         return
     }

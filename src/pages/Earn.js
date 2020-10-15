@@ -47,7 +47,7 @@ const Earn = (props) => {
     const getData = async () => {
 
         let rewards = await getRewards(context.walletData.address)
-        console.log({rewards})
+        //console.log({rewards})
         setReward(rewards)
 
     }
@@ -55,7 +55,7 @@ const Earn = (props) => {
     const harvest = async () => {
         let contract = getDaoContract()
         let tx = await contract.methods.harvest().send({ from: context.walletData.address })
-        console.log(tx.transactionHash)
+        //console.log(tx.transactionHash)
         await refreshData()
     }
 
@@ -140,14 +140,14 @@ const EarnItem = (props) => {
     const lock = async (record) => {
         let contract = getDaoContract()
         let tx = await contract.methods.lock(record.poolAddress, record.units).send({ from: context.walletData.address })
-        console.log(tx.transactionHash)
+        //console.log(tx.transactionHash)
         await refreshData()
     }
 
     const unlock = async (record) => {
         let contract = getDaoContract()
         let tx = await contract.methods.unlock(record.poolAddress).send({ from: context.walletData.address })
-        console.log(tx.transactionHash)
+        //console.log(tx.transactionHash)
         await refreshData()
     }
 

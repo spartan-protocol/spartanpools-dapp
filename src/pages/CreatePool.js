@@ -111,7 +111,7 @@ const CreatePool = (props) => {
                 try {
                     var tokenData = await getNewTokenData(addressSelected, context.walletData.address)
                     setTokenData(tokenData)
-                    console.log(tokenData)
+                    //console.log(tokenData)
                     if (+tokenData.balance > 0) {
                         setCheckFlag(true)
                         setAddLiquidity2Data(await getPoolSharesInputData(tokenData.balance, tokenData))
@@ -232,7 +232,7 @@ const CreatePool = (props) => {
             if (+approval >= +tokenData.balance) {
                 setApproval2(true)
             }
-            console.log(address, +approval, +tokenData.balance)
+            //console.log(address, +approval, +tokenData.balance)
         }
 
     }
@@ -246,10 +246,10 @@ const CreatePool = (props) => {
     }
 
     const unlockToken = async (address) => {
-        console.log(ROUTER_ADDR, address)
+        //console.log(ROUTER_ADDR, address)
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        console.log(ROUTER_ADDR, supply)
+        //console.log(ROUTER_ADDR, supply)
         await contract.methods.approve(ROUTER_ADDR, supply).send({
             from: context.walletData.address,
             gasPrice: '',
@@ -271,7 +271,7 @@ const CreatePool = (props) => {
     const createPool = async () => {
         const poolContract = getRouterContract()
 
-        console.log(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
+        //console.log(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
 
         await poolContract.methods.createPool(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected).send({
             from: context.walletData.address,

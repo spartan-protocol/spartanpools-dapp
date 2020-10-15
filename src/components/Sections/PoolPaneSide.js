@@ -53,6 +53,14 @@ const PoolPaneSide = (props) => {
                     <table className="table table-centered table-nowrap mb-0">
                         <tbody>
                         <tr>
+                            <td>
+                                <p className="mb-0 text-left">{props.t("Spot Price")}</p>
+                            </td>
+                            <td>
+                                <h5 className="mb-0 text-right">{formatAllUnits(props.pool.price)} SPARTA</h5>
+                            </td>
+                        </tr>
+                        <tr>
                             <td style={{width: "50%"}}>
                                 <p className="mb-0 text-left">{props.t("Volume")}</p>
                             </td>
