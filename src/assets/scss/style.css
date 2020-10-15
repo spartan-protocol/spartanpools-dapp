@@ -12,3 +12,9 @@ and (device-width: 320px){
 }
 
 
+.btn-li {
+
+    border-radius: 11px;
+    border: 1px solid #ffffff;
+    margin-top: 22px;
+}
