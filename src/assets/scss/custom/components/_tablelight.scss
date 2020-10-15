@@ -1,0 +1,25 @@
+// 
+// _table.scss
+// 
+
+.table {
+  th {
+      font-weight: $font-weight-bold;
+      color: #495057;
+  }
+}
+
+//Table centered
+.table-centered {
+  td,th {
+      vertical-align: middle !important;
+      text-align: center;
+      font-size: 1.2em;
+  }
+}
+
+.table-nowrap {
+  th, td {
+    white-space: nowrap;
+  }
+}
