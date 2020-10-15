@@ -26,7 +26,7 @@ $sidebar-dark-menu-item-active-color: #ffffff;
 // Topbar - Deafult Light
 $header-height: 70px;
 $header-bg: #ffffff;
-$header-item-color: #555b6d;
+$header-item-color: #eceaea;
 
 // Topbar - Dark
 $header-dark-bg: #2a3042;
@@ -475,6 +475,11 @@ $input-btn-border-width:      $border-width;
 
 $btn-header-bg:             #2a3042;
 $btn-header-secondary:      #e9ecef;
+
+$dark-toggle-gradient:        linear-gradient(#39598A, #79D7ED);
+
+$light-icon:                  #000;
+$dark-icon:                   rgba(0,0,0,0);
 
 
 // Buttons

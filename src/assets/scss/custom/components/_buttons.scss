@@ -21,6 +21,29 @@ button,a {
 }
 
 .btn-wallet {
-  background-color: $btn-header-bg;
   color: $btn-header-secondary;
+}
+
+.btn-darktoggle {
+  background: $dark-toggle-gradient;
+  border-radius: 11px;
+  border: 1px solid #222736;
+  margin-top:22px;
+}
+
+.btn-darktoggle i {
+  padding:3px;
+  font-size: 15px;
+}
+
+.header-white {
+  color:#eceaea;
+}
+
+.light-icon {
+  color:$light-icon;
+}
+
+.dark-icon {
+  color:$dark-icon;
 }

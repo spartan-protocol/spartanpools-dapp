@@ -1,8 +1,6 @@
 import React, {useState, useContext} from "react";
 
 import {withNamespaces} from 'react-i18next';
-import FormGroup from "reactstrap/es/FormGroup";
-import CustomInput from "reactstrap/es/CustomInput";
 
 import {Context} from '../../context'
 
@@ -25,20 +23,13 @@ const ThemeSwitch = (props) => {
     return (
         <React.Fragment>
 
-            <div
-                className="d-flex justify-content-center align-items-center header-item waves-effect"
-                tag="button"
-            ><i className="bx bx-moon mr-2"></i>
-                <FormGroup className="m-0">
-                    <CustomInput
-                        label={<i style={{color: "white"}} className="bx bx-sun"></i>}
-                        type="switch"
-                        id="CustomSwitch"
-                        name="customSwitch"
-                        onChange={toggleTheme}
-                        className="btn"
-                    />
-                </FormGroup>
+            <div className="header-item waves-effect mx-1" tag="button">
+
+                    <div className="btn-darktoggle d-inline-block" onClick={toggleTheme}>
+                        <i className="bx bx-moon float-left dark-icon"></i>
+                        <i className="bx bx-sun float-right light-icon"></i>
+                    </div>
+    
             </div>
         </React.Fragment>
 
