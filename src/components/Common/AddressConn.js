@@ -108,15 +108,15 @@ const AddressConn = (props) => {
                 type={notifyType}
                 message={notifyMessage}
             />
-            <div className="btn">
+            <div className="btn header-white">
                 {!connected && !connecting &&
-                    <div onClick={connectWallet} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light mt-1"><i className="bx bx-wallet" style={{fontSize:22}}/><i className="bx bx-x-circle bx-spin ml-1" style={{fontSize:18}}/></div>
+                    <div onClick={connectWallet}><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-x-circle bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
                 }
                 {connecting &&
-                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light mt-1"><i className="bx bx-wallet" style={{fontSize:22}}/><i className="bx bx-loader-alt bx-spin ml-1" style={{fontSize:18}}/></div>
+                    <div onClick={toggleRightbar}><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-loader-alt bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
                 }
                 {connected &&
-                    <div onClick={toggleRightbar} className="w-auto btn btn-wallet btn-lg btn-block waves-effect waves-light mt-1"><i className="bx bx-wallet" style={{fontSize:22}}/><i className="bx bx-check-circle ml-1" style={{fontSize:18}}/></div>
+                    <div onClick={toggleRightbar}><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-check-circle ml-1 float-right" style={{fontSize:18}}/></div>
                 }
             </div>
         </>
