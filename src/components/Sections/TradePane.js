@@ -26,7 +26,6 @@ export const TradePane = (props) => {
         if (props.tradeData.symbol === 'BNB') { // if input Symbol is BNB
             if (convertFromWei(props.tradeData.balance - props.tradeData.input) < 0.05) {   //if (wallet BNB balance) minus (transaction BNB amount) < 0.05
                 setShowModal(true)
-                console.log(props)
             }    
             else props.trade()
         }
@@ -61,10 +60,10 @@ export const TradePane = (props) => {
 
                     <tr>
                         <td style={{width: "100%"}}>
-                            <p className="mb-0 text-left">{props.t("Spot Price")}</p>
+                            <p className="mb-0 text-left">{props.t("Est. Rate")}</p>
                         </td>
                         <td style={{width: "10%"}}>
-                            <h5 className="mb-0 text-right"> {formatAllUnits(props.pool.price)} SPARTA</h5>
+                            <h5 className="mb-0 text-right"> {props.tradeData.estRate} SPARTA</h5>
                         </td>
                     </tr>
                     <tr>

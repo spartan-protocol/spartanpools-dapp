@@ -44,7 +44,7 @@ export const getBNBBalance = async (acc) => {
 
 export const getSpartaPrice = async () => {
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
-    console.log(resp.data["spartan-protocol-token"].usd)
+    //console.log(resp.data["spartan-protocol-token"].usd)
     return resp.data["spartan-protocol-token"].usd
 }
 
@@ -91,7 +91,7 @@ export const getDaoContract = () => {
 export const getAssets = async () => {
     var contract = getSpartaContract()
     let assetArray = await contract.methods.allAssets().call()
-    console.log({ assetArray })
+    //console.log({ assetArray })
     return assetArray
 }
 
@@ -106,14 +106,14 @@ export const getTokenDetails = async (address, tokenArray) => {
             assetDetailsArray.push(assetDetails)
         }
     }
-    console.log({ assetDetailsArray })
+    //console.log({ assetDetailsArray })
     return assetDetailsArray
 }
 
 // Filter tokens for eligiblity to upgrade
 export const getEligibleAssets = async (address, assetDetailsArray) => {
     const eligibleAssetArray = assetDetailsArray.find((item) => !item.hasClaimed)
-    console.log({ eligibleAssetArray })
+    //console.log({ eligibleAssetArray })
     return eligibleAssetArray
 }
 
@@ -126,7 +126,7 @@ export const getListedTokens = async () => {
         console.log(err)
     }
 
-    console.log({ tokenArray })
+    //console.log({ tokenArray })
     return tokenArray
 }
 
@@ -140,7 +140,7 @@ export const getAlltokens = async () => {
 export const getListedPools= async () => {
     var contract = getUtilsContract()
     let poolArray = await contract.methods.allPools().call()
-    console.log({ poolArray })
+    //console.log({ poolArray })
     return poolArray
 }
 
@@ -149,7 +149,7 @@ export const getPoolsData = async (tokenArray) => {
     for (let i = 0; i < tokenArray.length; i++) {
         poolsData.push(await getPool(tokenArray[i]))
     }
-    console.log({ poolsData })
+    //console.log({ poolsData })
     return poolsData
 }
 
@@ -194,20 +194,20 @@ export const getNetworkData = async (poolsData) => {
         'totalTx': totalTx,
         'totalRevenue': totalRevenue,
     }
-    console.log(networkData)
+    //console.log(networkData)
     return (networkData)
 }
 
 export const getGlobalData = async ()  => {
     var contract = getUtilsContract()
     let globalData = await contract.methods.getGlobalDetails().call()
-    console.log({globalData})
+    //console.log({globalData})
     return globalData
 }
 
 export const getWalletData = async (address, tokenDetailsArray) => {
     var tokens = []
-    console.log(tokenDetailsArray)
+    //console.log(tokenDetailsArray)
     var walletData = {
         'address': address,
         'tokens': tokens
@@ -234,7 +234,7 @@ export const getWalletData = async (address, tokenDetailsArray) => {
             'address': obj.tokenAddress
         })
     }
-    console.log({ walletData })
+    //console.log({ walletData })
     return walletData
 }
 
@@ -250,7 +250,7 @@ export const getNewTokenData = async (address, member) => {
         'address': token
     }
 
-    console.log(tokenData)
+    //console.log(tokenData)
     return tokenData
 }
 
@@ -295,7 +295,7 @@ export const getPoolSharesData = async (member, poolArray) => {
     for (let i = 0; i < poolArray.length; i++) {
         stakesData.push(await getPoolShares(member, poolArray[i]))
     }
-    console.log({ stakesData })
+    //console.log({ stakesData })
     return stakesData
 }
 
@@ -317,7 +317,7 @@ export const getPoolShares = async (member, token) => {
         'units': liquidityUnits,
         'share': +liquidityUnits / +tokenDetails.totalSupply
     }
-    console.log({share})
+    //console.log({share})
     return share
 }
 

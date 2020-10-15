@@ -131,7 +131,7 @@ const AddLiquidity = (props) => {
 
         setUserData(_userData)
 
-        console.log(baseData?.balance, tokenData?.balance)
+        //console.log(baseData?.balance, tokenData?.balance)
 
         let liquidityData = getPairedAmount(baseData?.balance, tokenData?.balance, pool)
         setLiquidityData(liquidityData)
@@ -144,9 +144,9 @@ const AddLiquidity = (props) => {
     }
 
     const checkApproval = async (address) => {
-        console.log({address})
+        //console.log({address})
         if (address === BNB_ADDR || address === WBNB_ADDR) {
-            console.log("BNB")
+            //console.log("BNB")
             return true
         } else {
             const contract = getTokenContract(address)
@@ -180,7 +180,7 @@ const AddLiquidity = (props) => {
 
     const changeTokenAmount = async (amount) => {
         const finalAmt = (bn(userData?.tokenBalance)).times(amount).div(100)
-        console.log(finalAmt, formatBN(finalAmt, 0))
+        //console.log(finalAmt, formatBN(finalAmt, 0))
         let liquidityData = {
             baseAmount: "0",
             tokenAmount: formatBN(finalAmt, 0),
@@ -216,7 +216,7 @@ const AddLiquidity = (props) => {
 
     const changeSymmAmount = async (amount) => {
         const finalAmt = (bn(userData?.tokenBalance)).times(amount).div(100)
-        console.log(finalAmt, formatBN(finalAmt, 0))
+        //console.log(finalAmt, formatBN(finalAmt, 0))
         let liquidityData = getPairedAmount(userData.baseBalance, formatBN(finalAmt, 0), pool)
         setLiquidityData(liquidityData)
         setLiquidityUnits(getLiquidityUnits(liquidityData, pool))
@@ -242,7 +242,7 @@ const AddLiquidity = (props) => {
         }
 
         if (baseAmount > baseBalance) {
-            console.log({baseBalance})
+            //console.log({baseBalance})
             liquidityData.tokenAmount = (baseBalance / price)  // 5 / 10 -> 0.5
             liquidityData.baseAmount = formatBN(bn(baseBalance), 0) // 5
         } else {
@@ -250,8 +250,8 @@ const AddLiquidity = (props) => {
             liquidityData.baseAmount = formatBN(bn(baseAmount), 0) // 10
         }
 
-        console.log(baseBalance, tokenAmount)
-        console.log(price, tokenAmount, liquidityData)
+        //console.log(baseBalance, tokenAmount)
+        //console.log(price, tokenAmount, liquidityData)
 
         return liquidityData
     }
@@ -295,7 +295,7 @@ const AddLiquidity = (props) => {
     const addLiquidity = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        console.log(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address)
+        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address)
         await contract.methods.addLiquidity(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address).send({
             from: context.walletData.address,
             gasPrice: '',

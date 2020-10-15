@@ -10,7 +10,7 @@ import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
 
 import {bn, formatBN, convertToWei} from '../utils'
-import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip} from '../math'
+import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} from '../math'
 
 import Notification from '../components/Common/notification'
 
@@ -88,7 +88,8 @@ const NewSwap = (props) => {
         outputSymbol: "XXX",
         slip: 0,
         actualSlip: 0,
-        fee: 0
+        fee: 0,
+        estRate: 0
     });
     const [sellData, setSellData] = useState({
         address: BNB_ADDR,
@@ -99,7 +100,8 @@ const NewSwap = (props) => {
         outputSymbol: "XXX",
         slip: 0,
         actualSlip: 0,
-        fee: 0
+        fee: 0,
+        estRate: 0
     });
 
     const [approval, setApproval] = useState(false)
@@ -171,12 +173,14 @@ const NewSwap = (props) => {
         var slip
         var fee
         var actualSlip
+        var estRate
         output = getSwapOutput(input, poolData, toBase)
         slip = getSwapSlip(input, poolData, toBase)
-        console.log(formatBN(output), formatBN(slip))
+        //console.log(formatBN(output), formatBN(slip))
         fee = getSwapFee(input, poolData, toBase)
         actualSlip = getActualSwapSlip(poolData, output, input, toBase)
-        console.log(formatBN(fee), formatBN(actualSlip))
+        estRate = getEstRate(output, input, toBase)
+        //console.log(formatBN(fee), formatBN(actualSlip))
 
         const swapData = {
             address: poolData.address,
@@ -188,15 +192,16 @@ const NewSwap = (props) => {
             slip: formatBN(slip),
             fee: formatBN(fee),
             actualSlip: formatBN(actualSlip),
+            estRate: formatBN(estRate),
         };
-        console.log(swapData)
+        //console.log(swapData)
         return swapData
     };
 
     const checkApproval = async (address) => {
-        console.log({address})
+        //console.log({address})
         if (address === BNB_ADDR || address === WBNB_ADDR) {
-            console.log("BNB")
+            //console.log("BNB")
             return true
         } else {
             const contract = getTokenContract(address)
@@ -252,7 +257,7 @@ const NewSwap = (props) => {
     const buy = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        console.log(buyData.input, outputTokenData.symbol, poolURL)
+        //console.log(buyData.input, outputTokenData.symbol, poolURL)
         await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
             from: context.walletData.address,
             gasPrice: '',
@@ -269,7 +274,7 @@ const NewSwap = (props) => {
     const sell = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        console.log(sellData.input, outputTokenData.symbol, poolURL)
+        //console.log(sellData.input, outputTokenData.symbol, poolURL)
         await contract.methods.swap(sellData.input, poolURL, SPARTA_ADDR).send({
             from: context.walletData.address,
             gasPrice: '',

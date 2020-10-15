@@ -34,7 +34,7 @@ const Overview = (props) => {
 
         var contract = getRouterContract()
         let SPARTA = await contract.methods.BASE().call()
-        console.log(SPARTA)
+        //console.log(SPARTA)
 
         // let networkData = await getNetworkData(context.poolsData)
         // context.setContext({'networkData': networkData})

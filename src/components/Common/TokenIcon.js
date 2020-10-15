@@ -10,9 +10,7 @@ export const TokenIcon = ({address}) => {
 
 
     const onFallback = () => {
-        console.log(isFallback)
         setIsFallback(process.env.PUBLIC_URL + "/fallback.png")
-        console.log(isFallback)
     }
 
     return (

@@ -1,4 +1,4 @@
-import { one, bn, convertFromWei } from './utils'
+import { one, bn } from './utils'
 
 export const getSwapOutput = (inputAmount, pool, toBase) => {
   // formula: (x * X * Y) / (x + X) ^ 2
@@ -49,6 +49,14 @@ export const getSwapFee = (inputAmount, pool, toBase) => {
   const numerator = x.times(x).multipliedBy(Y)
   const denominator = x.plus(X).pow(2)
   const result = numerator.div(denominator)
+  return result
+}
+
+export const getEstRate = (output, input, toBase) => {
+  // formula: ( y / x )
+  const y = toBase ? bn(output) : bn(input) // input is token if toBase
+  const x = toBase ? bn(input) : bn(output) // input is token if toBase
+  const result = y.div(x)
   return result
 }
 
@@ -157,9 +165,9 @@ export const calcEtherPPinMAI = (collateral, pool) => {
   const amount = bn(collateral)
   const etherBal = bn(pool.tokenAmount) 
   const balMAI = bn(pool.baseAmount)  
-  console.log('EthPrice' + balMAI/etherBal)
+  //console.log('EthPrice' + balMAI/etherBal)
   const outputMAI = calcCLPSwap(amount, etherBal, balMAI);
-  console.log(convertFromWei(outputMAI))
+  //console.log(convertFromWei(outputMAI))
   return outputMAI
 }
  

@@ -14,7 +14,7 @@ const Notification = (props) => {
         if (!visible && message.length > 0) {
             setVisible(true);
             setTimeout(onDismiss, 5000);
-            console.log("settimeout");
+            //console.log("settimeout");
         }
     }, [message])
 

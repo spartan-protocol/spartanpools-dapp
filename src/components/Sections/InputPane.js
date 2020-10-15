@@ -30,7 +30,6 @@ export const InputPane = (props) => {
                             <h5 className="mb-2 mt-2 text-right" >{formatAllUnits(convertFromWei(props.paneData?.baseBalance))}</h5> <p className='mb-0 text-right'> SPARTA</p>
                         </>
                     }
-                    {console.log(props)}
                 </Col>
                 </Row>
 
