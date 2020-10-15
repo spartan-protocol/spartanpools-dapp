@@ -9,7 +9,7 @@ const Navbar = (props) => {
 
     return (
         <React.Fragment>
-            <div className="topnav d-none d-sm-block">
+            <div className="topnav d-none d-lg-block">
                 <div className="container-fluid">
                     <nav className="navbar navbar-light navbar-expand-lg topnav-menu" id="navigation">
                         <ul className="navbar-nav">
