@@ -401,6 +401,7 @@ const AddLiquidity = (props) => {
                                                         addLiquidity={addLiquidity}
                                                         startTx={startTx}
                                                         endTx={endTx}
+                                                        activeTab={activeTab}
                                                     />
 
 
@@ -421,6 +422,7 @@ const AddLiquidity = (props) => {
                                                         addLiquidity={addLiquidity}
                                                         startTx={startTx}
                                                         endTx={endTx}
+                                                        activeTab={activeTab}
                                                     />
                                                 </TabPane>
                                                 <TabPane tabId="3" id="sell-tab">
@@ -458,6 +460,7 @@ const AddSymmPane = (props) => {
                 paneData={props.userData}
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}
+                activeTab={props.activeTab}
             />
             <br/>
             <div className="text-center">

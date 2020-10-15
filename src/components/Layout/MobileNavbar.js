@@ -28,7 +28,7 @@ const MobileNavbar = (props) => {
 
     return (
         <React.Fragment>
-            <div className="topnav d-block d-sm-none">
+            <div className="topnav d-block d-lg-none">
                 <div className="container-fluid">
                     <nav className="navbar navbar-light navbar-expand-lg topnav-menu" id="navigation">
                         <ul className="navbar-nav">
