@@ -1,9 +1,11 @@
 import React, {useContext} from "react";
 import {Context} from "../../context";
-import { TokenIcon } from '../Common/TokenIcon'
+import {TokenIcon} from '../Common/TokenIcon'
 import {convertFromWei, formatAllUSD} from "../../utils";
-import Button from "antd/es/button";
 
+import {
+    Button
+} from "reactstrap"
 
 import {withNamespaces} from "react-i18next";
 import {Link, withRouter} from "react-router-dom";
@@ -43,22 +45,25 @@ export const PoolTableItem = (props) => {
                 </td>
                 <td>
                     <Link to={`/pool/stake?pool=${props.address}`}>
-                        <Button color="primary"
-                                className="btn btn-primary waves-effect waves-light m-1 w-75">
-                            <i className="bx bx-log-in-circle"></i> {props.t("Join")}
-                        </Button>
+
+                            <button color="primary"
+                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
+                                <i className="bx bx-log-in-circle"></i> {props.t("Join")}
+                            </button>
                     </Link>
                     <Link to={`/pool/swap?pool=${props.address}`}>
-                        <button type="button"
-                                className="btn btn-primary waves-effect waves-light m-1 w-75">
-                            <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
-                        </button>
+
+                            <button color="primary"
+                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
+                                <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
+
+                            </button>
                     </Link>
                 </td>
 
             </tr>
         </>
-    )
+)
 };
 
 export default withRouter(withNamespaces()(PoolTableItem));

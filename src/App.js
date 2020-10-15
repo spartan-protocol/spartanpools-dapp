@@ -6,7 +6,9 @@ import Shares from './pages/Shares'
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import AddLiquidity from './pages/AddLiquidity'
 import Swap from './pages/Swap'
+import './assets/scss/style.css';
 import CreatePool from './pages/CreatePool'
+
 //import Earn from './pages/Earn'
 import {ContextProvider} from './context'
 import PagesStarter from "./pages/Utility/pages-starter";
