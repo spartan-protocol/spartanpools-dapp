@@ -87,7 +87,7 @@ export const AddSymmPane = (props) => {
 
             <Col xs={8}>
                 {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
+                <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined/>}> ADD TO
                     POOL</div>
                 }
                 {props.approvalBase && props.approvalToken && !props.startTx &&
