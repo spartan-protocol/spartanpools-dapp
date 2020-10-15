@@ -599,7 +599,7 @@ const AddAsymmPane = (props) => {
                         </Col>
                         <Col xs={12}>
                             {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO POOL</div>
+                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}> ADD TO POOL</div>
                             }
 
                             {props.approvalBase && props.approvalToken && !props.startTx &&
