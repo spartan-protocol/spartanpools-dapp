@@ -47,3 +47,18 @@ button,a {
 .dark-icon {
   color:$dark-icon;
 }
+
+@media only screen
+and (min-width : 300px) and (max-width : 390px) {
+    .btn {
+        padding: 6px 1px;
+        font-size: 0.62rem;
+    }
+
+}
+
+.btn-li {
+    border-radius: 11px;
+    border: 1px solid #ffffff;
+    margin-top: 22px;
+}
