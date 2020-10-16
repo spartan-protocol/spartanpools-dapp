@@ -6,7 +6,6 @@ import {getGlobalData} from '../client/web3'
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
-
 import {
     Container,
     Row,

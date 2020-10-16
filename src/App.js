@@ -7,6 +7,7 @@ import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import AddLiquidity from './pages/AddLiquidity'
 import Swap from './pages/Swap'
 import CreatePool from './pages/CreatePool'
+import Earn from './pages/Earn'
 
 //import Earn from './pages/Earn'
 import {ContextProvider} from './context'
@@ -28,8 +29,8 @@ const App = () => {
                             <Route path="/pool/stake" exact component={AddLiquidity}/>
                             <Route path="/pool/swap" exact component={Swap}/>
                             <Route path="/pool/create" exact component={CreatePool}/>
-                            {/* <Route path="/dao" exact component={Dao} />
-                            <Route path="/earn" exact component={Earn} />*/}
+                            <Route path="/earn" exact component={Earn} />
+                            {/* <Route path="/dao" exact component={Dao} />*/}
 
                             {/*Help*/}
                             <Route path="/start" exact component={PagesStarter}/>

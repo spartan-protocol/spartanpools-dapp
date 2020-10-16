@@ -20,10 +20,12 @@ const Navbar = (props) => {
                                 <div className={classname("dropdown-menu")}>
                                     <Link to="/pools" className="dropdown-item">{props.t('Pools')}</Link>
                                     {/*
-                                    <Link to="/share" className="dropdown-item" onClick={closeDropdowns}>{props.t('Shares')}</Link>
-                                    <Link to="/dao" className="dropdown-item" onClick={closeDropdowns}>{props.t('Dao')}</Link>
-                                    <Link to="/earn" className="dropdown-item" onClick={closeDropdowns}>{props.t('Earn')}</Link>
-                                    <Link to="/swap" className="dropdown-item" onClick={closeDropdowns}>{props.t('Swap')}</Link>
+                                    <Link to="/earn" className="dropdown-item">{props.t('Earn')}</Link>
+                                    */}
+                                    {/*
+                                    <Link to="/share" className="dropdown-item">{props.t('Shares')}</Link>
+                                    <Link to="/dao" className="dropdown-item">{props.t('Dao')}</Link>
+                                    <Link to="/swap" className="dropdown-item">{props.t('Swap')}</Link>
                                     */}
                                 </div>
                             </li>
