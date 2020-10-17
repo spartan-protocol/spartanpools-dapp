@@ -40,7 +40,6 @@ const PoolTable = (props) => {
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
-
                             {!context.poolsData &&
                             <div style={{textAlign: "center"}}><LoadingOutlined/></div>
                             }
@@ -61,7 +60,7 @@ const PoolTable = (props) => {
                                         <th className="d-none d-lg-table-cell" scope="col">{props.t("Volume")}</th>
                                         <th className="d-none d-lg-table-cell" scope="col">{props.t("Txns")}</th>
                                         <th className="d-none d-lg-table-cell" scope="col">{props.t("Revenue")}</th>
-                                        <th scope="col">{props.t("Price")}</th>
+                                        <th scope="col">{props.t("Action")}</th>
                                     </tr>
                                     </thead>
                                     <tbody>

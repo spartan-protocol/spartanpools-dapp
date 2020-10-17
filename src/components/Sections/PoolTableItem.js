@@ -12,16 +12,13 @@ export const PoolTableItem = (props) => {
 
     return (
         <>
-
             <tr>
                 <td>
-
                     <TokenIcon address={props.address}/>
-
                 </td>
-
                 <td>
                     {props.symbol}
+                    <h6 className="d-block d-lg-none mb-0">{formatAllUSD(props.price, context.spartanPrice)}</h6>
                 </td>
                 <td className="d-none d-lg-table-cell">
                     {formatAllUSD(props.price, context.spartanPrice)}
@@ -40,24 +37,19 @@ export const PoolTableItem = (props) => {
                 </td>
                 <td>
                     <Link to={`/pool/stake?pool=${props.address}`}>
-
-                            <button color="primary"
-                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
-                                <i className="bx bx-log-in-circle"></i> {props.t("Join")}
-                            </button>
-
+                        <button color="primary"
+                                className="btn btn-primary waves-effect waves-light m-1 w-75">
+                            <i className="bx bx-log-in-circle"></i> {props.t("Join")}
+                        </button>
                     </Link>
                     <Link to={`/pool/swap?pool=${props.address}`}>
+                        <button color="primary"
+                                className="btn btn-primary waves-effect waves-light m-1 w-75">
+                            <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
 
-                            <button color="primary"
-                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
-                                <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
-
-                            </button>
-
+                        </button>
                     </Link>
                 </td>
-
             </tr>
         </>
 )

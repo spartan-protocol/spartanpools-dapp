@@ -125,8 +125,6 @@ export const PoolsPaneSide = (props) => {
                                     <Col xs="12">
                                         <div>
                                             <h3 className="ml-20">{formatAllUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h3>
-                                            {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
-                                            {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
                                         </div>
                                     </Col>
                                     <Col xs="12">
@@ -151,8 +149,6 @@ export const PoolsPaneSide = (props) => {
                                     <Col xs="12">
                                         <div>
                                             <h3>{formatAllUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h3>
-                                            {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
-                                            {/*    className="mdi mdi-arrow-up ml-1 text-success"/></p>*/}
                                         </div>
                                     </Col>
                                     <Col xs="12">
@@ -177,8 +173,6 @@ export const PoolsPaneSide = (props) => {
                                     <Col xs="12">
                                         <div>
                                             <h3>{formatAllUnits(+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx)}</h3>
-                                            {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
-                                            {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
                                         </div>
                                     </Col>
                                     <Col xs="12">
@@ -203,9 +197,7 @@ export const PoolsPaneSide = (props) => {
                                     <Col xs="12">
                                         <div>
                                             <h3>{formatAllUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h3>
-                                            {/*<p className="text-muted text-truncate mb-0">0,0<i*/}
-                                            {/*    className="mdi mdi-arrow-up ml-1 text-success"></i></p>*/}
-                            </div>
+                                        </div>
                                     </Col>
                                     <Col xs="12">
                                         <div>
