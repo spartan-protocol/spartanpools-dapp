@@ -114,7 +114,7 @@ export const SharesPane = (props) => {
                                         <p>Shares overview</p>
                                         <div className="text-muted">
                                             <p className="mb-1"><i className="mdi mdi-circle-medium align-middle text-primary mr-1"></i> View your available LP shares</p>
-                                            <p className="mb-1"><i className="mdi mdi-circle-medium align-middle text-primary mr-1"></i> Assess you gains/losses</p>
+                                            <p className="mb-1"><i className="mdi mdi-circle-medium align-middle text-primary mr-1"></i> Assess your gains/losses</p>
                                         </div>
                                     </div>
                                 </Col>
