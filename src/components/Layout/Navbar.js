@@ -19,9 +19,9 @@ const Navbar = (props) => {
                                 </Link>
                                 <div className={classname("dropdown-menu")}>
                                     <Link to="/pools" className="dropdown-item">{props.t('Pools')}</Link>
-                                    {/*
+                                    
                                     <Link to="/earn" className="dropdown-item">{props.t('Earn')}</Link>
-                                    */}
+                                   
                                     {/*
                                     <Link to="/share" className="dropdown-item">{props.t('Shares')}</Link>
                                     <Link to="/dao" className="dropdown-item">{props.t('Dao')}</Link>

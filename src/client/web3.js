@@ -8,14 +8,14 @@ import POOLS from '../artifacts/Pool.json'
 import UTILS from '../artifacts/Utils.json'
 import DAO from '../artifacts/Dao.json'
 
-const net = 'MAINET';
+const net = '';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
-export const WBNB_ADDR = net === 'BSC' ? '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-export const SPARTA_ADDR = net === 'BSC' ? '0xfb0349F08e2078a2944Ae3205446D176c3b45373' : '0xE4Ae305ebE1AbE663f261Bc00534067C80ad677C'
-export const UTILS_ADDR = net === 'BSC' ? '0xeFD9BfFe7c63Ab5962648E3e83e44306C4dAD747' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
-export const DAO_ADDR = net === 'BSC' ? '0x4b38dCD3E3f422F33Ef1F49eD3A3F11c7A5d27bC' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
-export const ROUTER_ADDR = net === 'BSC' ? '0x94fFAD4568fF00D921C76aA158848b33D7Bd65d3' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
+export const WBNB_ADDR = net === 'testnet' ? '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+export const SPARTA_ADDR = net === 'testnet' ? '0xfb0349F08e2078a2944Ae3205446D176c3b45373' : '0xE4Ae305ebE1AbE663f261Bc00534067C80ad677C'
+export const UTILS_ADDR = net === 'testnet' ? '0xeFD9BfFe7c63Ab5962648E3e83e44306C4dAD747' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
+export const DAO_ADDR = net === 'testnet' ? '0x4b38dCD3E3f422F33Ef1F49eD3A3F11c7A5d27bC' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
+export const ROUTER_ADDR = net === 'testnet' ? '0x94fFAD4568fF00D921C76aA158848b33D7Bd65d3' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -126,7 +126,7 @@ export const getListedTokens = async () => {
         console.log(err)
     }
 
-    //console.log({ tokenArray })
+    console.log({ tokenArray })
     return tokenArray
 }
 

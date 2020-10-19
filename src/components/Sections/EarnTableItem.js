@@ -16,26 +16,28 @@ export const EarnTableItem = (props) => {
 
     const context = useContext(Context)
 
-    const lock = async (record) => {
+    const deposit = async (record) => {
+        console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.lock(record.poolAddress, record.units).send({ from: context.walletData.address })
+        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.walletData.address })
         console.log(tx.transactionHash)
         await refreshData()
     }
 
-    const unlock = async (record) => {
+    const withdraw = async (record) => {
+        console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.unlock(record.poolAddress).send({ from: context.walletData.address })
+        let tx = await contract.methods.withdraw(record.address).send({ from: context.walletData.address })
         console.log(tx.transactionHash)
         await refreshData()
     }
 
-    const harvest = async () => {
-        let contract = getDaoContract()
-        let tx = await contract.methods.harvest().send({ from: context.walletData.address })
-        console.log(tx.transactionHash)
-        await refreshData()
-    }
+    // const harvest = async () => {
+    //     let contract = getDaoContract()
+    //     let tx = await contract.methods.harvest().send({ from: context.walletData.address })
+    //     console.log(tx.transactionHash)
+    //     await refreshData()
+    // }
 
     const refreshData = async () => {
         let stakesData = await getPoolSharesData(context.walletData.address, await getListedTokens())
@@ -53,29 +55,26 @@ export const EarnTableItem = (props) => {
 
             <tr>
                 <td>
-                    <TokenIcon address={props.address}/>
+                    <TokenIcon address={props.symbAddr}/>
                 </td>
                 <td>
                     {props.symbol}
                 </td>
-                <td className="">
+                <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.units))}
                 </td>
-                <td className="">
+                <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.locked))}
                 </td>
-                <td className="">
-                    <button type="button" className="btn btn-primary waves-effect waves-light" onClick={() => harvest(props)}>
-                        <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest
-                    </button>
-                </td>
-                <td className="">
-                    <button type="button" className="btn btn-primary waves-effect waves-light" onClick={() => lock(props)}>
+                <td>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={
+                        () => deposit(props) //props.lockModal()
+                        }>
                         <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Lock
                     </button>
-                </td>
-                <td className="">
-                    <button type="button" className="btn btn-primary waves-effect waves-light" onClick={() => unlock(props)}>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={
+                        () => withdraw(props) //props.unlockModal()
+                        }>
                         <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"></i> Unlock
                     </button>
                 </td>
