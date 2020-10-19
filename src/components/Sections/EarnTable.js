@@ -51,7 +51,7 @@ const EarnTable = (props) => {
     const getData = async () => {
 
         let rewards = await getRewards(context.walletData.address)
-        //console.log({rewards})
+        console.log({rewards})
         setReward(rewards)
 
     }
@@ -73,10 +73,12 @@ const EarnTable = (props) => {
                                     <div style={{textAlign: "center"}}><LoadingOutlined/></div>
                                 }
                                 {context.stakesData &&
-                                    <h3>{convertFromWei(reward)}</h3> &&
+                                <>
+                                    <h3>{convertFromWei(reward)} SPARTA</h3>
                                     <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
                                         <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest Yield
                                     </button>
+                                    </>
                                 }
                             </CardBody>
                         </Card>
@@ -116,7 +118,7 @@ const EarnTable = (props) => {
                                     {context.stakesData.map(c =>
                                         <EarnTableItem 
                                             key={c.address}
-                                            address={c.address}
+                                            address={c.poolAddress}
                                             symbol={c.symbol}
                                             units={c.units}
                                             locked={c.locked}
