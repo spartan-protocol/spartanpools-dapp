@@ -55,29 +55,26 @@ export const EarnTableItem = (props) => {
 
             <tr>
                 <td>
-                    <TokenIcon address={props.address}/>
+                    <TokenIcon address={props.symbAddr}/>
                 </td>
                 <td>
                     {props.symbol}
                 </td>
-                <td className="">
+                <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.units))}
                 </td>
-                <td className="">
+                <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.locked))}
                 </td>
-                {/* <td className="">
-                    <button type="button" className="btn btn-primary waves-effect waves-light" onClick={() => harvest(props)}>
-                        <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest
-                    </button>
-                </td> */}
-                <td className="">
-                    <button type="button" className="btn btn-primary waves-effect waves-light" onClick={() => deposit(props)}>
+                <td>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={
+                        () => deposit(props) //props.lockModal()
+                        }>
                         <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Lock
                     </button>
-                </td>
-                <td className="">
-                    <button type="button" className="btn btn-primary waves-effect waves-light" onClick={() => withdraw(props)}>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={
+                        () => withdraw(props) //props.unlockModal()
+                        }>
                         <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"></i> Unlock
                     </button>
                 </td>
