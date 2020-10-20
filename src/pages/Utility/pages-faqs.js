@@ -232,6 +232,17 @@ class PagesFaqs extends Component {
                                                             </p>
                                                         </Media>
                                                     </Media>
+                                                    <Media className="faq-box">
+                                                        <div className="faq-icon mr-3">
+                                                            <i className="bx bx-help-circle font-size-20 text-success"></i>
+                                                        </div>
+                                                        <Media body>
+                                                            <h5 className="font-size-15">Why are my rewards so low?
+                                                            </h5>
+                                                            <p className="text-muted">Spartan Protocol has released the Earn dApp with 1000 SPARTA sitting in the emissions pool for testing purposes. The SPARTA emissions as per the White paper are not yet enabled, and this will be communicated in the near future.
+                                                            </p>
+                                                        </Media>
+                                                    </Media>
                                                 </TabPane>
                                             </TabContent>
                                         </CardBody>

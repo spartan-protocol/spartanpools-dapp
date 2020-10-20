@@ -474,7 +474,7 @@ const AddSymmPane = (props) => {
                     <tbody>
                     <tr>
                         <td>
-                            <p className="mb-0 text-left">Estimated Units</p>
+                            <p className="mb-0 text-left">Estimated LP Units</p>
                         </td>
                         <td>
                             <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits.toFixed(0)))}</h5>
@@ -484,7 +484,7 @@ const AddSymmPane = (props) => {
                     </tr>
                     <tr>
                         <td>
-                            <p className="mb-0 text-left">Estimated Share</p>
+                            <p className="mb-0 text-left">Estimated Pool Share</p>
                         </td>
                         <td>
                             <h5 className="mb-0">{`${props.getEstShare()}%`}</h5>
