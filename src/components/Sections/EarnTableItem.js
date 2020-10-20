@@ -48,11 +48,6 @@ export const EarnTableItem = (props) => {
 
     return (
         <>
-            <Notification
-                type={notifyType}
-                message={notifyMessage}
-            />
-
             <tr>
                 <td>
                     <TokenIcon address={props.symbAddr}/>
@@ -77,6 +72,12 @@ export const EarnTableItem = (props) => {
                         }>
                         <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"></i> Unlock
                     </button>
+
+                    <Notification
+                        type={notifyType}
+                        message={notifyMessage}
+                    />
+
                 </td>
             </tr>
         </>

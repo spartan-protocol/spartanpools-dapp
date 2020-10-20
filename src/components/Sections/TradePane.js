@@ -126,7 +126,7 @@ export const TradePane = (props) => {
                 <Modal isOpen={showModal} toggle={toggle}>
                         <ModalHeader toggle={toggle}>BNB balance will be low after this transaction!</ModalHeader>
                         <ModalBody>
-                            This transaction will leave you with a very low BNB balance ({convertFromWei(props.tradeData.balance - props.tradeData.input)} BNB)<br/>
+                            This transaction will leave you with a very low BNB balance (~{formatAllUnits(convertFromWei(props.tradeData.balance - props.tradeData.input))} BNB)<br/>
                             Please ensure you understand that BNB is used as 'gas' for the BSC network.<br/>
                             If you do not have any/enough BNB in your wallet you may not be able to transfer assets or interact with BSC DApps after this transaction.<br/>
                             Keep in mind however, gas fees are usually very low (~0.005 BNB).<br/>

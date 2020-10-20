@@ -6,7 +6,7 @@ import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
 import Notification from '../../components/Common/notification'
 
-import {convertFromWei} from '../../utils'
+import {convertFromWei, formatAllUnits} from '../../utils'
 
 import {
     Row,
@@ -80,7 +80,6 @@ const EarnTable = (props) => {
     }
 
     const getData = async () => {
-
         let rewards = await getRewards(context.walletData.address)
         console.log({rewards})
         setReward(rewards)
@@ -99,18 +98,18 @@ const EarnTable = (props) => {
                     <Col sm={12} className="mr-20">
                         <Card>
                             <CardBody>
-                                <h2>CLAIM REWARDS</h2>
-                                {!context.stakesData &&
-                                    <div style={{textAlign: "center"}}><LoadingOutlined/></div>
-                                }
-                                {context.stakesData &&
-                                <>
-                                    <h3>{convertFromWei(reward)} SPARTA</h3>
-                                    <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
-                                        <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest Yield
-                                    </button>
-                                    </>
-                                }
+                                <h2>Claim Rewards</h2>
+                                    {!context.stakesData &&
+                                        <div style={{textAlign: "center"}}><LoadingOutlined/></div>
+                                    }
+                                    {context.stakesData &&
+                                        <div>
+                                            <h5>{formatAllUnits(convertFromWei(reward))} SPARTA</h5>
+                                            <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest Yield
+                                            </button>
+                                        </div>
+                                    }
                             </CardBody>
                         </Card>
                     </Col>
