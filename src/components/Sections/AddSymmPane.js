@@ -36,7 +36,7 @@ export const AddSymmPane = (props) => {
                             <p className="mb-0">Estimated Units</p>
                         </td>
                         <td>
-                            <h5 className="mb-0">{convertFromWei(props.estLiquidityUnits.toFixed(0))}</h5>
+                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
                         </td>
                         <td>
                         </td>
@@ -56,7 +56,7 @@ export const AddSymmPane = (props) => {
                             <p className="mb-0">Paired Amount (SPARTA)</p>
                         </td>
                         <td style={{width: "10%"}}>
-                            <h2 className="mb-0">{convertFromWei(props.liquidityData.baseAmount)}</h2>
+                            <h2 className="mb-0">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))}</h2>
                         </td>
                         <td>
                         </td>

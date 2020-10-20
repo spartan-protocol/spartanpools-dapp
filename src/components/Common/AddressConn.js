@@ -108,15 +108,15 @@ const AddressConn = (props) => {
                 type={notifyType}
                 message={notifyMessage}
             />
-            <div className="btn header-white">
+            <div className="btn header-white" onClick={toggleRightbar}>
                 {!connected && !connecting &&
                     <div onClick={connectWallet}><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-x-circle bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
                 }
                 {connecting &&
-                    <div onClick={toggleRightbar}><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-loader-alt bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
+                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-loader-alt bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
                 }
                 {connected &&
-                    <div onClick={toggleRightbar}><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-check-circle ml-1 float-right" style={{fontSize:18}}/></div>
+                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-check-circle ml-1 float-right" style={{fontSize:18}}/></div>
                 }
             </div>
         </>

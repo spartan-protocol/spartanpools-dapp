@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 //import {Menu} from 'antd'
 // PlusCircleOutlined, MinusCircleOutlined, Tooltip
 import {
-    rainbowStop, getIntFromName, convertFromWei, formatAllUSD,
+    rainbowStop, getIntFromName, convertFromWei, formatAllUSD, formatAllUnits,
     // formatAPY,
 } from '../utils'
 import {H1, HR, Text, Center, Sublabel} from './elements'
@@ -77,7 +77,7 @@ export const InputPaneStatic = (props) => {
             <Row>
                 <Col xs={24}>
                     <Input onChange={props.onInputChange}
-                           placeholder={convertFromWei(props.paneData?.input)}
+                           placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
                         // defaultValue={convertFromWei(props.paneData?.input)}
                            allowClear={true}
                            addonAfter={
@@ -85,7 +85,7 @@ export const InputPaneStatic = (props) => {
                                    symbol={props.tokenSymbol?.symbol}/>}
                     ></Input>
                     <Sublabel>Balance:
-                        {convertFromWei(props.paneData?.balance)} ({props.tokenSymbol?.symbol})</Sublabel>
+                        {formatAllUnits(convertFromWei(props.paneData?.balance))} ({props.tokenSymbol?.symbol})</Sublabel>
                 </Col>
             </Row>
             <PercentButtonRow changeAmount={props.changeAmount}/>
@@ -294,7 +294,7 @@ export const PoolPane = (props) => {
                     <Col xs={24}>
                         <ColourCoin symbol={props.symbol} size={40}/>
                         <Center><Text size={30}
-                                      margin={"-40px 0px 5px 0px"}>{convertFromWei(props?.balance)}</Text></Center>
+                                      margin={"-40px 0px 5px 0px"}>{formatAllUnits(convertFromWei(props?.balance))}</Text></Center>
                         {/* <Center><Label margin={"0px 0px 0px 0px"}>({formatUSD(convertFromWei(props?.balance))})</Label></Center> */}
                         <Center><Sublabel margin={"0px 0px 5px 0px"}>DEPTH ({props?.symbol})</Sublabel></Center>
 
@@ -369,7 +369,7 @@ export const CoinRow = (props) => {
                     <Label size={props.size / 1.8}>{props.symbol}</Label><br/>
                 </Col>
                 <Col xs={12}>
-                    <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br/>
+                    <Text size={props.size / 2}>{formatAllUnits(convertFromWei(props.balance))}</Text><br/>
                     {/* <Text size={props.size / 3}>({formatUSD(convertFromWei(props.balance))})</Text> */}
                 </Col>
             </Row>
@@ -389,7 +389,7 @@ export const CDPDetails = (props) => {
                     <Label size={props.size / 2.2}>{props.name}</Label><br/>
                 </Col>
                 <Col span={6}>
-                    <Text size={props.size / 2}>{convertFromWei(props.balance)}</Text><br/>
+                    <Text size={props.size / 2}>{formatAllUnits(convertFromWei(props.balance))}</Text><br/>
                     <Text size={props.size / 3}>({formatAllUSD(convertFromWei(props.balance))})</Text>
                 </Col>
 

@@ -22,7 +22,7 @@ export const one = 10**18;
 export function convertFromWei(number) {
     var num = new BigNumber(number)
     var final = num.div(10**18)
-    return (final).toFixed(2);
+    return final
 }
 
 export function convertToWei(number) {
@@ -44,7 +44,7 @@ export const formatAPY = (input) => {
 
 export const formatAllUnits = (input) => {
     var units = (bn(input).toString())
-    if (input === 0) {units = (bn(input).toFixed(0).toString())}
+    if (input === 0) {units = (bn(input).toFixed(2).toString())}
     else if (input < 0.0001) {units = (bn(input).toFixed(6).toString())}
     else if (input < 0.001) {units = (bn(input).toFixed(5).toString())}
     else if (input < 0.01) {units = (bn(input).toFixed(4).toString())}
@@ -58,7 +58,7 @@ export const formatAllUnits = (input) => {
 export const formatAllUSD = (input, price) => {
     var valueNew = (bn(input).times( price )).toNumber()
     const value = input ? (bn(input).times( price )).toNumber() : 0
-    if (value === 0) {valueNew = (bn(value).toFixed(0).toString())}
+    if (value === 0) {valueNew = (bn(value).toFixed(2).toString())}
     else if (input < 0.0001) {valueNew = (bn(value).toFixed(6).toString())}
     else if (input < 0.001) {valueNew = (bn(value).toFixed(5).toString())}
     else if (input < 0.01) {valueNew = (bn(value).toFixed(4).toString())}

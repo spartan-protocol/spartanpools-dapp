@@ -5,7 +5,7 @@ import Breadcrumbs from "../components/Common/Breadcrumb";
 
 import { TokenIcon } from '../components/Common/TokenIcon';
 
-import {convertFromWei} from '../utils'
+import {convertFromWei, formatAllUnits} from '../utils'
 
 import {
     Container,
@@ -227,7 +227,7 @@ export const PoolShareItem = (props) => {
                                 </Col>
                                 <Col xs={4}>
                                     SPARTA AVAILABLE (SHARE)
-                                    <h3>{convertFromWei(props.baseAmount)}</h3>
+                                    <h3>{formatAllUnits(convertFromWei(props.baseAmount))}</h3>
                                     SPARTA GAIN/LOSS
                                     <h3>XXX</h3>
                                 </Col>
@@ -251,7 +251,7 @@ export const PoolShareItem = (props) => {
                                 </Col>
                                 <Col xs={4}>
                                     PAIRED TOKEN AVAILABLE (SHARE)
-                                    <h4>{convertFromWei(props.tokenAmount)}</h4>
+                                    <h4>{formatAllUnits(convertFromWei(props.tokenAmount))}</h4>
                                     PAIRED TOKEN GAIN/LOSS
                                     <h3>XXX</h3>
                                 </Col>
