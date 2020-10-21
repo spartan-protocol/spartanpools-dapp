@@ -40,7 +40,7 @@ export const InputPane = (props) => {
                     </InputGroupAddon>
                     <Input type="text" className="form-control" onChange={props.onInputChange}
                            placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
-                           size={'large'}
+                           bssize={'large'}
                         // defaultValue={convertFromWei(props.paneData?.input)}
                         //   allowClear={true}
                         // addonAfter={<TokenDropDown default={props.paneData?.address}

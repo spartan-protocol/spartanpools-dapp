@@ -44,7 +44,7 @@ export const formatAPY = (input) => {
 
 export const formatAllUnits = (input) => {
     var units = (bn(input).toString())
-    if (input === 0) {units = (bn(input).toFixed(2).toString())}
+    if (input <= 0) {units = (bn(input).toFixed(2).toString())}
     else if (input < 0.0001) {units = (bn(input).toFixed(6).toString())}
     else if (input < 0.001) {units = (bn(input).toFixed(5).toString())}
     else if (input < 0.01) {units = (bn(input).toFixed(4).toString())}
@@ -58,7 +58,7 @@ export const formatAllUnits = (input) => {
 export const formatAllUSD = (input, price) => {
     var valueNew = (bn(input).times( price )).toNumber()
     const value = input ? (bn(input).times( price )).toNumber() : 0
-    if (value === 0) {valueNew = (bn(value).toFixed(2).toString())}
+    if (value <= 0) {valueNew = (bn(value).toFixed(2).toString())}
     else if (input < 0.0001) {valueNew = (bn(value).toFixed(6).toString())}
     else if (input < 0.001) {valueNew = (bn(value).toFixed(5).toString())}
     else if (input < 0.01) {valueNew = (bn(value).toFixed(4).toString())}

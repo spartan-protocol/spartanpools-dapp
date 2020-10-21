@@ -106,7 +106,7 @@ const EarnTable = (props) => {
                                         <div>
                                             <h5>{formatAllUnits(convertFromWei(reward))} SPARTA</h5>
                                             <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest Yield
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest SPARTA
                                             </button>
                                         </div>
                                     }
@@ -121,44 +121,44 @@ const EarnTable = (props) => {
                     <Card>
                         <CardBody>
 
-                            {!context.stakesData &&
-                            <div style={{textAlign: "center"}}><LoadingOutlined/></div>
-                            }
-                            {context.stakesData &&
-                            <div className="table-responsive">
-                                <CardTitle><h4>Earn</h4></CardTitle>
-                                <CardSubtitle className="mb-3">
-                                    Earn yield by depositing liquidity in the Spartan Protocol DAO.
-                                </CardSubtitle>
-                                <Table className="table-centered mb-0">
+                            {context.stakesData ? (
+                                <div className="table-responsive">
+                                    <CardTitle><h4>Earn</h4></CardTitle>
+                                    <CardSubtitle className="mb-3">
+                                        By adding liquidity to the pools you receive Spartan Protocol LP Tokens.<br/>
+                                        Earn extra SPARTA by locking these LP tokens in the DAO.
+                                    </CardSubtitle>
+                                    <Table className="table-centered mb-0">
 
-                                    <thead className="center">
-                                    <tr>
-                                        <th scope="col">{props.t("Icon")}</th>
-                                        <th scope="col">{props.t("Symbol")}</th>
-                                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Balance")}</th>
-                                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
-                                        <th scope="col">{props.t("Action")}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        {console.log(context.stakesData)}
-                                    {context.stakesData.map(c =>
-                                        <EarnTableItem 
-                                            key={c.address}
-                                            symbAddr={c.address}
-                                            address={c.poolAddress}
-                                            symbol={c.symbol}
-                                            units={c.units}
-                                            locked={c.locked}
-                                            //lockModal={toggleLock}
-                                            //unlockModal={toggleUnlock}
-                                        />
-                                    )}
-                                    </tbody>
-                                </Table>
-                            </div>
-                            }
+                                        <thead className="center">
+                                        <tr>
+                                            <th scope="col">{props.t("Icon")}</th>
+                                            <th scope="col">{props.t("Symbol")}</th>
+                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Balance")}</th>
+                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
+                                            <th scope="col">{props.t("Action")}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {console.log(context.stakesData)}
+                                        {context.stakesData.map(c =>
+                                            <EarnTableItem 
+                                                key={c.address}
+                                                symbAddr={c.address}
+                                                address={c.poolAddress}
+                                                symbol={c.symbol}
+                                                units={c.units}
+                                                locked={c.locked}
+                                                //lockModal={toggleLock}
+                                                //unlockModal={toggleUnlock}
+                                            />
+                                        )}
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            ) : (
+                                <div style={{textAlign: "center"}}><LoadingOutlined/></div>
+                            )}
                         </CardBody>
                     </Card>
                 </Col>

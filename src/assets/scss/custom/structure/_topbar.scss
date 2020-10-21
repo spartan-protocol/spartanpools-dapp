@@ -285,3 +285,7 @@ body[data-layout="horizontal"] {
         }    
     }
 }
+
+.tooltip {
+    z-index:10000;
+}

@@ -57,23 +57,25 @@ const AddressConn = (props) => {
 
     const connectingWallet = async (account) => {
         await getSpartaPrice()
-        setNotifyMessage('Loading tokens');
-        setNotifyType('dark')
         // let assetArray = context.assetArray ? context.assetArray : await getAssets()
         // context.setContext({ 'assetArray': assetArray })
         // let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getTokenDetails(account, assetArray)
         // context.setContext({ 'assetDetailsArray': assetDetailsArray })
-
+        setNotifyMessage('Loading token array');
+        setNotifyType('dark')
         let tokenArray = context.tokenArray ? context.tokenArray : await getListedTokens()
         context.setContext({ 'tokenArray': tokenArray })
         // context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
 
         // let allTokens = assetArray.concat(tokenArray)
         // var sortedTokens = [...new Set(allTokens)].sort()
-
+        setNotifyMessage('Loading pool array');
+        setNotifyType('dark')
         let poolArray = context.poolArray ? context.poolArray : await getListedPools()
         context.setContext({ 'poolArray': poolArray })
 
+        setNotifyMessage('Loading token details array');
+        setNotifyType('dark')
         let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getTokenDetails(account, tokenArray)
         context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
 
@@ -82,11 +84,15 @@ const AddressConn = (props) => {
         let walletData = await getWalletData(account, tokenDetailsArray)
         context.setContext({ 'walletData': walletData })
 
+        setNotifyMessage('Loading wallet data');
+        setNotifyType('dark')
         let stakesData = context.stakesData ? context.stakesData : await getPoolSharesData(account, tokenArray)
         context.setContext({ 'stakesData': stakesData })
 
         context.setContext({ 'connected': true })
     }
+
+    // SPLIT UP connectingWallet INTO 3 SECTIONS (WALLET, POOLS & STAKES) AND MOVE THEM TO RELEVANT PAGES
 
     const getSpartaPrice = async () => {
         let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
