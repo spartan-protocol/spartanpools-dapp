@@ -27,9 +27,11 @@ export const DAO_ABI = DAO.abi
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
 }
+
 export const getExplorerURL = () => {
     return "https://bscscan.com/"
 }
+
 export const getAccount = async () => {
     var web3_ = getWeb3()
     var accounts = await web3_.eth.getAccount()
@@ -97,16 +99,46 @@ export const getAssets = async () => {
 
 // Build out Asset Details, as long as have balance
 export const getTokenDetails = async (address, tokenArray) => {
+    let results = 0
+    const pagination = 3
+    if (tokenArray.length > pagination) {
+        results = pagination
+    }
+    else {results = tokenArray.length}
     let assetDetailsArray = []
-    for (let i = 0; i < tokenArray.length; i++) {
+    for (let i = 0; i < results; i++) {
         let utilsContract = getUtilsContract()
         let token = tokenArray[i] === WBNB_ADDR ? BNB_ADDR : tokenArray[i]
         let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(token, address).call()
-        if(+assetDetails.balance > 0){
+        if(+assetDetails.balance > 0) {
             assetDetailsArray.push(assetDetails)
         }
     }
     //console.log({ assetDetailsArray })
+    return assetDetailsArray
+}
+
+export const getNextTokenDetails = async (address, tokenArray, prevTokenData, page, isLoading, isNotLoading, isCompleteArray) => {
+    isLoading()
+    let results = 0
+    const pagination = 20
+    if (tokenArray.length > page * pagination) {
+        results = page * pagination
+    }
+    else {
+        results = tokenArray.length
+        isCompleteArray()
+    }
+    let assetDetailsArray = prevTokenData
+    for (let i = assetDetailsArray.length; i < results; i++) {
+        let utilsContract = getUtilsContract()
+        let token = tokenArray[i] === WBNB_ADDR ? BNB_ADDR : tokenArray[i]
+        let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(token, address).call()
+        if(+assetDetails.balance > 0) {
+            assetDetailsArray.push(assetDetails)
+        }
+    }
+    isNotLoading()
     return assetDetailsArray
 }
 
@@ -145,11 +177,37 @@ export const getListedPools= async () => {
 }
 
 export const getPoolsData = async (tokenArray) => {
+    let results = 0
+    const pagination = 3
+    if (tokenArray.length > pagination) {
+        results = pagination
+    }
+    else {results = tokenArray.length}
     let poolsData = []
-    for (let i = 0; i < tokenArray.length; i++) {
+    for (let i = 0; i < results; i++) {
         poolsData.push(await getPool(tokenArray[i]))
     }
     //console.log({ poolsData })
+    return poolsData
+}
+
+export const getNextPoolsData = async (tokenArray, prevPoolsData, page, isLoading, isNotLoading, isCompleteArray) => {
+    isLoading()
+    let results = 0
+    const pagination = 5
+    if (tokenArray.length > page * pagination) {
+        results = page * pagination
+    }
+    else {
+        results = tokenArray.length
+        isCompleteArray()
+    }
+    let poolsData = prevPoolsData
+    for (let i = poolsData.length; i < results; i++) {
+        poolsData.push(await getPool(tokenArray[i]))
+    }
+    //console.log({ poolsData })
+    isNotLoading()
     return poolsData
 }
 
@@ -291,11 +349,43 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
 }
 
 export const getPoolSharesData = async (member, poolArray) => {
+    let results = 0
+    const pagination = 3
+    if (poolArray.length > pagination) {
+        results = pagination
+    }
+    else {results = poolArray.length}
     let stakesData = []
-    for (let i = 0; i < poolArray.length; i++) {
-        stakesData.push(await getPoolShares(member, poolArray[i]))
+    for (let i = 0; i < results; i++) {
+        let stakesItem = await getPoolShares(member, poolArray[i])
+        if (stakesItem.locked + stakesItem.units > 0) {
+            stakesData.push(stakesItem)
+        }
     }
     //console.log({ stakesData })
+    return stakesData
+}
+
+export const getNextPoolSharesData = async (member, poolArray, prevStakesData, page, isLoading, isNotLoading, isCompleteArray) => {
+    isLoading()
+    let results = 0
+    const pagination = 20
+    if (poolArray.length > page * pagination) {
+        results = page * pagination
+    }
+    else {
+        results = poolArray.length
+        isCompleteArray()
+    }
+    let stakesData = prevStakesData
+    for (let i = stakesData.length; i < results; i++) {
+        let stakesItem = await getPoolShares(member, poolArray[i])
+        if (stakesItem.locked + stakesItem.units > 0) {
+            stakesData.push(stakesItem)
+        }
+    }
+    //console.log({ stakesData })
+    isNotLoading()
     return stakesData
 }
 

@@ -1,12 +1,14 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Context } from '../../context'
-import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table } from "reactstrap";
+import { Progress, Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table, Tooltip } from "reactstrap";
 import classnames from 'classnames';
 
 import {LoadingOutlined} from '@ant-design/icons';
 
 import { connect } from "react-redux";
 import { hideRightSidebar } from "../../store/actions";
+
+import {getNextPoolSharesData, getNextTokenDetails, getWalletData} from '../../client/web3'
 
 import {convertFromWei, formatAllUnits} from '../../utils'
 
@@ -20,6 +22,7 @@ import SimpleBar from "simplebar-react";
 import { Link } from "react-router-dom";
 
 import "../../assets/scss/custom/components/_rightbar.scss";
+import BigNumber from 'bignumber.js';
 
 const RightSidebar = (props) => {
   const [activeTab, setActiveTab] = useState('1');
@@ -59,6 +62,7 @@ const RightSidebar = (props) => {
                     Assets
                     </NavLink>
                   </NavItem>
+                  
                   <NavItem className="text-center w-50">
                     <NavLink
                       className={classnames({ active: activeTab === '2' })}
@@ -102,11 +106,37 @@ const mapStatetoProps = state => {
 export const AssetTable = (props) => {
 
   const context = useContext(Context);
+  const [page,setPage] = useState(2)
+  const [loading,setLoading] = useState(false)
+  const [completeArray,setCompleteArray] = useState(false)
+
+  const handleNextPage = () => {
+    setPage(page + 1)
+    getNextTokenDetails(context.walletData.address, context.tokenArray, context.tokenDetailsArray, page, isLoading, isNotLoading, isCompleteArray)
+    getWalletData(context.walletData.address, context.tokenDetailsArray)
+    console.log(page)
+  }
+
+  const isLoading = () => {
+    setLoading(true)
+    console.log('loading more assets')
+  }
+  
+  const isNotLoading = () => {
+    setLoading(false)
+    console.log('more assets loaded')
+  }
+
+  const isCompleteArray = () => {
+    setCompleteArray(true)
+    console.log('all assets loaded')
+  }
 
   useEffect(() => {
       // updateWallet()
-
-  }, [context.transaction])
+      console.log(context.walletData)
+      // eslint-disable-next-line
+  }, [loading])
 
   // const updateWallet = async () => {
   //     context.setContext({ walletData: await getWalletData(context.poolArray) })
@@ -118,7 +148,7 @@ export const AssetTable = (props) => {
         <Row>
           <Col>
             {!context.connected &&
-              <div style={{textAlign:"center"}}><LoadingOutlined/></div>
+              <div className="text-center m-2"><LoadingOutlined/></div>
             }
             {context.connected &&
               <Table className="text-center">
@@ -137,6 +167,20 @@ export const AssetTable = (props) => {
                           balance={c.balance}
                         />
                       )}
+                      <tr>
+                        <td colSpan="2">
+                          {!loading && !completeArray &&
+                            <button color="primary"
+                            className="btn btn-primary waves-effect waves-light m-1"
+                            onClick={handleNextPage}>
+                              Load More
+                            </button>
+                          }
+                          {loading &&
+                            <div className="text-center m-2"><LoadingOutlined/></div>
+                          }
+                        </td>
+                      </tr>
                 </tbody>
               </Table>
             }
@@ -168,12 +212,37 @@ export const AssetItem = (props) => {
 export const PoolShareTable = (props) => {
 
   const context = useContext(Context)
+  const [page,setPage] = useState(2)
+  const [loading,setLoading] = useState(false)
+  const [completeArray,setCompleteArray] = useState(false)
+
+  const handleNextPage = () => {
+    setPage(page + 1)
+    getNextPoolSharesData(context.walletData.address, context.tokenArray, context.stakesData, page, isLoading, isNotLoading, isCompleteArray)
+    console.log(page)
+  }
+
+  const isLoading = () => {
+    setLoading(true)
+    console.log('loading more LP shares')
+  }
+  
+  const isNotLoading = () => {
+    setLoading(false)
+    console.log('LP shares loaded')
+  }
+
+  const isCompleteArray = () => {
+    setCompleteArray(true)
+    console.log('all assets loaded')
+  }
 
   useEffect(() => {
+    console.log(context.stakesData)
     // getPoolSharess()
     // console.log(context.stakes)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [])
+    // eslint-disable-next-line
+  }, [loading])
 
   return (
     <>
@@ -181,14 +250,14 @@ export const PoolShareTable = (props) => {
         <Row>
           <Col>
             {!context.stakesData &&
-              <div style={{textAlign:"center"}}><LoadingOutlined/></div>
+              <div className="text-center m-2"><LoadingOutlined/></div>
             }
             {context.stakesData &&
               <Table className="text-center">
                 <thead>
                   <tr>
                     <th>Symbol</th>
-                    <th>Balance</th>
+                    <th>Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,8 +267,23 @@ export const PoolShareTable = (props) => {
                           symbol={c.symbol}
                           address={c.address}
                           units={c.units}
+                          locked={c.locked}
                         />
                       )}
+                      <tr>
+                        <td colSpan="2">
+                          {!loading && !completeArray &&
+                            <button color="primary"
+                            className="btn btn-primary waves-effect waves-light m-1"
+                            onClick={handleNextPage}>
+                              Load More
+                            </button>
+                          }
+                          {loading &&
+                            <div className="text-center m-2"><LoadingOutlined/></div>
+                          }
+                        </td>
+                      </tr>
                 </tbody>
               </Table>
             }
@@ -212,15 +296,39 @@ export const PoolShareTable = (props) => {
 
 export const PoolItem = (props) => {
 
+const [tooltipOne, setTooltipOne] = useState(false);
+const [tooltipTwo, setTooltipTwo] = useState(false);
+
+const toggleOne = () => setTooltipOne(!tooltipOne);
+const toggleTwo = () => setTooltipTwo(!tooltipTwo);
+
+const units = new BigNumber(props.units)
+const locked = new BigNumber(props.locked)
+const total = units.plus(locked)
+const lockedPC = locked.dividedBy(total).times(100).toFixed(0)
+const availPC = units.dividedBy(total).times(100).toFixed(0)
+
   return (
     <>
       <tr>
         <td>
-          <TokenIcon address={props.address}/>
+          <TokenIcon className="m-1" address={props.address}/>
+          <Progress multi className="m-1 my-2">
+            <Progress bar value={convertFromWei(locked).toFixed(2)} max={convertFromWei(total).toFixed(2)} id="tooltipOne">{lockedPC} %</Progress>
+            <Progress bar color="success" value={convertFromWei(units).toFixed(2)} max={convertFromWei(total).toFixed(2)} id="tooltipTwo">{availPC} %</Progress>
+          </Progress>
+
+          <Tooltip placement="bottom" isOpen={tooltipOne} target="tooltipOne" toggle={toggleOne}>
+            Locked
+          </Tooltip>
+
+          <Tooltip placement="bottom" isOpen={tooltipTwo} target="tooltipTwo" toggle={toggleTwo}>
+            Available
+          </Tooltip>
         </td>
         <td>
-          <h5>{formatAllUnits(convertFromWei(props.units))}</h5>
-          <h6>{props.symbol}</h6>
+          <h5 className="m-1">{formatAllUnits(convertFromWei(total))}</h5>
+          <h6 className="m-1">{props.symbol}</h6>
         </td>
       </tr>
     </>

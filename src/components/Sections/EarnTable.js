@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Context} from "../../context";
-import {getListedTokens, getRewards, getDaoContract, getPoolSharesData} from "../../client/web3";
+import {getListedTokens, getRewards, getDaoContract, getPoolSharesData, getNextPoolSharesData} from "../../client/web3";
 import {LoadingOutlined} from "@ant-design/icons";
 import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
@@ -26,6 +26,9 @@ const EarnTable = (props) => {
     const [reward, setReward] = useState(false);
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
+    const [page,setPage] = useState(2)
+    const [loading,setLoading] = useState(false)
+    const [completeArray,setCompleteArray] = useState(false)
     //const [showLockModal, setShowLockModal] = useState(false);
     //const [showUnlockModal, setShowUnlockModal] = useState(false);
 
@@ -63,7 +66,7 @@ const EarnTable = (props) => {
             getData()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.stakesData])
+    }, [context.stakesData, loading])
 
     const harvest = async () => {
         let contract = getDaoContract()
@@ -86,6 +89,27 @@ const EarnTable = (props) => {
 
     }
 
+    const handleNextPage = () => {
+        setPage(page + 1)
+        getNextPoolSharesData(context.walletData.address, context.tokenArray, context.stakesData, page, isLoading, isNotLoading, isCompleteArray)
+        console.log(page)
+      }
+    
+      const isLoading = () => {
+        setLoading(true)
+        console.log('loading more LP shares')
+      }
+      
+      const isNotLoading = () => {
+        setLoading(false)
+        console.log('LP shares loaded')
+      }
+    
+      const isCompleteArray = () => {
+        setCompleteArray(true)
+        console.log('all assets loaded')
+      }
+
     return (
         <>
             <Notification
@@ -106,7 +130,7 @@ const EarnTable = (props) => {
                                         <div>
                                             <h5>{formatAllUnits(convertFromWei(reward))} SPARTA</h5>
                                             <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest Yield
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest SPARTA
                                             </button>
                                         </div>
                                     }
@@ -121,44 +145,58 @@ const EarnTable = (props) => {
                     <Card>
                         <CardBody>
 
-                            {!context.stakesData &&
-                            <div style={{textAlign: "center"}}><LoadingOutlined/></div>
-                            }
-                            {context.stakesData &&
-                            <div className="table-responsive">
-                                <CardTitle><h4>Earn</h4></CardTitle>
-                                <CardSubtitle className="mb-3">
-                                    Earn yield by depositing liquidity in the Spartan Protocol DAO.
-                                </CardSubtitle>
-                                <Table className="table-centered mb-0">
+                            {context.stakesData ? (
+                                <div className="table-responsive">
+                                    <CardTitle><h4>Earn</h4></CardTitle>
+                                    <CardSubtitle className="mb-3">
+                                        By adding liquidity to the pools you receive Spartan Protocol LP Tokens.<br/>
+                                        Earn extra SPARTA by locking these LP tokens in the DAO.
+                                    </CardSubtitle>
+                                    <Table className="table-centered mb-0">
 
-                                    <thead className="center">
-                                    <tr>
-                                        <th scope="col">{props.t("Icon")}</th>
-                                        <th scope="col">{props.t("Symbol")}</th>
-                                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Balance")}</th>
-                                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
-                                        <th scope="col">{props.t("Action")}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        {console.log(context.stakesData)}
-                                    {context.stakesData.map(c =>
-                                        <EarnTableItem 
-                                            key={c.address}
-                                            symbAddr={c.address}
-                                            address={c.poolAddress}
-                                            symbol={c.symbol}
-                                            units={c.units}
-                                            locked={c.locked}
-                                            //lockModal={toggleLock}
-                                            //unlockModal={toggleUnlock}
-                                        />
-                                    )}
-                                    </tbody>
-                                </Table>
-                            </div>
-                            }
+                                        <thead className="center">
+                                        <tr>
+                                            <th scope="col">{props.t("Icon")}</th>
+                                            <th scope="col">{props.t("Symbol")}</th>
+                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Balance")}</th>
+                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
+                                            <th scope="col">{props.t("Action")}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {console.log(context.stakesData)}
+                                        {context.stakesData.map(c =>
+                                            <EarnTableItem 
+                                                key={c.address}
+                                                symbAddr={c.address}
+                                                address={c.poolAddress}
+                                                symbol={c.symbol}
+                                                units={c.units}
+                                                locked={c.locked}
+                                                //lockModal={toggleLock}
+                                                //unlockModal={toggleUnlock}
+                                            />
+                                        )}
+                                            <tr>
+                                                <td colSpan="5">
+                                                {!loading && !completeArray &&
+                                                    <button color="primary"
+                                                    className="btn btn-primary waves-effect waves-light m-1"
+                                                    onClick={handleNextPage}>
+                                                    Load More
+                                                    </button>
+                                                }
+                                                {loading &&
+                                                    <div className="text-center m-2"><LoadingOutlined/></div>
+                                                }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            ) : (
+                                <div style={{textAlign: "center"}}><LoadingOutlined/></div>
+                            )}
                         </CardBody>
                     </Card>
                 </Col>
