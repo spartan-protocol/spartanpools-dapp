@@ -55,6 +55,19 @@ export const formatAllUnits = (input) => {
     return `${units}`
 }
 
+export const formatGranularUnits = (input) => {
+    var units = (bn(input).toString())
+    if (input <= 0) {units = (bn(input).toFixed(2).toString())}
+    else if (input < 0.0001) {units = (bn(input).toFixed(7).toString())}
+    else if (input < 0.001) {units = (bn(input).toFixed(6).toString())}
+    else if (input < 0.01) {units = (bn(input).toFixed(5).toString())}
+    else if (input < 0.1) {units = (bn(input).toFixed(4).toString())}
+    else if (input < 1000) {units = (bn(input).toFixed(3).toString())}
+    else if (input < 1000000) {units = (bn(input).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}
+    else if (input >= 1000000) {units = ((bn(input).toFixed(1)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  // ADD: Divide by 1m and add 'M' string
+    return `${units}`
+}
+
 export const formatAllUSD = (input, price) => {
     var valueNew = (bn(input).times( price )).toNumber()
     const value = input ? (bn(input).times( price )).toNumber() : 0

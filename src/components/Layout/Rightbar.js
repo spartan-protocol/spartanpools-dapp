@@ -311,7 +311,7 @@ const availPC = units.dividedBy(total).times(100).toFixed(0)
   return (
     <>
       <tr>
-        <td>
+        <td className="align-middle">
           <TokenIcon className="m-1" address={props.address}/>
           <Progress multi className="m-1 my-2">
             <Progress bar value={convertFromWei(locked).toFixed(2)} max={convertFromWei(total).toFixed(2)} id="tooltipOne">{lockedPC} %</Progress>
@@ -326,7 +326,7 @@ const availPC = units.dividedBy(total).times(100).toFixed(0)
             Available
           </Tooltip>
         </td>
-        <td>
+        <td className="align-middle">
           <h5 className="m-1">{formatAllUnits(convertFromWei(total))}</h5>
           <h6 className="m-1">{props.symbol}</h6>
         </td>

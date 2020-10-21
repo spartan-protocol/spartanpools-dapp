@@ -36,7 +36,7 @@ export const PoolsPaneSide = (props) => {
                     stops: [25, 100, 100, 100]
                 }
             },
-            tooltip: {fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
+            tooltip: {enabled: false, fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
         };
 
 
@@ -58,7 +58,7 @@ export const PoolsPaneSide = (props) => {
                     stops: [25, 100, 100, 100]
                 }
             },
-            tooltip: {fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
+            tooltip: {enabled: false, fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
         };
 
         const series3 = [{
@@ -79,7 +79,7 @@ export const PoolsPaneSide = (props) => {
                     stops: [25, 100, 100, 100]
                 }
             },
-            tooltip: {fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
+            tooltip: {enabled: false, fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
         };
 
 
@@ -101,7 +101,7 @@ export const PoolsPaneSide = (props) => {
                     stops: [25, 100, 100, 100]
                 }
             },
-            tooltip: {fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
+            tooltip: {enabled: false, fixed: {enabled: !1}, x: {show: !1}, marker: {show: !1}}
         };
 
 

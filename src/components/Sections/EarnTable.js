@@ -6,14 +6,15 @@ import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
 import Notification from '../../components/Common/notification'
 
-import {convertFromWei, formatAllUnits} from '../../utils'
+import {convertFromWei, formatGranularUnits} from '../../utils'
 
 import {
     Row,
     Col,
     Card,
     CardBody,
-    Table
+    Table,
+    Spinner
 } from "reactstrap";
 import {withNamespaces} from 'react-i18next';
 
@@ -62,11 +63,14 @@ const EarnTable = (props) => {
     // }
 
     useEffect(() => {
-        if (context.stakesData) {
-            getData()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.stakesData, loading])
+        const interval = setInterval(() => {
+            if (context.stakesData && !loading) {
+                getData()
+            }
+        }, 3000);
+        return () => clearInterval(interval);
+        // eslint-disable-next-line
+      }, [context.stakesData, loading]);
 
     const harvest = async () => {
         let contract = getDaoContract()
@@ -123,12 +127,13 @@ const EarnTable = (props) => {
                         <Card>
                             <CardBody>
                                 <h2>Claim Rewards</h2>
+                                <h6>Witness the power of BSC's fast block-times! Watch your harvest accumulate in real-time!</h6>
                                     {!context.stakesData &&
-                                        <div style={{textAlign: "center"}}><LoadingOutlined/></div>
+                                        <div className="text-center m-2"><LoadingOutlined/></div>
                                     }
                                     {context.stakesData &&
                                         <div>
-                                            <h5>{formatAllUnits(convertFromWei(reward))} SPARTA</h5>
+                                            <h5><Spinner type="grow" color="primary" className='m-2' style={{height:'15px', width:'15px'}} />{formatGranularUnits(convertFromWei(reward))} SPARTA</h5>
                                             <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
                                                 <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest SPARTA
                                             </button>
@@ -195,7 +200,7 @@ const EarnTable = (props) => {
                                     </Table>
                                 </div>
                             ) : (
-                                <div style={{textAlign: "center"}}><LoadingOutlined/></div>
+                                <div className="text-center m-2"><LoadingOutlined/></div>
                             )}
                         </CardBody>
                     </Card>
