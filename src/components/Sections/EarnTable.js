@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Context} from "../../context";
-import {getListedTokens, getRewards, getDaoContract, getPoolSharesData} from "../../client/web3";
+import {getListedTokens, getRewards, getDaoContract, getPoolSharesData, getNextPoolSharesData} from "../../client/web3";
 import {LoadingOutlined} from "@ant-design/icons";
 import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
@@ -26,6 +26,9 @@ const EarnTable = (props) => {
     const [reward, setReward] = useState(false);
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
+    const [page,setPage] = useState(2)
+    const [loading,setLoading] = useState(false)
+    const [completeArray,setCompleteArray] = useState(false)
     //const [showLockModal, setShowLockModal] = useState(false);
     //const [showUnlockModal, setShowUnlockModal] = useState(false);
 
@@ -63,7 +66,7 @@ const EarnTable = (props) => {
             getData()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.stakesData])
+    }, [context.stakesData, loading])
 
     const harvest = async () => {
         let contract = getDaoContract()
@@ -85,6 +88,27 @@ const EarnTable = (props) => {
         setReward(rewards)
 
     }
+
+    const handleNextPage = () => {
+        setPage(page + 1)
+        getNextPoolSharesData(context.walletData.address, context.tokenArray, context.stakesData, page, isLoading, isNotLoading, isCompleteArray)
+        console.log(page)
+      }
+    
+      const isLoading = () => {
+        setLoading(true)
+        console.log('loading more LP shares')
+      }
+      
+      const isNotLoading = () => {
+        setLoading(false)
+        console.log('LP shares loaded')
+      }
+    
+      const isCompleteArray = () => {
+        setCompleteArray(true)
+        console.log('all assets loaded')
+      }
 
     return (
         <>
@@ -153,6 +177,20 @@ const EarnTable = (props) => {
                                                 //unlockModal={toggleUnlock}
                                             />
                                         )}
+                                            <tr>
+                                                <td colSpan="5">
+                                                {!loading && !completeArray &&
+                                                    <button color="primary"
+                                                    className="btn btn-primary waves-effect waves-light m-1"
+                                                    onClick={handleNextPage}>
+                                                    Load More
+                                                    </button>
+                                                }
+                                                {loading &&
+                                                    <div className="text-center m-2"><LoadingOutlined/></div>
+                                                }
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </Table>
                                 </div>
