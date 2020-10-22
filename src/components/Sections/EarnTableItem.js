@@ -2,6 +2,7 @@ import React, {useContext, useState} from "react";
 import {Context} from "../../context";
 import {TokenIcon} from '../Common/TokenIcon'
 import {convertFromWei, formatAllUnits} from "../../utils";
+import {Progress} from 'reactstrap'
 
 import {getDaoContract, getPoolSharesData, getListedTokens} from '../../client/web3'
 import Notification from '../../components/Common/notification'
@@ -9,12 +10,19 @@ import Notification from '../../components/Common/notification'
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
 
+import BigNumber from 'bignumber.js';
+
 export const EarnTableItem = (props) => {
 
+    const context = useContext(Context)
     const [notifyMessage,setNotifyMessage] = useState("");
     const [notifyType,setNotifyType] = useState("dark");
 
-    const context = useContext(Context)
+    const units = new BigNumber(props.units)
+    const locked = new BigNumber(props.locked)
+    const total = units.plus(locked)
+    const lockedPC = locked.dividedBy(total).times(100).toFixed(0)
+    //const availPC = units.dividedBy(total).times(100).toFixed(0)
 
     const deposit = async (record) => {
         console.log(record)
@@ -60,6 +68,10 @@ export const EarnTableItem = (props) => {
                 </td>
                 <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.locked))}
+                    <Progress multi className="m-1 my-2">
+                        <Progress bar color="success" value={convertFromWei(locked).toFixed(2)} max={convertFromWei(total).toFixed(2)}>{lockedPC} %</Progress>
+                        <Progress bar color="danger" value={convertFromWei(units).toFixed(2)} max={convertFromWei(total).toFixed(2)}></Progress>
+                    </Progress>
                 </td>
                 <td>
                     <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={

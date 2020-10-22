@@ -1,0 +1,108 @@
+{
+    "name": "sptokens",
+    },
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png",
+    "tokens": [
+      {
+        "name": "WBNB Token",
+        "symbol": "WBNB",
+        "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      },
+      {
+        "name": "BUSD Token",
+        "symbol": "BUSD",
+        "address": "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xe9e7cea3dedca5984780bafc599bd69add087d56/logo.png"
+      },
+      {
+        "name": "Ethereum Token",
+        "symbol": "ETH",
+        "address": "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x2170ed0880ac9a755fd29b2688956bd959f933f8/logo.png"
+      },
+      {
+        "name": "BTCB Token",
+        "symbol": "BTCB",
+        "address": "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c/logo.png"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0x55d398326f99059ff775485246999027b3197955",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x55d398326f99059ff775485246999027b3197955/logo.png"
+      },
+      {
+        "name": "XRP Token",
+        "symbol": "XRP",
+        "address": "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe/logo.png"
+      },
+      {
+        "name": "Cream",
+        "symbol": "CREAM",
+        "address": "0xd4cb328a82bdf5f03eb737f37fa6b370aef3e888",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xd4cb328a82bdf5f03eb737f37fa6b370aef3e888/logo.png"
+      },
+      {
+        "name": "Prometeus",
+        "symbol": "PROM",
+        "address": "0xaf53d56ff99f1322515e54fdde93ff8b3b7dafd5",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xaf53d56ff99f1322515e54fdde93ff8b3b7dafd5/logo.png"
+      },
+      {
+        "name": "CanYaCoin",
+        "symbol": "CAN",
+        "address": "0x007ea5c0ea75a8df45d288a4debdd5bb633f9e56",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x007ea5c0ea75a8df45d288a4debdd5bb633f9e56/logo.png"
+      },
+      {
+        "name": "Polkadot Token",
+        "symbol": "DOT",
+        "address": "0x7083609fce4d1d8dc0c979aab8c869ea2c873402",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x7083609fce4d1d8dc0c979aab8c869ea2c873402/logo.png"
+      },
+      {
+        "name": "Ankr",
+        "symbol": "ANKR",
+        "address": "0xf307910a4c7bbc79691fd374889b36d8531b08e3",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xf307910a4c7bbc79691fd374889b36d8531b08e3/logo.png"
+      },
+      {
+        "name": "ChainLink Token",
+        "symbol": "LINK",
+        "address": "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd/logo.png"
+      },
+      {
+        "name": "Burger Swap",
+        "symbol": "BURGER",
+        "address": "0xae9269f27437f0fcbc232d39ec814844a51d6b8f",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xae9269f27437f0fcbc232d39ec814844a51d6b8f/logo.png"
+      },
+      {
+        "name": "SPARTAN PROTOCOL TOKEN",
+        "symbol": "SPARTA",
+        "address": "0xe4ae305ebe1abe663f261bc00534067c80ad677c",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xe4ae305ebe1abe663f261bc00534067c80ad677c/logo.png"
+      },
+      {
+        "name": "Trust Wallet",
+        "symbol": "TWT",
+        "address": "0x4b0f1812e5df2a09796481ff14017e6005508003",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x4b0f1812e5df2a09796481ff14017e6005508003/logo.png"
+      },
+      {
+        "name": "Beefy.finance",
+        "symbol": "BIFI",
+        "address": "0xCa3F508B8e4Dd382eE878A314789373D80A5190A",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0xCa3F508B8e4Dd382eE878A314789373D80A5190A/logo.png"
+      },
+         {
+        "name": "yearn.finance",
+        "symbol": "YFI",
+        "address": "0x88f1a5ae2a3bf98aeaf342d26b30a79438c9142e",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x88f1a5ae2a3bf98aeaf342d26b30a79438c9142e/logo.png"
+      }
+    ]
+  }

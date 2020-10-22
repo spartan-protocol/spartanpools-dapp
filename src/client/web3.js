@@ -100,7 +100,7 @@ export const getAssets = async () => {
 // Build out Asset Details, as long as have balance
 export const getTokenDetails = async (address, tokenArray) => {
     let results = 0
-    const pagination = 3
+    const pagination = 20
     if (tokenArray.length > pagination) {
         results = pagination
     }
@@ -121,7 +121,7 @@ export const getTokenDetails = async (address, tokenArray) => {
 export const getNextTokenDetails = async (address, tokenArray, prevTokenData, page, isLoading, isNotLoading, isCompleteArray) => {
     isLoading()
     let results = 0
-    const pagination = 20
+    const pagination = 5
     if (tokenArray.length > page * pagination) {
         results = page * pagination
     }
@@ -178,7 +178,7 @@ export const getListedPools= async () => {
 
 export const getPoolsData = async (tokenArray) => {
     let results = 0
-    const pagination = 3
+    const pagination = 20
     if (tokenArray.length > pagination) {
         results = pagination
     }
@@ -292,7 +292,7 @@ export const getWalletData = async (address, tokenDetailsArray) => {
             'address': obj.tokenAddress
         })
     }
-    //console.log({ walletData })
+    console.log(walletData)
     return walletData
 }
 
@@ -350,7 +350,7 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
 
 export const getPoolSharesData = async (member, poolArray) => {
     let results = 0
-    const pagination = 3
+    const pagination = 20
     if (poolArray.length > pagination) {
         results = pagination
     }
@@ -369,7 +369,7 @@ export const getPoolSharesData = async (member, poolArray) => {
 export const getNextPoolSharesData = async (member, poolArray, prevStakesData, page, isLoading, isNotLoading, isCompleteArray) => {
     isLoading()
     let results = 0
-    const pagination = 20
+    const pagination = 5
     if (poolArray.length > page * pagination) {
         results = page * pagination
     }
