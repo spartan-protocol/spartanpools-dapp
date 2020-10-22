@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "./components/Layout";
 import "./assets/scss/app-dark.scss";
 import Pools from './pages/Pools.js'
-import Shares from './pages/Shares'
+// import Shares from './pages/Shares'
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import AddLiquidity from './pages/AddLiquidity'
 import Swap from './pages/Swap'
@@ -25,7 +25,7 @@ const App = () => {
                         <Switch>
                             <Route path="/" exact component={Pools}/>
                             <Route path="/pools" exact component={Pools}/>
-                            <Route path="/share" exact component={Shares}/>
+                            {/* <Route path="/share" exact component={Shares}/>*/}
                             <Route path="/pool/stake" exact component={AddLiquidity}/>
                             <Route path="/pool/swap" exact component={Swap}/>
                             <Route path="/pool/create" exact component={CreatePool}/>

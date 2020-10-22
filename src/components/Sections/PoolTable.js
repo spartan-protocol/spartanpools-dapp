@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect} from "react";
 import {Context} from "../../context";
-import {getListedPools, getListedTokens, getPoolsData, getNextPoolsData} from "../../client/web3";
+import {getListedPools, getListedTokens, getPoolsData} from "../../client/web3";
 import {LoadingOutlined} from "@ant-design/icons";
 import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
@@ -20,40 +20,11 @@ import { withRouter } from "react-router-dom";
 const PoolTable = (props) => {
 
     const context = useContext(Context);
-    const [page,setPage] = useState(2)
-    const [loading,setLoading] = useState(false)
-    const [completeArray,setCompleteArray] = useState(false)
-
-    const handleNextPage = () => {
-        setPage(page + 1)
-        getNextPoolsData(context.tokenArray, context.poolsData, page, isLoading, isNotLoading, isCompleteArray)
-        console.log(page)
-      }
-    
-      const isLoading = () => {
-        setLoading(true)
-        console.log('loading more pools')
-      }
-      
-      const isNotLoading = () => {
-        setLoading(false)
-        console.log('more pools loaded')
-      }
-    
-      const isCompleteArray = () => {
-        setCompleteArray(true)
-        console.log('all pools loaded')
-      }
 
     useEffect(() => {
         getData()
         // eslint-disable-next-line
     }, []);
-
-    useEffect(() => {
-        console.log(context.poolsData)
-        // eslint-disable-next-line
-    }, [loading]);
 
     const getData = async () => {
         let tokenArray = await getListedTokens();
@@ -104,20 +75,6 @@ const PoolTable = (props) => {
                                                 fees={c.fees}
                                                 />
                                             )}
-                                                <tr>
-                                                    <td colSpan="8">
-                                                    {!loading && !completeArray &&
-                                                        <button color="primary"
-                                                        className="btn btn-primary waves-effect waves-light m-1"
-                                                        onClick={handleNextPage}>
-                                                        Load More
-                                                        </button>
-                                                    }
-                                                    {loading &&
-                                                        <div className="text-center m-2"><LoadingOutlined/></div>
-                                                    }
-                                                    </td>
-                                                </tr>
                                             </tbody>
                                         </Table>
                                     </div>
