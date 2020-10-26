@@ -256,11 +256,6 @@ export const TokenDropDown = (props) => {
 
 export const TokenSymbol = (props) => {
 
-    useEffect(() => {
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.symbol])
-
     const style = {
         width: 100,
         // background: Colour().white,

@@ -1,21 +1,11 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Context} from "../../context";
-import {getListedTokens, getRewards, getDaoContract, getPoolSharesData, getNextPoolSharesData} from "../../client/web3";
-import {LoadingOutlined} from "@ant-design/icons";
-import CardTitle from "reactstrap/es/CardTitle";
-import CardSubtitle from "reactstrap/es/CardSubtitle";
+import {getListedTokens, getRewards, getDaoContract, getPoolSharesData, getNextPoolSharesData, checkArrayComplete} from "../../client/web3";
 import Notification from '../../components/Common/notification'
 
 import {convertFromWei, formatGranularUnits} from '../../utils'
 
-import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    Table,
-    Spinner
-} from "reactstrap";
+import {Row, Col, Card, CardTitle, CardSubtitle, CardBody, Table, Spinner} from "reactstrap";
 import {withNamespaces} from 'react-i18next';
 
 import EarnTableItem from "./EarnTableItem";
@@ -27,9 +17,7 @@ const EarnTable = (props) => {
     const [reward, setReward] = useState(false);
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
-    const [page,setPage] = useState(2)
-    const [loading,setLoading] = useState(false)
-    const [completeArray,setCompleteArray] = useState(false)
+
     //const [showLockModal, setShowLockModal] = useState(false);
     //const [showUnlockModal, setShowUnlockModal] = useState(false);
 
@@ -41,7 +29,7 @@ const EarnTable = (props) => {
     const deposit = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.walletData.address })
+        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
     }
@@ -49,7 +37,7 @@ const EarnTable = (props) => {
     const withdraw = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.withdraw(record.address).send({ from: context.walletData.address })
+        let tx = await contract.methods.withdraw(record.address).send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
     }
@@ -57,62 +45,48 @@ const EarnTable = (props) => {
 
     // const harvest = async () => {
     //     let contract = getDaoContract()
-    //     let tx = await contract.methods.harvest().send({ from: context.walletData.address })
+    //     let tx = await contract.methods.harvest().send({ from: context.account })
     //     console.log(tx.transactionHash)
     //     await refreshData()
     // }
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (context.stakesData && !loading) {
+            if (context.walletData) {
                 getData()
             }
         }, 3000);
         return () => clearInterval(interval);
         // eslint-disable-next-line
-      }, [context.stakesData, loading]);
+      }, [context.walletData]);
+
+    const getData = async () => {
+        let rewards = await getRewards(context.account)
+        console.log({rewards})
+        setReward(rewards)
+    }
 
     const harvest = async () => {
         let contract = getDaoContract()
-        let tx = await contract.methods.harvest().send({ from: context.walletData.address })
+        let tx = await contract.methods.harvest().send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
     }
-    
+
     const refreshData = async () => {
-        let stakesData = await getPoolSharesData(context.walletData.address, await getListedTokens())
+        let stakesData = await getPoolSharesData(context.account, await getListedTokens())
         context.setContext({ 'stakesData': stakesData })
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
     }
 
-    const getData = async () => {
-        let rewards = await getRewards(context.walletData.address)
-        console.log({rewards})
-        setReward(rewards)
-
+    const nextPoolSharesDataPage = async () => {
+        var lastPage = await checkArrayComplete(context.tokenArray, context.stakesData)
+        context.setContext({'poolSharesDataLoading': true})
+        context.setContext({'stakesData': await getNextPoolSharesData(context.account, context.tokenArray, context.stakesData)})
+        context.setContext({'poolSharesDataLoading': false})
+        context.setContext({'poolSharesDataComplete': lastPage})
     }
-
-    const handleNextPage = () => {
-        setPage(page + 1)
-        getNextPoolSharesData(context.walletData.address, context.tokenArray, context.stakesData, page, isLoading, isNotLoading, isCompleteArray)
-        console.log(page)
-      }
-    
-      const isLoading = () => {
-        setLoading(true)
-        console.log('loading more LP shares')
-      }
-      
-      const isNotLoading = () => {
-        setLoading(false)
-        console.log('LP shares loaded')
-      }
-    
-      const isCompleteArray = () => {
-        setCompleteArray(true)
-        console.log('all assets loaded')
-      }
 
     return (
         <>
@@ -128,10 +102,10 @@ const EarnTable = (props) => {
                             <CardBody>
                                 <h2>Claim Rewards</h2>
                                 <h6>Witness the power of BSC's fast block-times! Watch your harvest accumulate in real-time!</h6>
-                                    {!context.stakesData &&
-                                        <div className="text-center m-2"><LoadingOutlined/></div>
+                                    {!context.walletData &&
+                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                     }
-                                    {context.stakesData &&
+                                    {context.walletData &&
                                         <div>
                                             <h5><Spinner type="grow" color="primary" className='m-2' style={{height:'15px', width:'15px'}} />{formatGranularUnits(convertFromWei(reward))} SPARTA</h5>
                                             <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
@@ -169,38 +143,41 @@ const EarnTable = (props) => {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            {console.log(context.stakesData)}
-                                        {context.stakesData.map(c =>
-                                            <EarnTableItem 
-                                                key={c.address}
-                                                symbAddr={c.address}
-                                                address={c.poolAddress}
-                                                symbol={c.symbol}
-                                                units={c.units}
-                                                locked={c.locked}
-                                                //lockModal={toggleLock}
-                                                //unlockModal={toggleUnlock}
-                                            />
-                                        )}
+                                            {context.stakesData.sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                                <EarnTableItem 
+                                                    key={c.address}
+                                                    symbAddr={c.address}
+                                                    address={c.poolAddress}
+                                                    symbol={c.symbol}
+                                                    units={c.units}
+                                                    locked={c.locked}
+                                                    //lockModal={toggleLock}
+                                                    //unlockModal={toggleUnlock}
+                                                />
+                                            )}
                                             <tr>
                                                 <td colSpan="5">
-                                                {!loading && !completeArray &&
-                                                    <button color="primary"
-                                                    className="btn btn-primary waves-effect waves-light m-1"
-                                                    onClick={handleNextPage}>
-                                                    Load More
-                                                    </button>
-                                                }
-                                                {loading &&
-                                                    <div className="text-center m-2"><LoadingOutlined/></div>
-                                                }
+                                                    {!context.poolSharesDataLoading && !context.poolSharesDataComplete &&
+                                                        <button color="primary"
+                                                        className="btn btn-primary waves-effect waves-light m-1"
+                                                        onClick={()=>nextPoolSharesDataPage()}
+                                                        >
+                                                        Load More
+                                                        </button>
+                                                    }
+                                                    {context.poolSharesDataLoading &&
+                                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                                    }
+                                                    {!context.poolSharesDataLoading && context.poolSharesDataComplete &&
+                                                        <div className="text-center m-2">All LP Tokens Loaded</div>
+                                                    }
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </Table>
                                 </div>
                             ) : (
-                                <div className="text-center m-2"><LoadingOutlined/></div>
+                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                             )}
                         </CardBody>
                     </Card>

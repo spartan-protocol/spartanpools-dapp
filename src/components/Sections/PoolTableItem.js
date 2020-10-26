@@ -18,7 +18,7 @@ export const PoolTableItem = (props) => {
                 </td>
                 <td>
                     {props.symbol}
-                    <h6 className="d-block d-lg-none mb-0">{formatAllUSD(props.price, context.spartanPrice)}</h6>
+                    <h6 className="d-block d-lg-none mb-0">{(props.price, context.spartanPrice)}</h6>
                 </td>
                 <td className="d-none d-lg-table-cell">
                     {formatAllUSD(props.price, context.spartanPrice)}

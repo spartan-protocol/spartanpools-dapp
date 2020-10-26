@@ -1,17 +1,10 @@
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 import {Context} from "../../context";
-import {getListedPools, getListedTokens, getPoolsData} from "../../client/web3";
-import {LoadingOutlined} from "@ant-design/icons";
+import {getNextPoolsData, checkArrayComplete} from "../../client/web3";
 import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
 
-import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    Table,
-} from "reactstrap";
+import {Row, Col, Card, CardBody, Table} from "reactstrap";
 import {withNamespaces} from 'react-i18next';
 
 import PoolTableItem from "../Sections/PoolTableItem";
@@ -21,18 +14,13 @@ const PoolTable = (props) => {
 
     const context = useContext(Context);
 
-    useEffect(() => {
-        getData()
-        // eslint-disable-next-line
-    }, []);
-
-    const getData = async () => {
-        let tokenArray = await getListedTokens();
-        context.setContext({'poolsData': await getPoolsData(tokenArray)})
-        context.setContext({'tokenArray': tokenArray});
-        let poolArray = await getListedPools();
-        context.setContext({'poolArray': poolArray});
-    };
+    const nextPoolsDataPage = async () => {
+        var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
+        context.setContext({'poolsDataLoading': true})
+        context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
+        context.setContext({'poolsDataLoading': false})
+        context.setContext({'poolsDataComplete': lastPage})
+    }
 
     return (
         <>
@@ -40,7 +28,7 @@ const PoolTable = (props) => {
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
-                            {context.poolsData ? (
+                            {context.poolsData &&
                                 <>
                                     <div className="table-responsive">
                                         <CardTitle><h4>Pools</h4></CardTitle>
@@ -62,7 +50,7 @@ const PoolTable = (props) => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            {context.poolsData.map(c =>
+                                            {context.poolsData.sort((a, b) => (parseFloat(a.depth) > parseFloat(b.depth)) ? -1 : 1).map(c =>
                                                 <PoolTableItem 
                                                 key={c.address}
                                                 scope="row"
@@ -75,13 +63,28 @@ const PoolTable = (props) => {
                                                 fees={c.fees}
                                                 />
                                             )}
+                                                <tr>
+                                                    <td colSpan="8">
+                                                        {!context.poolsDataLoading && !context.poolsDataComplete &&
+                                                            <button color="primary"
+                                                            className="btn btn-primary waves-effect waves-light m-1"
+                                                            onClick={()=>nextPoolsDataPage()}
+                                                            >
+                                                            Load More
+                                                            </button>
+                                                        }
+                                                        {context.poolsDataLoading &&
+                                                            <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                                        }
+                                                        {!context.poolsDataLoading && context.poolsDataComplete &&
+                                                            <div className="text-center m-2">All Assets Loaded</div>
+                                                        }
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </Table>
                                     </div>
                                 </>
-                            ) : (
-                                <div style={{textAlign: "center"}}><LoadingOutlined/></div>
-                            )
                             }
                         </CardBody>
                     </Card>

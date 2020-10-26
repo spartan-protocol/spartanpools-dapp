@@ -226,7 +226,7 @@ const AddLiquidity = (props) => {
 
     const checkApproval1 = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, POOLS_ADDR).call()
+        const approval = await contract.methods.allowance(context.account, POOLS_ADDR).call()
         const tokenData = await getTokenData(address, context.walletData)
         if (+approval >= tokenData.balance) {
             setApproval1(true)
@@ -237,7 +237,7 @@ const AddLiquidity = (props) => {
             setApproval2(true)
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, POOLS_ADDR).call()
+            const approval = await contract.methods.allowance(context.account, POOLS_ADDR).call()
             const tokenData = await getTokenData(address, context.walletData)
             if (+approval >= tokenData.balance) {
                 setApproval2(true)
@@ -258,7 +258,7 @@ const AddLiquidity = (props) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
         await contract.methods.approve(POOLS_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -268,7 +268,7 @@ const AddLiquidity = (props) => {
         const poolContract = getPoolsContract()
         const tx = await poolContract.methods.addLiquidity(stake1Data.input, stake2Data.input, BNB).send({
             value: stake2Data.input,
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -278,7 +278,7 @@ const AddLiquidity = (props) => {
     const unstake = async () => {
         const poolContract = getPoolsContract()
         const tx = await poolContract.methods.removeLiquidity(withdrawAmount*100, BNB).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })

@@ -15,9 +15,9 @@ import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} f
 import Notification from '../components/Common/notification'
 
 import {
-    BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,
+    BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
     getPoolData, getNewTokenData, getTokenDetails,
-    getListedPools, getPoolsData, getPool, WBNB_ADDR
+    getPool, WBNB_ADDR
 } from '../client/web3'
 
 import {
@@ -36,10 +36,7 @@ import {
 import classnames from 'classnames';
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
-
-
 const NewSwap = (props) => {
-
 
     const [activeTab, setActiveTab] = useState('1');
     const [notifyMessage, setNotifyMessage] = useState("");
@@ -110,23 +107,11 @@ const NewSwap = (props) => {
     const [endTx, setEndTx] = useState(false);
 
     useEffect(() => {
-        if (context.connected) {
-            getPools()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.connected])
-
-    const getPools = async () => {
-        let tokenArray = await getListedTokens()
-        context.setContext({'tokenArray': tokenArray})
-        let poolArray = await getListedPools()
-        context.setContext({'poolArray': poolArray})
-        context.setContext({'poolsData': await getPoolsData(tokenArray)})
-    }
-
-    useEffect(() => {
         if (context.poolsData) {
             getData()
+            return function cleanup() {
+                getData()
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [context.connected, context.poolsData])
@@ -137,8 +122,8 @@ const NewSwap = (props) => {
         const pool = await getPoolData(params.pool, context.poolsData)
         setPool(pool)
 
-        const inputTokenData = await getNewTokenData(SPARTA_ADDR, context.walletData.address)
-        const outputTokenData = await getNewTokenData(pool.address, context.walletData.address)
+        const inputTokenData = await getNewTokenData(SPARTA_ADDR, context.account)
+        const outputTokenData = await getNewTokenData(pool.address, context.account)
         setInputTokenData(inputTokenData)
         setOutputTokenData(outputTokenData)
 
@@ -205,7 +190,7 @@ const NewSwap = (props) => {
             return true
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+            const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
             if (+approval > 0) {
                 return true
             } else {
@@ -244,7 +229,7 @@ const NewSwap = (props) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
         await contract.methods.approve(ROUTER_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -259,7 +244,7 @@ const NewSwap = (props) => {
         let contract = getRouterContract()
         //console.log(buyData.input, outputTokenData.symbol, poolURL)
         await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -268,7 +253,7 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray)})
+        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     };
 
     const sell = async () => {
@@ -276,7 +261,7 @@ const NewSwap = (props) => {
         let contract = getRouterContract()
         //console.log(sellData.input, outputTokenData.symbol, poolURL)
         await contract.methods.swap(sellData.input, poolURL, SPARTA_ADDR).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: '',
             value: pool.address === BNB_ADDR ? sellData.input : 0
@@ -286,7 +271,7 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray)})
+        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     };
 
     const updatePool = async () => {

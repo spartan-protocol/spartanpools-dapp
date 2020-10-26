@@ -80,7 +80,7 @@ const SimpleAddLiquidity = (props) => {
 
     const checkApproval = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+        const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
         console.log(approval, address)
         if (+approval > 0) {
             address === SPARTA_ADDR ? setApprovalS(true) : setApproval(true)
@@ -100,7 +100,7 @@ const SimpleAddLiquidity = (props) => {
         // (utils.parseEther(10**18)).toString()
         const supply = '1000000000000000000000000'
         await contract.methods.approve(ROUTER_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -120,14 +120,14 @@ const SimpleAddLiquidity = (props) => {
         console.log(spartaAmount, tokenAmount, tokenFrom)
         let contract = getRouterContract()
         await contract.methods.createPool(spartaAmount, tokenAmount, tokenFrom).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
         message.success(`Transaction Sent!`, 2);
         setStartTx(false)
         setEndTx(true)
-        // context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
+        // context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray) })
     }
 
     return (

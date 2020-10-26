@@ -1,17 +1,12 @@
 import {InputPane} from "../Sections/InputPane";
 
-import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
 import {convertFromWei} from "../../utils";
 import React from "react";
 
-import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
-
 import {withNamespaces} from "react-i18next";
 
-import {
-   Col,
-} from "reactstrap";
-import { withRouter } from "react-router-dom";
+import {Col} from "reactstrap";
+import {withRouter} from "react-router-dom";
 
 
 export const AddSymmPane = (props) => {
@@ -24,7 +19,7 @@ export const AddSymmPane = (props) => {
                 changeAmount={props.changeAmount}
             />
             <br/>
-            <PlusOutlined style={{fontSize: 24}}/>
+            <i className="bx bx-plus"/>
             <br/>
             <br/>
 
@@ -87,7 +82,7 @@ export const AddSymmPane = (props) => {
 
             <Col xs={8}>
                 {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                <div className="btn primary" onClick={props.addLiquidity} icon={<LoadingOutlined/>}> ADD TO
+                <div className="btn primary" onClick={props.addLiquidity}><i className="bx bx-spin bx-loader"/> ADD TO
                     POOL</div>
                 }
                 {props.approvalBase && props.approvalToken && !props.startTx &&

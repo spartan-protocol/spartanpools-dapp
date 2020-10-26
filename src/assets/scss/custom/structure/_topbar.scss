@@ -8,7 +8,7 @@
     right: 0;
     left: 0;
     z-index: 1002;
-    background-color: $header-bg;
+    background-color: $header-dark-bg;
     box-shadow: $box-shadow;
 }
 
@@ -100,7 +100,14 @@
 }
 
 .page-content {
-    padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} / 2) $footer-height calc(#{$grid-gutter-width} / 2);
+    margin-top: 70px;
+    padding: 79px 12px 60px;
+}
+
+@media (max-width: 992px) {
+    .page-content {
+        margin-top: 15px;
+    }
 }
 
 .header-item {

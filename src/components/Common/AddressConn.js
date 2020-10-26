@@ -1,45 +1,32 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
 import Web3 from 'web3'
-import axios from 'axios'
 
-import Notification from './notification'
-
-// import logo from '../../assets/spartan-logo-white.png';
 import { manageBodyClass } from '../common';
 
-import {
-    getTokenDetails, getListedTokens,
-    getWalletData, getPoolSharesData, getListedPools
+import { getListedTokens, getWalletData, getPoolSharesData, 
+    getListedPools, getSpartaPrice, 
+    getPoolsData 
 } from '../../client/web3'
 
 const AddressConn = (props) => {
 
     const context = useContext(Context);
-    const [connecting, setConnecting] = useState(false);
-    const [connected, setConnected] = useState(false);
-    const [notifyMessage,setNotifyMessage] = useState("");
-    const [notifyType,setNotifyType] = useState("dark");
 
     useEffect(() => {
-        connectWallet()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        connectWallet(props)
+        // eslint-disable-next-line
     }, [])
 
-    const connectWallet = async () => {
-        setConnecting(true)
+    const connectWallet = async (props) => {
         window.web3 = new Web3(window.ethereum);
         const account = (await window.web3.eth.getAccounts())[0];
         if (account) {
-            await connectingWallet(account)
-            setConnecting(false)
-            setConnected(true)
-            setNotifyMessage('Loaded!');
-            setNotifyType('success')
+            context.setContext({'account': account})
+            await loadingTokens(account)
         } else {
-            await enableMetaMask()
-            setConnected(false)
+            await enableMetaMask(props)
         }
     }
 
@@ -48,57 +35,48 @@ const AddressConn = (props) => {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
             window.ethereum.enable();
-            setConnecting(true)
-            connectWallet()
+            //await connectWallet()
             return true;
         }
         return false;
     }
 
-    const connectingWallet = async (account) => {
-        await getSpartaPrice()
-        // let assetArray = context.assetArray ? context.assetArray : await getAssets()
-        // context.setContext({ 'assetArray': assetArray })
-        // let assetDetailsArray = context.assetDetailsArray ? context.assetDetailsArray : await getTokenDetails(account, assetArray)
-        // context.setContext({ 'assetDetailsArray': assetDetailsArray })
-        setNotifyMessage('Loading token array');
-        setNotifyType('dark')
-        let tokenArray = context.tokenArray ? context.tokenArray : await getListedTokens()
-        context.setContext({ 'tokenArray': tokenArray })
-        // context.setContext({ 'poolsData': await getPoolsData(tokenArray) })
+    const loadingTokens = async (account) => {
+        // (spartanPrice) SPARTA PRICE | USED: GLOBALLY
+        context.setContext({'spartanPrice': await getSpartaPrice()})
 
-        // let allTokens = assetArray.concat(tokenArray)
-        // var sortedTokens = [...new Set(allTokens)].sort()
-        setNotifyMessage('Loading pool array');
-        setNotifyType('dark')
-        let poolArray = context.poolArray ? context.poolArray : await getListedPools()
-        context.setContext({ 'poolArray': poolArray })
+        // (tokenArray) LISTED TOKENS | USED: GLOBALLY
+        let tokenArray = await getListedTokens()
+        context.setContext({'tokenArray': tokenArray})
 
+        // (poolArray) LISTED POOLS | USED: GLOBALLY
+        let poolArray = await getListedPools();
+        context.setContext({'poolArray': poolArray});
+
+        // eslint-disable-next-line
+        {/*
+        //3rd slowest - no longer required (was previously used for 'walletData')
         setNotifyMessage('Loading token details array');
         setNotifyType('dark')
-        let tokenDetailsArray = context.tokenDetailsArray ? context.tokenDetailsArray : await getTokenDetails(account, tokenArray)
+        let tokenDetailsArray = await getTokenDetails(account, tokenArray)
         context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
+        */}
 
-        setNotifyMessage('Loading wallet data');
-        setNotifyType('dark')
-        let walletData = await getWalletData(account, tokenDetailsArray)
-        context.setContext({ 'walletData': walletData })
+        // (walletData) WALLET DATA | USED: RIGHT-BAR + 
+        context.setContext({'walletDataLoading': true})
+        let walletData = await getWalletData(account)
+        context.setContext({'walletData': walletData})
+        context.setContext({'walletDataLoading': false})
 
-        setNotifyMessage('Loading wallet data');
-        setNotifyType('dark')
-        let stakesData = context.stakesData ? context.stakesData : await getPoolSharesData(account, tokenArray)
-        context.setContext({ 'stakesData': stakesData })
+        // (stakesData) POOLS DATA | USED: POOLS TABLE + 
+        context.setContext({'poolsDataLoading': true})
+        const getPools = await getPoolsData(tokenArray)
+        context.setContext({'poolsData': getPools})
+        context.setContext({'poolsDataLoading': false})
 
-        context.setContext({ 'connected': true })
-    }
-
-    // SPLIT UP connectingWallet INTO 3 SECTIONS (WALLET, POOLS & STAKES) AND MOVE THEM TO RELEVANT PAGES
-
-    const getSpartaPrice = async () => {
-        let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
-        //console.log(resp.data["spartan-protocol-token"].usd)
-        context.setContext({ 'spartanPrice': resp.data["spartan-protocol-token"].usd })
-        return
+        // (stakesData) STAKES DATA | USED: RIGHT-BAR + 
+        let stakesData = await getPoolSharesData(account, tokenArray)
+        context.setContext({'stakesData': stakesData})
     }
 
     /**
@@ -110,18 +88,16 @@ const AddressConn = (props) => {
 
     return (
         <>
-            <Notification
-                type={notifyType}
-                message={notifyMessage}
-            />
+            {!context.walletData && !context.walletDataLoading &&
+                <div className="btn header-white" onClick={()=>connectWallet(props)}>
+                        <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-x-circle ml-1 float-right" style={{fontSize:18}}/></div>
+                </div>
+            }
             <div className="btn header-white" onClick={toggleRightbar}>
-                {!connected && !connecting &&
-                    <div onClick={connectWallet}><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-x-circle bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
-                }
-                {connecting &&
+                {context.walletData && context.walletDataLoading &&
                     <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-loader-alt bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
                 }
-                {connected &&
+                {context.walletData && !context.walletDataLoading &&
                     <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-check-circle ml-1 float-right" style={{fontSize:18}}/></div>
                 }
             </div>

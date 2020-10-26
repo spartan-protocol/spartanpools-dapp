@@ -45,8 +45,10 @@ export const getBNBBalance = async (acc) => {
 }
 
 export const getSpartaPrice = async () => {
+    console.log('start get sparta price')
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
-    //console.log(resp.data["spartan-protocol-token"].usd)
+    console.log('end get sparta price')
+    console.log(resp.data["spartan-protocol-token"].usd)
     return resp.data["spartan-protocol-token"].usd
 }
 
@@ -89,7 +91,7 @@ export const getDaoContract = () => {
     return new web3.eth.Contract(DAO_ABI, DAO_ADDR)
 }
 
-// Get just an array of tokens that can be upgrade
+// Get just an array of tokens that can be upgraded
 export const getAssets = async () => {
     var contract = getSpartaContract()
     let assetArray = await contract.methods.allAssets().call()
@@ -97,16 +99,20 @@ export const getAssets = async () => {
     return assetArray
 }
 
-// Build out Asset Details, as long as have balance
-export const getTokenDetails = async (address, tokenArray) => {
-    let results = 0
+// Check if last page, if true remember to setContext n the component (after getting next array data)
+export const checkArrayComplete = (refArray, prevArray) => {
     const pagination = 20
-    if (tokenArray.length > pagination) {
-        results = pagination
+    if (prevArray.length + pagination >= refArray.length) {
+        return true
     }
-    else {results = tokenArray.length}
+    else return false
+}
+
+// Build out Asset Details, as long as they have a balance
+export const getTokenDetails = async (address, tokenArray) => {
+    console.log('start getTokenDetails')
     let assetDetailsArray = []
-    for (let i = 0; i < results; i++) {
+    for (let i = 0; i < tokenArray.length; i++) {
         let utilsContract = getUtilsContract()
         let token = tokenArray[i] === WBNB_ADDR ? BNB_ADDR : tokenArray[i]
         let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(token, address).call()
@@ -114,14 +120,17 @@ export const getTokenDetails = async (address, tokenArray) => {
             assetDetailsArray.push(assetDetails)
         }
     }
-    //console.log({ assetDetailsArray })
+    console.log('end getTokenDetails')
+    console.log({ assetDetailsArray })
     return assetDetailsArray
 }
 
+// eslint-disable-next-line
+{/*
 export const getNextTokenDetails = async (address, tokenArray, prevTokenData, page, isLoading, isNotLoading, isCompleteArray) => {
     isLoading()
     let results = 0
-    const pagination = 5
+    const pagination = 1
     if (tokenArray.length > page * pagination) {
         results = page * pagination
     }
@@ -141,6 +150,7 @@ export const getNextTokenDetails = async (address, tokenArray, prevTokenData, pa
     isNotLoading()
     return assetDetailsArray
 }
+*/}
 
 // Filter tokens for eligiblity to upgrade
 export const getEligibleAssets = async (address, assetDetailsArray) => {
@@ -150,64 +160,69 @@ export const getEligibleAssets = async (address, assetDetailsArray) => {
 }
 
 export const getListedTokens = async () => {
+    console.log('start getlistedtokens')
     var contract = getUtilsContract()
-    let tokenArray = []
-    try {
-        tokenArray = await contract.methods.allTokens().call()
-    } catch (err) {
-        console.log(err)
-    }
-
-    console.log({ tokenArray })
+    let tokenArray = await contract.methods.allTokens().call()
+    console.log('end getlistedtokens')
+    //console.log(tokenArray)
     return tokenArray
 }
 
 export const getAlltokens = async () => {
     let assetArray = await getAssets()
     let tokenArray = await getListedTokens()
-    let allTokens= assetArray.concat(tokenArray)
+    let allTokens = assetArray.concat(tokenArray)
     var sortedTokens = [...new Set(allTokens)].sort()
     return sortedTokens;
 }
+
 export const getListedPools= async () => {
+    console.log('start getlistedpools')
     var contract = getUtilsContract()
     let poolArray = await contract.methods.allPools().call()
-    //console.log({ poolArray })
+    console.log('end getlistedpools')
+    //console.log(poolArray)
     return poolArray
 }
 
+// Get Pools Table Data (initial load)
 export const getPoolsData = async (tokenArray) => {
+    console.log('start getPoolsData')
     let results = 0
-    const pagination = 20
+    const pagination = 3
     if (tokenArray.length > pagination) {
         results = pagination
     }
-    else {results = tokenArray.length}
+    else {
+        results = tokenArray.length
+    }
     let poolsData = []
     for (let i = 0; i < results; i++) {
         poolsData.push(await getPool(tokenArray[i]))
     }
-    //console.log({ poolsData })
+    console.log('end getPoolsData')
+    //console.log(poolsData)
     return poolsData
 }
 
-export const getNextPoolsData = async (tokenArray, prevPoolsData, page, isLoading, isNotLoading, isCompleteArray) => {
-    isLoading()
+/// Get Pools Table Data (pagination)
+export const getNextPoolsData = async (tokenArray, prevPoolsData) => {
+    console.log('start getNextPoolsData')
     let results = 0
-    const pagination = 5
-    if (tokenArray.length > page * pagination) {
-        results = page * pagination
+    const pagination = 20
+    const currentLength = prevPoolsData.length
+    if (tokenArray.length > currentLength + pagination) {
+        results = currentLength + pagination
     }
     else {
         results = tokenArray.length
-        isCompleteArray()
     }
     let poolsData = prevPoolsData
-    for (let i = poolsData.length; i < results; i++) {
+    for (let i = currentLength; i < results; i++) {
         poolsData.push(await getPool(tokenArray[i]))
     }
-    //console.log({ poolsData })
-    isNotLoading()
+    console.log('end getNextPoolsData')
+    //console.log(poolsData)
     return poolsData
 }
 
@@ -236,6 +251,7 @@ export const getPool = async (address) => {
 
 export const getPoolData = async (address, poolsData) => {
     const poolData = poolsData.find((item) => item.address === address)
+    console.log(poolData)
     return (poolData)
 }
 
@@ -256,42 +272,63 @@ export const getNetworkData = async (poolsData) => {
     return (networkData)
 }
 
+// get global pools data stats (txns, APY etc)
 export const getGlobalData = async ()  => {
+    console.log('start getGlobalData')
     var contract = getUtilsContract()
     let globalData = await contract.methods.getGlobalDetails().call()
+    console.log('end getGlobalData')
     //console.log({globalData})
     return globalData
 }
 
-export const getWalletData = async (address, tokenDetailsArray) => {
-    var tokens = []
-    //console.log(tokenDetailsArray)
-    var walletData = {
-        'address': address,
-        'tokens': tokens
-    }
-    tokens.push({
+// Get SPARTA & BNB (Initial wallet assets load)
+export const getWalletData = async (address) => {
+    console.log('start getWalletData')
+    var walletData = []
+    walletData.push({
         'symbol': 'SPARTA',
         'name': 'Sparta',
         'balance': await getTokenContract(SPARTA_ADDR).methods.balanceOf(address).call(),
         'address': SPARTA_ADDR
     })
-    tokens.push({
-        'symbol': 'WBNB',
-        'name': 'Wrapped BNB',
-        'balance': await getTokenContract(WBNB_ADDR).methods.balanceOf(address).call(),
-        'address': WBNB_ADDR
+    walletData.push({
+        'symbol': 'BNB',
+        'name': 'BNB',
+        'balance': await getBNBBalance(address),
+        'address': BNB_ADDR
     })
+    console.log('end getWalletData')
+    //console.log(walletData)
+    return walletData
+}
 
-    for (let i = 0; i < tokenDetailsArray.length; i++) {
-        var obj = tokenDetailsArray[i]
-        tokens.push({
-            'symbol': obj.symbol,
-            'name': obj.name,
-            'balance': obj.tokenAddress === BNB_ADDR ? await getBNBBalance(address) : await getTokenContract(obj.tokenAddress).methods.balanceOf(address).call(),
-            'address': obj.tokenAddress
-        })
+export const getNextWalletData = async (account, tokenArray, prevWalletData) => {
+    console.log('start getNextWalletData') 
+    let results = 0
+    const pagination = 20
+    const currentLength = prevWalletData.length
+    if (tokenArray.length > currentLength + pagination) {
+        results = currentLength + pagination
     }
+    else {
+        results = tokenArray.length
+    }
+    let walletData = prevWalletData
+    for (let i = currentLength - 1; i < results; i++) {
+        var addr = tokenArray[i]
+        var balance = await getTokenContract(addr).methods.balanceOf(account).call()
+        var details = await getUtilsContract().methods.getTokenDetails(addr).call()
+        //if (balance > 0) {
+            walletData.push({
+                'symbol': details.symbol,
+                'name': details.name,
+                'balance': balance,
+                'address': addr
+            })
+        //}
+    }
+    console.log('end getNextWalletData')
     console.log(walletData)
     return walletData
 }
@@ -313,22 +350,22 @@ export const getNewTokenData = async (address, member) => {
 }
 
 export const getTokenData = async (address, walletData) => {
-    const tokenData = walletData.tokens.find((item) => item.address === address)
+    const tokenData = walletData.find((item) => item.address === address)
     return (tokenData)
 }
 
 // Get all tokens on wallet that have a pool - swapping
 export const filterWalletByPools = async (poolsData, walletData) => {
-    const Wallet = walletData.tokens
+    const Wallet = walletData
     const pools = poolsData.map((item) => item.address)
     const wallet = Wallet.map((item) => item.address)
     const tokens = wallet.filter((item) => pools.includes(item) || item === SPARTA)
     return tokens
 }
 
-// Get all tokens on wallet that not have a pool - creating new pool
+// Get all tokens on wallet that do not have a pool - for creating a new pool
 export const filterWalletNotPools = async (poolsData, walletData) => {
-    const Wallet = walletData.tokens
+    const Wallet = walletData
     const pools = poolsData.map((item) => item.address)
     const wallet = Wallet.map((item) => item.address)
     const tokens = wallet.filter((item) => !pools.includes(item) && item !== SPARTA)
@@ -348,44 +385,52 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
     return tokensNotPool
 }
 
+// Load Initial Pool Staked Data (Wallet Drawer & Earn Page)
 export const getPoolSharesData = async (member, poolArray) => {
+    console.log('start getPoolSharesData')
     let results = 0
-    const pagination = 20
+    const pagination = 3
+    //console.log(poolArray)
     if (poolArray.length > pagination) {
         results = pagination
     }
-    else {results = poolArray.length}
+    else {
+        results = poolArray.length
+        //handleStates('poolSharesDataCompleted')
+    }
     let stakesData = []
     for (let i = 0; i < results; i++) {
         let stakesItem = await getPoolShares(member, poolArray[i])
-        if (stakesItem.locked + stakesItem.units > 0) {
-            stakesData.push(stakesItem)
-        }
+        //if (stakesItem.locked + stakesItem.units > 0) {
+        stakesData.push(stakesItem)
+        //}
     }
-    //console.log({ stakesData })
+    console.log('end getPoolSharesData')
+    //console.log(stakesData)
     return stakesData
 }
 
-export const getNextPoolSharesData = async (member, poolArray, prevStakesData, page, isLoading, isNotLoading, isCompleteArray) => {
-    isLoading()
+// Load More Pool Staked Data (Wallet Drawer & Earn Page)
+export const getNextPoolSharesData = async (member, poolArray, prevStakesData) => {
+    console.log('start getNextPoolSharesData')
     let results = 0
-    const pagination = 5
-    if (poolArray.length > page * pagination) {
-        results = page * pagination
+    const pagination = 20
+    const currentLength = prevStakesData.length
+    if (poolArray.length > currentLength + pagination) {
+        results = currentLength + pagination
     }
     else {
         results = poolArray.length
-        isCompleteArray()
     }
     let stakesData = prevStakesData
-    for (let i = stakesData.length; i < results; i++) {
+    for (let i = currentLength; i < results; i++) {
         let stakesItem = await getPoolShares(member, poolArray[i])
-        if (stakesItem.locked + stakesItem.units > 0) {
-            stakesData.push(stakesItem)
-        }
+        //if (stakesItem.locked + stakesItem.units > 0) {
+        stakesData.push(stakesItem)
+        //}
     }
-    //console.log({ stakesData })
-    isNotLoading()
+    console.log('end getNextPoolSharesData')
+    console.log(stakesData)
     return stakesData
 }
 

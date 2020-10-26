@@ -23,7 +23,6 @@ const PoolPaneSide = (props) => {
 
     return (
 
-
         <Card className="h-100">
             <CardBody>
 
@@ -33,6 +32,7 @@ const PoolPaneSide = (props) => {
                     <Col xs="6">
                         <div className="text-center">
                             <div className="mb-4">
+                                {console.log(props.pool)}
                                 <TokenIcon address={props.pool.address}/>
                             </div>
                             <h4>{props.pool.symbol}</h4>
