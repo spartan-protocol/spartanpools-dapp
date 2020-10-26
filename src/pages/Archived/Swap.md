@@ -190,7 +190,7 @@ const Swap = (props) => {
 
     const checkApprovalBuy = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+        const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
         if (+approval >= +inputTokenData.balance) {
             setApprovalBuy(true)
         }
@@ -200,7 +200,7 @@ const Swap = (props) => {
             setApprovalSell(true)
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+            const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
             if (+approval >= +outputTokenData.balance) {
                 setApprovalSell(true)
             }
@@ -220,7 +220,7 @@ const Swap = (props) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
         await contract.methods.approve(ROUTER_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -233,7 +233,7 @@ const Swap = (props) => {
         console.log(buyData.input, SPARTA_ADDR, mainPool.address)
         const tx = await poolContract.methods.swap(buyData.input, SPARTA_ADDR, mainPool.address)
             .send({
-                from: context.walletData.address,
+                from: context.account,
                 gasPrice: '',
                 gas: '',
 
@@ -252,7 +252,7 @@ const Swap = (props) => {
         if (sellData.address === BNB_ADDR) {
             tx = await poolContract.methods.swap(sellData.input, mainPool.address, SPARTA_ADDR)
                 .send({
-                    from: context.walletData.address,
+                    from: context.account,
                     gasPrice: '',
                     gas: '240085',
                     value: sellData.input
@@ -260,7 +260,7 @@ const Swap = (props) => {
         } else {
             tx = await poolContract.methods.swap(sellData.input, mainPool.address, SPARTA_ADDR)
                 .send({
-                    from: context.walletData.address,
+                    from: context.account,
                     gasPrice: '',
                     gas: '240085',
                 })
@@ -274,7 +274,7 @@ const Swap = (props) => {
     const reloadData = async () => {
         let poolArray = await getListedPools()
         let poolsData = await getPoolsData(poolArray)
-        let stakesData = await getPoolSharesData(context.walletData.address, poolArray)
+        let stakesData = await getPoolSharesData(context.account, poolArray)
         let walletData = await getWalletData(poolArray)
         context.setContext({ 'poolArray': poolArray })
         context.setContext({ 'poolsData': poolsData })

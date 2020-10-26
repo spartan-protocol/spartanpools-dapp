@@ -11,7 +11,6 @@ import {
     Col,
     Card,
     CardBody,
-
 } from "reactstrap"
 
 export const PoolsPaneSide = (props) => {

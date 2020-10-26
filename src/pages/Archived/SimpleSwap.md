@@ -80,7 +80,7 @@ const SimpleSwap = (props) => {
 
     const checkApproval = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, SPARTA_ADDR).call()
+        const approval = await contract.methods.allowance(context.account, SPARTA_ADDR).call()
         console.log(approval)
         if (+approval > 0) {
             setApproval(true)
@@ -92,7 +92,7 @@ const SimpleSwap = (props) => {
         // (utils.parseEther(10**18)).toString()
         const supply = await contract.methods.totalSupply().call()
         await contract.methods.approve(SPARTA_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -103,14 +103,14 @@ const SimpleSwap = (props) => {
         setStartTx(true)
         let contract = getSpartaContract()
         await contract.methods.upgrade(tokenTo).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
         message.success(`Transaction Sent!`, 2);
         setStartTx(false)
         setEndTx(true)
-        context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray) })
+        context.setContext({ 'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray) })
     }
 
     return (

@@ -26,6 +26,9 @@ const Overview = (props) => {
     useEffect(() => {
         if (context.connected) {
             getData()
+            return function cleanup() {
+                getData()
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [context.connected])

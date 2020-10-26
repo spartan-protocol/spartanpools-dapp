@@ -1,20 +1,16 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Context } from '../../context'
-import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table } from "reactstrap";
 import classnames from 'classnames';
 
-import {LoadingOutlined} from '@ant-design/icons';
-
-import { connect } from "react-redux";
-import { hideRightSidebar } from "../../store/actions";
+import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table } from "reactstrap";
 
 import {convertFromWei, formatAllUnits} from '../../utils'
+import {checkArrayComplete, getNextPoolSharesData, getNextWalletData} from '../../client/web3'
 
 import { manageBodyClass } from '../common';
 
 import { TokenIcon } from '../Common/TokenIcon'
 
-//SimpleBar
 import SimpleBar from "simplebar-react";
 
 import { Link } from "react-router-dom";
@@ -75,14 +71,18 @@ const RightSidebar = (props) => {
                   <TabPane tabId="1">
                     <Row>
                       <Col sm="12">
-                        <AssetTable />
+                        <AssetTable 
+                          handleNextWalletDataPage={props.handleNextWalletDataPage}
+                          walletDataCompleted={props.walletDataCompleted}
+                          walletDataLoading={props.walletDataLoading}
+                        />
                       </Col>
                     </Row>
                   </TabPane>
                   <TabPane tabId="2">
                     <Row>
                       <Col sm="12">
-                        <PoolShareTable toggleRightbar={toggleRightbar} />
+                        <PoolShareTable toggleRightbar={toggleRightbar}/>
                       </Col>
                     </Row>
                   </TabPane>
@@ -97,19 +97,22 @@ const RightSidebar = (props) => {
   );
 }
 
-const mapStatetoProps = state => {
-  return { ...state.Layout };
-};
+export const AssetTable = () => {
 
-export const AssetTable = (props) => {
+  const context = useContext(Context)
 
-  const context = useContext(Context);
+  const nextWalletDataPage = async () => {
+    var lastPage = await checkArrayComplete(context.tokenArray, context.walletData)
+    context.setContext({'walletDataLoading': true})
+    context.setContext({'walletData': await getNextWalletData(context.account, context.tokenArray, context.walletData)})
+    context.setContext({'walletDataLoading': false})
+    context.setContext({'walletDataComplete': lastPage})
+  }
 
-  useEffect(() => {
+  //useEffect(() => {
       // updateWallet()
-      console.log(context.walletData)
       // eslint-disable-next-line
-  }, [])
+  //}, [])
 
   // const updateWallet = async () => {
   //     context.setContext({ walletData: await getWalletData(context.poolArray) })
@@ -120,10 +123,10 @@ export const AssetTable = (props) => {
       <div>
         <Row>
           <Col>
-            {!context.connected &&
-              <div className="text-center m-2"><LoadingOutlined/></div>
+            {!context.walletData &&
+              <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
             }
-            {context.connected &&
+            {context.walletData &&
               <Table className="text-center">
                 <thead>
                   <tr>
@@ -132,14 +135,32 @@ export const AssetTable = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                      {context.walletData.tokens.map(c =>
-                        <AssetItem 
-                          key={c.address}
-                          symbol={c.symbol}
-                          address={c.address}
-                          balance={c.balance}
-                        />
-                      )}
+                  {context.walletData.filter(x => x.balance > 0).sort((a, b) => (parseFloat(a.balance) > parseFloat(b.balance)) ? -1 : 1).map(c =>
+                    <AssetItem 
+                      key={c.address}
+                      symbol={c.symbol}
+                      address={c.address}
+                      balance={c.balance}
+                    />
+                  )}
+                  <tr>
+                    <td colSpan="5">
+                      {!context.walletDataLoading && !context.walletDataComplete &&
+                          <button color="primary"
+                          className="btn btn-primary waves-effect waves-light m-1"
+                          onClick={()=>nextWalletDataPage()}
+                          >
+                          Load More
+                          </button>
+                      }
+                      {context.walletDataLoading &&
+                          <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                      }
+                      {!context.walletDataLoading && context.walletDataComplete &&
+                          <div className="text-center m-2">All Assets Loaded</div>
+                      }
+                    </td>
+                  </tr>
                 </tbody>
               </Table>
             }
@@ -168,16 +189,25 @@ export const AssetItem = (props) => {
 
 }
 
-export const PoolShareTable = (props) => {
+export const PoolShareTable = () => {
 
   const context = useContext(Context)
 
-  useEffect(() => {
+  const nextPoolSharesDataPage = async () => {
+    var lastPage = await checkArrayComplete(context.tokenArray, context.stakesData)
+    context.setContext({'poolSharesDataLoading': true})
+    context.setContext({'stakesData': await getNextPoolSharesData(context.account, context.tokenArray, context.stakesData)})
+    context.setContext({'poolSharesDataLoading': false})
+    context.setContext({'poolSharesDataComplete': lastPage})
     console.log(context.stakesData)
+  }
+
+  //useEffect(() => {
+    //console.log(context.stakesData)
     // getPoolSharess()
     // console.log(context.stakes)
     // eslint-disable-next-line
-  }, [])
+  //}, [])
 
   return (
     <>
@@ -185,7 +215,7 @@ export const PoolShareTable = (props) => {
         <Row>
           <Col>
             {!context.stakesData &&
-              <div className="text-center m-2"><LoadingOutlined/></div>
+              <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
             }
             {context.stakesData &&
               <Table className="text-center">
@@ -196,7 +226,7 @@ export const PoolShareTable = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                      {context.stakesData.map(c =>
+                      {context.stakesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
                         <PoolItem 
                           key={c.address}
                           symbol={c.symbol}
@@ -206,13 +236,22 @@ export const PoolShareTable = (props) => {
                         />
                       )}
                       <tr>
-                        <td colSpan="2">
-                          <Link to="/earn" onClick={props.toggleRightbar}>
-                            <button color="primary" className="btn btn-primary waves-effect waves-light m-1">
-                              See More
-                            </button>
-                          </Link>
-                        </td>
+                          <td colSpan="5">
+                              {!context.poolSharesDataLoading && !context.poolSharesDataComplete &&
+                                  <button color="primary"
+                                  className="btn btn-primary waves-effect waves-light m-1"
+                                  onClick={()=>nextPoolSharesDataPage()}
+                                  >
+                                  Load More
+                                  </button>
+                              }
+                              {context.poolSharesDataLoading &&
+                                  <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                              }
+                              {!context.poolSharesDataLoading && context.poolSharesDataComplete &&
+                                  <div className="text-center m-2">All LP Tokens Loaded</div>
+                              }
+                          </td>
                       </tr>
                 </tbody>
               </Table>
@@ -246,4 +285,4 @@ const total = units.plus(locked)
 
 }
 
-export default connect(mapStatetoProps, {hideRightSidebar})(RightSidebar);
+export default RightSidebar;

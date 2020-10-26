@@ -4,11 +4,7 @@ import EarnTable from '../components/Sections/EarnTable'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import {
-    Container,
-    Row,
-    Col,
-} from "reactstrap";
+import {Container, Row, Col} from "reactstrap";
 
 const Earn = (props) => {
 

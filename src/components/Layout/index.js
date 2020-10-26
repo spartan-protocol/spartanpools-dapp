@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-
-import {
-  changeLayout,
-  changeTopbarTheme,
-  changeLayoutWidth,
-} from "../../store/actions";
 
 // Other Layout related Component
 import Navbar from "./Navbar";
@@ -21,7 +14,7 @@ const Layout = (props) => {
 
   const toggleNav = () => {
     setNavIsOpen(!navIsOpen)
-  };
+  }
 
   const title = props.location.pathname;
   let currentage = title.charAt(1).toUpperCase() + title.slice(2);
@@ -29,20 +22,18 @@ const Layout = (props) => {
   document.title =
     currentage + " | Spartan - Protocol";
 
-  props.changeLayout('horizontal');
-  if (props.topbarTheme) {
-    props.changeTopbarTheme(props.topbarTheme);
-  }
-
-  if (props.layoutWidth) {
-    props.changeLayoutWidth(props.layoutWidth);
-  }
-
   return (
     <React.Fragment>
 
       <div id="layout-wrapper">
-        <Header theme={props.topbarTheme} toggleNav={toggleNav} />
+        <Header
+          theme={props.topbarTheme}
+          toggleNav={toggleNav} 
+          changeStates={props.changeStates}
+          changeNotification={props.changeNotification}
+          connectedTokens={props.connectedTokens}
+          connectingTokens={props.connectingTokens}
+        />
         {navIsOpen &&
           <MobileNavbar setNavIsOpen={setNavIsOpen} />
         }
@@ -53,17 +44,9 @@ const Layout = (props) => {
         <Footer />
       </div>
 
-      <Rightbar />
+      <Rightbar/>
     </React.Fragment>
   );
 }
 
-const mapStatetoProps = () => {
-  return {
-    ...Layout
-  };
-};
-
-export default connect(mapStatetoProps, {
-  changeTopbarTheme, changeLayout, changeLayoutWidth
-})(withRouter(Layout));
+export default withRouter(Layout);

@@ -1,24 +1,17 @@
-import React, {useContext, useEffect, useState} from 'react'
-import {Context} from '../context'
+import React, {useEffect, useState} from 'react'
 import {withRouter} from "react-router-dom";
 
-import {getGlobalData} from '../client/web3'
+import {getGlobalData, getSpartaPrice} from '../client/web3'
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
-import {
-    Container,
-    Row,
-    Col,
-} from "reactstrap";
+import {Container, Row, Col} from "reactstrap";
 import {withNamespaces} from 'react-i18next';
 import PoolTable from "../components/Sections/PoolTable";
 import PoolsPaneSide from "../components/Sections/PoolsPaneSide";
 
-
 const Pools = (props) => {
 
-    const context = useContext(Context)
     const [globalData, setGlobalData] = useState({
         totalPooled: 0,
         totalFees: 0,
@@ -29,13 +22,11 @@ const Pools = (props) => {
     });
 
     useEffect(() => {
-        if (context.poolsData) {
-            getData()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.poolsData])
+        getData()
+    }, [])
 
     const getData = async () => {
+        await getSpartaPrice()
         setGlobalData(await getGlobalData())
     }
 

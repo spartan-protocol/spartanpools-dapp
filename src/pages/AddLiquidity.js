@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react'
 import {Context} from '../context'
-import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
 
 import {withRouter} from 'react-router-dom';
 import queryString from 'query-string';
@@ -29,9 +28,9 @@ import {
 
 import classnames from 'classnames';
 import {
-    BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract, getListedTokens,
-    getPoolData, getTokenData, getTokenDetails,
-    getListedPools, getPoolsData, getPool, getPoolShares, WBNB_ADDR
+    BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
+    getPoolData, getTokenData, getTokenDetails, checkArrayComplete,
+    getPool, getPoolShares, WBNB_ADDR, getNextPoolsData, getNextWalletData
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
 import PoolPaneSide from "../components/Sections/PoolPaneSide"
@@ -73,84 +72,115 @@ const AddLiquidity = (props) => {
     })
 
     const [liquidityData, setLiquidityData] = useState({
-        'baseAmount': '',
-        'tokenAmount': '',
+        'baseAmount': '0',
+        'tokenAmount': '0',
     })
 
     const [withdrawData, setWithdrawData] = useState({
-        'baseAmount': '',
-        'tokenAmount': '',
+        'baseAmount': '0',
+        'tokenAmount': '0',
     })
 
     const [estLiquidityUnits, setLiquidityUnits] = useState(0)
     const [approvalToken, setApprovalToken] = useState(false)
     const [approvalBase, setApprovalBase] = useState(false)
-    const [startTx, setStartTx] = useState(false);
-    const [endTx, setEndTx] = useState(false);
+    const [startTx, setStartTx] = useState(false)
+    const [endTx, setEndTx] = useState(false)
 
     const [withdrawAmount, setWithdrawAmount] = useState(0)
 
     useEffect(() => {
-        if (context.connected) {
-            getPools()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.connected])
+        checkPoolReady()
+    // eslint-disable-next-line
+      }, []);
 
-    const getPools = async () => {
-        let tokenArray = await getListedTokens()
-        context.setContext({'tokenArray': tokenArray})
-        let poolArray = await getListedPools()
-        context.setContext({'poolArray': poolArray})
-        context.setContext({'poolsData': await getPoolsData(tokenArray)})
+    const checkPoolReady = async () => {
+        let params = queryString.parse(props.location.search)
+        if (context.poolsData && !context.poolsDataLoading) {
+            var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
+            if (existsInPoolsData === true) {
+                await checkWalletReady()
+            }
+            else {
+                await nextPoolsDataPage()
+                await checkPoolReady()
+            }
+        }
     }
 
-    useEffect(() => {
-        if (context.poolsData) {
-            getData()
+    const checkWalletReady = async () => {
+        let params = queryString.parse(props.location.search)
+        if (context.walletData && !context.walletDataLoading) {
+            var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
+            console.log(context.walletData)
+            if (existsInWalletData === true) {
+                await getData()
+            }
+            else {
+                await nextWalletDataPage()
+                await checkWalletReady()
+            }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.connected, context.poolsData])
+    }
 
     const getData = async () => {
-        let params = queryString.parse(props.location.search)
-        const pool = await getPoolData(params.pool, context.poolsData)
-        setPool(pool)
+            let params = queryString.parse(props.location.search)
+            const pool = await getPoolData(params.pool, context.poolsData)
+            setPool(pool)
+            
+            const baseData = await getTokenData(SPARTA_ADDR, context.walletData)
+            const tokenData = await getTokenData(pool.address, context.walletData)
 
-        const baseData = await getTokenData(SPARTA_ADDR, context.walletData)
-        const tokenData = await getTokenData(pool.address, context.walletData)
+            let _userData = {
+                'baseBalance': baseData?.balance,
+                'tokenBalance': tokenData?.balance,
+                'address': tokenData?.address,
+                'symbol': tokenData?.symbol,
+                'balance': tokenData?.balance,
+                'input': 0,
+            }
 
-        let _userData = {
-            'baseBalance': baseData?.balance,
-            'tokenBalance': tokenData?.balance,
-            'address': tokenData?.address,
-            'symbol': tokenData?.symbol,
-            'balance': tokenData?.balance,
-            'input': 0,
-        }
+            setUserData(_userData)
 
-        setUserData(_userData)
+            //console.log(baseData?.balance, tokenData?.balance)
 
-        //console.log(baseData?.balance, tokenData?.balance)
+            let liquidityData = getPairedAmount(baseData?.balance, tokenData?.balance, pool)
+            setLiquidityData(liquidityData)
+            const estLiquidityUnits = getLiquidityUnits(liquidityData, pool)
+            setLiquidityUnits(estLiquidityUnits)
 
-        let liquidityData = getPairedAmount(baseData?.balance, tokenData?.balance, pool)
-        setLiquidityData(liquidityData)
-        const estLiquidityUnits = getLiquidityUnits(liquidityData, pool)
-        setLiquidityUnits(estLiquidityUnits)
-
-        await checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
-        await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
-
+            await checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
+            await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
     }
 
+    const nextPoolsDataPage = async () => {
+        if (context.poolsData && !context.poolsDataLoading) {
+            console.log(context.poolsData)
+            var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
+            context.setContext({'poolsDataLoading': true})
+            context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
+            context.setContext({'poolsDataLoading': false})
+            context.setContext({'poolsDataComplete': lastPage})
+        }
+    }
+
+    const nextWalletDataPage = async () => {
+        if (context.walletData && !context.walletDataLoading) {
+            var lastPage = await checkArrayComplete(context.tokenArray, context.walletData)
+            context.setContext({'walletDataLoading': true})
+            context.setContext({'walletData': await getNextWalletData(context.account, context.tokenArray, context.walletData)})
+            context.setContext({'walletDataLoading': false})
+            context.setContext({'walletDataComplete': lastPage})
+        }
+      }
+
     const checkApproval = async (address) => {
-        //console.log({address})
         if (address === BNB_ADDR || address === WBNB_ADDR) {
             //console.log("BNB")
             return true
         } else {
             const contract = getTokenContract(address)
-            const approvalToken = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+            const approvalToken = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
             if (+approvalToken > 0) {
                 return true
             } else {
@@ -258,7 +288,7 @@ const AddLiquidity = (props) => {
 
     const changeWithdrawAmount = async (amount) => {
         setWithdrawAmount(amount)
-        let poolShare = await getPoolShares(context.walletData.address, pool.address)
+        let poolShare = await getPoolShares(context.account, pool.address)
         let withdrawData = {
             'baseAmount': (+poolShare.baseAmount * amount) / 100,
             'tokenAmount': (+poolShare.tokenAmount * amount) / 100,
@@ -284,7 +314,7 @@ const AddLiquidity = (props) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
         await contract.methods.approve(ROUTER_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -297,7 +327,7 @@ const AddLiquidity = (props) => {
         let contract = getRouterContract()
         //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address)
         await contract.methods.addLiquidity(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: '',
             value: pool.address === BNB_ADDR ? liquidityData.tokenAmount : 0
@@ -307,13 +337,13 @@ const AddLiquidity = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray)})
+        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     }
 
     const removeLiquidity = async () => {
         let contract = getRouterContract()
         const tx = await contract.methods.removeLiquidity(withdrawAmount * 100, pool.address).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -323,15 +353,12 @@ const AddLiquidity = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.walletData.address, context.tokenArray)})
-
+        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     }
 
     const updatePool = async () => {
         setPool(await getPool(pool.address))
     }
-
-
 
     return (
         <>
@@ -344,105 +371,110 @@ const AddLiquidity = (props) => {
                     <div className="page-content">
                         <Container fluid>
                             <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Join")}/>
-                            <Row>
-                                <Col lg="4">
-                                    <PoolPaneSide pool={pool} price={context.spartanPrice} />
-                                </Col>
-                                <Col lg="6">
-                                    <Card className="h-100">
-                                        <CardBody>
-                                            <h4 className="card-title mb-4">{props.t("Add Liquidity")}</h4>
-                                            <Nav  className="nav nav-pills nav-fill bg-light rounded" role="tablist">
-                                                <NavItem className="text-center ">
-                                                    <NavLink
-                                                        className={classnames({active: activeTab === '1'})}
-                                                        onClick={() => {
-                                                            toggle('1');
-                                                        }}
-                                                    >
-                                                        {`${props.t("Add")} ${pool.symbol} + SPARTA`}
-                                                    </NavLink>
-                                                </NavItem>
-                                                <NavItem className="text-center">
-                                                    <NavLink
-                                                        className={classnames({active: activeTab === '2'})}
-                                                        onClick={() => {
-                                                            toggle('2');
-                                                        }}
-                                                    >
-                                                        {`${props.t("Add")} ${pool.symbol}`}
-                                                    </NavLink>
-                                                </NavItem>
-                                                <NavItem className="text-center">
-                                                    <NavLink
-                                                        className={classnames({active: activeTab === '3'})}
-                                                        onClick={() => {
-                                                            toggle('3');
-                                                        }}
-                                                    >
-                                                        {`${props.t("Remove")} ${pool.symbol} + SPARTA`}
-                                                    </NavLink>
-                                                </NavItem>
-                                            </Nav>
-                                            <TabContent activeTab={activeTab} className="mt-4">
-                                                <TabPane tabId="1" id="buy-tab">
-                                                    <AddSymmPane
-                                                        pool={pool}
-                                                        userData={userData}
-                                                        liquidityData={liquidityData}
-                                                        onAddChange={onAddSymmChange}
-                                                        changeAmount={changeSymmAmount}
-                                                        estLiquidityUnits={estLiquidityUnits}
-                                                        getEstShare={getEstShare}
-                                                        approvalBase={approvalBase}
-                                                        approvalToken={approvalToken}
-                                                        unlockSparta={unlockSparta}
-                                                        unlockToken={unlockToken}
-                                                        addLiquidity={addLiquidity}
-                                                        startTx={startTx}
-                                                        endTx={endTx}
-                                                        activeTab={activeTab}
-                                                    />
+                            {context.stakesData &&
+                                <Row>
+                                    
+                                    <Col lg="4">
+                                        <PoolPaneSide pool={pool} price={context.spartanPrice} />
+                                    </Col>
+                                    <Col lg="6">
+                                        <Card className="h-100">
+                                            <CardBody>
+                                                <h4 className="card-title mb-4">{props.t("Add Liquidity")}</h4>
+                                                <Nav  className="nav nav-pills nav-fill bg-light rounded" role="tablist">
+                                                    <NavItem className="text-center ">
+                                                        <NavLink
+                                                            className={classnames({active: activeTab === '1'})}
+                                                            onClick={() => {
+                                                                toggle('1');
+                                                            }}
+                                                        >
+                                                            {`${props.t("Add")} ${pool.symbol} + SPARTA`}
+                                                        </NavLink>
+                                                    </NavItem>
+                                                    <NavItem className="text-center">
+                                                        <NavLink
+                                                            className={classnames({active: activeTab === '2'})}
+                                                            onClick={() => {
+                                                                toggle('2');
+                                                            }}
+                                                        >
+                                                            {`${props.t("Add")} ${pool.symbol}`}
+                                                        </NavLink>
+                                                    </NavItem>
+                                                    <NavItem className="text-center">
+                                                        <NavLink
+                                                            className={classnames({active: activeTab === '3'})}
+                                                            onClick={() => {
+                                                                toggle('3');
+                                                            }}
+                                                        >
+                                                            {`${props.t("Remove")} ${pool.symbol} + SPARTA`}
+                                                        </NavLink>
+                                                    </NavItem>
+                                                </Nav>
+                                                <TabContent activeTab={activeTab} className="mt-4">
+                                                    <TabPane tabId="1" id="buy-tab">
+                                                        <AddSymmPane
+                                                            pool={pool}
+                                                            userData={userData}
+                                                            liquidityData={liquidityData}
+                                                            onAddChange={onAddSymmChange}
+                                                            changeAmount={changeSymmAmount}
+                                                            estLiquidityUnits={estLiquidityUnits}
+                                                            getEstShare={getEstShare}
+                                                            approvalBase={approvalBase}
+                                                            approvalToken={approvalToken}
+                                                            unlockSparta={unlockSparta}
+                                                            unlockToken={unlockToken}
+                                                            addLiquidity={addLiquidity}
+                                                            startTx={startTx}
+                                                            endTx={endTx}
+                                                            activeTab={activeTab}
+                                                        />
 
 
-                                                </TabPane>
-                                                <TabPane tabId="2" id="sell-tab">
-                                                    <AddAsymmPane
-                                                        pool={pool}
-                                                        userData={userData}
-                                                        liquidityData={liquidityData}
-                                                        onAddChange={onAddTokenChange}
-                                                        changeAmount={changeTokenAmount}
-                                                        estLiquidityUnits={estLiquidityUnits}
-                                                        getEstShare={getEstShare}
-                                                        approvalBase={approvalBase}
-                                                        approvalToken={approvalToken}
-                                                        unlockSparta={unlockSparta}
-                                                        unlockToken={unlockToken}
-                                                        addLiquidity={addLiquidity}
-                                                        startTx={startTx}
-                                                        endTx={endTx}
-                                                        activeTab={activeTab}
-                                                    />
-                                                </TabPane>
-                                                <TabPane tabId="3" id="sell-tab">
-                                                    <RemoveLiquidityPane
-                                                        pool={pool}
-                                                        changeWithdrawAmount={changeWithdrawAmount}
-                                                        approvalToken={approvalToken}
-                                                        unlock={unlockToken}
-                                                        removeLiquidity={removeLiquidity}
-                                                        withdrawData={withdrawData}
-                                                        startTx={startTx}
-                                                        endTx={endTx}
-                                                    />
-                                                </TabPane>
-                                            </TabContent>
-                                        </CardBody>
-                                    </Card>
-                                </Col>
-
-                            </Row>
+                                                    </TabPane>
+                                                    <TabPane tabId="2" id="sell-tab">
+                                                        <AddAsymmPane
+                                                            pool={pool}
+                                                            userData={userData}
+                                                            liquidityData={liquidityData}
+                                                            onAddChange={onAddTokenChange}
+                                                            changeAmount={changeTokenAmount}
+                                                            estLiquidityUnits={estLiquidityUnits}
+                                                            getEstShare={getEstShare}
+                                                            approvalBase={approvalBase}
+                                                            approvalToken={approvalToken}
+                                                            unlockSparta={unlockSparta}
+                                                            unlockToken={unlockToken}
+                                                            addLiquidity={addLiquidity}
+                                                            startTx={startTx}
+                                                            endTx={endTx}
+                                                            activeTab={activeTab}
+                                                        />
+                                                    </TabPane>
+                                                    <TabPane tabId="3" id="sell-tab">
+                                                        <RemoveLiquidityPane
+                                                            pool={pool}
+                                                            changeWithdrawAmount={changeWithdrawAmount}
+                                                            approvalToken={approvalToken}
+                                                            unlock={unlockToken}
+                                                            removeLiquidity={removeLiquidity}
+                                                            withdrawData={withdrawData}
+                                                            startTx={startTx}
+                                                            endTx={endTx}
+                                                        />
+                                                    </TabPane>
+                                                </TabContent>
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                            }
+                            {!context.stakesData &&
+                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                            }
                         </Container>
                     </div>
                 </React.Fragment>
@@ -464,7 +496,7 @@ const AddSymmPane = (props) => {
             />
             <br/>
             <div className="text-center">
-                <PlusOutlined style={{fontSize: 24}}/>
+            <i className="bx bx-plus"/>
             </div>
             <br/>
             <br/>
@@ -528,7 +560,7 @@ const AddSymmPane = (props) => {
                     </Col>
                     <Col xs={12}>
                         {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}>ADD TO
+                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}><i className="bx bx-spin bx-loader"/> ADD TO
                             POOL</div>
                         }
                         {props.approvalBase && props.approvalToken && !props.startTx &&
@@ -540,7 +572,6 @@ const AddSymmPane = (props) => {
         </>
     )
 };
-
 
 export default withRouter(withNamespaces()(AddLiquidity));
 
@@ -602,7 +633,7 @@ const AddAsymmPane = (props) => {
                         </Col>
                         <Col xs={12}>
                             {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity} icon={<LoadingOutlined/>}> ADD TO POOL</div>
+                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}><i className="bx bx-spin bx-loader"/> ADD TO POOL</div>
                             }
 
                             {props.approvalBase && props.approvalToken && !props.startTx &&
@@ -617,6 +648,27 @@ const AddAsymmPane = (props) => {
 }
 
 const RemoveLiquidityPane = (props) => {
+
+    //const context = useContext(Context)
+    
+    // eslint-disable-next-line
+    {/*
+    const getLockedAmount = () => {
+        if (context.stakesData && props.pool) {
+            console.log(context.stakesData)
+            console.log(props.pool)
+            const lockedAmount = context.stakesData.find(x => x.address === props.pool.address).locked
+            console.log(lockedAmount)
+            return lockedAmount
+        }
+    }
+
+    const getLockedWorth = async () => {
+        let poolShare = await getPoolShares(context.account, props.pool.address)
+        console.log(poolShare)
+        return poolShare
+    }
+    */}
 
     return (
         <>
@@ -646,6 +698,49 @@ const RemoveLiquidityPane = (props) => {
                         <td>
                         </td>
                     </tr>
+                    {/*
+                    <tr>
+                        <td>
+                            <p className="mb-0 text-left">Locked LP Tokens</p>
+                        </td>
+                        <td className='text-right'>
+                            {console.log(context.stakesData)}
+                            {context.stakesData &&                 
+                                <h5 className="mb-0">{formatAllUnits(convertFromWei(getLockedAmount()))}</h5>
+                            }
+                            {!context.stakesData &&
+                                <i className="bx bx-spin bx-loader"/>
+                            }
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p className="mb-0 text-left">Locked {props.pool.symbol}</p>
+                        </td>
+                        <td className='text-right'>
+                            {context.stakesData &&                 
+                                <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(getLockedWorth().tokenAmount * getLockedAmount()))}</h5>
+                            }
+                            {!context.stakesData &&
+                                <i className="bx bx-spin bx-loader"/>
+                            }
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p className="mb-0 text-left">Locked SPARTA</p>
+                        </td>
+                        <td>
+                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(getLockedWorth().baseAmount * getLockedAmount()))}</h5>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    */}
                     </tbody>
                 </table>
             </div>

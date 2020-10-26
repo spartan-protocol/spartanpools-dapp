@@ -8,7 +8,6 @@ import { Row, Col, message, Input, Table } from 'antd';
 
 import { H1, H2, Button } from '../components/elements';
 
-import { LoadingOutlined } from '@ant-design/icons';
 var utils = require('ethers').utils;
 
 const Upgrade = (props) => {
@@ -34,7 +33,7 @@ const Upgrade = (props) => {
     }, [context.tokenDetailsArray])
 
     const getData = async () => {
-        // let eligibleAssetArray = context.eligibleAssetArray ? context.eligibleAssetArray : await getEligibleAssets(walletData.address)
+        // let eligibleAssetArray = context.eligibleAssetArray ? context.eligibleAssetArray : await getEligibleAssets(account)
         // context.setContext({ 'eligibleAssetArray': eligibleAssetArray })
     }
     const changeToken = (e) => {
@@ -48,7 +47,7 @@ const Upgrade = (props) => {
             setApproval(true)
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, SPARTA_ADDR).call()
+            const approval = await contract.methods.allowance(context.account, SPARTA_ADDR).call()
             console.log(approval)
             if (+approval > 0) {
                 setApproval(true)
@@ -61,7 +60,7 @@ const Upgrade = (props) => {
         // (utils.parseEther(10**18)).toString()
         const supply = await contract.methods.totalSupply().call()
         await contract.methods.approve(SPARTA_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -73,7 +72,7 @@ const Upgrade = (props) => {
         setStartTx(true)
         let contract = getSpartaContract()
         await contract.methods.upgrade(token).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: '',
             // value: token === BNB_ADDR ? sellData.input : 0
@@ -81,9 +80,9 @@ const Upgrade = (props) => {
         message.success(`Transaction Sent!`,  2);
         setStartTx(false)
         setEndTx(true)
-        let tokenDetailsArray = await getTokenDetails(context.walletData.address, context.tokenArray)
+        let tokenDetailsArray = await getTokenDetails(context.account, context.tokenArray)
         context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
-        let walletData = await getWalletData(context.walletData.address, tokenDetailsArray)
+        let walletData = await getWalletData(context.account, tokenDetailsArray)
         context.setContext({ 'walletData': walletData })
     }
 
@@ -115,7 +114,7 @@ const Upgrade = (props) => {
                                     <Button onClick={upgrade} type={'primary'} >UPGRADE</Button>
                                 }
                                 {approval && startTx && !endTx &&
-                                    <Button onClick={upgrade} type={'primary'} icon={<LoadingOutlined/>}>UPGRADE</Button>
+                                    <Button onClick={upgrade} type={'primary'}><i className="bx bx-spin bx-loader"/> UPGRADE</Button>
                                 }
 
                         </Col>

@@ -16,7 +16,6 @@ import { Row, Col, Container } from 'reactstrap';
 //import components
 import AddressConn from '../Common/AddressConn';
 import ThemeSwitch from "../Common/ThemeSwitch";
-//import ThemeSwitch from "../Common/ThemeSwitch";
 
 const Header = (props) => {
 
@@ -47,7 +46,12 @@ const Header = (props) => {
 
                 <Col xs={4} className="px-1 text-right">
                   <LanguageDropdown />
-                  <AddressConn />
+                  <AddressConn 
+                    changeStates={props.changeStates}
+                    changeNotification={props.changeNotification}
+                    connectedTokens={props.connectedTokens}
+                    connectingTokens={props.connectingTokens}
+                  />
                 </Col>
 
               </Row>

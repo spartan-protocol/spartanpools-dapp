@@ -76,6 +76,9 @@ const CreatePool = (props) => {
     useEffect(() => {
         if (context.connected) {
             getData()
+            return function cleanup() {
+                getData()
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [context.connected])
@@ -109,7 +112,7 @@ const CreatePool = (props) => {
                 setNotifyType('danger')
             } else {
                 try {
-                    var tokenData = await getNewTokenData(addressSelected, context.walletData.address)
+                    var tokenData = await getNewTokenData(addressSelected, context.account)
                     setTokenData(tokenData)
                     //console.log(tokenData)
                     if (+tokenData.balance > 0) {
@@ -216,7 +219,7 @@ const CreatePool = (props) => {
 
     const checkApproval1 = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
+        const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
         const tokenData = await getTokenData(address, context.walletData)
         if (+approval >= tokenData.balance) {
             setApproval1(true)
@@ -227,8 +230,8 @@ const CreatePool = (props) => {
             setApproval2(true)
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.walletData.address, ROUTER_ADDR).call()
-            var tokenData = await getNewTokenData(address, context.walletData.address)
+            const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
+            var tokenData = await getNewTokenData(address, context.account)
             if (+approval >= +tokenData.balance) {
                 setApproval2(true)
             }
@@ -251,7 +254,7 @@ const CreatePool = (props) => {
         const supply = await contract.methods.totalSupply().call()
         //console.log(ROUTER_ADDR, supply)
         await contract.methods.approve(ROUTER_ADDR, supply).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: ''
         })
@@ -274,7 +277,7 @@ const CreatePool = (props) => {
         //console.log(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
 
         await poolContract.methods.createPool(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected).send({
-            from: context.walletData.address,
+            from: context.account,
             gasPrice: '',
             gas: '',
             value: addressSelected === BNB_ADDR ? formatBN(stake2Data.input, 0) : 0
@@ -290,9 +293,9 @@ const CreatePool = (props) => {
         var sortedTokens = [...new Set(assetArray.concat(tokenArray))].sort()
         let poolArray = await getListedPools()
         let poolsData = await getPoolsData(tokenArray)
-        // let stakesData = await getPoolSharesData(context.walletData.address, poolArray)
-        let tokenDetailsArray = await getTokenDetails(context.walletData.address, sortedTokens)
-        let walletData = await getWalletData(context.walletData.address, tokenDetailsArray)
+        // let stakesData = await getPoolSharesData(context.account, poolArray)
+        let tokenDetailsArray = await getTokenDetails(context.account, sortedTokens)
+        let walletData = await getWalletData(context.account, tokenDetailsArray)
         context.setContext({'tokenArray': tokenArray})
         context.setContext({'poolArray': poolArray})
         context.setContext({'poolsData': poolsData})

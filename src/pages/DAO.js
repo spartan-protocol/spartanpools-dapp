@@ -35,6 +35,9 @@ const DAO = (props) => {
 
     useEffect(() => {
         getData()
+        return function cleanup() {
+            getData()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -70,33 +73,33 @@ const DAO = (props) => {
 
     const listAsset = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.listAssetWithClaim(asset, maxClaim, claimRate).send({ from: context.walletData.address })
+        let tx = await contract.methods.listAssetWithClaim(asset, maxClaim, claimRate).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
     const listDAO = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.changeDAO(daoAddress).send({ from: context.walletData.address })
+        let tx = await contract.methods.changeDAO(daoAddress).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
     const listRouter = async () => {
         let contract = getDaoContract()
-        let tx = await contract.methods.setGenesisRouter(routerAddress).send({ from: context.walletData.address })
+        let tx = await contract.methods.setGenesisRouter(routerAddress).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
     const changeIncentiveAddr= async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.changeIncentiveAddress(incentiveAddress).send({ from: context.walletData.address })
+        let tx = await contract.methods.changeIncentiveAddress(incentiveAddress).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
 
     const startEmissions = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.startEmissions().send({ from: context.walletData.address })
+        let tx = await contract.methods.startEmissions().send({ from: context.account })
         //console.log(tx.transactionHash)
     }
     const stopEmissions = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.stopEmissions().send({ from: context.walletData.address })
+        let tx = await contract.methods.stopEmissions().send({ from: context.account })
         //console.log(tx.transactionHash)
     }
 

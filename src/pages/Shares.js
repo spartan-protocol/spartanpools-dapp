@@ -83,7 +83,7 @@ const Shares = (props) => {
                         <Col xs="12">
                             <br/>
                             {/*{!context.connected &&                                       //RE-ENABLE THESE AFTER INTEGRATING DATA
-                                <div style={{textAlign:"center"}}><LoadingOutlined/></div>  //RE-ENABLE THESE AFTER INTEGRATING DATA
+                                <div style={{textAlign:"center"}}><i className="bx bx-spin bx-loader"/></div>  //RE-ENABLE THESE AFTER INTEGRATING DATA
                             }
                         {context.connected &&                                           //RE-ENABLE THESE AFTER INTEGRATING DATA*/}
                                 <PoolShareTable shares={shares} />

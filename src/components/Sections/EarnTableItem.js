@@ -27,7 +27,7 @@ export const EarnTableItem = (props) => {
     const deposit = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.walletData.address })
+        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
     }
@@ -35,20 +35,20 @@ export const EarnTableItem = (props) => {
     const withdraw = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.withdraw(record.address).send({ from: context.walletData.address })
+        let tx = await contract.methods.withdraw(record.address).send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
     }
 
     // const harvest = async () => {
     //     let contract = getDaoContract()
-    //     let tx = await contract.methods.harvest().send({ from: context.walletData.address })
+    //     let tx = await contract.methods.harvest().send({ from: context.account })
     //     console.log(tx.transactionHash)
     //     await refreshData()
     // }
 
     const refreshData = async () => {
-        let stakesData = await getPoolSharesData(context.walletData.address, await getListedTokens())
+        let stakesData = await getPoolSharesData(context.account, await getListedTokens())
         context.setContext({ 'stakesData': stakesData })
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
