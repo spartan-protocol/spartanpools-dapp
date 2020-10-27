@@ -118,23 +118,25 @@ const NewSwap = (props) => {
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
-        setPoolURL(params.pool)
-        const pool = await getPoolData(params.pool, context.poolsData)
-        setPool(pool)
+        if (params.pool !== undefined) {
+            setPoolURL(params.pool)
+            console.log(params.pool)
+            const pool = await getPoolData(params.pool, context.poolsData)
+            setPool(pool)
 
-        const inputTokenData = await getNewTokenData(SPARTA_ADDR, context.account)
-        const outputTokenData = await getNewTokenData(pool.address, context.account)
-        setInputTokenData(inputTokenData)
-        setOutputTokenData(outputTokenData)
+            const inputTokenData = await getNewTokenData(SPARTA_ADDR, context.account)
+            const outputTokenData = await getNewTokenData(pool.address, context.account)
+            setInputTokenData(inputTokenData)
+            setOutputTokenData(outputTokenData)
 
-        setBuyData(await getSwapData(inputTokenData?.balance, inputTokenData, outputTokenData, pool, false))
-        setSellData(await getSwapData(outputTokenData?.balance, outputTokenData, inputTokenData, pool, true))
+            setBuyData(await getSwapData(inputTokenData?.balance, inputTokenData, outputTokenData, pool, false))
+            setSellData(await getSwapData(outputTokenData?.balance, outputTokenData, inputTokenData, pool, true))
 
-        await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
-        await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+            await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
+            await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
 
-        // console.log(await checkApproval(SPARTA_ADDR))
-
+            // console.log(await checkApproval(SPARTA_ADDR))
+        }
     };
 
     // MAKE SURE THESE ARE ALL VISIBLE TO USER:
@@ -296,68 +298,69 @@ const NewSwap = (props) => {
                                     <PoolPaneSide pool={pool} price={context.spartanPrice}/>
                                 </Col>
                                 <Col lg="6">
-
-                                    <Card className="h-100">
-                                        <CardBody>
-                                            <h4 className="card-title mb-4 text-center">{props.t("Buy/Sell")}</h4>
-                                            <Nav pills className="bg-light rounded" role="tablist">
-                                                <NavItem className="text-center w-50">
-                                                    <NavLink
-                                                        className={classnames({active: activeTab === '1'})}
-                                                        onClick={() => {
-                                                            toggle('1');
-                                                        }}
-                                                    >
-                                                        {props.t("Buy")} {pool.symbol}
-                                                    </NavLink>
-                                                </NavItem>
-                                                <NavItem className="text-center w-50">
-                                                    <NavLink
-                                                        className={classnames({active: activeTab === '2'})}
-                                                        onClick={() => {
-                                                            toggle('2');
-                                                        }}
-                                                    >
-                                                        {props.t("Sell")} {pool.symbol}
-                                                    </NavLink>
-                                                </NavItem>
-                                            </Nav>
-                                            <TabContent activeTab={activeTab} className="mt-4">
-                                                <TabPane tabId="1" id="buy-tab">
-                                                    <TabPane tab={`BUY ${pool.symbol}`} key="1">
-                                                        <TradePane
-                                                            pool={pool}
-                                                            tradeData={buyData}
-                                                            onTradeChange={onBuyChange}
-                                                            changeTradeAmount={changeBuyAmount}
-                                                            approval={approvalS}
-                                                            unlock={unlockSparta}
-                                                            trade={buy}
-                                                            startTx={startTx}
-                                                            endTx={endTx}
-                                                            type={"Buy"}
-                                                        />
+                                    {pool &&
+                                        <Card className="h-100">
+                                            <CardBody>
+                                                <h4 className="card-title mb-4 text-center">{props.t("Buy/Sell")}</h4>
+                                                <Nav pills className="bg-light rounded" role="tablist">
+                                                    <NavItem className="text-center w-50">
+                                                        <NavLink
+                                                            className={classnames({active: activeTab === '1'})}
+                                                            onClick={() => {
+                                                                toggle('1');
+                                                            }}
+                                                        >
+                                                            {props.t("Buy")} {pool.symbol}
+                                                        </NavLink>
+                                                    </NavItem>
+                                                    <NavItem className="text-center w-50">
+                                                        <NavLink
+                                                            className={classnames({active: activeTab === '2'})}
+                                                            onClick={() => {
+                                                                toggle('2');
+                                                            }}
+                                                        >
+                                                            {props.t("Sell")} {pool.symbol}
+                                                        </NavLink>
+                                                    </NavItem>
+                                                </Nav>
+                                                <TabContent activeTab={activeTab} className="mt-4">
+                                                    <TabPane tabId="1" id="buy-tab">
+                                                        <TabPane tab={`BUY ${pool.symbol}`} key="1">
+                                                            <TradePane
+                                                                pool={pool}
+                                                                tradeData={buyData}
+                                                                onTradeChange={onBuyChange}
+                                                                changeTradeAmount={changeBuyAmount}
+                                                                approval={approvalS}
+                                                                unlock={unlockSparta}
+                                                                trade={buy}
+                                                                startTx={startTx}
+                                                                endTx={endTx}
+                                                                type={"Buy"}
+                                                            />
+                                                        </TabPane>
                                                     </TabPane>
-                                                </TabPane>
-                                                <TabPane tabId="2" id="sell-tab">
-                                                    <TabPane tab={`SELL ${pool.symbol}`} key="2">
-                                                        <TradePane
-                                                            pool={pool}
-                                                            tradeData={sellData}
-                                                            onTradeChange={onSellChange}
-                                                            changeTradeAmount={changeSellAmount}
-                                                            approval={approval}
-                                                            unlock={unlockToken}
-                                                            trade={sell}
-                                                            startTx={startTx}
-                                                            endTx={endTx}
-                                                            type={"Sell"}
-                                                        />
+                                                    <TabPane tabId="2" id="sell-tab">
+                                                        <TabPane tab={`SELL ${pool.symbol}`} key="2">
+                                                            <TradePane
+                                                                pool={pool}
+                                                                tradeData={sellData}
+                                                                onTradeChange={onSellChange}
+                                                                changeTradeAmount={changeSellAmount}
+                                                                approval={approval}
+                                                                unlock={unlockToken}
+                                                                trade={sell}
+                                                                startTx={startTx}
+                                                                endTx={endTx}
+                                                                type={"Sell"}
+                                                            />
+                                                        </TabPane>
                                                     </TabPane>
-                                                </TabPane>
-                                            </TabContent>
-                                        </CardBody>
-                                    </Card>
+                                                </TabContent>
+                                            </CardBody>
+                                        </Card>
+                                    }
                                 </Col>
                             </Row>
                         </Container>

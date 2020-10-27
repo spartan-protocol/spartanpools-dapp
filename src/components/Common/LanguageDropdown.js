@@ -67,7 +67,7 @@ const LanguageDropdown = (props) => {
         className="d-inline-block"
       >
         <DropdownToggle
-          className="btn header-item waves-effect"
+          className="btn header-item waves-effect mx-1"
           tag="button"
         >
           <img

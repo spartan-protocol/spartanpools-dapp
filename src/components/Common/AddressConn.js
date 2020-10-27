@@ -89,16 +89,16 @@ const AddressConn = (props) => {
     return (
         <>
             {!context.walletData && !context.walletDataLoading &&
-                <div className="btn header-white" onClick={()=>connectWallet(props)}>
-                        <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-x-circle ml-1 float-right" style={{fontSize:18}}/></div>
+                <div className="btn header-white mx-1" onClick={()=>connectWallet(props)}>
+                        <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-x-circle mx-1 float-right" style={{fontSize:22}}/></div>
                 </div>
             }
-            <div className="btn header-white" onClick={toggleRightbar}>
+            <div className="btn header-white mx-1" onClick={toggleRightbar}>
                 {context.walletData && context.walletDataLoading &&
-                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-loader-alt bx-spin ml-1 float-right" style={{fontSize:18}}/></div>
+                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-loader-alt bx-spin mx-1 float-right" style={{fontSize:22}}/></div>
                 }
                 {context.walletData && !context.walletDataLoading &&
-                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="d-none d-sm-block bx bx-check-circle ml-1 float-right" style={{fontSize:18}}/></div>
+                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-check-circle mx-1 float-right" style={{fontSize:22}}/></div>
                 }
             </div>
         </>
