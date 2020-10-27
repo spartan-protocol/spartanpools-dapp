@@ -43,13 +43,6 @@ const EarnTable = (props) => {
     }
     */}
 
-    // const harvest = async () => {
-    //     let contract = getDaoContract()
-    //     let tx = await contract.methods.harvest().send({ from: context.account })
-    //     console.log(tx.transactionHash)
-    //     await refreshData()
-    // }
-
     useEffect(() => {
         const interval = setInterval(() => {
             if (context.walletData) {
@@ -159,10 +152,10 @@ const EarnTable = (props) => {
                                                 <td colSpan="5">
                                                     {!context.poolSharesDataLoading && !context.poolSharesDataComplete &&
                                                         <button color="primary"
-                                                        className="btn btn-primary waves-effect waves-light m-1"
-                                                        onClick={()=>nextPoolSharesDataPage()}
-                                                        >
-                                                        Load More
+                                                            className="btn btn-primary waves-effect waves-light m-1"
+                                                            onClick={()=>nextPoolSharesDataPage()}
+                                                            >
+                                                            Load More
                                                         </button>
                                                     }
                                                     {context.poolSharesDataLoading &&
