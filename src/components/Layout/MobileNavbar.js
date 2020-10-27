@@ -7,23 +7,23 @@ import { withNamespaces } from 'react-i18next';
 
 const MobileNavbar = (props) => {
 
-    const [isDropdown1,setIsDropdown1] = useState('false')
-    const [isDropdown2,setIsDropdown2] = useState('false')
+    const [isDropdown1,setIsDropdown1] = useState(false)
+    const [isDropdown2,setIsDropdown2] = useState(true)
 
     const toggleDropdown1 = () => {
-        setIsDropdown1(!isDropdown1);
-        setIsDropdown2('false');
+        setIsDropdown1(!isDropdown1)
+        setIsDropdown2(false)
     }
 
     const toggleDropdown2 = () => {
-        setIsDropdown2(!isDropdown2);
-        setIsDropdown1('false');
+        setIsDropdown2(!isDropdown2)
+        setIsDropdown1(false)
     }
 
     const closeDropdowns = () => {
         props.setNavIsOpen(false)
-        setIsDropdown2('false');
-        setIsDropdown1('false');
+        setIsDropdown2(false)
+        setIsDropdown1(false)
     }
 
     return (
@@ -37,8 +37,8 @@ const MobileNavbar = (props) => {
                                     <i className="bx bx-customize mr-2"></i>{props.t('Apps')}<div className="arrow-down ml-2"></div>
                                 </Link>
                                 <div className={classname("dropdown-menu", { show: !isDropdown1 })}>
-                                    <Link to="/pools" className="dropdown-item" onClick={closeDropdowns}>{props.t('Pools')}</Link>
-                                    <Link to="/earn" className="dropdown-item" onClick={closeDropdowns}>{props.t('Earn')}</Link>
+                                    <Link to="/pools" className="dropdown-item m-2" onClick={closeDropdowns}><i className="bx bx-swim mr-2"/>{props.t('Pools')}</Link>
+                                    <Link to="/earn" className="dropdown-item m-2" onClick={closeDropdowns}><i className="bx bx-money mr-2"/>{props.t('Earn')}</Link>
                                     {/*
                                     <Link to="/share" className="dropdown-item" onClick={closeDropdowns}>{props.t('Shares')}</Link>
                                     <Link to="/dao" className="dropdown-item" onClick={closeDropdowns}>{props.t('Dao')}</Link>
