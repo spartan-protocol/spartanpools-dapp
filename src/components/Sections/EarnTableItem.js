@@ -69,7 +69,7 @@ export const EarnTableItem = (props) => {
                 <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.locked))}
                     <Progress multi className="m-1 my-2">
-                        <Progress bar color="success" value={convertFromWei(locked).toFixed(2)} max={convertFromWei(total).toFixed(2)}>{lockedPC} %</Progress>
+                        <Progress bar color="success" value={convertFromWei(locked).toFixed(2)} max={convertFromWei(total).toFixed(2)}>{lockedPC <= 0 && "0%"}{lockedPC > 0 && lockedPC + " %"}</Progress>
                         <Progress bar color="danger" value={convertFromWei(units).toFixed(2)} max={convertFromWei(total).toFixed(2)}></Progress>
                     </Progress>
                 </td>
