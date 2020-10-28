@@ -22,9 +22,11 @@ export const TradePane = (props) => {
 
     const toggle = () => setShowModal(!showModal);
 
+    const remainder = convertFromWei(props.tradeData.balance - props.tradeData.input)
+
     const checkEnoughForGas = () => {
         if (props.tradeData.symbol === 'BNB') { // if input Symbol is BNB
-            if (convertFromWei(props.tradeData.balance - props.tradeData.input) < 0.05) {   //if (wallet BNB balance) minus (transaction BNB amount) < 0.05
+            if (remainder < 0.05) {   //if (wallet BNB balance) minus (transaction BNB amount) < 0.05
                 setShowModal(true)
             }    
             else props.trade()
@@ -126,22 +128,55 @@ export const TradePane = (props) => {
                 <Modal isOpen={showModal} toggle={toggle}>
                         <ModalHeader toggle={toggle}>BNB balance will be low after this transaction!</ModalHeader>
                         <ModalBody>
-                            This transaction will leave you with a very low BNB balance (~{formatAllUnits(convertFromWei(props.tradeData.balance - props.tradeData.input))} BNB)<br/>
-                            Please ensure you understand that BNB is used as 'gas' for the BSC network.<br/>
-                            If you do not have any/enough BNB in your wallet you may not be able to transfer assets or interact with BSC DApps after this transaction.<br/>
-                            Keep in mind however, gas fees are usually very low (~0.005 BNB).<br/>
-                            0.05 BNB is usually enough for 10+ transactions.<br/>
+                            {remainder >= 0.05 &&
+                                <>
+                                    This transaction will now leave you with (~{formatAllUnits(remainder)} BNB)<br/>
+                                    This is plenty of gas to interact with the BSC network.<br/>
+                                    If you would rather a different amount please cancel txn and manually input your amount.<br/>
+                                    Remember though, we recommend leaving ~0.05 BNB in your wallet for gas purposes.<br/>
+                                </>
+                            }
+                            {remainder < 0.05 &&
+                                <>
+                                    This transaction will leave you with a very low BNB balance (~{formatAllUnits(remainder)} BNB)<br/>
+                                    Please ensure you understand that BNB is used as 'gas' for the BSC network.<br/>
+                                    If you do not have any/enough BNB in your wallet you may not be able to transfer assets or interact with BSC DApps after this transaction.<br/>
+                                    Keep in mind however, gas fees are usually very low (~0.005 BNB).<br/>
+                                    0.05 BNB is usually enough for 10+ transactions.<br/>
+                                </>
+                            }
                         </ModalBody>
                         <ModalFooter>
-                            <Button 
-                            color="primary" 
-                            onClick={() => {
-                                toggle();
-                                props.trade();
-                            }}>
-                                Continue Txn Anyway!
-                            </Button>{' '}
-                            <Button color="secondary" onClick={toggle}>Cancel Transaction</Button>
+                            {remainder >= 0.05 &&
+                                <Button 
+                                color="primary" 
+                                onClick={() => {
+                                    toggle();
+                                    props.trade();
+                                }}>
+                                    Continue Transaction!
+                                </Button>
+                            }
+                            {remainder < 0.05 &&
+                                <>
+                                    <Button 
+                                    color="primary" 
+                                    onClick={() => {
+                                        props.changeTradeAmount((1 - (0.05 / convertFromWei(props.tradeData.balance))) * 100);
+                                    }}>
+                                        Change to ~{formatAllUnits(convertFromWei(props.tradeData.balance * (1 - (0.05 / convertFromWei(props.tradeData.balance)))))} BNB
+                                    </Button>
+                                    <Button 
+                                        color="danger" 
+                                        onClick={() => {
+                                            toggle();
+                                            props.trade();
+                                        }}>
+                                            Continue (Might Fail!)
+                                    </Button>
+                                </>
+                            }
+                            <Button color="secondary" onClick={toggle}>Cancel</Button>
                         </ModalFooter>
                 </Modal>
 

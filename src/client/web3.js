@@ -48,7 +48,7 @@ export const getSpartaPrice = async () => {
     console.log('start get sparta price')
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
     console.log('end get sparta price')
-    console.log(resp.data["spartan-protocol-token"].usd)
+    //console.log(resp.data["spartan-protocol-token"].usd)
     return resp.data["spartan-protocol-token"].usd
 }
 
@@ -251,7 +251,7 @@ export const getPool = async (address) => {
 
 export const getPoolData = async (address, poolsData) => {
     const poolData = poolsData.find((item) => item.address === address)
-    console.log(poolData)
+    //console.log(poolData)
     return (poolData)
 }
 

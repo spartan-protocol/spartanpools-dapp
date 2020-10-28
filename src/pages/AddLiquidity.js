@@ -486,6 +486,7 @@ const AddSymmPane = (props) => {
     return (
         <>
             <InputPane
+                address={props.pool.address}
                 paneData={props.userData}
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}
@@ -582,6 +583,7 @@ const AddAsymmPane = (props) => {
             </Alert>
             <br/>
             <InputPane
+                address={props.pool.address}
                 paneData={props.userData}
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}

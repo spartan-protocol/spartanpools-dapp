@@ -1,6 +1,6 @@
 import {convertFromWei, formatAllUnits} from "../../utils";
 import React from "react";
-import {PercentButtonRow} from "../common";
+import {PercentButtonRow, PercentButtonRowGas} from "../common";
 
 import {withNamespaces} from "react-i18next";
 
@@ -13,6 +13,7 @@ import {
     Row,
 } from "reactstrap";
 import { withRouter } from "react-router-dom";
+import { BNB_ADDR } from "../../client/web3";
 
 export const InputPane = (props) => {
 
@@ -45,7 +46,7 @@ export const InputPane = (props) => {
                 <Label>{props.t("Add Amount :")}</Label>
                 <InputGroup className="mb-3">
                     <InputGroupAddon addonType="prepend">
-                        <Label className="input-group-text">{props.t("Total")}</Label>
+                        <Label className="input-group-text">{props.paneData?.symbol} {props.t("Total")}</Label>
                     </InputGroupAddon>
                     <Input type="text" className="form-control" onChange={props.onInputChange}
                            placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
@@ -60,7 +61,12 @@ export const InputPane = (props) => {
             </div>
             <br/>
             <div className="text-center">
-                <PercentButtonRow changeAmount={props.changeAmount}/>
+                {props.address !== BNB_ADDR &&
+                    <PercentButtonRow changeAmount={props.changeAmount}/>
+                }
+                {props.address === BNB_ADDR &&
+                    <PercentButtonRowGas changeAmount={props.changeAmount}/>
+                }
             </div>
             <br/>
         </div>
