@@ -36,19 +36,26 @@ export const PoolTableItem = (props) => {
                     {formatAllUSD(convertFromWei(props.fees), context.spartanPrice)}
                 </td>
                 <td>
-                    <Link to={`/pool/stake?pool=${props.address}`}>
-                        <button color="primary"
-                                className="btn btn-primary waves-effect waves-light m-1 w-75">
-                            <i className="bx bx-log-in-circle"></i> {props.t("Join")}
-                        </button>
-                    </Link>
-                    <Link to={`/pool/swap?pool=${props.address}`}>
-                        <button color="primary"
-                                className="btn btn-primary waves-effect waves-light m-1 w-75">
-                            <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
+                    {context.walletData &&
+                        <Link to={`/pool/stake?pool=${props.address}`}>
+                            <button color="primary"
+                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
+                                <i className="bx bx-log-in-circle"></i> {props.t("Join")}
+                            </button>
+                        </Link>
+                    }
+                    {context.walletData &&
+                        <Link to={`/pool/swap?pool=${props.address}`}>
+                            <button color="primary"
+                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
+                                <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
 
-                        </button>
-                    </Link>
+                            </button>
+                        </Link>
+                    }
+                    {!context.walletData && !context.walletDataLoading &&
+                        <div><h6 className="m-1">Connect Wallet</h6></div>
+                    }
                 </td>
             </tr>
         </>

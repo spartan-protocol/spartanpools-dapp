@@ -95,7 +95,7 @@ const EarnTable = (props) => {
                             <CardBody>
                                 <h2>Claim Rewards</h2>
                                 <h6>Witness the power of BSC's fast block-times! Watch your harvest accumulate in real-time!</h6>
-                                    {!context.walletData &&
+                                    {context.walletDataLoading &&
                                         <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                     }
                                     {context.walletData &&
@@ -116,8 +116,7 @@ const EarnTable = (props) => {
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
-
-                            {context.stakesData ? (
+                            {context.stakesData &&
                                 <div className="table-responsive">
                                     <CardTitle><h4>Earn</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
@@ -169,9 +168,13 @@ const EarnTable = (props) => {
                                         </tbody>
                                     </Table>
                                 </div>
-                            ) : (
+                            }
+                            {context.stakesDataLoading &&
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                            )}
+                            }
+                            {!context.stakesDataLoading && !context.walletData &&
+                                <div className="text-center m-2">Please connect your wallet to proceed</div>
+                            }
                         </CardBody>
                     </Card>
                 </Col>
