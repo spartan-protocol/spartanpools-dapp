@@ -14,7 +14,7 @@ import { withRouter } from "react-router-dom";
 const EarnTable = (props) => {
 
     const context = useContext(Context);
-    const [reward, setReward] = useState(false);
+    const [reward, setReward] = useState(0);
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
 

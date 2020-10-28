@@ -38,6 +38,7 @@ import PoolPaneSide from "../components/Sections/PoolPaneSide"
 
 const AddLiquidity = (props) => {
 
+    const context = useContext(Context)
     const [activeTab, setActiveTab] = useState('1');
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
@@ -46,11 +47,10 @@ const AddLiquidity = (props) => {
         if (activeTab !== tab) setActiveTab(tab);
     };
 
-    const context = useContext(Context)
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
-        'address': BNB_ADDR,
+        'address': 'XXX',
         'price': 0,
         'volume': 0,
         'baseAmount': 0,
@@ -112,7 +112,6 @@ const AddLiquidity = (props) => {
         let params = queryString.parse(props.location.search)
         if (context.walletData && !context.walletDataLoading) {
             var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-            console.log(context.walletData)
             if (existsInWalletData === true) {
                 await getData()
             }
@@ -155,7 +154,6 @@ const AddLiquidity = (props) => {
 
     const nextPoolsDataPage = async () => {
         if (context.poolsData && !context.poolsDataLoading) {
-            console.log(context.poolsData)
             var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
             context.setContext({'poolsDataLoading': true})
             context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
@@ -373,9 +371,8 @@ const AddLiquidity = (props) => {
                             <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Join")}/>
                             {context.stakesData &&
                                 <Row>
-                                    
                                     <Col lg="4">
-                                        <PoolPaneSide pool={pool} price={context.spartanPrice} />
+                                        <PoolPaneSide pool={pool} price={context.spartanPrice} address={pool.address} />
                                     </Col>
                                     <Col lg="6">
                                         <Card className="h-100">

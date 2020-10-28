@@ -51,7 +51,7 @@ const NewSwap = (props) => {
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
-        'address': BNB_ADDR,
+        'address': 'XXX',
         'price': 0,
         'volume': 0,
         'baseAmount': 0,
@@ -295,7 +295,7 @@ const NewSwap = (props) => {
                             <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Swap")}/>
                             <Row>
                                 <Col lg="4">
-                                    <PoolPaneSide pool={pool} price={context.spartanPrice}/>
+                                    <PoolPaneSide pool={pool} price={context.spartanPrice} address={pool.address}/>
                                 </Col>
                                 <Col lg="6">
                                     {pool &&

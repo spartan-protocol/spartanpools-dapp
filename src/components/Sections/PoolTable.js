@@ -86,7 +86,7 @@ const PoolTable = (props) => {
                                     </div>
                                 </>
                             }
-                            {context.poolsDataLoading &&
+                            {!context.poolsData &&
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                             }
                         </CardBody>
