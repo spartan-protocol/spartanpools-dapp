@@ -167,18 +167,48 @@ export const PercentButtonRow = (props) => {
     }
     return (
         <>
-
             <Col xs={24}>
-
                 <Button color="primary" type="button" style={btnStyle} onClick={change25}>25%</Button>
                 <Button color="primary" type="button" style={btnStyle} onClick={change50}>50%</Button>
                 <Button color="primary" type="button" style={btnStyle} onClick={change75}>75%</Button>
                 <Button color="primary" style={btnStyle} onClick={change100}>All</Button>
             </Col>
-
         </>
     )
 }
+
+export const PercentButtonRowGas = (props) => {
+
+    const change25 = () => {
+        props.changeAmount(25)
+    }
+    const change50 = () => {
+        props.changeAmount(50)
+    }
+    const change75 = () => {
+        props.changeAmount(75)
+    }
+    const change100 = () => {
+        props.changeAmount(98)
+    }
+
+    const btnStyle = {
+        marginRight: 3.5,
+        marginTop: 10,
+        minWidth: '15%',
+    }
+    return (
+        <>
+            <Col xs={24}>
+                <Button color="primary" type="button" style={btnStyle} onClick={change25}>25%</Button>
+                <Button color="primary" type="button" style={btnStyle} onClick={change50}>50%</Button>
+                <Button color="primary" type="button" style={btnStyle} onClick={change75}>75%</Button>
+                <Button color="primary" style={btnStyle} onClick={change100}>Max</Button>
+            </Col>
+        </>
+    )
+}
+
 // eslint-disable-next-line
 {/*
 export const TokenDropDown = (props) => {
