@@ -7,7 +7,7 @@ import { manageBodyClass } from '../common';
 
 import { getListedTokens, getWalletData, getPoolSharesData, 
     getListedPools, getSpartaPrice, 
-    getPoolsData 
+    getPoolsData, 
 } from '../../client/web3'
 
 const AddressConn = (props) => {
@@ -15,6 +15,7 @@ const AddressConn = (props) => {
     const context = useContext(Context);
 
     useEffect(() => {
+        loadingGlobal(props)
         connectWallet(props)
         // eslint-disable-next-line
     }, [])
@@ -41,7 +42,7 @@ const AddressConn = (props) => {
         return false;
     }
 
-    const loadingTokens = async (account) => {
+    const loadingGlobal = async () => {
         // (spartanPrice) SPARTA PRICE | USED: GLOBALLY
         context.setContext({'spartanPrice': await getSpartaPrice()})
 
@@ -52,6 +53,19 @@ const AddressConn = (props) => {
         // (poolArray) LISTED POOLS | USED: GLOBALLY
         let poolArray = await getListedPools();
         context.setContext({'poolArray': poolArray});
+
+        // (stakesData) POOLS DATA | USED: POOLS TABLE + 
+        context.setContext({'poolsDataLoading': true})
+        const getPools = await getPoolsData(tokenArray)
+        context.setContext({'poolsData': getPools})
+        context.setContext({'poolsDataLoading': false})
+    }
+
+    const loadingTokens = async (account) => {
+
+        // (tokenArray) LISTED TOKENS | USED: GLOBALLY
+        let tokenArray = await getListedTokens()
+        context.setContext({'tokenArray': tokenArray})
 
         // eslint-disable-next-line
         {/*
@@ -67,12 +81,6 @@ const AddressConn = (props) => {
         let walletData = await getWalletData(account)
         context.setContext({'walletData': walletData})
         context.setContext({'walletDataLoading': false})
-
-        // (stakesData) POOLS DATA | USED: POOLS TABLE + 
-        context.setContext({'poolsDataLoading': true})
-        const getPools = await getPoolsData(tokenArray)
-        context.setContext({'poolsData': getPools})
-        context.setContext({'poolsDataLoading': false})
 
         // (stakesData) STAKES DATA | USED: RIGHT-BAR + 
         let stakesData = await getPoolSharesData(account, tokenArray)
