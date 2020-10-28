@@ -1,6 +1,6 @@
 import {convertFromWei, formatAllUnits} from "../../utils";
 import React from "react";
-import {PercentButtonRow, PercentButtonRowGas} from "../common";
+import {PercentButtonRow} from "../common";
 
 import {withNamespaces} from "react-i18next";
 
@@ -13,7 +13,6 @@ import {
     Row,
 } from "reactstrap";
 import { withRouter } from "react-router-dom";
-import { BNB_ADDR } from "../../client/web3";
 
 export const InputPane = (props) => {
 
@@ -61,12 +60,7 @@ export const InputPane = (props) => {
             </div>
             <br/>
             <div className="text-center">
-                {props.address !== BNB_ADDR &&
-                    <PercentButtonRow changeAmount={props.changeAmount}/>
-                }
-                {props.address === BNB_ADDR &&
-                    <PercentButtonRowGas changeAmount={props.changeAmount}/>
-                }
+                <PercentButtonRow changeAmount={props.changeAmount}/>
             </div>
             <br/>
         </div>

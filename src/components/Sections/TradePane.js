@@ -40,6 +40,7 @@ export const TradePane = (props) => {
     return (
         <>
             <InputPane
+                address={props.pool.address}
                 pool={props.pool}
                 paneData={props.tradeData}
                 onInputChange={props.onTradeChange}
@@ -162,9 +163,9 @@ export const TradePane = (props) => {
                                     <Button 
                                     color="primary" 
                                     onClick={() => {
-                                        props.changeTradeAmount((1 - (0.05 / convertFromWei(props.tradeData.balance))) * 100);
+                                        props.changeTradeAmount((0.999 - (0.05 / convertFromWei(props.tradeData.balance))) * 100);
                                     }}>
-                                        Change to ~{formatAllUnits(convertFromWei(props.tradeData.balance * (1 - (0.05 / convertFromWei(props.tradeData.balance)))))} BNB
+                                        Change to ~{formatAllUnits(convertFromWei(props.tradeData.balance * (0.999 - (0.05 / convertFromWei(props.tradeData.balance)))))} BNB
                                     </Button>
                                     <Button 
                                         color="danger" 

@@ -15,6 +15,7 @@ import Notification from '../components/Common/notification'
 import {
     Container,
     Row,
+    Button,
     Col,
     Card,
     CardBody,
@@ -24,6 +25,7 @@ import {
     TabPane,
     TabContent,
     Alert,
+    Modal, ModalHeader, ModalBody, ModalFooter
 } from "reactstrap";
 
 import classnames from 'classnames';
@@ -38,7 +40,6 @@ import PoolPaneSide from "../components/Sections/PoolPaneSide"
 
 const AddLiquidity = (props) => {
 
-    const context = useContext(Context)
     const [activeTab, setActiveTab] = useState('1');
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
@@ -47,6 +48,7 @@ const AddLiquidity = (props) => {
         if (activeTab !== tab) setActiveTab(tab);
     };
 
+    const context = useContext(Context)
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
@@ -112,6 +114,7 @@ const AddLiquidity = (props) => {
         let params = queryString.parse(props.location.search)
         if (context.walletData && !context.walletDataLoading) {
             var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
+            //console.log(context.walletData)
             if (existsInWalletData === true) {
                 await getData()
             }
@@ -154,6 +157,7 @@ const AddLiquidity = (props) => {
 
     const nextPoolsDataPage = async () => {
         if (context.poolsData && !context.poolsDataLoading) {
+            //console.log(context.poolsData)
             var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
             context.setContext({'poolsDataLoading': true})
             context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
@@ -371,8 +375,9 @@ const AddLiquidity = (props) => {
                             <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Join")}/>
                             {context.stakesData &&
                                 <Row>
+                                    
                                     <Col lg="4">
-                                        <PoolPaneSide pool={pool} price={context.spartanPrice} address={pool.address} />
+                                        <PoolPaneSide pool={pool} price={context.spartanPrice} address={pool.address}/>
                                     </Col>
                                     <Col lg="6">
                                         <Card className="h-100">
@@ -483,6 +488,25 @@ const AddLiquidity = (props) => {
 
 const AddSymmPane = (props) => {
 
+    const [showModal, setShowModal] = useState(false);
+
+    const toggle = () => setShowModal(!showModal);
+
+    const remainder = convertFromWei(props.userData.balance - props.userData.input)
+
+    const checkEnoughForGas = () => {
+        if (props.userData.symbol === 'BNB') { // if input Symbol is BNB
+            if (remainder < 0.05) {   //if (wallet BNB balance) minus (transaction BNB amount) < 0.05
+                setShowModal(true)
+            }    
+            else props.addLiquidity()
+        }
+
+        else {
+            props.addLiquidity()
+        }
+    }
+
     return (
         <>
             <InputPane
@@ -492,13 +516,13 @@ const AddSymmPane = (props) => {
                 changeAmount={props.changeAmount}
                 activeTab={props.activeTab}
             />
+            {console.log(props.userData)}
             <br/>
             <div className="text-center">
             <i className="bx bx-plus"/>
             </div>
             <br/>
             <br/>
-
             <div className="table-responsive mt-6">
                 <table className="table table-centered table-nowrap mb-0">
                     <tbody>
@@ -507,7 +531,7 @@ const AddSymmPane = (props) => {
                             <p className="mb-0 text-left">Estimated LP Units</p>
                         </td>
                         <td>
-                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits.toFixed(0)))}</h5>
+                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
                         </td>
                         <td>
                         </td>
@@ -558,15 +582,71 @@ const AddSymmPane = (props) => {
                     </Col>
                     <Col xs={12}>
                         {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}><i className="bx bx-spin bx-loader"/> ADD TO
+                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}><i className="bx bx-spin bx-loader"/> ADD TO
                             POOL</div>
                         }
                         {props.approvalBase && props.approvalToken && !props.startTx &&
-                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
+                        <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>ADD TO POOL</div>
                         }
                     </Col>
                 </Row>
             </div>
+
+            <Modal isOpen={showModal} toggle={toggle}>
+                <ModalHeader toggle={toggle}>BNB balance will be low after this transaction!</ModalHeader>
+                <ModalBody>
+                    {remainder >= 0.05 &&
+                        <>
+                            This transaction will now leave you with (~{formatAllUnits(remainder)} BNB)<br/>
+                            This is plenty of gas to interact with the BSC network.<br/>
+                            If you would rather a different amount please cancel txn and manually input your amount.<br/>
+                            Remember though, we recommend leaving ~0.05 BNB in your wallet for gas purposes.<br/>
+                        </>
+                    }
+                    {remainder < 0.05 &&
+                        <>
+                            This transaction will leave you with a very low BNB balance (~{formatAllUnits(remainder)} BNB)<br/>
+                            Please ensure you understand that BNB is used as 'gas' for the BSC network.<br/>
+                            If you do not have any/enough BNB in your wallet you may not be able to transfer assets or interact with BSC DApps after this transaction.<br/>
+                            Keep in mind however, gas fees are usually very low (~0.005 BNB).<br/>
+                            0.05 BNB is usually enough for 10+ transactions.<br/>
+                        </>
+                    }
+                </ModalBody>
+                <ModalFooter>
+                    {remainder >= 0.05 &&
+                        <Button 
+                        color="primary" 
+                        onClick={() => {
+                            toggle();
+                            props.addLiquidity();
+                        }}>
+                            Continue Transaction!
+                        </Button>
+                    }
+                    {remainder < 0.05 &&
+                        <>
+                            <Button 
+                            color="primary" 
+                            onClick={() => {
+                                props.changeAmount((0.999 - (0.05 / convertFromWei(props.userData.balance))) * 100);
+                            }}>
+                                Change to ~{formatAllUnits(convertFromWei(props.userData.balance * (0.999 - (0.05 / convertFromWei(props.userData.balance)))))} BNB
+                            </Button>
+                            <Button 
+                                color="danger" 
+                                onClick={() => {
+                                    toggle();
+                                    props.addLiquidity();
+                                }}>
+                                    Continue (Might Fail!)
+                            </Button>
+                        </>
+                    }
+                    <Button color="secondary" onClick={toggle}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
+
         </>
     )
 };
@@ -574,6 +654,25 @@ const AddSymmPane = (props) => {
 export default withRouter(withNamespaces()(AddLiquidity));
 
 const AddAsymmPane = (props) => {
+
+    const [showModal, setShowModal] = useState(false);
+
+    const toggle = () => setShowModal(!showModal);
+
+    const remainder = convertFromWei(props.userData.balance - props.userData.input)
+
+    const checkEnoughForGas = () => {
+        if (props.userData.symbol === 'BNB') { // if input Symbol is BNB
+            if (remainder < 0.05) {   //if (wallet BNB balance) minus (transaction BNB amount) < 0.05
+                setShowModal(true)
+            }    
+            else props.addLiquidity()
+        }
+
+        else {
+            props.addLiquidity()
+        }
+    }
 
     return (
         <>
@@ -597,7 +696,7 @@ const AddAsymmPane = (props) => {
                             <p className="mb-0">Estimated LP Units</p>
                         </td>
                         <td>
-                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits.toFixed(0)))}</h5>
+                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
                         </td>
                         <td>
                         </td>
@@ -632,15 +731,70 @@ const AddAsymmPane = (props) => {
                         </Col>
                         <Col xs={12}>
                             {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
-                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}><i className="bx bx-spin bx-loader"/> ADD TO POOL</div>
+                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}><i className="bx bx-spin bx-loader"/> ADD TO POOL</div>
                             }
 
                             {props.approvalBase && props.approvalToken && !props.startTx &&
-                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.addLiquidity}>ADD TO POOL</div>
+                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>ADD TO POOL</div>
                             }
                         </Col>
                 </Row>
             </div>
+
+            <Modal isOpen={showModal} toggle={toggle}>
+                <ModalHeader toggle={toggle}>BNB balance will be low after this transaction!</ModalHeader>
+                <ModalBody>
+                    {remainder >= 0.05 &&
+                        <>
+                            This transaction will now leave you with (~{formatAllUnits(remainder)} BNB)<br/>
+                            This is plenty of gas to interact with the BSC network.<br/>
+                            If you would rather a different amount please cancel txn and manually input your amount.<br/>
+                            Remember though, we recommend leaving ~0.05 BNB in your wallet for gas purposes.<br/>
+                        </>
+                    }
+                    {remainder < 0.05 &&
+                        <>
+                            This transaction will leave you with a very low BNB balance (~{formatAllUnits(remainder)} BNB)<br/>
+                            Please ensure you understand that BNB is used as 'gas' for the BSC network.<br/>
+                            If you do not have any/enough BNB in your wallet you may not be able to transfer assets or interact with BSC DApps after this transaction.<br/>
+                            Keep in mind however, gas fees are usually very low (~0.005 BNB).<br/>
+                            0.05 BNB is usually enough for 10+ transactions.<br/>
+                        </>
+                    }
+                </ModalBody>
+                <ModalFooter>
+                    {remainder >= 0.05 &&
+                        <Button 
+                        color="primary" 
+                        onClick={() => {
+                            toggle();
+                            props.addLiquidity();
+                        }}>
+                            Continue Transaction!
+                        </Button>
+                    }
+                    {remainder < 0.05 &&
+                        <>
+                            <Button 
+                            color="primary" 
+                            onClick={() => {
+                                props.changeAmount((0.999 - (0.05 / convertFromWei(props.userData.balance))) * 100);
+                            }}>
+                                Change to ~{formatAllUnits(convertFromWei(props.userData.balance * (0.999 - (0.05 / convertFromWei(props.userData.balance)))))} BNB
+                            </Button>
+                            <Button 
+                                color="danger" 
+                                onClick={() => {
+                                    toggle();
+                                    props.addLiquidity();
+                                }}>
+                                    Continue (Might Fail!)
+                            </Button>
+                        </>
+                    }
+                    <Button color="secondary" onClick={toggle}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
 
         </>
     )
