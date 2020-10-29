@@ -22,14 +22,11 @@ const ThemeSwitch = (props) => {
 
     return (
         <React.Fragment>
-
             <div className="header-item waves-effect mx-1" tag="button">
-
-                    <div className="btn-darktoggle d-inline-block" onClick={toggleTheme}>
-                        <i className="bx bx-moon float-left dark-icon"></i>
-                        <i className="bx bx-sun float-right light-icon"></i>
-                    </div>
-    
+                <div className="btn-darktoggle d-inline-block" onClick={toggleTheme}>
+                    <i className="bx bx-moon float-left dark-icon"></i>
+                    <i className="bx bx-sun float-right light-icon"></i>
+                </div>
             </div>
         </React.Fragment>
 

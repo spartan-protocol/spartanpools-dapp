@@ -86,8 +86,11 @@ const PoolTable = (props) => {
                                     </div>
                                 </>
                             }
-                            {!context.poolsData &&
+                            {!context.poolsData && context.web3Wallet &&
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                            }
+                            {!context.web3Wallet &&
+                                <div className="text-center m-2">Please connect your wallet to proceed</div>
                             }
                         </CardBody>
                     </Card>

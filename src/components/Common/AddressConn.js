@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { Context } from '../../context'
 
 import Web3 from 'web3'
@@ -12,7 +12,10 @@ import { getListedTokens, getWalletData, getPoolSharesData,
 
 const AddressConn = (props) => {
 
-    const context = useContext(Context);
+    const context = useContext(Context)
+    const [contLoad,setContLoad] = useState(false)
+
+    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
         loadingGlobal(props)
@@ -21,21 +24,33 @@ const AddressConn = (props) => {
     }, [])
 
     const connectWallet = async (props) => {
-        window.web3 = new Web3(window.ethereum);
-        const account = (await window.web3.eth.getAccounts())[0];
-        if (account) {
-            context.setContext({'account': account})
-            await loadingTokens(account)
-        } else {
-            await enableMetaMask(props)
+        if (contLoad === false) {
+            window.web3 = new Web3(window.ethereum)
+            if (window.web3._provider) {
+                context.setContext({'web3Wallet': true})
+                const account = (await window.web3.eth.getAccounts())[0]
+                if (account) {
+                    setContLoad(false)
+                    context.setContext({'account': account})
+                    await loadingTokens(account)
+                } else {
+                    await enableMetaMask(props)
+                    setContLoad(true)
+                    await pause(3000)
+                    connectWallet(props)
+                }
+            }
+            else {
+                context.setContext({'web3Wallet': false})
+            }
         }
     }
 
     const enableMetaMask = async () => {
         //console.log('connecting')
         if (window.ethereum) {
-            window.web3 = new Web3(window.ethereum);
-            window.ethereum.enable();
+            window.web3 = new Web3(window.ethereum)
+            window.ethereum.enable()
             //await connectWallet()
             return true;
         }
@@ -84,7 +99,9 @@ const AddressConn = (props) => {
 
         // (stakesData) STAKES DATA | USED: RIGHT-BAR + 
         let stakesData = await getPoolSharesData(account, tokenArray)
+        context.setContext({'poolSharesDataLoading': true})
         context.setContext({'stakesData': stakesData})
+        context.setContext({'poolSharesDataLoading': false})
     }
 
     /**
