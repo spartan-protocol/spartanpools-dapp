@@ -32,6 +32,12 @@ export const getExplorerURL = () => {
     return "https://bscscan.com/"
 }
 
+export const getCurrentBlock = async () => {
+    var web3 = getWeb3()
+    var block = await web3.eth.getBlockNumber()
+    return block
+}
+
 export const getAccount = async () => {
     var web3_ = getWeb3()
     var accounts = await web3_.eth.getAccount()
@@ -430,7 +436,7 @@ export const getNextPoolSharesData = async (member, poolArray, prevStakesData) =
         //}
     }
     console.log('end getNextPoolSharesData')
-    console.log(stakesData)
+    //console.log(stakesData)
     return stakesData
 }
 
@@ -461,7 +467,19 @@ export const getLiquidityData = async (address, stakesData) => {
     return (liquidityData)
 }
 
+// DAO CONTRACT FUNCTIONS (0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0)
 export const getRewards = async (member) => {
     let locked = await getDaoContract().methods.calcCurrentReward(member).call()
     return locked;
+}
+
+// Note that 'lastBlock' in the resulting array = UNIX timestamp
+export const getMemberDetail = async (member) => {
+    let memberDetails = await getDaoContract().methods.getMemberDetails(member).call()
+    return memberDetails;
+}
+
+export const getTotalWeight = async () => {
+    let totalWeight = await getDaoContract().methods.totalWeight().call()
+    return totalWeight;
 }

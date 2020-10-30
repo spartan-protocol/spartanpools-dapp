@@ -42,6 +42,33 @@ export const formatAPY = (input) => {
     return `${annual}%`
 }
 
+export const daysSince = (date) => {
+    var seconds = Math.floor(((new Date().getTime()/1000) - date))
+    var intervalType
+    var interval = Math.floor(seconds / 31536000)
+    interval = Math.floor(seconds / 86400)
+        if (interval >= 1) {
+            intervalType = 'day'
+        } else {
+            interval = Math.floor(seconds / 3600)
+            if (interval >= 1) {
+                intervalType = "hour"
+            } else {
+                interval = Math.floor(seconds / 60)
+                if (interval >= 1) {
+                    intervalType = "minute"
+                } else {
+                    interval = seconds
+                    intervalType = "second"
+                }
+            }
+        }
+    if (interval > 1 || interval === 0) {
+      intervalType += 's';
+    }
+    return interval + ' ' + intervalType;
+}
+
 export const formatAllUnits = (input) => {
     var units = (bn(input).toString())
     if (input <= 0) {units = (bn(input).toFixed(2).toString())}
