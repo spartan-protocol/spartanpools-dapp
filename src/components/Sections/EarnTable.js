@@ -1,22 +1,29 @@
-import React, {useContext, useEffect, useState} from "react";
-import {Context} from "../../context";
-import {getListedTokens, getRewards, getDaoContract, getPoolSharesData, getNextPoolSharesData, checkArrayComplete} from "../../client/web3";
+import React, {useContext, useEffect, useState} from "react"
+import {Context} from "../../context"
+
+import {getListedTokens, getRewards, getDaoContract,
+    getPoolSharesData, getNextPoolSharesData,
+    checkArrayComplete, getMemberDetail, getTotalWeight
+} from "../../client/web3"
+
 import Notification from '../../components/Common/notification'
 
-import {convertFromWei, formatGranularUnits} from '../../utils'
+import {convertFromWei, formatAllUnits, formatGranularUnits, daysSince} from '../../utils'
 
-import {Row, Col, Card, CardTitle, CardSubtitle, CardBody, Table, Spinner} from "reactstrap";
-import {withNamespaces} from 'react-i18next';
+import {Row, Col, Card, CardTitle, CardSubtitle, CardBody, Table, Spinner} from "reactstrap"
+import {withNamespaces} from 'react-i18next'
 
-import EarnTableItem from "./EarnTableItem";
-import { withRouter } from "react-router-dom";
+import EarnTableItem from "./EarnTableItem"
+import { withRouter } from "react-router-dom"
 
 const EarnTable = (props) => {
 
     const context = useContext(Context);
-    const [reward, setReward] = useState(0);
-    const [notifyMessage, setNotifyMessage] = useState("");
-    const [notifyType, setNotifyType] = useState("dark");
+    const [reward, setReward] = useState(0)
+    const [member, setMember] = useState([])
+    const [totalWeight, setTotalWeight] = useState(0)
+    const [notifyMessage, setNotifyMessage] = useState("")
+    const [notifyType, setNotifyType] = useState("dark")
 
     //const [showLockModal, setShowLockModal] = useState(false);
     //const [showUnlockModal, setShowUnlockModal] = useState(false);
@@ -55,8 +62,11 @@ const EarnTable = (props) => {
 
     const getData = async () => {
         let rewards = await getRewards(context.account)
-        console.log({rewards})
         setReward(rewards)
+        let memberDetails = await getMemberDetail(context.account)
+        setMember(memberDetails)
+        let weight = await getTotalWeight()
+        setTotalWeight(weight)
     }
 
     const harvest = async () => {
@@ -93,19 +103,33 @@ const EarnTable = (props) => {
                     <Col sm={12} className="mr-20">
                         <Card>
                             <CardBody>
-                                <h2>Claim Rewards</h2>
-                                <h6>Witness the power of BSC's fast block-times! Watch your harvest accumulate in real-time!</h6>
-                                    {context.walletDataLoading &&
-                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                    }
-                                    {context.walletData &&
-                                        <div>
-                                            <h5><Spinner type="grow" color="primary" className='m-2' style={{height:'15px', width:'15px'}} />{formatGranularUnits(convertFromWei(reward))} SPARTA</h5>
-                                            <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest SPARTA
-                                            </button>
-                                        </div>
-                                    }
+                                <CardTitle CardTitle><h4>Claim Rewards</h4></CardTitle>
+                                <CardSubtitle className="mb-3">
+                                    Witness the power of BSC's fast block-times by watching your harvest accumulate in real-time!<br/>
+                                </CardSubtitle>
+                                {context.walletData &&
+                                    <>
+                                        <Row>
+                                            <Col xs='12' sm='3' className='text-center p-2'>
+                                                <h5><Spinner type="grow" color="primary" className='m-2' style={{height:'15px', width:'15px'}} />{formatGranularUnits(convertFromWei(reward))} SPARTA</h5>
+                                                <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
+                                                    <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Harvest SPARTA
+                                                </button>
+                                            </Col>
+                                            <Col xs='12' sm='8' className='p-2'>
+                                                <p>
+                                                    <strong>{member.weight > 0 && formatAllUnits(member.weight / totalWeight)}%</strong> of the total DAO weight represented by your wallet.<br/>
+                                                    <strong>{member.poolCount} {member.poolCount <= 1 && 'pool'}{member.poolCount > 1 && 'pools'}</strong> are honored to have you in their shield wall.<br/>
+                                                    <strong>SPARTA</strong> rewards await your next visit, come back often to harvest!<br/>
+                                                    <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}</strong> passed since your last harvest.
+                                                </p>
+                                            </Col>
+                                        </Row>
+                                    </>
+                                }
+                                {context.walletDataLoading &&
+                                    <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                }
                             </CardBody>
                         </Card>
                     </Col>
@@ -185,6 +209,7 @@ const EarnTable = (props) => {
                         <ModalHeader toggle={toggleLock}>You are locking your tokens!</ModalHeader>
                         <ModalBody>
                             Locking your tokens enables them to earn yield.<br/>
+                            You must harvest any accumulated 
                             If you confirm below you will lock all of your available tokens.<br/>
                             However, you can unlock them at any time.<br/>
                             Check in daily to harvest your rewards!<br/>
@@ -205,8 +230,10 @@ const EarnTable = (props) => {
                 <Modal isOpen={showUnlockModal} toggle={toggleUnlock}>
                         <ModalHeader toggle={toggleUnlock}>You are unlocking your tokens!</ModalHeader>
                         <ModalBody>
-                            Unlocking your tokens means they will no longer be earning daily rewards.<br/>
-                            If you confirm below you will unlock all of your available tokens.<br/>
+                            Unlocking your LP tokens means they will no longer be earning SPARTA rewards.<br/>
+                            It may also reset your lock calculation date reducing your harvestable SPARTA to 0.</br>
+                            We recommend performing a harvest before unlocking your LP tokens to ensure you do not miss out on rewards.</br>
+                            If you confirm below you will unlock 100% of your locked *INSERT SYMBOL* LP tokens.<br/>
                             However, you can re-lock them at any time.<br/>
                         </ModalBody>
                         <ModalFooter>
