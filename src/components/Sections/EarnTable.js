@@ -203,52 +203,55 @@ const EarnTable = (props) => {
                     </Card>
                 </Col>
             </Row>
-
-            {/*
-            <Modal isOpen={showLockModal} toggle={toggleLock}>
-                        <ModalHeader toggle={toggleLock}>You are locking your tokens!</ModalHeader>
-                        <ModalBody>
-                            Locking your tokens enables them to earn yield.<br/>
-                            You must harvest any accumulated 
-                            If you confirm below you will lock all of your available tokens.<br/>
-                            However, you can unlock them at any time.<br/>
-                            Check in daily to harvest your rewards!<br/>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button 
-                            color="primary" 
-                            onClick={() => {
-                                toggleLock();
-                                deposit(props);
-                            }}>
-                                Lock Tokens!
-                            </Button>{' '}
-                            <Button color="secondary" onClick={toggleLock}>Cancel</Button>
-                        </ModalFooter>
+             {/*}
+            {showLockModal &&
+                <Modal>
+                    <ModalHeader toggle={toggleLock}>You are locking your tokens!</ModalHeader>
+                    <ModalBody>
+                        Locking your tokens enables them to earn yield.<br/>
+                        You must harvest any accumulated 
+                        If you confirm below you will lock all of your available tokens.<br/>
+                        However, you can unlock them at any time.<br/>
+                        Check in daily to harvest your rewards!<br/>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button 
+                        color="primary" 
+                        onClick={() => {
+                            toggleLock();
+                            deposit(props);
+                        }}>
+                            Lock Tokens!
+                        </Button>{' '}
+                        <Button color="secondary" onClick={toggleLock}>Cancel</Button>
+                    </ModalFooter>
                 </Modal>
+            }
 
-                <Modal isOpen={showUnlockModal} toggle={toggleUnlock}>
-                        <ModalHeader toggle={toggleUnlock}>You are unlocking your tokens!</ModalHeader>
-                        <ModalBody>
-                            Unlocking your LP tokens means they will no longer be earning SPARTA rewards.<br/>
-                            It may also reset your lock calculation date reducing your harvestable SPARTA to 0.</br>
-                            We recommend performing a harvest before unlocking your LP tokens to ensure you do not miss out on rewards.</br>
-                            If you confirm below you will unlock 100% of your locked *INSERT SYMBOL* LP tokens.<br/>
-                            However, you can re-lock them at any time.<br/>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button 
-                            color="primary" 
-                            onClick={() => {
-                                toggleUnlock();
-                                withdraw(props);
-                            }}>
-                                Unlock Tokens!
-                            </Button>{' '}
-                            <Button color="secondary" onClick={toggleUnlock}>Cancel</Button>
-                        </ModalFooter>
+            {showUnlockModal &&
+                <Modal>
+                    <ModalHeader toggle={toggleUnlock}>You are unlocking your tokens!</ModalHeader>
+                    <ModalBody>
+                        Unlocking your LP tokens means they will no longer be earning SPARTA rewards.<br/>
+                        It may also reset your lock calculation date reducing your harvestable SPARTA to 0.</br>
+                        We recommend performing a harvest before unlocking your LP tokens to ensure you do not miss out on rewards.</br>
+                        If you confirm below you will unlock 100% of your locked *INSERT SYMBOL* LP tokens.<br/>
+                        However, you can re-lock them at any time.<br/>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button 
+                        color="primary" 
+                        onClick={() => {
+                            toggleUnlock();
+                            withdraw(props);
+                        }}>
+                            Unlock Tokens!
+                        </Button>{' '}
+                        <Button color="secondary" onClick={toggleUnlock}>Cancel</Button>
+                    </ModalFooter>
                 </Modal>
-                */}
+            }
+        */}
 
         </>
     )

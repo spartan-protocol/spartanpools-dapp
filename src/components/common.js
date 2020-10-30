@@ -157,7 +157,7 @@ export const PercentButtonRow = (props) => {
         props.changeAmount(75)
     }
     const change100 = () => {
-        props.changeAmount(99.999999)
+        props.changeAmount(100)
     }
 
     const btnStyle = {
