@@ -42,6 +42,12 @@ export const formatAPY = (input) => {
     return `${annual}%`
 }
 
+export const hoursSince = (date) => {
+    var seconds = Math.floor(((new Date().getTime()/1000) - date))
+    var interval = seconds / 3600
+    return interval
+}
+
 export const daysSince = (date) => {
     var seconds = Math.floor(((new Date().getTime()/1000) - date))
     var intervalType

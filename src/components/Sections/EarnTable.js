@@ -10,7 +10,7 @@ import Notification from '../../components/Common/notification'
 
 import {convertFromWei, formatAllUnits, formatGranularUnits, daysSince} from '../../utils'
 
-import {Row, Col, Card, CardTitle, CardSubtitle, CardBody, Table, Spinner} from "reactstrap"
+import {Row, Col, Table, Card, CardTitle, CardSubtitle, CardBody, Spinner} from "reactstrap"
 import {withNamespaces} from 'react-i18next'
 
 import EarnTableItem from "./EarnTableItem"
@@ -24,31 +24,7 @@ const EarnTable = (props) => {
     const [totalWeight, setTotalWeight] = useState(0)
     const [notifyMessage, setNotifyMessage] = useState("")
     const [notifyType, setNotifyType] = useState("dark")
-
-    //const [showLockModal, setShowLockModal] = useState(false);
-    //const [showUnlockModal, setShowUnlockModal] = useState(false);
-
-    //const toggleLock = () => setShowLockModal(!showLockModal);
-    //const toggleUnlock = () => setShowUnlockModal(!showUnlockModal);
-
-    // eslint-disable-next-line
-    {/*
-    const deposit = async (record) => {
-        console.log(record)
-        let contract = getDaoContract()
-        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.account })
-        console.log(tx.transactionHash)
-        await refreshData()
-    }
-
-    const withdraw = async (record) => {
-        console.log(record)
-        let contract = getDaoContract()
-        let tx = await contract.methods.withdraw(record.address).send({ from: context.account })
-        console.log(tx.transactionHash)
-        await refreshData()
-    }
-    */}
+    const [loadingHarvest, setLoadingHarvest] = useState(false)
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -70,10 +46,12 @@ const EarnTable = (props) => {
     }
 
     const harvest = async () => {
+        setLoadingHarvest(true)
         let contract = getDaoContract()
         let tx = await contract.methods.harvest().send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
+        setLoadingHarvest(false)
     }
 
     const refreshData = async () => {
@@ -97,13 +75,12 @@ const EarnTable = (props) => {
                 type={notifyType}
                 message={notifyMessage}
             />
-
             <Card>
                 <Row>
                     <Col sm={12} className="mr-20">
                         <Card>
                             <CardBody>
-                                <CardTitle CardTitle><h4>Claim Rewards</h4></CardTitle>
+                                <CardTitle><h4>Claim Rewards</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
                                     Witness the power of BSC's fast block-times by watching your harvest accumulate in real-time!<br/>
                                 </CardSubtitle>
@@ -119,7 +96,6 @@ const EarnTable = (props) => {
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
                                                     <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}%</strong> of the total DAO weight represented by your wallet.<br/>
-                                                    <strong>{member.poolCount} {member.poolCount <= 1 && 'pool'}{member.poolCount > 1 && 'pools'}</strong> are honored to have you in their shield wall.<br/>
                                                     <strong>SPARTA</strong> rewards await your next visit, come back often to harvest!<br/>
                                                     <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}</strong> passed since your last harvest.
                                                 </p>
@@ -135,7 +111,6 @@ const EarnTable = (props) => {
                     </Col>
                 </Row>
             </Card>
-
             <Row>
                 <Col sm={12} className="mr-20">
                     <Card>
@@ -167,8 +142,9 @@ const EarnTable = (props) => {
                                                     symbol={c.symbol}
                                                     units={c.units}
                                                     locked={c.locked}
-                                                    //lockModal={toggleLock}
-                                                    //unlockModal={toggleUnlock}
+                                                    member={member}
+                                                    harvest={harvest}
+                                                    loadingHarvest={loadingHarvest}
                                                 />
                                             )}
                                             <tr>
@@ -203,56 +179,6 @@ const EarnTable = (props) => {
                     </Card>
                 </Col>
             </Row>
-             {/*}
-            {showLockModal &&
-                <Modal>
-                    <ModalHeader toggle={toggleLock}>You are locking your tokens!</ModalHeader>
-                    <ModalBody>
-                        Locking your tokens enables them to earn yield.<br/>
-                        You must harvest any accumulated 
-                        If you confirm below you will lock all of your available tokens.<br/>
-                        However, you can unlock them at any time.<br/>
-                        Check in daily to harvest your rewards!<br/>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button 
-                        color="primary" 
-                        onClick={() => {
-                            toggleLock();
-                            deposit(props);
-                        }}>
-                            Lock Tokens!
-                        </Button>{' '}
-                        <Button color="secondary" onClick={toggleLock}>Cancel</Button>
-                    </ModalFooter>
-                </Modal>
-            }
-
-            {showUnlockModal &&
-                <Modal>
-                    <ModalHeader toggle={toggleUnlock}>You are unlocking your tokens!</ModalHeader>
-                    <ModalBody>
-                        Unlocking your LP tokens means they will no longer be earning SPARTA rewards.<br/>
-                        It may also reset your lock calculation date reducing your harvestable SPARTA to 0.</br>
-                        We recommend performing a harvest before unlocking your LP tokens to ensure you do not miss out on rewards.</br>
-                        If you confirm below you will unlock 100% of your locked *INSERT SYMBOL* LP tokens.<br/>
-                        However, you can re-lock them at any time.<br/>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button 
-                        color="primary" 
-                        onClick={() => {
-                            toggleUnlock();
-                            withdraw(props);
-                        }}>
-                            Unlock Tokens!
-                        </Button>{' '}
-                        <Button color="secondary" onClick={toggleUnlock}>Cancel</Button>
-                    </ModalFooter>
-                </Modal>
-            }
-        */}
-
         </>
     )
 };

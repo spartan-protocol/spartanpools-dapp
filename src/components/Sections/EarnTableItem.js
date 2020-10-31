@@ -1,8 +1,11 @@
 import React, {useContext, useState} from "react";
 import {Context} from "../../context";
 import {TokenIcon} from '../Common/TokenIcon'
-import {convertFromWei, formatAllUnits} from "../../utils";
-import {Progress} from 'reactstrap'
+import {convertFromWei, formatAllUnits, hoursSince} from "../../utils";
+import {
+    Progress, Button,
+    Modal, ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap'
 
 import {getDaoContract, getPoolSharesData, getListedTokens} from '../../client/web3'
 import Notification from '../../components/Common/notification'
@@ -40,18 +43,35 @@ export const EarnTableItem = (props) => {
         await refreshData()
     }
 
-    // const harvest = async () => {
-    //     let contract = getDaoContract()
-    //     let tx = await contract.methods.harvest().send({ from: context.account })
-    //     console.log(tx.transactionHash)
-    //     await refreshData()
-    // }
-
     const refreshData = async () => {
         let stakesData = await getPoolSharesData(context.account, await getListedTokens())
         context.setContext({ 'stakesData': stakesData })
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
+    }
+
+    const [lastHarvest,setlastHarvest] = useState(100);
+    const getLastHarvest = (props) => setlastHarvest(hoursSince(props.member.lastBlock))
+
+    const [isMember, setIsMember] = useState(false)
+    const getIsMember = (props) => {
+        if (props.member.weight > 0) {setIsMember(true)}
+        if (props.member.weight === 0) {setIsMember(false)}
+    }
+
+    const [showLockModal, setShowLockModal] = useState(false)
+    const [showUnlockModal, setShowUnlockModal] = useState(false)
+
+    const toggleLock = (props) => {
+        getLastHarvest(props)
+        getIsMember(props)
+        setShowLockModal(!showLockModal)
+    }
+
+    const toggleUnlock = (props) => {
+        getLastHarvest(props)
+        getIsMember(props)
+        setShowUnlockModal(!showUnlockModal)
     }
 
     return (
@@ -74,14 +94,10 @@ export const EarnTableItem = (props) => {
                     </Progress>
                 </td>
                 <td>
-                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={
-                        () => deposit(props) //props.lockModal()
-                        }>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
                         <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Lock
                     </button>
-                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={
-                        () => withdraw(props) //props.unlockModal()
-                        }>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
                         <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"></i> Unlock
                     </button>
 
@@ -90,6 +106,138 @@ export const EarnTableItem = (props) => {
                         message={notifyMessage}
                     />
 
+                        <Modal isOpen={showLockModal} toggle={()=>toggleLock(props)}>
+                            <ModalHeader toggle={()=>toggleLock(props)}>You are locking your tokens!</ModalHeader>
+                            <ModalBody>
+                                {isMember === false &&
+                                    <>
+                                        Locking your tokens enables them to earn yield.<br/>
+                                        Doing so increases your weight in the DAO.<br/>
+                                        This leads to higher SPARTA harvestable rewards.<br/>
+                                        Confirming will lock all of your available {props.symbol} tokens.<br/>
+                                        However, you can unlock them at any time.<br/>
+                                        Check in daily to harvest your rewards!<br/>
+                                    </>
+                                }
+                                {isMember === true && lastHarvest <= 1 &&
+                                    <>
+                                        Locking your tokens enables them to earn yield.<br/>
+                                        Doing so increases your weight in the DAO.<br/>
+                                        This leads to higher SPARTA harvestable rewards.<br/>
+                                        Confirming will lock all of your available {props.symbol} tokens.<br/>
+                                        However, you can unlock them at any time.<br/>
+                                        Check in daily to harvest your rewards!<br/>
+                                    </>
+                                }
+                                {isMember === true && lastHarvest > 1 &&
+                                    <>
+                                        Before you lock your tokens a harvest must be performed.<br/>
+                                        This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
+                                        Harvesting now ensures you do not miss out on your hard earned rewards!<br/>
+                                    </>
+                                }
+                            </ModalBody>
+                            <ModalFooter>
+                                {isMember === false &&
+                                    <Button 
+                                        color="primary" 
+                                        onClick={() => {
+                                            toggleLock(props)
+                                            deposit(props)
+                                        }}>
+                                            Lock Tokens!
+                                    </Button>
+                                }
+                                {isMember === true && lastHarvest <= 1 &&
+                                    <Button 
+                                        color="primary" 
+                                        onClick={() => {
+                                            toggleLock(props)
+                                            deposit(props)
+                                        }}>
+                                            Lock Tokens!
+                                    </Button>
+                                }
+                                {isMember === true && lastHarvest > 1 && props.loadingHarvest === false &&
+                                    <Button 
+                                        color="primary" 
+                                        onClick={() => props.harvest()}>
+                                            Harvest SPARTA!
+                                    </Button>
+                                }
+                                {props.loadingHarvest === true &&
+                                    <Button>
+                                        <i className="bx bx-spin bx-loader"/>
+                                    </Button>
+                                }
+                                <Button color="secondary" onClick={()=>toggleLock(props)}>Cancel</Button>
+                            </ModalFooter>
+                        </Modal>
+                        <Modal isOpen={showUnlockModal} toggle={()=>toggleUnlock(props)}>
+                            <ModalHeader toggle={()=>toggleUnlock(props)}>You are unlocking your tokens!</ModalHeader>
+                            <ModalBody>
+                                {isMember === false &&
+                                    <>
+                                        Unlocking your tokens disables them from earning yield.<br/>
+                                        Doing so also decreases your weight in the DAO.<br/>
+                                        Confirming will unlock all of your available {props.symbol} tokens.<br/>
+                                        However, you can re-lock them any time.<br/>
+                                    </>
+                                }
+                                {isMember === true && lastHarvest <= 1 &&
+                                    <>
+                                        Unlocking your tokens disables them from earning yield.<br/>
+                                        Doing so also decreases your weight in the DAO.<br/>
+                                        Confirming will unlock all of your available {props.symbol} tokens.<br/>
+                                        However, you can re-lock them any time.<br/>
+                                    </>
+                                }
+                                {isMember === true && lastHarvest > 1 &&
+                                    <>
+                                        Before you unlock your tokens a harvest must be performed.<br/>
+                                        This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
+                                        Harvesting now ensures you do not miss out on your hard earned rewards!<br/>
+                                    </>
+                                }
+                            </ModalBody>
+                            <ModalFooter>
+                                {isMember === false &&
+                                    <Button 
+                                    color="primary" 
+                                    onClick={() => {
+                                        toggleUnlock(props)
+                                        withdraw(props)
+                                    }}>
+                                        Unlock Tokens!
+                                    </Button>
+                                }
+                                {isMember === true && lastHarvest <= 1 &&
+                                    <Button 
+                                    color="primary" 
+                                    onClick={() => {
+                                        toggleUnlock(props)
+                                        withdraw(props)
+                                    }}>
+                                        Unlock Tokens!
+                                    </Button>
+                                }
+                                {isMember === true && lastHarvest > 1 && props.loadingHarvest === false &&
+                                    <Button 
+                                        color="primary" 
+                                        onClick={() => {
+                                            props.harvest()
+                                        }}>
+                                            Harvest SPARTA!
+                                    </Button>
+                                }
+                                {props.loadingHarvest === true &&
+                                    <Button>
+                                        <i className="bx bx-spin bx-loader"/>
+                                    </Button>
+                                }
+                                <Button color="secondary" onClick={()=>toggleUnlock(props)}>Cancel</Button>
+                            </ModalFooter>
+                        </Modal>
                 </td>
             </tr>
         </>
