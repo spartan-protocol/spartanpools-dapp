@@ -118,7 +118,7 @@ const EarnTable = (props) => {
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
-                                                    <strong>{member.weight > 0 && formatAllUnits(member.weight / totalWeight)}%</strong> of the total DAO weight represented by your wallet.<br/>
+                                                    <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}%</strong> of the total DAO weight represented by your wallet.<br/>
                                                     <strong>{member.poolCount} {member.poolCount <= 1 && 'pool'}{member.poolCount > 1 && 'pools'}</strong> are honored to have you in their shield wall.<br/>
                                                     <strong>SPARTA</strong> rewards await your next visit, come back often to harvest!<br/>
                                                     <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}</strong> passed since your last harvest.
