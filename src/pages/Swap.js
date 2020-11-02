@@ -315,23 +315,27 @@ const NewSwap = (props) => {
                                                         <span className="d-none d-sm-inline-block ml-1">Balance <i className="mdi mdi-chevron-down"/></span>
                                                     </DropdownToggle>
                                                     <DropdownMenu right className="dropdown-menu-md">
-                                                        <div className="dropdown-item-text">
-                                                            <div>
-                                                                <p className="text-muted mb-2">Available Balance</p>
-                                                                <h5 className="mb-0">000.000</h5>
-                                                            </div>
-                                                        </div>
-                                                        <DropdownItem divider/>
-                                                        <DropdownItem href="">
-                                                            SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
-                                                        </DropdownItem>
-                                                        <DropdownItem href="">
-                                                            XXX : <span className="float-right">XXX.XXX</span>
-                                                        </DropdownItem>
-                                                        <DropdownItem divider/>
-                                                        <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
-                                                            View total assets
-                                                        </DropdownItem>
+                                                        {pool.address !== 'XXX' &&
+                                                            <>
+                                                                <div className="dropdown-item-text">
+                                                                    <div>
+                                                                        <p className="text-muted mb-2">Available Balance</p>
+                                                                        <h5 className="mb-0">000.000</h5>
+                                                                    </div>
+                                                                </div>
+                                                                <DropdownItem divider/>
+                                                                <DropdownItem href="">
+                                                                    SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
+                                                                </DropdownItem>
+                                                                <DropdownItem href="">
+                                                                    XXX : <span className="float-right">XXX.XXX</span>
+                                                                </DropdownItem>
+                                                                <DropdownItem divider/>
+                                                                <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
+                                                                    View all assets
+                                                                </DropdownItem>
+                                                            </>
+                                                        }
                                                     </DropdownMenu>
                                                 </Dropdown>
                                             </div>

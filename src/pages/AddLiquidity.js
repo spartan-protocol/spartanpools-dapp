@@ -10,6 +10,7 @@ import {OutputPane} from '../components/common'
 import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits} from '../utils'
 import {getLiquidityUnits} from '../math'
 import Breadcrumbs from "../components/Common/Breadcrumb";
+import {manageBodyClass} from "../components/common";
 import Notification from '../components/Common/notification'
 
 import {
@@ -401,6 +402,10 @@ const AddLiquidity = (props) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
+    const toggleRightbar = (cssClass) => {
+        manageBodyClass("right-bar-enabled");
+    };
+
     return (
         <>
             <Notification type={notifyType} message={notifyMessage}/>
@@ -425,28 +430,30 @@ const AddLiquidity = (props) => {
                                                         <span className="d-none d-sm-inline-block ml-1">Balance <i
                                                             className="mdi mdi-chevron-down"></i></span>
                                                     </DropdownToggle>
-                                                    {pool.address !== 'XXX' &&
                                                         <DropdownMenu right className="dropdown-menu-md">
-                                                            <div className="dropdown-item-text">
-                                                                <div>
-                                                                    <p className="text-muted mb-2">Available Balance</p>
-                                                                    <h5 className="mb-0">000.000</h5>
-                                                                </div>
-                                                            </div>
-                                                            <DropdownItem divider/>
-                                                            <DropdownItem href="">
-                                                                SPARTA : <span
-                                                                className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
-                                                            </DropdownItem>
-                                                            <DropdownItem href="">
-                                                                BNB : <span className="float-right">0.04121</span>
-                                                            </DropdownItem>
-                                                            <DropdownItem divider/>
-                                                            <DropdownItem className="text-primary text-center" href="">
-                                                                View total assets
-                                                            </DropdownItem>
+                                                            {pool.address !== 'XXX' &&
+                                                                <>
+                                                                    <div className="dropdown-item-text">
+                                                                        <div>
+                                                                            <p className="text-muted mb-2">Available Balance</p>
+                                                                            <h5 className="mb-0">000.000</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <DropdownItem divider/>
+                                                                    <DropdownItem href="">
+                                                                        SPARTA : <span
+                                                                        className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
+                                                                    </DropdownItem>
+                                                                    <DropdownItem href="">
+                                                                        BNB : <span className="float-right">0.04121</span>
+                                                                    </DropdownItem>
+                                                                    <DropdownItem divider/>
+                                                                    <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
+                                                                        View all assets
+                                                                    </DropdownItem>
+                                                                </>
+                                                            }
                                                         </DropdownMenu>
-                                                    }
                                                 </Dropdown>
                                             </div>
                                             <div className="crypto-buy-sell-nav">

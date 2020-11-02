@@ -1,34 +1,15 @@
 import {convertFromWei, formatAllUnits} from "../../utils";
-import React, {useState} from "react";
+import React from "react";
 import {PercentButtonRow} from "../common";
 
 import {withNamespaces} from "react-i18next";
 
 import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Card,
-    CardBody,
-    Media,
     Col,
     Row,
-    Container,
-    Form,
     FormGroup,
     Input,
     Label,
-    Nav,
-    NavItem,
-    NavLink,
-    TabContent,
-    TabPane,
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
     InputGroup,
     InputGroupAddon
 } from "reactstrap";
@@ -58,8 +39,7 @@ export const InputPaneJoin = (props) => {
                                             <span>  {props.paneData?.symbol}</span></Col>
                                         <div className="ml-5">
                                             <Col md={4}>
-                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"></i>Available
-                                                    amount:</p>
+                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
                                                 <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.balance))} {props.paneData?.symbol}</h5>
                                             </Col>
                                         </div>
@@ -82,10 +62,8 @@ export const InputPaneJoin = (props) => {
                                             <span>  SPARTA</span></Col>
                                         <div className="ml-5">
                                             <Col md={4}>
-                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"></i>Available
-                                                    amount:</p>
+                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
                                                 <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.baseBalance))} SPARTA</h5>
-
                                             </Col>
                                         </div>
                                     </Row>

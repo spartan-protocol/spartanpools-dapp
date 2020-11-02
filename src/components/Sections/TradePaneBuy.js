@@ -13,7 +13,7 @@ import {
 } from "reactstrap"
 
 import {withNamespaces} from "react-i18next";
-import {withRouter, Link} from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import UncontrolledTooltip from "reactstrap/lib/UncontrolledTooltip";
 
 export const TradePaneBuy = (props) => {
