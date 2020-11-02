@@ -78,7 +78,7 @@ export const InputPane = (props) => {
                                 <div className="card-radio">
                                     <div>
                                         <i className="mdi mdi-circle font-size-24 text-warning align-middle mr-2"></i>
-                                        <span>XXX</span>
+                                        <span>XX</span>
                                     </div>
                                 </div>
                             </label>
