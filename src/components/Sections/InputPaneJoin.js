@@ -27,14 +27,10 @@ export const InputPaneJoin = (props) => {
                     <Col xs="12" md="6">
                         <div className="mb-3">
                             <label className="card-radio-label mb-2">
-                                <input type="radio" name="currency"
-                                       id="buycurrencyoption2"
-                                       className="card-radio-input"/>
-
+                                <input type="radio" name="currency" id="buycurrencyoption2" className="card-radio-input"/>
                                 <div className="card-radio">
                                     <Row>
                                         <Col md={3}>
-
                                             <TokenIcon address={props.address}/>
                                             <span>  {props.paneData?.symbol}</span></Col>
                                         <div className="ml-5">
@@ -76,7 +72,6 @@ export const InputPaneJoin = (props) => {
             </div>
             <br/>
             <FormGroup>
-                <Label>Value :</Label>
                 <Row>
                     <Col sm="12">
                         <InputGroup className="mb-3">
