@@ -6,7 +6,7 @@ import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
 
 import {TokenIcon} from '../Common/TokenIcon'
-import {Card, CardBody, Row, Col} from "reactstrap";
+import {Card, CardBody, Row, Col, FormGroup, Label, Input, InputGroup, InputGroupAddon, Button, Form} from "reactstrap";
 import { Context } from "../../context";
 
 const PoolPaneSide = (props) => {

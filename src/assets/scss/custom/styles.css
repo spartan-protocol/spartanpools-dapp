@@ -1,0 +1,5 @@
+html[data-theme='light'] .nav-tabs .nav-link.active, html[data-theme='light'] .nav-tabs .nav-item.show .nav-link {
+    color: #495057;
+    background-color: #ffffff;
+    border-color: #ced4da #ced4da #2a3042;
+} 

@@ -21,20 +21,38 @@ import {
 } from '../client/web3'
 
 import {
-    Container,
-    Row,
-    Col,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
     Card,
     CardBody,
+    Media,
+    Col,
+    Row,
+    Container,
+    Form,
+    FormGroup,
+    Input,
+    Label,
     Nav,
     NavItem,
     NavLink,
+    TabContent,
     TabPane,
-    TabContent
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+    InputGroup,
+    InputGroupAddon
 } from "reactstrap";
 
 import classnames from 'classnames';
 import Breadcrumbs from "../components/Common/Breadcrumb";
+
+import {InputPane} from "../components/Sections/InputPane";
 
 const NewSwap = (props) => {
 
@@ -283,49 +301,81 @@ const NewSwap = (props) => {
 
     return (
         <>
-            <div>
-                <React.Fragment>
-                    <Notification
-                        type={notifyType}
-                        message={notifyMessage}
-                    />
-                    <div className="page-content">
-                        <Container fluid>
-                            {/* Render Breadcrumb */}
-                            <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Swap")}/>
-                            <Row>
-                                <Col lg="4">
-                                    <PoolPaneSide pool={pool} price={context.spartanPrice} address={pool.address}/>
-                                </Col>
-                                <Col lg="6">
-                                    {pool &&
-                                        <Card className="h-100">
-                                            <CardBody>
-                                                <h4 className="card-title mb-4 text-center">{props.t("Buy/Sell")}</h4>
-                                                <Nav pills className="bg-light rounded" role="tablist">
-                                                    <NavItem className="text-center w-50">
+            <React.Fragment>
+                <div className="page-content">
+                    <Container fluid>
+
+                        {/* Render Breadcrumb */}
+                        <Breadcrumbs title="Pools" breadcrumbItem="Swap"/>
+                        <Row>
+
+                            <Col lg="6">
+                                {pool &&
+                                    <Card>
+                                        <CardBody>
+                                            <div className="float-right">
+                                                <Dropdown>
+                                                    <DropdownToggle type="button" tag="button" className="btn btn-light">
+                                                        <i className="mdi mdi-wallet mr-1"></i>
+                                                        <span className="d-none d-sm-inline-block ml-1">Wallet Balance <i
+                                                            className="mdi mdi-chevron-down"></i></span>
+                                                    </DropdownToggle>
+                                                    <DropdownMenu right className="dropdown-menu-md">
+                                                        <div className="dropdown-item-text">
+                                                            <div>
+                                                                <p className="text-muted mb-2">X</p>
+                                                                <h5 className="mb-0">XX</h5>
+                                                            </div>
+                                                        </div>
+
+                                                        <DropdownItem divider/>
+
+                                                        <DropdownItem href="#">
+                                                            BTC : <span className="float-right">1.02356</span>
+                                                        </DropdownItem>
+                                                        <DropdownItem href="#">
+                                                            ETH : <span className="float-right">0.04121</span>
+                                                        </DropdownItem>
+                                                        <DropdownItem href="#">
+                                                            LTC : <span className="float-right">0.00356</span>
+                                                        </DropdownItem>
+
+                                                        <DropdownItem divider/>
+
+                                                        <DropdownItem className="text-primary text-center" href="#">
+                                                            Learn more
+                                                        </DropdownItem>
+                                                    </DropdownMenu>
+                                                </Dropdown>
+                                            </div>
+
+                                            <h1 className="display-4">{props.t("Swap")}</h1>
+                                            <br/>
+                                            <div className="crypto-buy-sell-nav">
+                                                <Nav tabs className="nav-tabs-custom" role="tablist">
+                                                    <NavItem>
                                                         <NavLink
                                                             className={classnames({active: activeTab === '1'})}
                                                             onClick={() => {
                                                                 toggle('1');
                                                             }}
                                                         >
-                                                            {props.t("Buy")} {pool.symbol}
+                                                            {props.t("BUY")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
-                                                    <NavItem className="text-center w-50">
+                                                    <NavItem>
                                                         <NavLink
                                                             className={classnames({active: activeTab === '2'})}
                                                             onClick={() => {
                                                                 toggle('2');
                                                             }}
                                                         >
-                                                            {props.t("Sell")} {pool.symbol}
+                                                            {props.t("SELL")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
                                                 </Nav>
-                                                <TabContent activeTab={activeTab} className="mt-4">
-                                                    <TabPane tabId="1" id="buy-tab">
+                                                <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
+                                                    <TabPane tabId="1" id="buy">
                                                         <TabPane tab={`BUY ${pool.symbol}`} key="1">
                                                             <TradePane
                                                                 pool={pool}
@@ -343,31 +393,22 @@ const NewSwap = (props) => {
                                                     </TabPane>
                                                     <TabPane tabId="2" id="sell-tab">
                                                         <TabPane tab={`SELL ${pool.symbol}`} key="2">
-                                                            <TradePane
-                                                                pool={pool}
-                                                                tradeData={sellData}
-                                                                onTradeChange={onSellChange}
-                                                                changeTradeAmount={changeSellAmount}
-                                                                approval={approval}
-                                                                unlock={unlockToken}
-                                                                trade={sell}
-                                                                startTx={startTx}
-                                                                endTx={endTx}
-                                                                type={"Sell"}
-                                                            />
+
                                                         </TabPane>
                                                     </TabPane>
                                                 </TabContent>
-                                            </CardBody>
-                                        </Card>
-                                    }
-                                </Col>
-                            </Row>
-                        </Container>
-                    </div>
-                </React.Fragment>
-            </div>
-
+                                            </div>
+                                        </CardBody>
+                                    </Card>
+                                }
+                            </Col>
+                            <Col lg="4">
+                                <PoolPaneSide pool={pool} price={context.spartanPrice}/>
+                            </Col>
+                        </Row>
+                    </Container>
+                </div>
+            </React.Fragment>
         </>
     )
 };

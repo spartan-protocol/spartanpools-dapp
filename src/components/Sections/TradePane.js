@@ -10,7 +10,28 @@ import {
     Modal,
     ModalHeader,
     ModalBody,
-    ModalFooter
+    ModalFooter,
+    Card,
+    CardBody,
+    Media,
+    Col,
+    Row,
+    Container,
+    Form,
+    FormGroup,
+    Input,
+    Label,
+    Nav,
+    NavItem,
+    NavLink,
+    TabContent,
+    TabPane,
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+    InputGroup,
+    InputGroupAddon
 } from "reactstrap"
 
 import {withNamespaces} from "react-i18next";
@@ -48,14 +69,115 @@ export const TradePane = (props) => {
             />
             <br/>
 
-                    {/*
-                    // MAKE SURE THESE ARE ALL VISIBLE TO USER:
-                    // SWAP FEE | {props.tradeData.fee}
-                    // ACTUAL SLIP | {props.tradeData.actualSlip}
-                    // SPOT RATE | {pool.price}
-                    // OUTPUT | {output}
-                    // INPUT | {input}
-                    */}
+            {/*
+            // MAKE SURE THESE ARE ALL VISIBLE TO USER:
+            // SWAP FEE | {props.tradeData.fee}
+            // RATE SLIP | {props.tradeData.actualSlip}
+            // POOL PRICE SLIP |
+            // SPOT RATE | {pool.price}
+            // OUTPUT | {output}
+            // INPUT | {input}
+            */}
+
+            <Card>
+                <CardBody>
+
+                    <Media>
+                        {/*<div className="mr-4">*/}
+                        {/*    <i className="mdi mdi-account-circle text-primary h1"></i>*/}
+                        {/*</div>*/}
+
+                        {/*<Media body>*/}
+                        {/*    <div className="text-muted">*/}
+                        {/*        <h5>XX</h5>*/}
+                        {/*        <p className="mb-1">xx</p>*/}
+                        {/*        <p className="mb-0">xx</p>*/}
+                        {/*    </div>*/}
+
+                        {/*</Media>*/}
+
+                        {/*<Dropdown isOpen={this.state.isMenu} toggle={this.toggleMenu} className="ml-2">*/}
+                        {/*    <DropdownToggle tag="i" className="text-muted">*/}
+                        {/*        <i className="mdi mdi-dots-horizontal font-size-18"></i>*/}
+                        {/*    </DropdownToggle>*/}
+                        {/*    <DropdownMenu right>*/}
+                        {/*        <DropdownItem href="#">Action</DropdownItem>*/}
+                        {/*        <DropdownItem href="#">Another action</DropdownItem>*/}
+                        {/*        <DropdownItem href="#">Something else</DropdownItem>*/}
+                        {/*    </DropdownMenu>*/}
+                        {/*</Dropdown>*/}
+                    </Media>
+                </CardBody>
+                <CardBody className="border-top">
+
+                    <Row>
+                        <Col sm="6">
+                            <div>
+                                <p className="text-muted mb-2">XXX</p>
+                                <h5>XXX</h5>
+                            </div>
+                        </Col>
+                        <Col sm="6">
+                            <div className="text-sm-right mt-4 mt-sm-0">
+                                <p className="text-muted mb-2">XXX</p>
+                                <h5>XXX  <span className="badge badge-success ml-1 align-bottom">+ 1.3 %</span></h5>
+
+                            </div>
+                        </Col>
+                    </Row>
+                </CardBody>
+
+                <CardBody className="border-top">
+                    <p className="text-muted mb-4">In this month</p>
+                    <div className="text-center">
+                        <Row>
+                            <Col sm="4">
+                                <div>
+                                    <div className="font-size-24 text-primary mb-2">
+                                        <i className="bx bx-send"></i>
+                                    </div>
+
+                                    <p className="text-muted mb-2">XXX</p>
+                                    <h5>XXX</h5>
+
+                                    <div className="mt-3">
+                                        {/*<Link to="#" className="btn btn-primary btn-sm w-md">Send</Link>*/}
+                                    </div>
+                                </div>
+                            </Col>
+                            <Col sm="4">
+                                <div className="mt-4 mt-sm-0">
+                                    <div className="font-size-24 text-primary mb-2">
+                                        <i className="bx bx-import"></i>
+                                    </div>
+
+                                    <p className="text-muted mb-2">XXX</p>
+                                    <h5>XXX</h5>
+
+                                    <div className="mt-3">
+                                        {/*<Link to="#" className="btn btn-primary btn-sm w-md">Receive</Link>*/}
+                                    </div>
+                                </div>
+                            </Col>
+                            <Col sm="4">
+                                <div className="mt-4 mt-sm-0">
+                                    <div className="font-size-24 text-primary mb-2">
+                                        <i className="bx bx-wallet"></i>
+                                    </div>
+
+                                    <p className="text-muted mb-2">XXX</p>
+                                    <h5>XXX</h5>
+
+                                    <div className="mt-3">
+                                        {/*<Link to="#" className="btn btn-primary btn-sm w-md">Withdraw</Link>*/}
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
+
+                </CardBody>
+            </Card>
 
             <div className="table-responsive mt-6">
                 <table className="table table-centered table-nowrap mb-0">
