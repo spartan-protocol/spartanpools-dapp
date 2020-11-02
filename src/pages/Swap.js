@@ -15,25 +15,16 @@ import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getNewTokenData, getTokenDetails,
+    getPoolData, getNewTokenData, getTokenDetails, checkArrayComplete, getNextPoolsData,
     getPool, WBNB_ADDR
 } from '../client/web3'
 
 import {
-    Card,
-    CardBody,
-    Col,
-    Row,
-    Container,
-    Nav,
-    NavItem,
-    NavLink,
-    TabContent,
-    TabPane,
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
+    Card, CardBody,
+    Col, Row, Container,
+    Nav, NavItem, NavLink,
+    TabContent, TabPane,
+    Dropdown, DropdownToggle, DropdownMenu, DropdownItem,
 } from "reactstrap";
 
 import classnames from 'classnames';
@@ -111,14 +102,23 @@ const NewSwap = (props) => {
     const [endTx, setEndTx] = useState(false);
 
     useEffect(() => {
-        if (context.poolsData) {
-            getData()
-            return function cleanup() {
-                getData()
+        checkPoolReady()
+    // eslint-disable-next-line
+    }, []);
+
+      const checkPoolReady = async () => {
+        let params = queryString.parse(props.location.search)
+        if (context.poolsData && !context.poolsDataLoading) {
+            var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
+            if (existsInPoolsData === true) {
+                await getData()
+            }
+            else {
+                await nextPoolsDataPage()
+                await checkPoolReady()
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.connected, context.poolsData])
+    }
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
@@ -142,6 +142,16 @@ const NewSwap = (props) => {
             // console.log(await checkApproval(SPARTA_ADDR))
         }
     };
+
+    const nextPoolsDataPage = async () => {
+        if (context.poolsData && !context.poolsDataLoading) {
+            var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
+            context.setContext({'poolsDataLoading': true})
+            context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
+            context.setContext({'poolsDataLoading': false})
+            context.setContext({'poolsDataComplete': lastPage})
+        }
+    }
 
     // MAKE SURE THESE ARE ALL VISIBLE TO USER:
     // SWAP FEE | ACTUAL SLIP | SPOT RATE | OUTPUT | INPUT
@@ -180,6 +190,7 @@ const NewSwap = (props) => {
             symbol: inputTokenData?.symbol,
             output: formatBN(output, 0),
             outputSymbol: outputTokenData?.symbol,
+            outputBalance: outputTokenData?.balance,
             slip: formatBN(slip),
             fee: formatBN(fee),
             actualSlip: formatBN(actualSlip),
@@ -320,15 +331,14 @@ const NewSwap = (props) => {
                                                                 <div className="dropdown-item-text">
                                                                     <div>
                                                                         <p className="text-muted mb-2">Available Balance</p>
-                                                                        <h5 className="mb-0">000.000</h5>
                                                                     </div>
                                                                 </div>
                                                                 <DropdownItem divider/>
                                                                 <DropdownItem href="">
-                                                                    SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
+                                                                    SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.balance))}</span>
                                                                 </DropdownItem>
                                                                 <DropdownItem href="">
-                                                                    XXX : <span className="float-right">XXX.XXX</span>
+                                                                    {buyData.outputSymbol} : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.outputBalance))}</span>
                                                                 </DropdownItem>
                                                                 <DropdownItem divider/>
                                                                 <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>

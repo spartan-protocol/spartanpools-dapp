@@ -13,7 +13,7 @@ export const AddSymmPane = (props) => {
 
     return (
         <>
-            <InputPaneSwap
+            <InputPaneJoin
                 paneData={props.userData}
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}
@@ -65,7 +65,7 @@ export const AddSymmPane = (props) => {
                 <button color="success" type="button"
                         className="btn btn-success btn-lg btn-block waves-effect waves-light"
                         onClick={props.unlockToken}>
-                    <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock {props.pool.symbol}
+                    <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Unlock {props.pool.symbol}
                 </button>
                 }
             </Col>
@@ -75,7 +75,7 @@ export const AddSymmPane = (props) => {
                 <button color="success" type="button"
                         className="btn btn-success btn-lg btn-block waves-effect waves-light"
                         onClick={props.unlockSparta}>
-                    <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"></i> Unlock SPARTA</button>
+                    <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Unlock SPARTA</button>
                 }
             </Col>
 

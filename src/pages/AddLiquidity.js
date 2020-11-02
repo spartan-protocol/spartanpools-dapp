@@ -452,13 +452,13 @@ const AddLiquidity = (props) => {
                                                         </NavItem>
                                                         <NavItem className="text-center">
                                                             <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
-                                                                <i className="bx bxs-chevron-down mr-1 bx-sm "></i>
+                                                                <i className="bx bxs-chevron-down mr-1 bx-sm"/>
                                                                 <br/>{`${props.t("ADD")} ${pool.symbol}`}
                                                             </NavLink>
                                                         </NavItem>
                                                         <NavItem className="text-center">
                                                             <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggle('3');}}>
-                                                                <i className="bx bxs-chevrons-up mr-1 bx-sm "></i>
+                                                                <i className="bx bxs-chevrons-up mr-1 bx-sm"/>
                                                                 <br/>
                                                                 {`${props.t("REMOVE")} ${pool.symbol} + SPARTA`}
                                                             </NavLink>
@@ -766,7 +766,7 @@ const AddAsymmPane = (props) => {
                         <td style={{width: "100%"}}>
                             <div className="mb-0 text-left">
                                 <span id="tooltipShareAsym">Est. Pool Share <i
-                                    className="bx bx-info-circle align-middle"></i></span>
+                                    className="bx bx-info-circle align-middle"/></span>
                                 <UncontrolledTooltip placement="right" target="tooltipShareAsym">
                                     Estimate of the total share of the pool this liquidity add represents.
                                 </UncontrolledTooltip>

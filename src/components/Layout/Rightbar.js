@@ -40,7 +40,7 @@ const RightSidebar = (props) => {
           <div data-simplebar className="h-100">
             <div className="rightbar-title px-3 py-4">
               <Link to="#" onClick={toggleRightbar} className="right-bar-toggle float-right">
-                <i className="mdi mdi-close noti-icon"></i>
+                <i className="mdi mdi-close noti-icon"/>
               </Link>
               <h5 className="m-0">Wallet</h5>
             </div>

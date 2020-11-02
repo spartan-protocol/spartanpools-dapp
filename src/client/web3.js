@@ -257,7 +257,7 @@ export const getPool = async (address) => {
 
 export const getPoolData = async (address, poolsData) => {
     const poolData = poolsData.find((item) => item.address === address)
-    //console.log(poolData)
+    console.log(poolData)
     return (poolData)
 }
 

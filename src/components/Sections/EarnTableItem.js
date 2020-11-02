@@ -95,10 +95,10 @@ export const EarnTableItem = (props) => {
                 </td>
                 <td>
                     <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
-                        <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"></i> Lock
+                        <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"/> Lock
                     </button>
                     <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
-                        <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"></i> Unlock
+                        <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"/> Unlock
                     </button>
 
                     <Notification

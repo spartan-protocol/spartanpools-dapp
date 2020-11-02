@@ -25,7 +25,7 @@ const PoolPaneSide = (props) => {
                                         <TokenIconPane address={props.pool.address}/>
                                     }
                                     {props.pool.address === "XXX" &&
-                                        <img src={process.env.PUBLIC_URL + "/fallback.png"} style={{height: 40, borderRadius: 21}} alt={"Fallback Token Icon"}/>
+                                        <img src={process.env.PUBLIC_URL + "/fallback.png"} style={{height: 60, borderRadius: 30}} alt={"Fallback Token Icon"}/>
                                     }
                                 </div>
                                 <h4>{props.pool.symbol}</h4>

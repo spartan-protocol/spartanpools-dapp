@@ -24,7 +24,6 @@ export const InputPaneSwap = (props) => {
         <div>
             <div>
                 <Row>
-
                     <Col xs="12" md="6">
                         <div className="mb-3">
                             <label className="card-radio-label mb-2">
@@ -32,12 +31,27 @@ export const InputPaneSwap = (props) => {
                                 <div className="card-radio">
                                     <Row>
                                         <Col md={3}>
-                                            <TokenIcon address={props.pool.address}/>
-                                            <span className="">  {props.paneData?.outputSymbol}</span></Col>
+                                            <TokenIcon address={props.address}/>
+                                            <span className="">
+                                                {props.paneData?.outputSymbol === 'SPARTA' &&
+                                                    props.paneData?.symbol
+                                                }
+                                                {props.paneData?.outputSymbol !== 'SPARTA' &&
+                                                    props.paneData?.outputSymbol
+                                                }
+                                            </span>
+                                        </Col>
                                         <div className="ml-5">
                                             <Col md={4}>
-                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"></i>Available:</p>
-                                                <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.output))} {props.paneData?.outputSymbol}</h5>
+                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
+                                                <h5 className="font-size-16">
+                                                    {props.paneData?.outputSymbol === 'SPARTA' &&
+                                                        formatAllUnits(convertFromWei(props.paneData?.balance))
+                                                    }
+                                                    {props.paneData?.outputSymbol !== 'SPARTA' &&
+                                                        formatAllUnits(convertFromWei(props.paneData?.outputBalance))
+                                                    }
+                                                </h5>
                                             </Col>
                                         </div>
                                     </Row>
@@ -56,8 +70,8 @@ export const InputPaneSwap = (props) => {
                                             <span className=""> SPARTA</span></Col>
                                         <div className="ml-5">
                                             <Col md={4}>
-                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"></i>Available:</p>
-                                                <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.input))} SPARTA</h5>
+                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
+                                                <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.balance))} SPARTA</h5>
                                             </Col>
                                         </div>
                                     </Row>
