@@ -4,7 +4,6 @@ import {Context} from '../context'
 import {withRouter, useLocation, Link} from 'react-router-dom';
 import queryString from 'query-string';
 
-import InputPaneSwap from "../components/Sections/InputPaneSwap";
 import InputPaneJoin from "../components/Sections/InputPaneJoin";
 
 import {OutputPane} from '../components/common'
@@ -25,7 +24,6 @@ import {
     NavLink,
     TabPane,
     TabContent,
-    Alert,
     Dropdown,
     DropdownToggle,
     DropdownMenu,
@@ -46,10 +44,6 @@ import UncontrolledTooltip from "reactstrap/lib/UncontrolledTooltip";
 
 
 const AddLiquidity = (props) => {
-
-    const back = () => {
-        props.history.push('/pools')
-    };
 
     const [activeTab, setActiveTab] = useState('1');
     const [notifyMessage, setNotifyMessage] = useState("");
@@ -540,6 +534,9 @@ const AddLiquidity = (props) => {
                             {!context.stakesData &&
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                             }
+                            <Col lg="4">
+                                <PoolPaneSide pool={pool} price={context.spartanPrice}/>
+                            </Col>
                         </Row>
                     </Container>
                 </div>

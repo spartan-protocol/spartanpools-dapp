@@ -8,7 +8,6 @@ import TradePaneBuy from "../components/Sections/TradePaneBuy";
 
 import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
-
 import {bn, formatBN, convertToWei, formatAllUnits, convertFromWei} from '../utils'
 import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} from '../math'
 
@@ -21,21 +20,11 @@ import {
 } from '../client/web3'
 
 import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     Card,
     CardBody,
-    Media,
     Col,
     Row,
     Container,
-    Form,
-    FormGroup,
-    Input,
-    Label,
     Nav,
     NavItem,
     NavLink,
@@ -45,14 +34,11 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
-    InputGroup,
-    InputGroupAddon
 } from "reactstrap";
 
 import classnames from 'classnames';
 import Breadcrumbs from "../components/Common/Breadcrumb";
-
-import {InputPaneSwap} from "../components/Sections/InputPaneSwap";
+import {manageBodyClass} from "../components/common";
 
 const NewSwap = (props) => {
 
@@ -301,6 +287,10 @@ const NewSwap = (props) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
+    const toggleRightbar = (cssClass) => {
+        manageBodyClass("right-bar-enabled");
+    };
+
     return (
         <>
             <Notification type={notifyType} message={notifyMessage}/>
@@ -336,10 +326,10 @@ const NewSwap = (props) => {
                                                             SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
                                                         </DropdownItem>
                                                         <DropdownItem href="">
-                                                            BNB : <span className="float-right">0.04121</span>
+                                                            XXX : <span className="float-right">XXX.XXX</span>
                                                         </DropdownItem>
                                                         <DropdownItem divider/>
-                                                        <DropdownItem className="text-primary text-center" href="">
+                                                        <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
                                                             View total assets
                                                         </DropdownItem>
                                                     </DropdownMenu>
@@ -365,7 +355,7 @@ const NewSwap = (props) => {
                                                 </Nav>
                                                 <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
                                                     <TabPane tabId="1" id="buy">
-                                                        <TradePane
+                                                        <TradePaneBuy
                                                             pool={pool}
                                                             tradeData={buyData}
                                                             onTradeChange={onBuyChange}
@@ -378,7 +368,7 @@ const NewSwap = (props) => {
                                                             type={"Buy"}/>
                                                     </TabPane>
                                                     <TabPane tabId="2" id="sell-tab">
-                                                        <TradePane
+                                                        <TradePaneBuy
                                                             pool={pool}
                                                             tradeData={sellData}
                                                             onTradeChange={onSellChange}

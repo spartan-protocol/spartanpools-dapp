@@ -31,7 +31,8 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
-    InputGroup
+    InputGroup,
+    InputGroupAddon
 } from "reactstrap";
 import { withRouter } from "react-router-dom";
 import {BNB_ADDR, SPARTA_ADDR} from "../../client/web3";
@@ -114,14 +115,14 @@ export const InputPaneSwap = (props) => {
             </div>
             <br/>
             <FormGroup>
-                <Label>Value :</Label>
+                <Label>Amount :</Label>
                 <Row>
                     <Col sm="6">
                         <InputGroup className="mb-2 currency-value">
                             <InputGroupAddon addonType="prepend">
-                                <span className="input-group-text">{props.paneData?.symbol}</span>
+                                <span className="input-group-text">Sell {props.paneData?.symbol}</span>
                             </InputGroupAddon>
-                            <Input type="text" className="form-control" onChange={props.onInputChange}
+                            <Input min={0} type="text" className="form-control" onChange={props.onInputChange}
                                    placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
                                    size={'large'}
                                 // defaultValue={convertFromWei(props.paneData?.input)}
@@ -134,9 +135,9 @@ export const InputPaneSwap = (props) => {
                     </Col>
                     <Col sm="6">
                         <InputGroup className="mb-2">
-                            <Input type="text" className="form-control text-sm-right" placeholder={formatAllUnits(convertFromWei(props.paneData?.output))}/>
+                            <Input readonly="readonly" type="text" className="form-control text-sm-right" placeholder={formatAllUnits(convertFromWei(props.paneData?.output))}/>
                             <InputGroupAddon addonType="append">
-                                <span className="input-group-text">{props.paneData?.outputSymbol}</span>
+                                <span className="input-group-text">Receive {props.paneData?.outputSymbol}</span>
                             </InputGroupAddon>
                         </InputGroup>
                     </Col>

@@ -29,7 +29,8 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
-    InputGroup
+    InputGroup,
+    InputGroupAddon
 } from "reactstrap";
 import { withRouter } from "react-router-dom";
 import {TokenIcon} from "../Common/TokenIcon";

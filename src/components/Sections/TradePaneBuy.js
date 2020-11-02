@@ -3,7 +3,6 @@ import React, {useState} from "react";
 import InputPaneSwap from "./InputPaneSwap";
 
 import {convertFromWei, formatAllUnits} from "../../utils";
-import {LoadingOutlined, UnlockOutlined} from "@ant-design/icons";
 
 import {
     Button,
@@ -11,27 +10,6 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    Card,
-    CardBody,
-    Media,
-    Col,
-    Row,
-    Container,
-    Form,
-    FormGroup,
-    Input,
-    Label,
-    Nav,
-    NavItem,
-    NavLink,
-    TabContent,
-    TabPane,
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-    InputGroup,
-    InputGroupAddon
 } from "reactstrap"
 
 import {withNamespaces} from "react-i18next";
@@ -140,7 +118,7 @@ export const TradePaneBuy = (props) => {
                 }
                 {props.approval && props.startTx && !props.endTx &&
                     <Button size="lg" color="success" onClick={checkEnoughForGas} className="m-1">
-                        <LoadingOutlined className='mr-1'/>{`${props.type} ${props.pool.symbol}`}
+                        <i className="bx bx-loader-alt bx-spin mx-1 float-right"/>{`${props.type} ${props.pool.symbol}`}
                     </Button>
                 }
                 {props.approval && !props.startTx && (props.tradeData.balance > 0) &&

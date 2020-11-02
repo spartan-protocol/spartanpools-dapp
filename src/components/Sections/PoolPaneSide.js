@@ -5,115 +5,121 @@ import {SPARTA_ADDR} from "../../client/web3";
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
 
-import {TokenIcon} from '../Common/TokenIcon'
-import {Card, CardBody, Row, Col, FormGroup, Label, Input, InputGroup, InputGroupAddon, Button, Form, Table, CardTitle, CardSubtitle} from "reactstrap";
+import {TokenIconPane} from '../Common/TokenIconPane'
+import {Card, CardBody, Row, Col, Progress} from "reactstrap";
 import { Context } from "../../context";
 
 const PoolPaneSide = (props) => {
-
     const context = useContext(Context)
 
     return (
-
         <Card>
             <CardBody>
-            <h4 className="card-title">Overview</h4>
-                <div className="border p-3 rounded mt-4">
+                <h4 className="card-title mb-4 text-center">{props.t("Overview")}</h4>
+                {props.pool && context.walletData &&
                     <Row>
-                        <Col lg="6">
-                            <div className="d-flex align-items-center mb-3">
-                                <div className="avatar-xs mr-3">
-                                    <div className="mb-4">
-                                        {props.address !== "XXX" &&
-                                            <TokenIcon address={props.address}/>
-                                        }
-                                        {props.address === "XXX" &&
-                                            <img
-                                            src={process.env.PUBLIC_URL + "/fallback.png"}
-                                            style={{height:40,borderRadius:21}}
-                                            alt={"Fallback Token Icon"}
-                                            />
-                                        }
-                                    </div>
+                        <Col xs="6">
+                            <div className="text-center">
+                                <div className="mb-4">
+                                    {props.address !== "XXX" &&
+                                        <TokenIconPane address={props.address}/>
+                                    }
+                                    {props.address === "XXX" &&
+                                        <img src={process.env.PUBLIC_URL + "/fallback.png"} style={{height: 40, borderRadius: 21}} alt={"Fallback Token Icon"}/>
+                                    }
                                 </div>
-                                <h5 className="font-size-14 mb-0">{props.pool.symbol}</h5>
+                                <h4>{props.pool.symbol}</h4>
+                                <p>{props.t("Price")}</p>
+                                <h4 className="strong">{formatAllUSD(props.pool.price, props.price)}</h4>
                             </div>
-                            <Row>
-                                <div className="col-lg-6">
-                                    <div className="text-muted mt-3">
-                                        <p>Price</p>
-                                        <h4>{formatAllUSD(props.pool.price, props.price)}</h4>
-                                    </div>
-                                </div>
-
-                                <div className="col-lg-6 align-self-end">
-                                    <div className="float-right mt-3">
-                                    </div>
-                                </div>
-                            </Row>
                         </Col>
-                        <Col lg="6">
-                            <div className="d-flex align-items-center mb-3">
-                                <div className="avatar-xs mr-3">
-                                    <div className="mb-4">
-                                        <TokenIcon address={SPARTA_ADDR}/>
-                                    </div>
+                        <Col xs="6">
+                            <div className="text-center">
+                                <div className="mb-4">
+                                    <TokenIconPane address={SPARTA_ADDR}/>
                                 </div>
-                                <h5 className="font-size-14 mb-0">SPARTA</h5>
+                                <h4>SPARTA</h4>
+                                <p>{props.t("Price")}</p>
+                                <h4 className="strong">{formatAllUSD(props.price, 1)}</h4>
                             </div>
-                            <Row>
-                                <div className="col-lg-6">
-                                    <div className="text-muted mt-3">
-                                        <p>Price</p>
-                                        <h4>{formatAllUSD(props.price, 1)}</h4>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6 align-self-end">
-                                    <div className="float-right mt-3">
-                                    </div>
-                                </div>
-                            </Row>
+                        </Col>
+                        <div className="table-responsive mt-4">
+                            {!context.walletDataLoading &&
+                                <table className="table table-centered table-nowrap  mb-2">
+                                    <tbody>
+                                        <tr>
+                                            <td style={{width: "30%"}}>
+                                                <p className="mb-0">Spot Price</p>
+                                            </td>
+                                            <td style={{width: "25%"}}>
+                                                <h5 className="mb-0">{formatAllUnits(props.pool.price)} SPARTA</h5></td>
+                                            <td>
+                                                <Progress value="78" color="primary" className="bg-transparent" size="sm"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p className="mb-0">Volume</p>
+                                            </td>
+                                            <td>
+                                                <h5 className="mb-0">{formatAllUSD(convertFromWei(props.pool.volume), props.price)}</h5>
+                                            </td>
+                                            <td>
+                                                <Progress value="51" color="success" className="bg-transparent" size="sm"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p className="mb-0">Tx Count</p>
+                                            </td>
+                                            <td>
+                                                <h5 className="mb-0">{formatAllUnits(props.pool.txCount)}</h5>
+                                            </td>
+                                            <td>
+                                                <Progress value="29" color="warning" className="bg-transparent" size="sm"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p className="mb-0">Fees</p>
+                                            </td>
+                                            <td>
+                                                <h5 className="mb-0">{formatAllUSD(convertFromWei(props.pool.fees), props.price)}</h5>
+                                            </td>
+                                            <td>
+                                                <Progress value="12" color="secondary" className="bg-transparent" size="sm"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p className="mb-0">Depth</p>
+                                            </td>
+                                            <td>
+                                                <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.tokenAmount))} {props.pool.symbol}</h5>
+                                                <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.baseAmount))} SPARTA</h5>
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                            {context.walletDataLoading &&
+                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                            }
+                        </div>
+                        <Col>
+                            <br/>
+                            <br/>
                             <br/>
                         </Col>
-                        {!context.walletDataLoading &&
-                            <div className="d-flex align-items-center mb-3">
-                                <div className="table-responsive">
-                                    <Table className="table-centered table-nowrap mb-0">
-                                        <thead>
-                                        <tr>
-                                            <th>Spot Price</th>
-                                            <th>Volume</th>
-                                            <th>Tx Count</th>
-                                            <th>Depth</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>{formatAllUnits(props.pool.price)} SPARTA</td>
-                                            <td>{formatAllUSD(convertFromWei(props.pool.volume), props.price)}</td>
-                                            <td>{formatAllUnits(props.pool.txCount)}</td>
-                                            <td>{formatAllUnits(convertFromWei(props.pool.tokenAmount))} SPARTA</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"></th>
-                                            <td></td>
-                                            <td></td>
-                                            <td>{formatAllUnits(convertFromWei(props.pool.baseAmount))} {props.pool.symbol}</td>
-                                        </tr>
-                                        </tbody>
-                                    </Table>
-                                </div>
-                            </div>
-                        }
-                        {context.walletDataLoading &&
-                            <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                        }
                     </Row>
-                </div>
-            </CardBody>
-            <CardBody>
+                }
             </CardBody>
         </Card>
+
+        // {/* <h4>APY</h4>
+        // <h3 className="strong">{formatAPY(props.pool.apy)}</h3> */}
     )
 };
 
