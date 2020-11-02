@@ -14,21 +14,11 @@ import {manageBodyClass} from "../components/common";
 import Notification from '../components/Common/notification'
 
 import {
-    Container,
-    Row,
-    Button,
-    Col,
-    Card,
-    CardBody,
-    Nav,
-    NavItem,
-    NavLink,
-    TabPane,
-    TabContent,
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
+    Container, Row, Button, Col,
+    Card, CardBody,
+    Nav, NavItem, NavLink,
+    TabPane, TabContent,
+    Dropdown, DropdownToggle, DropdownMenu, DropdownItem,
     UncontrolledAlert,
     Modal, ModalHeader, ModalBody, ModalFooter
 } from "reactstrap";
@@ -414,9 +404,9 @@ const AddLiquidity = (props) => {
                     <Container fluid>
                         <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Join")}/>
                         <Row>
-                            {context.stakesData &&
-                                <Col lg="6">
-                                    <Card className="h-100">
+                            <Col lg="6">
+                                <Card className="h-100">
+                                    {context.stakesData &&
                                         <CardBody>
                                             <Link to='/pools'>
                                                 <button type="button" tag="button" className="btn btn-light">
@@ -431,116 +421,117 @@ const AddLiquidity = (props) => {
                                                             className="mdi mdi-chevron-down"></i></span>
                                                     </DropdownToggle>
                                                         <DropdownMenu right className="dropdown-menu-md">
-                                                            {pool.address !== 'XXX' &&
-                                                                <>
-                                                                    <div className="dropdown-item-text">
-                                                                        <div>
-                                                                            <p className="text-muted mb-2">Available Balance</p>
-                                                                            <h5 className="mb-0">000.000</h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <DropdownItem divider/>
-                                                                    <DropdownItem href="">
-                                                                        SPARTA : <span
-                                                                        className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
-                                                                    </DropdownItem>
-                                                                    <DropdownItem href="">
-                                                                        BNB : <span className="float-right">0.04121</span>
-                                                                    </DropdownItem>
-                                                                    <DropdownItem divider/>
-                                                                    <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
-                                                                        View all assets
-                                                                    </DropdownItem>
-                                                                </>
-                                                            }
+                                                            <div className="dropdown-item-text">
+                                                                <div>
+                                                                    <p className="text-muted mb-2">Available Balance</p>
+                                                                    <h5 className="mb-0">000.000</h5>
+                                                                </div>
+                                                            </div>
+                                                            <DropdownItem divider/>
+                                                            <DropdownItem href="">
+                                                                SPARTA : <span
+                                                                className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
+                                                            </DropdownItem>
+                                                            <DropdownItem href="">
+                                                                BNB : <span className="float-right">0.04121</span>
+                                                            </DropdownItem>
+                                                            <DropdownItem divider/>
+                                                            <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
+                                                                View all assets
+                                                            </DropdownItem>
                                                         </DropdownMenu>
                                                 </Dropdown>
                                             </div>
-                                            <div className="crypto-buy-sell-nav">
-                                                <br />
-                                                <Nav tabs className="nav-tabs-custom" role="tablist">
-                                                    <NavItem className="text-center ">
-                                                        <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
-                                                            <i className="bx bxs-chevrons-down mr-1 bx-sm"/>
-                                                            <br/>{`${props.t("ADD")} ${pool.symbol} + SPARTA`}
-                                                        </NavLink>
-                                                    </NavItem>
-                                                    <NavItem className="text-center">
-                                                        <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
-                                                            <i className="bx bxs-chevron-down mr-1 bx-sm "></i>
-                                                            <br/>{`${props.t("ADD")} ${pool.symbol}`}
-                                                        </NavLink>
-                                                    </NavItem>
-                                                    <NavItem className="text-center">
-                                                        <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggle('3');}}>
-                                                            <i className="bx bxs-chevrons-up mr-1 bx-sm "></i>
-                                                            <br/>
-                                                            {`${props.t("REMOVE")} ${pool.symbol} + SPARTA`}
-                                                        </NavLink>
-                                                    </NavItem>
-                                                </Nav>
-                                                <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
-                                                    <TabPane tabId="1" id="buy">
-                                                        <AddSymmPane
-                                                            pool={pool}
-                                                            userData={userData}
-                                                            liquidityData={liquidityData}
-                                                            onAddChange={onAddSymmChange}
-                                                            changeAmount={changeSymmAmount}
-                                                            estLiquidityUnits={estLiquidityUnits}
-                                                            getEstShare={getEstShare}
-                                                            approvalBase={approvalBase}
-                                                            approvalToken={approvalToken}
-                                                            unlockSparta={unlockSparta}
-                                                            unlockToken={unlockToken}
-                                                            addLiquidity={addLiquidity}
-                                                            startTx={startTx}
-                                                            endTx={endTx}
-                                                            activeTab={activeTab}
-                                                        />
-                                                    </TabPane>
-                                                    <TabPane tabId="2" id="sell-tab">
-                                                        <AddAsymmPane
-                                                            pool={pool}
-                                                            userData={userData}
-                                                            liquidityData={liquidityData}
-                                                            onAddChange={onAddTokenChange}
-                                                            changeAmount={changeTokenAmount}
-                                                            estLiquidityUnits={estLiquidityUnits}
-                                                            getEstShare={getEstShare}
-                                                            approvalBase={approvalBase}
-                                                            approvalToken={approvalToken}
-                                                            unlockSparta={unlockSparta}
-                                                            unlockToken={unlockToken}
-                                                            addLiquidity={addLiquidity}
-                                                            startTx={startTx}
-                                                            endTx={endTx}
-                                                            activeTab={activeTab}
-                                                        />
-                                                    </TabPane>
-                                                    <TabPane tabId="3" id="sell-tab">
-                                                        <RemoveLiquidityPane
-                                                            pool={pool}
-                                                            userData={userData}
-                                                            changeWithdrawAmount={changeWithdrawAmount}
-                                                            approvalToken={approvalToken}
-                                                            unlock={unlockToken}
-                                                            removeLiquidity={removeLiquidity}
-                                                            withdrawData={withdrawData}
-                                                            startTx={startTx}
-                                                            endTx={endTx}
-                                                            location={props.location.search}
-                                                        />
-                                                    </TabPane>
-                                                </TabContent>
-                                            </div>
+                                            {pool.address !== 'XXX' &&
+                                                <div className="crypto-buy-sell-nav">
+                                                    <br />
+                                                    <Nav tabs className="nav-tabs-custom" role="tablist">
+                                                        <NavItem className="text-center ">
+                                                            <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
+                                                                <i className="bx bxs-chevrons-down mr-1 bx-sm"/>
+                                                                <br/>{`${props.t("ADD")} ${pool.symbol} + SPARTA`}
+                                                            </NavLink>
+                                                        </NavItem>
+                                                        <NavItem className="text-center">
+                                                            <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
+                                                                <i className="bx bxs-chevron-down mr-1 bx-sm "></i>
+                                                                <br/>{`${props.t("ADD")} ${pool.symbol}`}
+                                                            </NavLink>
+                                                        </NavItem>
+                                                        <NavItem className="text-center">
+                                                            <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggle('3');}}>
+                                                                <i className="bx bxs-chevrons-up mr-1 bx-sm "></i>
+                                                                <br/>
+                                                                {`${props.t("REMOVE")} ${pool.symbol} + SPARTA`}
+                                                            </NavLink>
+                                                        </NavItem>
+                                                    </Nav>
+                                                    <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
+                                                        <TabPane tabId="1" id="buy">
+                                                            <AddSymmPane
+                                                                pool={pool}
+                                                                userData={userData}
+                                                                liquidityData={liquidityData}
+                                                                onAddChange={onAddSymmChange}
+                                                                changeAmount={changeSymmAmount}
+                                                                estLiquidityUnits={estLiquidityUnits}
+                                                                getEstShare={getEstShare}
+                                                                approvalBase={approvalBase}
+                                                                approvalToken={approvalToken}
+                                                                unlockSparta={unlockSparta}
+                                                                unlockToken={unlockToken}
+                                                                addLiquidity={addLiquidity}
+                                                                startTx={startTx}
+                                                                endTx={endTx}
+                                                                activeTab={activeTab}
+                                                            />
+                                                        </TabPane>
+                                                        <TabPane tabId="2" id="sell-tab">
+                                                            <AddAsymmPane
+                                                                pool={pool}
+                                                                userData={userData}
+                                                                liquidityData={liquidityData}
+                                                                onAddChange={onAddTokenChange}
+                                                                changeAmount={changeTokenAmount}
+                                                                estLiquidityUnits={estLiquidityUnits}
+                                                                getEstShare={getEstShare}
+                                                                approvalBase={approvalBase}
+                                                                approvalToken={approvalToken}
+                                                                unlockSparta={unlockSparta}
+                                                                unlockToken={unlockToken}
+                                                                addLiquidity={addLiquidity}
+                                                                startTx={startTx}
+                                                                endTx={endTx}
+                                                                activeTab={activeTab}
+                                                            />
+                                                        </TabPane>
+                                                        <TabPane tabId="3" id="sell-tab">
+                                                            <RemoveLiquidityPane
+                                                                pool={pool}
+                                                                userData={userData}
+                                                                changeWithdrawAmount={changeWithdrawAmount}
+                                                                approvalToken={approvalToken}
+                                                                unlock={unlockToken}
+                                                                removeLiquidity={removeLiquidity}
+                                                                withdrawData={withdrawData}
+                                                                startTx={startTx}
+                                                                endTx={endTx}
+                                                                location={props.location.search}
+                                                            />
+                                                        </TabPane>
+                                                    </TabContent>
+                                                </div>
+                                            }
+                                            {pool.address === 'XXX' &&
+                                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                            }
                                         </CardBody>
-                                    </Card>
-                                </Col>
-                            }
-                            {!context.stakesData &&
-                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                            }
+                                    }
+                                    {!context.stakesData &&
+                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                    }
+                                </Card>
+                            </Col>
                             <Col lg="4">
                                 <PoolPaneSide pool={pool} price={context.spartanPrice}/>
                             </Col>
@@ -889,9 +880,7 @@ const RemoveLiquidityPane = (props) => {
     const checkPoolSharesDataReady = async (props) => {
         let pool = ''
         let params = queryString.parse(location.search)
-        if (params.pool === BNB_ADDR) {
-            pool = WBNB_ADDR
-        }
+        if (params.pool === BNB_ADDR) {pool = WBNB_ADDR}
         else {pool = params.pool}
         if (context.stakesData && !context.poolSharesDataLoading) {
             var existsInStakesData = await context.stakesData.some(e => (e.address === pool))
@@ -921,6 +910,9 @@ const RemoveLiquidityPane = (props) => {
         let share = lockedAmount / units
         setBase(bn(sparta) * bn(share))
         setToken(bn(tokens) * bn(share))
+        console.log(sparta)
+        console.log(tokens)
+        console.log(share)
     }
 
     return (
