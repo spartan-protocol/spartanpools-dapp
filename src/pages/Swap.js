@@ -2,14 +2,14 @@ import React, {useEffect, useState, useContext} from 'react'
 import {Context} from '../context'
 
 import {withNamespaces} from 'react-i18next';
-import {withRouter} from 'react-router-dom';
+import {withRouter, Link} from 'react-router-dom';
 import queryString from 'query-string';
-import TradePane from "../components/Sections/TradePane";
+import TradePaneBuy from "../components/Sections/TradePaneBuy";
 
 import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
 
-import {bn, formatBN, convertToWei} from '../utils'
+import {bn, formatBN, convertToWei, formatAllUnits, convertFromWei} from '../utils'
 import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} from '../math'
 
 import Notification from '../components/Common/notification'
@@ -52,7 +52,7 @@ import {
 import classnames from 'classnames';
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
-import {InputPane} from "../components/Sections/InputPane";
+import {InputPaneSwap} from "../components/Sections/InputPaneSwap";
 
 const NewSwap = (props) => {
 
@@ -298,52 +298,49 @@ const NewSwap = (props) => {
         setPool(await getPool(pool.address))
     };
 
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
     return (
         <>
+            <Notification type={notifyType} message={notifyMessage}/>
             <React.Fragment>
                 <div className="page-content">
                     <Container fluid>
-
-                        {/* Render Breadcrumb */}
                         <Breadcrumbs title="Pools" breadcrumbItem="Swap"/>
                         <Row>
-
                             <Col lg="6">
                                 {pool &&
                                     <Card>
                                         <CardBody>
-                                            <div className="float-right">
-                                                <Dropdown>
+                                            <Link to='/pools'>
+                                                <button type="button" tag="button" className="btn btn-light">
+                                                    <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Back to Liquidity Pools
+                                                </button>
+                                            </Link>
+                                            <div className="float-right mr-2">
+                                                <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                                                     <DropdownToggle type="button" tag="button" className="btn btn-light">
-                                                        <i className="mdi mdi-wallet mr-1"></i>
-                                                        <span className="d-none d-sm-inline-block ml-1">Wallet Balance <i
-                                                            className="mdi mdi-chevron-down"></i></span>
+                                                        <i className="mdi mdi-wallet mr-1"/>
+                                                        <span className="d-none d-sm-inline-block ml-1">Balance <i className="mdi mdi-chevron-down"/></span>
                                                     </DropdownToggle>
                                                     <DropdownMenu right className="dropdown-menu-md">
                                                         <div className="dropdown-item-text">
                                                             <div>
-                                                                <p className="text-muted mb-2">X</p>
-                                                                <h5 className="mb-0">XX</h5>
+                                                                <p className="text-muted mb-2">Available Balance</p>
+                                                                <h5 className="mb-0">000.000</h5>
                                                             </div>
                                                         </div>
-
                                                         <DropdownItem divider/>
-
-                                                        <DropdownItem href="#">
-                                                            BTC : <span className="float-right">1.02356</span>
+                                                        <DropdownItem href="">
+                                                            SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(props.paneData?.balance))}</span>
                                                         </DropdownItem>
-                                                        <DropdownItem href="#">
-                                                            ETH : <span className="float-right">0.04121</span>
+                                                        <DropdownItem href="">
+                                                            BNB : <span className="float-right">0.04121</span>
                                                         </DropdownItem>
-                                                        <DropdownItem href="#">
-                                                            LTC : <span className="float-right">0.00356</span>
-                                                        </DropdownItem>
-
                                                         <DropdownItem divider/>
-
-                                                        <DropdownItem className="text-primary text-center" href="#">
-                                                            Learn more
+                                                        <DropdownItem className="text-primary text-center" href="">
+                                                            View total assets
                                                         </DropdownItem>
                                                     </DropdownMenu>
                                                 </Dropdown>
@@ -353,48 +350,46 @@ const NewSwap = (props) => {
                                             <br/>
                                             <div className="crypto-buy-sell-nav">
                                                 <Nav tabs className="nav-tabs-custom" role="tablist">
-                                                    <NavItem>
-                                                        <NavLink
-                                                            className={classnames({active: activeTab === '1'})}
-                                                            onClick={() => {
-                                                                toggle('1');
-                                                            }}
-                                                        >
-                                                            {props.t("BUY")} {pool.symbol}
+                                                    <NavItem className="text-center">
+                                                        <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
+                                                            <i className="bx bxs-chevron-down mr-1 bx-sm"/>
+                                                            <br/>{props.t("BUY")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
-                                                    <NavItem>
-                                                        <NavLink
-                                                            className={classnames({active: activeTab === '2'})}
-                                                            onClick={() => {
-                                                                toggle('2');
-                                                            }}
-                                                        >
-                                                            {props.t("SELL")} {pool.symbol}
+                                                    <NavItem className="text-center">
+                                                        <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
+                                                            <i className="bx bxs-chevron-up mr-1 bx-sm"/>
+                                                            <br/>{props.t("SELL")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
                                                 </Nav>
                                                 <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
                                                     <TabPane tabId="1" id="buy">
-                                                        <TabPane tab={`BUY ${pool.symbol}`} key="1">
-                                                            <TradePane
-                                                                pool={pool}
-                                                                tradeData={buyData}
-                                                                onTradeChange={onBuyChange}
-                                                                changeTradeAmount={changeBuyAmount}
-                                                                approval={approvalS}
-                                                                unlock={unlockSparta}
-                                                                trade={buy}
-                                                                startTx={startTx}
-                                                                endTx={endTx}
-                                                                type={"Buy"}
-                                                            />
-                                                        </TabPane>
+                                                        <TradePane
+                                                            pool={pool}
+                                                            tradeData={buyData}
+                                                            onTradeChange={onBuyChange}
+                                                            changeTradeAmount={changeBuyAmount}
+                                                            approval={approvalS}
+                                                            unlock={unlockSparta}
+                                                            trade={buy}
+                                                            startTx={startTx}
+                                                            endTx={endTx}
+                                                            type={"Buy"}/>
                                                     </TabPane>
                                                     <TabPane tabId="2" id="sell-tab">
-                                                        <TabPane tab={`SELL ${pool.symbol}`} key="2">
-
-                                                        </TabPane>
+                                                        <TradePane
+                                                            pool={pool}
+                                                            tradeData={sellData}
+                                                            onTradeChange={onSellChange}
+                                                            changeTradeAmount={changeSellAmount}
+                                                            approval={approval}
+                                                            unlock={unlockToken}
+                                                            trade={sell}
+                                                            startTx={startTx}
+                                                            endTx={endTx}
+                                                            type={"Sell"}
+                                                        />
                                                     </TabPane>
                                                 </TabContent>
                                             </div>

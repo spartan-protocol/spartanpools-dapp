@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
-import { BreadcrumbCombo, InputPane, PoolPane } from '../components/common'
+import { BreadcrumbCombo, InputPaneSwap, PoolPane } from '../components/common'
 import { Center, HR, Text } from '../components/elements';
 import { bn, formatBN, convertFromWei, convertToWei, formatUSD } from '../../utils'
 import { getSwapOutput, getSwapSlip } from '../../math'
@@ -315,7 +315,7 @@ const Swap = (props) => {
                         <Col xs={2}>
                         </Col>
                         <Col xs={9} style={{ marginRight: 30 }}>
-                            <InputPane
+                            <InputPaneSwap
                                 mainPool={mainPool}
                                 tokenList={tokenList}
                                 paneData={buyData}
@@ -338,7 +338,7 @@ const Swap = (props) => {
                             }
                         </Col>
                         <Col xs={9} style={{ marginLeft: 30 }}>
-                            <InputPane
+                            <InputPaneSwap
                                 poolsData={context.poolsData}
                                 tokenList={[mainPool.address]}
                                 paneData={sellData}

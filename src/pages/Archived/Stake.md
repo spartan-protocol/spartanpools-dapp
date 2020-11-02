@@ -6,7 +6,7 @@ import { Tabs, Row, Col } from 'antd';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
-import { BreadcrumbCombo, InputPane, PoolPane, OutputPane } from '../components/common'
+import { BreadcrumbCombo, InputPaneSwap, PoolPane, OutputPane } from '../components/common'
 import { Center, Button, LabelGroup } from '../components/elements';
 
 import { getLiquidityUnits, getPoolShare } from '../../math'
@@ -318,7 +318,7 @@ const AddLiquidity = (props) => {
                                 <Col xs={2}>
                                 </Col>
                                 <Col xs={9} style={{ marginRight: 30 }}>
-                                    <InputPane
+                                    <InputPaneSwap
                                         tokenList={tokenList}
                                         paneData={stake1Data}
                                         onInputChange={onAddLiquidity1Change}
@@ -329,7 +329,7 @@ const AddLiquidity = (props) => {
                                 </Col>
                                 <Col xs={9} style={{ marginLeft: 30 }}>
 
-                                    <InputPane
+                                    <InputPaneSwap
                                         tokenList={[BNB]}
                                         paneData={stake2Data}
                                         onInputChange={onAddLiquidity2Change}

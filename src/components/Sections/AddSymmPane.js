@@ -1,4 +1,4 @@
-import {InputPane} from "../Sections/InputPane";
+import {InputPaneSwap} from "./InputPaneSwap";
 
 import {convertFromWei} from "../../utils";
 import React from "react";
@@ -13,7 +13,7 @@ export const AddSymmPane = (props) => {
 
     return (
         <>
-            <InputPane
+            <InputPaneSwap
                 paneData={props.userData}
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}

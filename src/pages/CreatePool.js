@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react'
 import {Context} from '../context'
 
 import {withRouter} from 'react-router-dom'
-import InputPane from "../components/Sections/InputPane";
+import InputPaneJoin from "../components/Sections/InputPaneJoin";
 
 import {
     Input,
@@ -359,7 +359,7 @@ const CreatePool = (props) => {
                         <Row type="flex" align="middle" justify="center">
                             <Col xs={12}>
                                 <Sublabel size={20}>{'INPUT SPARTA'}</Sublabel><br/>
-                                <InputPane
+                                <InputPaneJoin
                                     // mainPool={mainPool}
                                     // tokenList={tokenShortList}
                                     paneData={stake1Data}
@@ -370,7 +370,7 @@ const CreatePool = (props) => {
                             </Col>
                             <Col xs={12}>
                                 <Sublabel size={20}>{'INPUT TOKEN'}</Sublabel><br/>
-                                <InputPane
+                                <InputPaneJoin
                                     // tokenList={[tokenData.address]}
                                     paneData={stake2Data}
                                     onInputChange={onAddLiquidity2Change}
