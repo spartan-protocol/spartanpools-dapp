@@ -352,13 +352,13 @@ const NewSwap = (props) => {
                                             <br/><br/>
                                             <div className="crypto-buy-sell-nav">
                                                 <Nav tabs className="nav-tabs-custom" role="tablist">
-                                                    <NavItem className="text-center">
+                                                    <NavItem className="text-center w-50">
                                                         <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
                                                             <i className="bx bxs-chevron-down mr-1 bx-sm"/>
                                                             <br/>{props.t("BUY")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
-                                                    <NavItem className="text-center">
+                                                    <NavItem className="text-center w-50">
                                                         <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
                                                             <i className="bx bxs-chevron-up mr-1 bx-sm"/>
                                                             <br/>{props.t("SELL")} {pool.symbol}

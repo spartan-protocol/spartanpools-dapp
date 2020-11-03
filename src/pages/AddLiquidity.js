@@ -77,6 +77,7 @@ const AddLiquidity = (props) => {
     const [withdrawData, setWithdrawData] = useState({
         'baseAmount': '0',
         'tokenAmount': '0',
+        'lpAmount': '0',
     })
 
     const [estLiquidityUnits, setLiquidityUnits] = useState(0)
@@ -337,6 +338,7 @@ const AddLiquidity = (props) => {
         let withdrawData = {
             'baseAmount': (+poolShare.baseAmount * amount) / 100,
             'tokenAmount': (+poolShare.tokenAmount * amount) / 100,
+            'lpAmount': (+poolShare.units * amount) / 100,
         }
         setWithdrawData(withdrawData)
     }
@@ -460,23 +462,23 @@ const AddLiquidity = (props) => {
                                                 <div className="crypto-buy-sell-nav">
                                                     <br />
                                                     <Nav tabs className="nav-tabs-custom" role="tablist">
-                                                        <NavItem className="text-center ">
+                                                        <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
-                                                                <i className="bx bxs-chevrons-down mr-1 bx-sm"/>
-                                                                <br/>{`${props.t("ADD")} ${pool.symbol} + SPARTA`}
+                                                                <i className="bx bxs-chevrons-up mr-1 bx-sm"/>
+                                                                <br/>{`${props.t("ADD")} BOTH`}
                                                             </NavLink>
                                                         </NavItem>
-                                                        <NavItem className="text-center">
+                                                        <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
-                                                                <i className="bx bxs-chevron-down mr-1 bx-sm"/>
+                                                                <i className="bx bxs-chevron-up mr-1 bx-sm"/>
                                                                 <br/>{`${props.t("ADD")} ${pool.symbol}`}
                                                             </NavLink>
                                                         </NavItem>
-                                                        <NavItem className="text-center">
+                                                        <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggle('3');}}>
-                                                                <i className="bx bxs-chevrons-up mr-1 bx-sm"/>
+                                                                <i className="bx bxs-chevrons-down mr-1 bx-sm"/>
                                                                 <br/>
-                                                                {`${props.t("REMOVE")} ${pool.symbol} + SPARTA`}
+                                                                {`${props.t("REMOVE")} BOTH`}
                                                             </NavLink>
                                                         </NavItem>
                                                     </Nav>
@@ -598,10 +600,11 @@ const AddSymmPane = (props) => {
                                     <UncontrolledTooltip placement="right" target="tooltipAddBase">
                                         The quantity of {props.userData.symbol} you are adding to the pool.
                                     </UncontrolledTooltip>
+                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h6>
                                 </div>
                             </td>
-                            <td style={{width: "10%"}}>
-                                <h2 className="mb-0">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h2>
+                            <td className="d-none d-lg-table-cell">
+                                <h2 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h2>
                             </td>
                         </tr>
                         <tr>
@@ -611,10 +614,11 @@ const AddSymmPane = (props) => {
                                     <UncontrolledTooltip placement="right" target="tooltipAddToken">
                                         The quantity of SPARTA you are adding to the pool.
                                     </UncontrolledTooltip>
+                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))}</h6>
                                 </div>
                             </td>
-                            <td style={{width: "10%"}}>
-                                <h2 className="mb-0">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))}</h2>
+                            <td className="d-none d-lg-table-cell">
+                                <h2 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))}</h2>
                             </td>
                         </tr>
                         <tr>
@@ -624,10 +628,11 @@ const AddSymmPane = (props) => {
                                     <UncontrolledTooltip placement="right" target="tooltipUnits">
                                         An estimate of the amount of LP tokens you will receive from this transaction.
                                     </UncontrolledTooltip>
+                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h6>
                                 </div>
                             </td>
-                            <td style={{width: "10%"}}>
-                                <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
+                            <td className="d-none d-lg-table-cell">
+                                <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
                             </td>
                         </tr>
                         <tr>
@@ -637,10 +642,11 @@ const AddSymmPane = (props) => {
                                     <UncontrolledTooltip placement="right" target="tooltipPoolShare">
                                         An estimate of the total share of the pool that this liquidity-add represents.
                                     </UncontrolledTooltip>
+                                    <h6 className="d-block d-lg-none mb-0 text-left">{`${props.getEstShare()}%`}</h6>
                                 </div>
                             </td>
-                            <td style={{width: "10%"}}>
-                                <h5 className="mb-0">{`${props.getEstShare()}%`}</h5>
+                            <td className="d-none d-lg-table-cell">
+                                <h5 className="mb-0 text-right">{`${props.getEstShare()}%`}</h5>
                             </td>
                         </tr>
                     </tbody>
@@ -772,10 +778,11 @@ const AddAsymmPane = (props) => {
                                 <UncontrolledTooltip placement="right" target="tooltipUnitsAsym">
                                     Estimate of the amount of LP tokens you will receive from this transaction.
                                 </UncontrolledTooltip>
+                                <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h6>
                             </div>
                         </td>
-                        <td style={{width: "10%"}}>
-                            <h5 className="mb-0">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
+                        <td className="d-none d-lg-table-cell">
+                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
                         </td>
                     </tr>
                     <tr>
@@ -786,10 +793,11 @@ const AddAsymmPane = (props) => {
                                 <UncontrolledTooltip placement="right" target="tooltipShareAsym">
                                     Estimate of the total share of the pool this liquidity add represents.
                                 </UncontrolledTooltip>
+                                <h6 className="d-block d-lg-none mb-0 text-left">{`${props.getEstShare()}%`}</h6>
                             </div>
                         </td>
-                        <td style={{width: "10%"}}>
-                            <h5 className="mb-0">{`${props.getEstShare()}%`}</h5>
+                        <td className="d-none d-lg-table-cell">
+                            <h5 className="mb-0 text-right">{`${props.getEstShare()}%`}</h5>
                         </td>
                     </tr>
                     </tbody>
@@ -945,32 +953,29 @@ const RemoveLiquidityPane = (props) => {
                     <tbody>
                     <tr>
                         <td>
-                            <p className="mb-0 text-left">Avail. LP Tokens</p>
+                            <p className="mb-0 text-left">Redeem LP Tokens</p>
+                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.withdrawData.lpAmount))} of {formatAllUnits(convertFromWei(availAmnt))}</h6>
                         </td>
-                        <td>
-                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(availAmnt))}</h5>
-                        </td>
-                        <td>
+                        <td className="d-none d-lg-table-cell">
+                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.withdrawData.lpAmount))} of {formatAllUnits(convertFromWei(availAmnt))}</h5>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <p className="mb-0 text-left">Available {props.pool.symbol}</p>
+                            <p className="mb-0 text-left">Receive {props.pool.symbol}</p>
+                            <h6 className="d-block d-lg-none mb-0 text-left">~ {formatAllUnits(convertFromWei(props.withdrawData.tokenAmount))}</h6>
                         </td>
-                        <td>
+                        <td className="d-none d-lg-table-cell">
                             <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(props.withdrawData.tokenAmount))}</h6>
                         </td>
-                        <td>
-                        </td>
                     </tr>
                     <tr>
                         <td>
-                            <p className="mb-0 text-left">Available SPARTA</p>
+                            <p className="mb-0 text-left">Receive SPARTA</p>
+                            <h6 className="d-block d-lg-none mb-0 text-left">~ {formatAllUnits(convertFromWei(props.withdrawData.baseAmount))}</h6>
                         </td>
-                        <td>
+                        <td className="d-none d-lg-table-cell">
                             <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(props.withdrawData.baseAmount))}</h6>
-                        </td>
-                        <td>
                         </td>
                     </tr>
                     </tbody>
@@ -991,31 +996,28 @@ const RemoveLiquidityPane = (props) => {
                     <tr>
                         <td>
                             <p className="mb-0 text-left">Locked LP tokens</p>
+                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(lockedAmnt))}</h6>
                         </td>
-                        <td className='text-right'>           
-                            <h5 className="mb-0">{formatAllUnits(convertFromWei(lockedAmnt))}</h5>
-                        </td>
-                        <td>
+                        <td className="d-none d-lg-table-cell">        
+                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(lockedAmnt))}</h5>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <p className="mb-0 text-left">Locked {props.pool.symbol}</p>
+                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(token))}</h6>
                         </td>
-                        <td className='text-right'>        
+                        <td className="d-none d-lg-table-cell">      
                             <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(token))}</h6>
-                        </td>
-                        <td>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <p className="mb-0 text-left">Locked SPARTA</p>
+                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(base))}</h6>
                         </td>
-                        <td>
+                        <td className="d-none d-lg-table-cell">
                             <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(base))}</h6>
-                        </td>
-                        <td>
                         </td>
                     </tr>
                     </tbody>
