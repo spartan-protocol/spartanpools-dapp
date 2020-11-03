@@ -36,7 +36,7 @@ export const InputPaneJoin = (props) => {
                                         <div className="ml-5">
                                             <Col md={4}>
                                                 <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
-                                                <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.balance))} {props.paneData?.symbol}</h5>
+                                                <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.balance))}</h5>
                                             </Col>
                                         </div>
                                     </Row>
@@ -59,7 +59,7 @@ export const InputPaneJoin = (props) => {
                                         <div className="ml-5">
                                             <Col md={4}>
                                                 <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
-                                                <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.baseBalance))} SPARTA</h5>
+                                                <h5 className="font-size-16">{formatAllUnits(convertFromWei(props.paneData?.baseBalance))}</h5>
                                             </Col>
                                         </div>
                                     </Row>

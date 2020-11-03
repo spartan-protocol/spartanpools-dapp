@@ -349,9 +349,7 @@ const NewSwap = (props) => {
                                                     </DropdownMenu>
                                                 </Dropdown>
                                             </div>
-
-                                            <h1 className="display-4">{props.t("Swap")}</h1>
-                                            <br/>
+                                            <br/><br/>
                                             <div className="crypto-buy-sell-nav">
                                                 <Nav tabs className="nav-tabs-custom" role="tablist">
                                                     <NavItem className="text-center">

@@ -87,6 +87,8 @@ const AddLiquidity = (props) => {
 
     const [withdrawAmount, setWithdrawAmount] = useState(0)
 
+    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
     useEffect(() => {
         checkPoolReady()
         checkPoolSharesDataReady()
@@ -102,8 +104,13 @@ const AddLiquidity = (props) => {
             }
             else {
                 await nextPoolsDataPage()
+                await pause(2000)
                 await checkPoolReady()
             }
+        }
+        else {
+            await pause(2000)
+            await checkPoolReady()
         }
     }
 
@@ -117,8 +124,13 @@ const AddLiquidity = (props) => {
             }
             else {
                 await nextWalletDataPage()
+                await pause(2000)
                 await checkWalletReady()
             }
+        }
+        else {
+            await pause(2000)
+            await checkWalletReady()
         }
     }
 
@@ -137,8 +149,13 @@ const AddLiquidity = (props) => {
             }
             else {
                 await nextPoolSharesDataPage()
+                await pause(2000)
                 await checkPoolSharesDataReady()
             }
+        }
+        else {
+            await pause(2000)
+            await checkPoolSharesDataReady()
         }
     }
 
@@ -199,7 +216,6 @@ const AddLiquidity = (props) => {
             context.setContext({'stakesData': await getNextPoolSharesData(context.account, context.tokenArray, context.stakesData)})
             context.setContext({'poolSharesDataLoading': false})
             context.setContext({'poolSharesDataComplete': lastPage})
-            console.log(context.stakesData)
         }
     }
 

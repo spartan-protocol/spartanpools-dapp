@@ -28,7 +28,12 @@ const PoolPaneSide = (props) => {
                                         <img src={process.env.PUBLIC_URL + "/fallback.png"} style={{height: 60, borderRadius: 30}} alt={"Fallback Token Icon"}/>
                                     }
                                 </div>
-                                <h4>{props.pool.symbol}</h4>
+                                {props.pool.address !== "XXX" &&
+                                    <h4>{props.pool.symbol}</h4>
+                                }
+                                {props.pool.address === "XXX" &&
+                                    <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                }
                                 <p>{props.t("Price")}</p>
                                 <h4 className="strong">{formatAllUSD(props.pool.price, props.price)}</h4>
                             </div>

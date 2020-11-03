@@ -101,10 +101,7 @@ export const EarnTableItem = (props) => {
                         <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"/> Unlock
                     </button>
 
-                    <Notification
-                        type={notifyType}
-                        message={notifyMessage}
-                    />
+                    <Notification type={notifyType} message={notifyMessage}/>
 
                         <Modal isOpen={showLockModal} toggle={()=>toggleLock(props)}>
                             <ModalHeader toggle={()=>toggleLock(props)}>You are locking your tokens!</ModalHeader>

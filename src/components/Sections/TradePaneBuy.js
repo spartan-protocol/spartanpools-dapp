@@ -65,8 +65,8 @@ export const TradePaneBuy = (props) => {
                         <tr>
                             <td style={{width: "100%"}}>
                                 <div className="mb-0 text-left">
-                                    <span id="tooltipRate">{props.t("Est. Rate")} <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipRate">Help info</UncontrolledTooltip>
+                                    <span id="tooltipBuyRate">{props.t("Est. Rate")} <i className="bx bx-info-circle align-middle"/></span>
+                                    <UncontrolledTooltip placement="right" target="tooltipBuyRate">Estimated rate</UncontrolledTooltip>
                                 </div>
                             </td>
                             <td style={{width: "10%"}}>
@@ -76,8 +76,8 @@ export const TradePaneBuy = (props) => {
                         <tr>
                             <td>
                                 <div className="mb-0 text-left">
-                                    <span id="tooltipRate">{props.t("Est. Slip")} <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipRate">Help info</UncontrolledTooltip>
+                                    <span id="tooltipBuySlip">{props.t("Est. Slip")} <i className="bx bx-info-circle align-middle"/></span>
+                                    <UncontrolledTooltip placement="right" target="tooltipBuySlip">Estimated rate slip. Difference between market rate and the rate you are getting.</UncontrolledTooltip>
                                 </div>
                             </td>
                             <td>
@@ -89,8 +89,8 @@ export const TradePaneBuy = (props) => {
                         <tr>
                             <td style={{width: "100%"}}>
                                 <div className="mb-0 text-left">
-                                    <span id="tooltipRate">{props.t("Est. Fee")} <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipRate">Help info</UncontrolledTooltip>
+                                    <span id="tooltipBuyFee">{props.t("Est. Fee")} <i className="bx bx-info-circle align-middle"/></span>
+                                    <UncontrolledTooltip placement="right" target="tooltipBuyFee">Estimated pool fee for this swap transaction.</UncontrolledTooltip>
                                 </div>
                             </td>
                             <td style={{width: "10%"}}>
@@ -100,8 +100,8 @@ export const TradePaneBuy = (props) => {
                         <tr>
                             <td style={{width: "100%"}}>
                                 <div className="mb-0 text-left">
-                                    <span className="font-size-26" id="tooltipRate">{props.t("Est. Output")} <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipRate">Help info</UncontrolledTooltip>
+                                    <span className="font-size-26" id="tooltipBuyOutput">{props.t("Est. Output")} <i className="bx bx-info-circle align-middle"/></span>
+                                    <UncontrolledTooltip placement="right" target="tooltipBuyOutput">Estimated final figure resulting from this swap.</UncontrolledTooltip>
                                 </div>
                             </td>
                             <td style={{width: "10%"}}>
