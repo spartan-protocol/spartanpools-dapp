@@ -40,7 +40,7 @@ export const PoolTableItem = (props) => {
                         <Link to={`/pool/stake?pool=${props.address}`}>
                             <button color="primary"
                                     className="btn btn-primary waves-effect waves-light m-1 w-75">
-                                <i className="bx bx-log-in-circle"></i> {props.t("Join")}
+                                <i className="bx bx-log-in-circle"/> {props.t("Join")}
                             </button>
                         </Link>
                     }
@@ -48,7 +48,7 @@ export const PoolTableItem = (props) => {
                         <Link to={`/pool/swap?pool=${props.address}`}>
                             <button color="primary"
                                     className="btn btn-primary waves-effect waves-light m-1 w-75">
-                                <i className="bx bx-transfer-alt"></i> {props.t("Swap")}
+                                <i className="bx bx-transfer-alt"/> {props.t("Swap")}
 
                             </button>
                         </Link>

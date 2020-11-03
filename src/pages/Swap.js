@@ -2,39 +2,34 @@ import React, {useEffect, useState, useContext} from 'react'
 import {Context} from '../context'
 
 import {withNamespaces} from 'react-i18next';
-import {withRouter} from 'react-router-dom';
+import {withRouter, Link} from 'react-router-dom';
 import queryString from 'query-string';
-import TradePane from "../components/Sections/TradePane";
+import TradePaneBuy from "../components/Sections/TradePaneBuy";
 
 import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
-
-import {bn, formatBN, convertToWei} from '../utils'
+import {bn, formatBN, convertToWei, formatAllUnits, convertFromWei} from '../utils'
 import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} from '../math'
 
 import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getNewTokenData, getTokenDetails,
+    getPoolData, getNewTokenData, getTokenDetails, checkArrayComplete, getNextPoolsData,
     getPool, WBNB_ADDR
 } from '../client/web3'
 
 import {
-    Container,
-    Row,
-    Col,
-    Card,
-    CardBody,
-    Nav,
-    NavItem,
-    NavLink,
-    TabPane,
-    TabContent
+    Card, CardBody,
+    Col, Row, Container,
+    Nav, NavItem, NavLink,
+    TabContent, TabPane,
+    Dropdown, DropdownToggle, DropdownMenu, DropdownItem,
 } from "reactstrap";
 
 import classnames from 'classnames';
 import Breadcrumbs from "../components/Common/Breadcrumb";
+import {manageBodyClass} from "../components/common";
 
 const NewSwap = (props) => {
 
@@ -107,14 +102,23 @@ const NewSwap = (props) => {
     const [endTx, setEndTx] = useState(false);
 
     useEffect(() => {
-        if (context.poolsData) {
-            getData()
-            return function cleanup() {
-                getData()
+        checkPoolReady()
+    // eslint-disable-next-line
+    }, []);
+
+      const checkPoolReady = async () => {
+        let params = queryString.parse(props.location.search)
+        if (context.poolsData && !context.poolsDataLoading) {
+            var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
+            if (existsInPoolsData === true) {
+                await getData()
+            }
+            else {
+                await nextPoolsDataPage()
+                await checkPoolReady()
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.connected, context.poolsData])
+    }
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
@@ -138,6 +142,16 @@ const NewSwap = (props) => {
             // console.log(await checkApproval(SPARTA_ADDR))
         }
     };
+
+    const nextPoolsDataPage = async () => {
+        if (context.poolsData && !context.poolsDataLoading) {
+            var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
+            context.setContext({'poolsDataLoading': true})
+            context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
+            context.setContext({'poolsDataLoading': false})
+            context.setContext({'poolsDataComplete': lastPage})
+        }
+    }
 
     // MAKE SURE THESE ARE ALL VISIBLE TO USER:
     // SWAP FEE | ACTUAL SLIP | SPOT RATE | OUTPUT | INPUT
@@ -176,6 +190,7 @@ const NewSwap = (props) => {
             symbol: inputTokenData?.symbol,
             output: formatBN(output, 0),
             outputSymbol: outputTokenData?.symbol,
+            outputBalance: outputTokenData?.balance,
             slip: formatBN(slip),
             fee: formatBN(fee),
             actualSlip: formatBN(actualSlip),
@@ -280,94 +295,117 @@ const NewSwap = (props) => {
         setPool(await getPool(pool.address))
     };
 
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+
+    const toggleRightbar = (cssClass) => {
+        manageBodyClass("right-bar-enabled");
+    };
 
     return (
         <>
-            <div>
-                <React.Fragment>
-                    <Notification
-                        type={notifyType}
-                        message={notifyMessage}
-                    />
-                    <div className="page-content">
-                        <Container fluid>
-                            {/* Render Breadcrumb */}
-                            <Breadcrumbs title={props.t("Pools")} breadcrumbItem={props.t("Swap")}/>
-                            <Row>
-                                <Col lg="4">
-                                    <PoolPaneSide pool={pool} price={context.spartanPrice} address={pool.address}/>
-                                </Col>
-                                <Col lg="6">
-                                    {pool &&
-                                        <Card className="h-100">
-                                            <CardBody>
-                                                <h4 className="card-title mb-4 text-center">{props.t("Buy/Sell")}</h4>
-                                                <Nav pills className="bg-light rounded" role="tablist">
+            <Notification type={notifyType} message={notifyMessage}/>
+            <React.Fragment>
+                <div className="page-content">
+                    <Container fluid>
+                        <Breadcrumbs title="Pools" breadcrumbItem="Swap"/>
+                        <Row>
+                            <Col lg="6">
+                                {pool &&
+                                    <Card>
+                                        <CardBody>
+                                            <Link to='/pools'>
+                                                <button type="button" tag="button" className="btn btn-light">
+                                                    <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Back to Liquidity Pools
+                                                </button>
+                                            </Link>
+                                            <div className="float-right mr-2">
+                                                <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                                                    <DropdownToggle type="button" tag="button" className="btn btn-light">
+                                                        <i className="mdi mdi-wallet mr-1"/>
+                                                        <span className="d-none d-sm-inline-block ml-1">Balance <i className="mdi mdi-chevron-down"/></span>
+                                                    </DropdownToggle>
+                                                    <DropdownMenu right className="dropdown-menu-md">
+                                                        {pool.address !== 'XXX' &&
+                                                            <>
+                                                                <div className="dropdown-item-text">
+                                                                    <div>
+                                                                        <p className="text-muted mb-2">Available Balance</p>
+                                                                    </div>
+                                                                </div>
+                                                                <DropdownItem divider/>
+                                                                <DropdownItem href="">
+                                                                    SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.balance))}</span>
+                                                                </DropdownItem>
+                                                                <DropdownItem href="">
+                                                                    {buyData.outputSymbol} : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.outputBalance))}</span>
+                                                                </DropdownItem>
+                                                                <DropdownItem divider/>
+                                                                <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
+                                                                    View all assets
+                                                                </DropdownItem>
+                                                            </>
+                                                        }
+                                                    </DropdownMenu>
+                                                </Dropdown>
+                                            </div>
+                                            <br/><br/>
+                                            <div className="crypto-buy-sell-nav">
+                                                <Nav tabs className="nav-tabs-custom" role="tablist">
                                                     <NavItem className="text-center w-50">
-                                                        <NavLink
-                                                            className={classnames({active: activeTab === '1'})}
-                                                            onClick={() => {
-                                                                toggle('1');
-                                                            }}
-                                                        >
-                                                            {props.t("Buy")} {pool.symbol}
+                                                        <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
+                                                            <i className="bx bxs-chevron-down mr-1 bx-sm"/>
+                                                            <br/>{props.t("BUY")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
                                                     <NavItem className="text-center w-50">
-                                                        <NavLink
-                                                            className={classnames({active: activeTab === '2'})}
-                                                            onClick={() => {
-                                                                toggle('2');
-                                                            }}
-                                                        >
-                                                            {props.t("Sell")} {pool.symbol}
+                                                        <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
+                                                            <i className="bx bxs-chevron-up mr-1 bx-sm"/>
+                                                            <br/>{props.t("SELL")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
                                                 </Nav>
-                                                <TabContent activeTab={activeTab} className="mt-4">
-                                                    <TabPane tabId="1" id="buy-tab">
-                                                        <TabPane tab={`BUY ${pool.symbol}`} key="1">
-                                                            <TradePane
-                                                                pool={pool}
-                                                                tradeData={buyData}
-                                                                onTradeChange={onBuyChange}
-                                                                changeTradeAmount={changeBuyAmount}
-                                                                approval={approvalS}
-                                                                unlock={unlockSparta}
-                                                                trade={buy}
-                                                                startTx={startTx}
-                                                                endTx={endTx}
-                                                                type={"Buy"}
-                                                            />
-                                                        </TabPane>
+                                                <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
+                                                    <TabPane tabId="1" id="buy">
+                                                        <TradePaneBuy
+                                                            pool={pool}
+                                                            tradeData={buyData}
+                                                            onTradeChange={onBuyChange}
+                                                            changeTradeAmount={changeBuyAmount}
+                                                            approval={approvalS}
+                                                            unlock={unlockSparta}
+                                                            trade={buy}
+                                                            startTx={startTx}
+                                                            endTx={endTx}
+                                                            type={"Buy"}/>
                                                     </TabPane>
                                                     <TabPane tabId="2" id="sell-tab">
-                                                        <TabPane tab={`SELL ${pool.symbol}`} key="2">
-                                                            <TradePane
-                                                                pool={pool}
-                                                                tradeData={sellData}
-                                                                onTradeChange={onSellChange}
-                                                                changeTradeAmount={changeSellAmount}
-                                                                approval={approval}
-                                                                unlock={unlockToken}
-                                                                trade={sell}
-                                                                startTx={startTx}
-                                                                endTx={endTx}
-                                                                type={"Sell"}
-                                                            />
-                                                        </TabPane>
+                                                        <TradePaneBuy
+                                                            pool={pool}
+                                                            tradeData={sellData}
+                                                            onTradeChange={onSellChange}
+                                                            changeTradeAmount={changeSellAmount}
+                                                            approval={approval}
+                                                            unlock={unlockToken}
+                                                            trade={sell}
+                                                            startTx={startTx}
+                                                            endTx={endTx}
+                                                            type={"Sell"}
+                                                        />
                                                     </TabPane>
                                                 </TabContent>
-                                            </CardBody>
-                                        </Card>
-                                    }
-                                </Col>
-                            </Row>
-                        </Container>
-                    </div>
-                </React.Fragment>
-            </div>
-
+                                            </div>
+                                        </CardBody>
+                                    </Card>
+                                }
+                            </Col>
+                            <Col lg="4">
+                                <PoolPaneSide pool={pool} price={context.spartanPrice}/>
+                            </Col>
+                        </Row>
+                    </Container>
+                </div>
+            </React.Fragment>
         </>
     )
 };

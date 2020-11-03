@@ -39,7 +39,7 @@ const Header = (props) => {
                       className="btn btn-sm font-size-16 d-lg-none header-item waves-effect waves-light float-left mx-1"
                       onClick={props.toggleNav}
                   >
-                    <i className="fa fa-fw fa-bars"></i>
+                    <i className="fa fa-fw fa-bars"/>
                   </button>
                   <ThemeSwitch />
                 </Col>

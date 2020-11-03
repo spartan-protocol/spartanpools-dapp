@@ -166,7 +166,7 @@ export const PoolsPaneSide = (props) => {
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
-                                    className={"bx bx-rotate-right h1 text-secondary align-middle mb-0 mr-3"}></i>{props.t("Txn Count")}
+                                    className={"bx bx-rotate-right h1 text-secondary align-middle mb-0 mr-3"}/>{props.t("Txn Count")}
                                 </h5>
                                 <Row>
                                     <Col xs="12">
@@ -190,7 +190,7 @@ export const PoolsPaneSide = (props) => {
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
-                                    className={"bx bx-trending-up h1 text-success align-middle mb-0 mr-3"}></i>{props.t("Total Earnings")}
+                                    className={"bx bx-trending-up h1 text-success align-middle mb-0 mr-3"}/>{props.t("Total Earnings")}
                                 </h5>
                                 <Row>
                                     <Col xs="12">

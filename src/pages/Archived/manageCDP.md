@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Context } from '../../context'
 import { Button, Row, Col, Divider, Tabs, Input, Form } from 'antd';
 
-import { BreadcrumbCombo, InputPane, PercentButtonRow, InputPaneStatic, CDPPane, OutputPane } from '../components/common'
+import { BreadcrumbCombo, InputPaneSwap, PercentButtonRow, InputPaneStatic, CDPPane, OutputPane } from '../components/common'
 import { Center, HR, Text, Label, LabelGroup } from '../components/elements';
 import { formatBN, convertFromWei, convertToWei, ETH_ADDRESS, BASE_ADDRESS, formatUSD, bn } from '../../utils'
 import { getSwapOutput, getSwapSlip, getDoubleSwapOutput, getDoubleSwapSlip, getMAXMINT } from '../../math'

@@ -15,7 +15,7 @@ const Navbar = (props) => {
                         <ul className="navbar-nav">
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" to="#">
-                                    <i className="bx bx-customize mr-2"></i>{props.t('Apps')} <div className="arrow-down ml-2"></div>
+                                    <i className="bx bx-customize mr-2"/>{props.t('Apps')} <div className="arrow-down ml-2"></div>
                                 </Link>
                                 <div className={classname("dropdown-menu")}>
                                     <Link to="/pools" className="dropdown-item">{props.t('Pools')}</Link>
@@ -31,7 +31,7 @@ const Navbar = (props) => {
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" to="#">
-                                    <i className="bx bx-info-circle mr-2"></i>{props.t('Info')} <div className="arrow-down ml-2"></div>
+                                    <i className="bx bx-info-circle mr-2"/>{props.t('Info')} <div className="arrow-down ml-2"></div>
                                 </Link>
                                 <div className={classname("dropdown-menu")}>
                                     <Link to="/faq" className="dropdown-item">{props.t('FAQ')}</Link>

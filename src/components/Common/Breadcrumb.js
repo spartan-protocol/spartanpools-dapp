@@ -9,7 +9,7 @@ const Breadcrumbs = (props) => {
             <Row>
                 <Col xs="12">
                     <div className="page-title-box d-flex align-items-center justify-content-between">
-                        <h4 className="mb-0 font-size-18">{props.breadcrumbItem}</h4>
+                    <h1 className="mb-0 font-size-40">{props.breadcrumbItem}</h1>
                         <div className="page-title-right">
                             <Breadcrumb listClassName="m-0">
                                 <BreadcrumbItem>

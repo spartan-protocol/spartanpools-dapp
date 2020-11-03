@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Context } from '../../context'
 import { Button, Row, Col, Form, Input } from 'antd';
 import { Link, Redirect,useHistory } from 'react-router-dom'
-import { BreadcrumbCombo, InputPane, PoolPane, CLTButtonRow } from '../components/common'
+import { BreadcrumbCombo, InputPaneSwap, PoolPane, CLTButtonRow } from '../components/common'
 import { Center, HR, Text, Label } from '../components/elements';
 import {formatBN, convertFromWei, convertToWei, ETH_ADDRESS, SPARTA_ADDRESS, formatUSD} from '../../utils'
 import { getSwapOutput, getSwapSlip, getDoubleSwapOutput, getDoubleSwapSlip } from '../../math'
