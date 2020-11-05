@@ -8,7 +8,7 @@ import {getListedTokens, getRewards, getDaoContract,
 
 import Notification from '../../components/Common/notification'
 
-import {convertFromWei, formatAllUnits, formatGranularUnits, daysSince} from '../../utils'
+import {convertFromWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince} from '../../utils'
 
 import {Row, Col, Table, Card, CardTitle, CardSubtitle, CardBody, Spinner} from "reactstrap"
 import {withNamespaces} from 'react-i18next'
@@ -18,7 +18,7 @@ import { withRouter } from "react-router-dom"
 
 const EarnTable = (props) => {
 
-    const context = useContext(Context);
+    const context = useContext(Context)
     const [reward, setReward] = useState(0)
     const [member, setMember] = useState([])
     const [totalWeight, setTotalWeight] = useState(0)
@@ -45,6 +45,9 @@ const EarnTable = (props) => {
         setTotalWeight(weight)
     }
 
+    const [lastHarvest,setlastHarvest] = useState(100);
+    const getLastHarvest = () => setlastHarvest(hoursSince(member.lastBlock))
+
     const harvest = async () => {
         setLoadingHarvest(true)
         let contract = getDaoContract()
@@ -57,6 +60,7 @@ const EarnTable = (props) => {
     const refreshData = async () => {
         let stakesData = await getPoolSharesData(context.account, await getListedTokens())
         context.setContext({ 'stakesData': stakesData })
+        getLastHarvest()
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
     }
@@ -128,7 +132,7 @@ const EarnTable = (props) => {
                                         <tr>
                                             <th scope="col">{props.t("Icon")}</th>
                                             <th scope="col">{props.t("Symbol")}</th>
-                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Balance")}</th>
+                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Unlocked")}</th>
                                             <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
                                             <th scope="col">{props.t("Action")}</th>
                                         </tr>
@@ -145,6 +149,8 @@ const EarnTable = (props) => {
                                                     member={member}
                                                     harvest={harvest}
                                                     loadingHarvest={loadingHarvest}
+                                                    lastHarvest={lastHarvest}
+                                                    getLastHarvest={getLastHarvest}
                                                 />
                                             )}
                                             <tr>

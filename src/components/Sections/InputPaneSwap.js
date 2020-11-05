@@ -103,14 +103,15 @@ export const InputPaneSwap = (props) => {
                                 <span className="input-group-text">Sell {props.paneData?.symbol}</span>
                             </InputGroupAddon>
                             <Input min={0} type="text" className="form-control" onChange={props.onInputChange}
-                                   placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
-                                   bsSize={'large'}
+                                placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
+                                bsSize={'large'}
                                 // defaultValue={convertFromWei(props.paneData?.input)}
-                                //   allowClear={true}
+                                // allowClear={true}
                                 // addonAfter={<TokenDropDown default={props.paneData?.address}
-                                //   changeToken={props.changeToken}
-                                //   tokenList={props.tokenList} />}
-                            ></Input>
+                                // changeToken={props.changeToken}
+                                // tokenList={props.tokenList} />}
+                            >
+                            </Input>
                         </InputGroup>
                     </Col>
                     <Col sm="6">

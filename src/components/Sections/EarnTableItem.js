@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import {Context} from "../../context";
 import {TokenIcon} from '../Common/TokenIcon'
-import {convertFromWei, formatAllUnits, hoursSince} from "../../utils";
+import {convertFromWei, formatAllUnits} from "../../utils";
 import {
     Progress, Button,
     Modal, ModalHeader, ModalBody, ModalFooter
@@ -46,12 +46,10 @@ export const EarnTableItem = (props) => {
     const refreshData = async () => {
         let stakesData = await getPoolSharesData(context.account, await getListedTokens())
         context.setContext({ 'stakesData': stakesData })
+        props.getLastHarvest()
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
     }
-
-    const [lastHarvest,setlastHarvest] = useState(100);
-    const getLastHarvest = (props) => setlastHarvest(hoursSince(props.member.lastBlock))
 
     const [isMember, setIsMember] = useState(false)
     const getIsMember = (props) => {
@@ -63,13 +61,13 @@ export const EarnTableItem = (props) => {
     const [showUnlockModal, setShowUnlockModal] = useState(false)
 
     const toggleLock = (props) => {
-        getLastHarvest(props)
+        props.getLastHarvest()
         getIsMember(props)
         setShowLockModal(!showLockModal)
     }
 
     const toggleUnlock = (props) => {
-        getLastHarvest(props)
+        props.getLastHarvest()
         getIsMember(props)
         setShowUnlockModal(!showUnlockModal)
     }
@@ -94,12 +92,16 @@ export const EarnTableItem = (props) => {
                     </Progress>
                 </td>
                 <td>
-                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
-                        <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"/> Lock
-                    </button>
-                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
-                        <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"/> Unlock
-                    </button>
+                    {props.units > 0 &&
+                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
+                            <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"/> Lock
+                        </button>
+                    }
+                    {props.locked > 0 &&
+                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
+                            <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"/> Unlock
+                        </button>
+                    }
 
                     <Notification type={notifyType} message={notifyMessage}/>
 
@@ -116,7 +118,7 @@ export const EarnTableItem = (props) => {
                                         Check in daily to harvest your rewards!<br/>
                                     </>
                                 }
-                                {isMember === true && lastHarvest <= 1 &&
+                                {isMember === true && props.lastHarvest <= 1 &&
                                     <>
                                         Locking your tokens enables them to earn yield.<br/>
                                         Doing so increases your weight in the DAO.<br/>
@@ -126,7 +128,7 @@ export const EarnTableItem = (props) => {
                                         Check in daily to harvest your rewards!<br/>
                                     </>
                                 }
-                                {isMember === true && lastHarvest > 1 &&
+                                {isMember === true && props.lastHarvest > 1 &&
                                     <>
                                         Before you lock your tokens a harvest must be performed.<br/>
                                         This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -145,7 +147,7 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && lastHarvest <= 1 &&
+                                {isMember === true && props.lastHarvest <= 1 &&
                                     <Button 
                                         color="primary" 
                                         onClick={() => {
@@ -155,7 +157,7 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && lastHarvest > 1 && props.loadingHarvest === false &&
+                                {isMember === true && props.lastHarvest > 1 && props.loadingHarvest === false &&
                                     <Button 
                                         color="primary" 
                                         onClick={() => props.harvest()}>
@@ -181,7 +183,7 @@ export const EarnTableItem = (props) => {
                                         However, you can re-lock them any time.<br/>
                                     </>
                                 }
-                                {isMember === true && lastHarvest <= 1 &&
+                                {isMember === true && props.lastHarvest <= 1 &&
                                     <>
                                         Unlocking your tokens disables them from earning yield.<br/>
                                         Doing so also decreases your weight in the DAO.<br/>
@@ -189,9 +191,9 @@ export const EarnTableItem = (props) => {
                                         However, you can re-lock them any time.<br/>
                                     </>
                                 }
-                                {isMember === true && lastHarvest > 1 &&
+                                {isMember === true && props.lastHarvest > 1 &&
                                     <>
-                                        Before you unlock your tokens a harvest must be performed.<br/>
+                                        Before you unlock your tokensm, a harvest must be performed.<br/>
                                         This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
                                         Harvesting now ensures you do not miss out on your hard earned rewards!<br/>
                                     </>
@@ -208,7 +210,7 @@ export const EarnTableItem = (props) => {
                                         Unlock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && lastHarvest <= 1 &&
+                                {isMember === true && props.lastHarvest <= 1 &&
                                     <Button 
                                     color="primary" 
                                     onClick={() => {
@@ -218,7 +220,7 @@ export const EarnTableItem = (props) => {
                                         Unlock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && lastHarvest > 1 && props.loadingHarvest === false &&
+                                {isMember === true && props.lastHarvest > 1 && props.loadingHarvest === false &&
                                     <Button 
                                         color="primary" 
                                         onClick={() => {

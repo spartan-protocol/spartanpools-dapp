@@ -2,7 +2,7 @@ import React, {useState} from "react";
 
 import InputPaneSwap from "./InputPaneSwap";
 
-import {convertFromWei, formatAllUnits} from "../../utils";
+import {convertFromWei, formatAllUnits, formatGranularUnits} from "../../utils";
 
 import {
     Button,
@@ -52,7 +52,7 @@ export const TradePaneBuy = (props) => {
             // MAKE SURE THESE ARE ALL VISIBLE TO USER:
             // SWAP FEE | {props.tradeData.fee}
             // RATE SLIP | {props.tradeData.actualSlip}
-            // POOL PRICE SLIP |
+            // POOL PRICE SLIP | {props.tradeData.slip}
             // SPOT RATE | {pool.price}
             // OUTPUT | {output}
             // INPUT | {input}
@@ -76,13 +76,26 @@ export const TradePaneBuy = (props) => {
                         <tr>
                             <td>
                                 <div className="mb-0 text-left">
-                                    <span id="tooltipBuySlip">{props.t("Est. Slip")} <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipBuySlip">Estimated rate slip. Difference between market rate and the rate you are getting.</UncontrolledTooltip>
+                                    <span id="tooltipBuyRateSlip">{props.t("Est. Rate Slip")} <i className="bx bx-info-circle align-middle"/></span>
+                                    <UncontrolledTooltip placement="right" target="tooltipBuyRateSlip">Estimated rate slip; the difference between spot price and the rate you are getting after slippage & fees.</UncontrolledTooltip>
                                 </div>
                             </td>
                             <td>
                                 <h5 className="mb-0 text-right"><span
-                                    className="font-size-16 badge badge-success ml-1 align-bottom">{`${((props.tradeData.slip) * 100).toFixed(0)}%`}</span>
+                                    className="font-size-16 badge badge-success ml-1 align-bottom">{`${((props.tradeData.actualSlip) * 100).toFixed(3)}%`}</span>
+                                </h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div className="mb-0 text-left">
+                                    <span id="tooltipBuyPoolSlip">{props.t("Est. Pool Slip")} <i className="bx bx-info-circle align-middle"/></span>
+                                    <UncontrolledTooltip placement="right" target="tooltipBuyPoolSlip">Estimated pool price slip; the difference between asset's ratio in the pool before/after this swap.</UncontrolledTooltip>
+                                </div>
+                            </td>
+                            <td>
+                                <h5 className="mb-0 text-right"><span
+                                    className="font-size-16 badge badge-success ml-1 align-bottom">{`${((props.tradeData.slip) * 100).toFixed(3)}%`}</span>
                                 </h5>
                             </td>
                         </tr>
@@ -90,11 +103,11 @@ export const TradePaneBuy = (props) => {
                             <td style={{width: "100%"}}>
                                 <div className="mb-0 text-left">
                                     <span id="tooltipBuyFee">{props.t("Est. Fee")} <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipBuyFee">Estimated pool fee for this swap transaction.</UncontrolledTooltip>
+                                    <UncontrolledTooltip placement="right" target="tooltipBuyFee">Estimated pool fee for the swap. This fee is awarded to liquidity providers' pool holdings to incentivize deeper pools over time.</UncontrolledTooltip>
                                 </div>
                             </td>
                             <td style={{width: "10%"}}>
-                                <h5 className="mb-0 text-right"> {formatAllUnits(convertFromWei(props.tradeData.fee))} {props.tradeData.outputSymbol}</h5>
+                                <h5 className="mb-0 text-right"> {formatGranularUnits(convertFromWei(props.tradeData.fee))} {props.tradeData.outputSymbol}</h5>
                             </td>
                         </tr>
                         <tr>

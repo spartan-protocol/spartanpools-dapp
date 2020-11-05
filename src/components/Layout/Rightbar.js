@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Context } from '../../context'
 import classnames from 'classnames';
 
-import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table } from "reactstrap";
+import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table, Progress } from "reactstrap";
 
 import {convertFromWei, formatAllUnits} from '../../utils'
 import {checkArrayComplete, getNextPoolSharesData, getNextWalletData} from '../../client/web3'
@@ -20,6 +20,7 @@ import BigNumber from 'bignumber.js';
 
 const RightSidebar = (props) => {
   const [activeTab, setActiveTab] = useState('1');
+  const context = useContext(Context);
 
   const toggle = tab => {
     if(activeTab !== tab) setActiveTab(tab);
@@ -38,14 +39,17 @@ const RightSidebar = (props) => {
 
       <SimpleBar style={{ height: "900px" }}>
           <div data-simplebar className="h-100">
-            <div className="rightbar-title px-3 py-4">
+            <div className="rightbar-title px-4 pt-4">
               <Link to="#" onClick={toggleRightbar} className="right-bar-toggle float-right">
                 <i className="mdi mdi-close noti-icon"/>
               </Link>
               <h5 className="m-0">Wallet</h5>
+              {context.account !== undefined &&
+                <a target="_blank" href={"https://bscscan.com/address/" + context.account} rel="noopener noreferrer"><p>View on BSC Scan</p></a>
+              }
             </div>
 
-              <div className="p-4">
+              <div className="px-4 pt-2">
               <div className="radio-toolbar">
                 <Nav  className="nav nav-pills nav-fill bg-light rounded" role="tablist">
                   <NavItem className="text-center w-50">
@@ -268,6 +272,7 @@ export const PoolItem = (props) => {
 const units = new BigNumber(props.units)
 const locked = new BigNumber(props.locked)
 const total = units.plus(locked)
+const lockedPC = locked.dividedBy(total).times(100).toFixed(0)
 
   return (
     <>
@@ -276,8 +281,15 @@ const total = units.plus(locked)
           <TokenIcon className="m-1" address={props.address}/>
         </td>
         <td className="align-middle">
-          <h5 className="m-1">{formatAllUnits(convertFromWei(total))}</h5>
-          <h6 className="m-1">{props.symbol}</h6>
+          <h6 className='m-2'>{props.symbol}</h6>
+          <h5 className='m-2'>{formatAllUnits(convertFromWei(total))}</h5>
+          <p className='d-inline-block w-50'>Locked: </p>
+          <div className='d-inline-block w-50'>
+            <Progress multi className="m-1">
+              <Progress bar color="success" value={convertFromWei(locked).toFixed(2)} max={convertFromWei(total).toFixed(2)}>{lockedPC <= 0 && "0%"}{lockedPC > 0 && lockedPC + " %"}</Progress>
+              <Progress bar color="danger" value={convertFromWei(units).toFixed(2)} max={convertFromWei(total).toFixed(2)}></Progress>
+            </Progress>
+          </div>
         </td>
       </tr>
     </>

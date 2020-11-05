@@ -40,7 +40,7 @@ const AddLiquidity = (props) => {
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
 
-    const toggle = tab => {
+    const toggleTab = tab => {
         if (activeTab !== tab) setActiveTab(tab);
     };
 
@@ -463,19 +463,19 @@ const AddLiquidity = (props) => {
                                                     <br />
                                                     <Nav tabs className="nav-tabs-custom" role="tablist">
                                                         <NavItem className="text-center w-33">
-                                                            <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
+                                                            <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggleTab('1');}}>
                                                                 <i className="bx bxs-chevrons-up mr-1 bx-sm"/>
                                                                 <br/>{`${props.t("ADD")} BOTH`}
                                                             </NavLink>
                                                         </NavItem>
                                                         <NavItem className="text-center w-33">
-                                                            <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
+                                                            <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggleTab('2');}}>
                                                                 <i className="bx bxs-chevron-up mr-1 bx-sm"/>
                                                                 <br/>{`${props.t("ADD")} ${pool.symbol}`}
                                                             </NavLink>
                                                         </NavItem>
                                                         <NavItem className="text-center w-33">
-                                                            <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggle('3');}}>
+                                                            <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggleTab('3');}}>
                                                                 <i className="bx bxs-chevrons-down mr-1 bx-sm"/>
                                                                 <br/>
                                                                 {`${props.t("REMOVE")} BOTH`}
@@ -519,6 +519,7 @@ const AddLiquidity = (props) => {
                                                                 startTx={startTx}
                                                                 endTx={endTx}
                                                                 activeTab={activeTab}
+                                                                toggleTab={toggleTab}
                                                             />
                                                         </TabPane>
                                                         <TabPane tabId="3" id="sell-tab">
@@ -810,23 +811,33 @@ const AddAsymmPane = (props) => {
                         <br/>
                         <br/>
                         <br/>
-                        {!props.approvalToken &&
+                        {convertFromWei(props.pool.depth) > 10000 && !props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
                                 <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Unlock {props.pool.symbol}
                             </button>
                         }
                     </Col>
                     <Col xs={12}>
-                        {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 <i className="bx bx-spin bx-loader"/> ADD TO POOL
                             </div>
                         }
 
-                        {props.approvalBase && props.approvalToken && !props.startTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && !props.startTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 ADD TO POOL
                             </div>
+                        }
+
+                        {convertFromWei(props.pool.depth) <= 10000 &&
+                            <>
+                                <h5>This pool is too shallow to safely add liquidity asymmetrically.</h5>
+                                <h5>Please add symmetrically instead.</h5>
+                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {props.toggleTab('1');}}>
+                                    ADD BOTH (SYMMETRICAL)
+                                </div>
+                            </>
                         }
                     </Col>
                 </Row>
