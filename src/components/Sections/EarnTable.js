@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from "react"
 import {Context} from "../../context"
 
-import {getListedTokens, getRewards, getDaoContract,
-    getPoolSharesData, getNextPoolSharesData,
-    checkArrayComplete, getMemberDetail, getTotalWeight
+import {getRewards, getDaoContract,
+    getSharesData,
+    getMemberDetail, getTotalWeight
 } from "../../client/web3"
 
 import Notification from '../../components/Common/notification'
@@ -58,19 +58,11 @@ const EarnTable = (props) => {
     }
 
     const refreshData = async () => {
-        let stakesData = await getPoolSharesData(context.account, await getListedTokens())
-        context.setContext({ 'stakesData': stakesData })
+        let sharesData = await getSharesData(context.account, context.tokenArray)
+        context.setContext({ 'sharesData': sharesData })
         getLastHarvest()
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
-    }
-
-    const nextPoolSharesDataPage = async () => {
-        var lastPage = await checkArrayComplete(context.tokenArray, context.stakesData)
-        context.setContext({'poolSharesDataLoading': true})
-        context.setContext({'stakesData': await getNextPoolSharesData(context.account, context.tokenArray, context.stakesData)})
-        context.setContext({'poolSharesDataLoading': false})
-        context.setContext({'poolSharesDataComplete': lastPage})
     }
 
     return (
@@ -107,7 +99,7 @@ const EarnTable = (props) => {
                                         </Row>
                                     </>
                                 }
-                                {context.walletDataLoading &&
+                                {!context.walletData &&
                                     <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                 }
                             </CardBody>
@@ -119,7 +111,7 @@ const EarnTable = (props) => {
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
-                            {context.stakesData &&
+                            {context.sharesData &&
                                 <div className="table-responsive">
                                     <CardTitle><h4>Earn</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
@@ -138,7 +130,7 @@ const EarnTable = (props) => {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            {context.stakesData.sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                            {context.sharesData.sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
                                                 <EarnTableItem 
                                                     key={c.address}
                                                     symbAddr={c.address}
@@ -155,18 +147,7 @@ const EarnTable = (props) => {
                                             )}
                                             <tr>
                                                 <td colSpan="5">
-                                                    {!context.poolSharesDataLoading && !context.poolSharesDataComplete &&
-                                                        <button color="primary"
-                                                            className="btn btn-primary waves-effect waves-light m-1"
-                                                            onClick={()=>nextPoolSharesDataPage()}
-                                                            >
-                                                            Load More
-                                                        </button>
-                                                    }
-                                                    {context.poolSharesDataLoading &&
-                                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                                    }
-                                                    {!context.poolSharesDataLoading && context.poolSharesDataComplete &&
+                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true &&
                                                         <div className="text-center m-2">All LP Tokens Loaded</div>
                                                     }
                                                 </td>
@@ -175,10 +156,10 @@ const EarnTable = (props) => {
                                     </Table>
                                 </div>
                             }
-                            {context.stakesDataLoading &&
+                            {context.sharesDataLoading === true &&
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                             }
-                            {!context.stakesDataLoading && !context.walletData &&
+                            {context.sharesDataLoading !== true && !context.walletData &&
                                 <div className="text-center m-2">Please connect your wallet to proceed</div>
                             }
                         </CardBody>

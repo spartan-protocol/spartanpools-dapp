@@ -93,7 +93,7 @@ const AddLiquidity = (props) => {
         const mainPool = await getPoolData(params.pool, context.poolsData)
         setMainPool(mainPool)
 
-        const liquidityData = await getLiquidityData(params.pool, context.stakesData)
+        const liquidityData = await getLiquidityData(params.pool, context.sharesData)
         setLiquidityData(liquidityData)
         console.log(liquidityData)
 

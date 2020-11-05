@@ -1,6 +1,5 @@
 import React, {useContext} from "react";
 import {Context} from "../../context";
-import {getNextPoolsData, checkArrayComplete} from "../../client/web3";
 import CardTitle from "reactstrap/es/CardTitle";
 import CardSubtitle from "reactstrap/es/CardSubtitle";
 
@@ -13,14 +12,6 @@ import { withRouter } from "react-router-dom";
 const PoolTable = (props) => {
 
     const context = useContext(Context);
-
-    const nextPoolsDataPage = async () => {
-        var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
-        context.setContext({'poolsDataLoading': true})
-        context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
-        context.setContext({'poolsDataLoading': false})
-        context.setContext({'poolsDataComplete': lastPage})
-    }
 
     return (
         <>
@@ -65,18 +56,10 @@ const PoolTable = (props) => {
                                             )}
                                                 <tr>
                                                     <td colSpan="8">
-                                                        {!context.poolsDataLoading && !context.poolsDataComplete &&
-                                                            <button color="primary"
-                                                            className="btn btn-primary waves-effect waves-light m-1"
-                                                            onClick={()=>nextPoolsDataPage()}
-                                                            >
-                                                            Load More
-                                                            </button>
-                                                        }
-                                                        {context.poolsDataLoading &&
+                                                        {context.poolsDataLoading === true &&
                                                             <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                                         }
-                                                        {!context.poolsDataLoading && context.poolsDataComplete &&
+                                                        {context.poolsDataLoading !== true && context.poolsDataComplete === true &&
                                                             <div className="text-center m-2">All Assets Loaded</div>
                                                         }
                                                     </td>

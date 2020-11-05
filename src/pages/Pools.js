@@ -3,7 +3,7 @@ import {withRouter} from "react-router-dom";
 
 import { Context } from '../context'
 
-import {getGlobalData, getSpartaPrice} from '../client/web3'
+import {getGlobalData} from '../client/web3'
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
@@ -30,7 +30,6 @@ const Pools = (props) => {
     }, [])
 
     const getData = async () => {
-        await getSpartaPrice()
         setGlobalData(await getGlobalData())
     }
 

@@ -49,7 +49,7 @@ const PoolPaneSide = (props) => {
                             </div>
                         </Col>
                         <div className="table-responsive mt-4">
-                            {!context.walletDataLoading &&
+                            {context.walletDataLoading !== true &&
                                 <table className="table table-centered table-nowrap  mb-2">
                                     <tbody>
                                         <tr>
@@ -121,7 +121,7 @@ const PoolPaneSide = (props) => {
                                     </tbody>
                                 </table>
                             }
-                            {context.walletDataLoading &&
+                            {context.walletDataLoading === true &&
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                             }
                         </div>
