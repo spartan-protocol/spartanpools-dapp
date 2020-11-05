@@ -6,7 +6,7 @@ import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
 
 import {TokenIconPane} from '../Common/TokenIconPane'
-import {Card, CardBody, Row, Col, Progress} from "reactstrap";
+import {Card, CardBody, Row, Col} from "reactstrap";
 import { Context } from "../../context";
 
 const PoolPaneSide = (props) => {
@@ -53,58 +53,70 @@ const PoolPaneSide = (props) => {
                                 <table className="table table-centered table-nowrap  mb-2">
                                     <tbody>
                                         <tr>
-                                            <td style={{width: "30%"}}>
+                                            <td className='text-center'>
                                                 <p className="mb-0">Spot Price</p>
                                             </td>
-                                            <td style={{width: "25%"}}>
-                                                <h5 className="mb-0">{formatAllUnits(props.pool.price)} SPARTA</h5></td>
+                                            <td className='text-center'>
+                                                <h5 className="mb-0">{formatAllUnits(props.pool.price)} SPARTA</h5>
+                                            </td>
+                                            {/*
                                             <td>
                                                 <Progress value="78" color="primary" className="bg-transparent" size="sm"/>
                                             </td>
+                                            */}
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td className='text-center'>
                                                 <p className="mb-0">Volume</p>
                                             </td>
-                                            <td>
+                                            <td className='text-center'>
                                                 <h5 className="mb-0">{formatAllUSD(convertFromWei(props.pool.volume), props.price)}</h5>
                                             </td>
+                                            {/* 
                                             <td>
                                                 <Progress value="51" color="success" className="bg-transparent" size="sm"/>
                                             </td>
+                                            */}
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td className='text-center'>
                                                 <p className="mb-0">Tx Count</p>
                                             </td>
-                                            <td>
+                                            <td className='text-center'>
                                                 <h5 className="mb-0">{formatAllUnits(props.pool.txCount)}</h5>
                                             </td>
+                                            {/*
                                             <td>
                                                 <Progress value="29" color="warning" className="bg-transparent" size="sm"/>
                                             </td>
+                                            */}
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td className='text-center'>
                                                 <p className="mb-0">Fees</p>
                                             </td>
-                                            <td>
+                                            <td className='text-center'>
                                                 <h5 className="mb-0">{formatAllUSD(convertFromWei(props.pool.fees), props.price)}</h5>
                                             </td>
+                                            {/*
                                             <td>
                                                 <Progress value="12" color="secondary" className="bg-transparent" size="sm"/>
                                             </td>
+                                            */}
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td className='text-center'>
                                                 <p className="mb-0">Depth</p>
                                             </td>
-                                            <td>
+                                            <td className='text-center'>
                                                 <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.tokenAmount))} {props.pool.symbol}</h5>
                                                 <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.baseAmount))} SPARTA</h5>
                                             </td>
+                                            {/*
                                             <td>
+                                                <Progress value="12" color="secondary" className="bg-transparent" size="sm"/>
                                             </td>
+                                            */}
                                         </tr>
                                     </tbody>
                                 </table>

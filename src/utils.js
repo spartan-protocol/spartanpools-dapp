@@ -96,8 +96,8 @@ export const formatGranularUnits = (input) => {
     else if (input < 0.01) {units = (bn(input).toFixed(5).toString())}
     else if (input < 0.1) {units = (bn(input).toFixed(4).toString())}
     else if (input < 1000) {units = (bn(input).toFixed(3).toString())}
-    else if (input < 1000000) {units = (bn(input).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}
-    else if (input >= 1000000) {units = ((bn(input).toFixed(1)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  // ADD: Divide by 1m and add 'M' string
+    else if (input < 1000000) {units = (bn(input).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}
+    else if (input >= 1000000) {units = ((bn(input).toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}  // ADD: Divide by 1m and add 'M' string
     return `${units}`
 }
 

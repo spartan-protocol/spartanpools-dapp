@@ -37,7 +37,7 @@ export const getActualSwapSlip = (pool, output, input, toBase) => {
   const y = toBase ? bn(output) : bn(input) // input is token if toBase
   const x = toBase ? bn(input) : bn(output) // input is token if toBase
   const result = (X.div(y.div(x))).minus(1)
-  const endResult = result.times(-1)
+  const endResult = Math.abs(result)
   return endResult
 }
 
