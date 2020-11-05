@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Context } from '../../context'
 import classnames from 'classnames';
 
-import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table } from "reactstrap";
+import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table, Progress } from "reactstrap";
 
 import {convertFromWei, formatAllUnits} from '../../utils'
 import {checkArrayComplete, getNextPoolSharesData, getNextWalletData} from '../../client/web3'
@@ -268,6 +268,7 @@ export const PoolItem = (props) => {
 const units = new BigNumber(props.units)
 const locked = new BigNumber(props.locked)
 const total = units.plus(locked)
+const lockedPC = locked.dividedBy(total).times(100).toFixed(0)
 
   return (
     <>
@@ -276,8 +277,15 @@ const total = units.plus(locked)
           <TokenIcon className="m-1" address={props.address}/>
         </td>
         <td className="align-middle">
-          <h5 className="m-1">{formatAllUnits(convertFromWei(total))}</h5>
-          <h6 className="m-1">{props.symbol}</h6>
+          <h6 className='m-2'>{props.symbol}</h6>
+          <h5 className='m-2'>{formatAllUnits(convertFromWei(total))}</h5>
+          <p className='d-inline-block w-50'>Locked: </p>
+          <div className='d-inline-block w-50'>
+            <Progress multi className="m-1">
+              <Progress bar color="success" value={convertFromWei(locked).toFixed(2)} max={convertFromWei(total).toFixed(2)}>{lockedPC <= 0 && "0%"}{lockedPC > 0 && lockedPC + " %"}</Progress>
+              <Progress bar color="danger" value={convertFromWei(units).toFixed(2)} max={convertFromWei(total).toFixed(2)}></Progress>
+            </Progress>
+          </div>
         </td>
       </tr>
     </>
