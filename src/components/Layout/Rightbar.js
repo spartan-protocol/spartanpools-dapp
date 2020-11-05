@@ -20,6 +20,7 @@ import BigNumber from 'bignumber.js';
 
 const RightSidebar = (props) => {
   const [activeTab, setActiveTab] = useState('1');
+  const context = useContext(Context);
 
   const toggle = tab => {
     if(activeTab !== tab) setActiveTab(tab);
@@ -38,14 +39,17 @@ const RightSidebar = (props) => {
 
       <SimpleBar style={{ height: "900px" }}>
           <div data-simplebar className="h-100">
-            <div className="rightbar-title px-3 py-4">
+            <div className="rightbar-title px-4 pt-4">
               <Link to="#" onClick={toggleRightbar} className="right-bar-toggle float-right">
                 <i className="mdi mdi-close noti-icon"/>
               </Link>
               <h5 className="m-0">Wallet</h5>
+              {context.account !== undefined &&
+                <a target="_blank" href={"https://bscscan.com/address/" + context.account} rel="noopener noreferrer"><p>View on BSC Scan</p></a>
+              }
             </div>
 
-              <div className="p-4">
+              <div className="px-4 pt-2">
               <div className="radio-toolbar">
                 <Nav  className="nav nav-pills nav-fill bg-light rounded" role="tablist">
                   <NavItem className="text-center w-50">

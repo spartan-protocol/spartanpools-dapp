@@ -18,7 +18,7 @@ import { withRouter } from "react-router-dom"
 
 const EarnTable = (props) => {
 
-    const context = useContext(Context);
+    const context = useContext(Context)
     const [reward, setReward] = useState(0)
     const [member, setMember] = useState([])
     const [totalWeight, setTotalWeight] = useState(0)
