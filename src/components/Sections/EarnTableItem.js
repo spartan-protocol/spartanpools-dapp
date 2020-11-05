@@ -193,7 +193,7 @@ export const EarnTableItem = (props) => {
                                 }
                                 {isMember === true && props.lastHarvest > 1 &&
                                     <>
-                                        Before you unlock your tokens a harvest must be performed.<br/>
+                                        Before you unlock your tokensm, a harvest must be performed.<br/>
                                         This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
                                         Harvesting now ensures you do not miss out on your hard earned rewards!<br/>
                                     </>
