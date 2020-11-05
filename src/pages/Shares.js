@@ -23,7 +23,7 @@ const Shares = (props) => {
 
     //const context = useContext(Context)
 
-    const shares = [ //Use {context.stakesData} when finished testing
+    const shares = [ //Use {context.sharesData} when finished testing
         { 
             address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
             baseAmount: "12340301336715504755845",

@@ -7,7 +7,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap'
 
-import {getDaoContract, getPoolSharesData, getListedTokens} from '../../client/web3'
+import {getDaoContract, getSharesData} from '../../client/web3'
 import Notification from '../../components/Common/notification'
 
 import {withNamespaces} from "react-i18next";
@@ -44,8 +44,8 @@ export const EarnTableItem = (props) => {
     }
 
     const refreshData = async () => {
-        let stakesData = await getPoolSharesData(context.account, await getListedTokens())
-        context.setContext({ 'stakesData': stakesData })
+        let sharesData = await getSharesData(context.account, context.tokenArray)
+        context.setContext({ 'sharesData': sharesData })
         props.getLastHarvest()
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
@@ -193,7 +193,7 @@ export const EarnTableItem = (props) => {
                                 }
                                 {isMember === true && props.lastHarvest > 1 &&
                                     <>
-                                        Before you unlock your tokensm, a harvest must be performed.<br/>
+                                        Before you unlock your tokens, a harvest must be performed.<br/>
                                         This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
                                         Harvesting now ensures you do not miss out on your hard earned rewards!<br/>
                                     </>

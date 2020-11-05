@@ -5,9 +5,11 @@ import Web3 from 'web3'
 
 import { manageBodyClass } from '../common';
 
-import { getListedTokens, getWalletData, getPoolSharesData, 
-    getListedPools, getSpartaPrice, 
-    getPoolsData, 
+import { getListedTokens, getSpartaPrice, 
+    getWalletData, getNextWalletData, 
+    getSharesData, getNextSharesData,
+    getPoolsData, getNextPoolsData, 
+    checkArrayComplete, getListedPools,
 } from '../../client/web3'
 
 const AddressConn = (props) => {
@@ -46,6 +48,59 @@ const AddressConn = (props) => {
         }
     }
 
+    const loadingTokens = async (account) => {
+        // (tokenArray) LISTED TOKENS | USED: RIGHT-BAR + EARN TABLE + POOL TABLE + ADD LIQ + SWAP
+        context.setContext({'tokenArrayLoading': true})
+        let tokenArray = await getListedTokens()
+        context.setContext({'tokenArray': tokenArray})
+        context.setContext({'tokenArrayComplete': true})
+        context.setContext({'tokenArrayLoading': false})
+
+        // eslint-disable-next-line
+        {/*
+        //3rd slowest - no longer required (was previously used for 'walletData')
+        setNotifyMessage('Loading token details array');
+        setNotifyType('dark')
+        let tokenDetailsArray = await getTokenDetails(account, tokenArray)
+        context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
+        */}
+
+        // (walletData) WALLET DATA | USED: RIGHT-BAR + EARN TABLE + POOL PANE SIDE + POOL TABLE + ADD LIQ + CREATE POOL
+        context.setContext({'walletDataLoading': true})
+        let walletData = await getWalletData(account)
+        context.setContext({'walletData': walletData})
+        context.setContext({'walletDataLoading': false})
+
+        // (sharesData) STAKES DATA | USED: RIGHT-BAR + EARN TABLE + ADD LIQ
+        let sharesData = await getSharesData(account, tokenArray)
+        context.setContext({'sharesDataLoading': true})
+        context.setContext({'sharesData': sharesData})
+        context.setContext({'sharesDataLoading': false})
+
+        nextWalletDataPage(tokenArray, walletData, account)
+        nextSharesDataPage(tokenArray, sharesData, account)
+    }
+
+    const nextWalletDataPage = async (tokenArray, walletData, account) => {
+        if (walletData && context.walletDataLoading !== true) {
+            var lastPage = await checkArrayComplete(tokenArray, walletData)
+            context.setContext({'walletDataLoading': true})
+            context.setContext({'walletData': await getNextWalletData(account, tokenArray, walletData)})
+            context.setContext({'walletDataLoading': false})
+            context.setContext({'walletDataComplete': lastPage})
+        }
+    }
+
+    const nextSharesDataPage = async (tokenArray, sharesData, account) => {
+        if (sharesData && context.sharesDataLoading !== true) {
+            var lastPage = await checkArrayComplete(tokenArray, sharesData)
+            context.setContext({'sharesDataLoading': true})
+            context.setContext({'sharesData': await getNextSharesData(account, tokenArray, sharesData)})
+            context.setContext({'sharesDataLoading': false})
+            context.setContext({'sharesDataComplete': lastPage})
+        }
+    }
+
     const enableMetaMask = async () => {
         //console.log('connecting')
         if (window.ethereum) {
@@ -61,47 +116,35 @@ const AddressConn = (props) => {
         // (spartanPrice) SPARTA PRICE | USED: GLOBALLY
         context.setContext({'spartanPrice': await getSpartaPrice()})
 
-        // (tokenArray) LISTED TOKENS | USED: GLOBALLY
+        // (tokenArray) LISTED TOKENS | USED: RIGHT-BAR + EARN TABLE + POOL TABLE + ADD LIQ + SWAP
+        context.setContext({'tokenArrayLoading': true})
         let tokenArray = await getListedTokens()
         context.setContext({'tokenArray': tokenArray})
+        context.setContext({'tokenArrayComplete': true})
+        context.setContext({'tokenArrayLoading': false})
 
         // (poolArray) LISTED POOLS | USED: GLOBALLY
-        let poolArray = await getListedPools();
-        context.setContext({'poolArray': poolArray});
+        let poolArray = await getListedPools()
+        context.setContext({'poolArray': poolArray})
 
-        // (stakesData) POOLS DATA | USED: POOLS TABLE + 
-        context.setContext({'poolsDataLoading': true})
-        const getPools = await getPoolsData(tokenArray)
-        context.setContext({'poolsData': getPools})
-        context.setContext({'poolsDataLoading': false})
+        // (poolsData) POOLS DATA | USED: POOLS TABLE + ADD LIQ + CREATE POOL + SWAP
+        if (context.poolsDataLoading !== true) {
+            context.setContext({'poolsDataLoading': true})
+            const getPools = await getPoolsData(tokenArray)
+            context.setContext({'poolsData': getPools})
+            context.setContext({'poolsDataLoading': false})
+            nextPoolsDataPage(tokenArray, getPools)
+        }
     }
 
-    const loadingTokens = async (account) => {
-
-        // (tokenArray) LISTED TOKENS | USED: GLOBALLY
-        let tokenArray = await getListedTokens()
-        context.setContext({'tokenArray': tokenArray})
-
-        // eslint-disable-next-line
-        {/*
-        //3rd slowest - no longer required (was previously used for 'walletData')
-        setNotifyMessage('Loading token details array');
-        setNotifyType('dark')
-        let tokenDetailsArray = await getTokenDetails(account, tokenArray)
-        context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
-        */}
-
-        // (walletData) WALLET DATA | USED: RIGHT-BAR + 
-        context.setContext({'walletDataLoading': true})
-        let walletData = await getWalletData(account)
-        context.setContext({'walletData': walletData})
-        context.setContext({'walletDataLoading': false})
-
-        // (stakesData) STAKES DATA | USED: RIGHT-BAR + 
-        let stakesData = await getPoolSharesData(account, tokenArray)
-        context.setContext({'poolSharesDataLoading': true})
-        context.setContext({'stakesData': stakesData})
-        context.setContext({'poolSharesDataLoading': false})
+    const nextPoolsDataPage = async (tokenArray, poolsData) => {
+        var lastPage = await checkArrayComplete(tokenArray, poolsData)
+        if (context.poolsDataLoading !== true) {
+            context.setContext({'poolsDataLoading': true})
+            context.setContext({'poolsData': await getNextPoolsData(tokenArray, poolsData)})
+            context.setContext({'poolsDataLoading': false})
+            context.setContext({'poolsDataComplete': lastPage})
+        }
     }
 
     /**
@@ -109,20 +152,20 @@ const AddressConn = (props) => {
    */
     const toggleRightbar = (cssClass) => {
         manageBodyClass("right-bar-enabled");
-     }
+    }
 
     return (
         <>
-            {!context.walletData && !context.walletDataLoading &&
+            {!context.walletData && context.walletDataLoading !== true &&
                 <div className="btn header-white mx-1" onClick={()=>connectWallet(props)}>
-                        <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-x-circle mx-1 float-right" style={{fontSize:22}}/></div>
+                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-x-circle mx-1 float-right" style={{fontSize:22}}/></div>
                 </div>
             }
             <div className="btn header-white mx-1" onClick={toggleRightbar}>
-                {context.walletData && context.walletDataLoading &&
+                {context.walletData && context.walletDataLoading === true &&
                     <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-loader-alt bx-spin mx-1 float-right" style={{fontSize:22}}/></div>
                 }
-                {context.walletData && !context.walletDataLoading &&
+                {context.walletData && context.walletDataLoading !== true &&
                     <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-check-circle mx-1 float-right" style={{fontSize:22}}/></div>
                 }
             </div>

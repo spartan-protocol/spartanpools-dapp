@@ -335,7 +335,7 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
         //}
     }
     console.log('end getNextWalletData')
-    console.log(walletData)
+    //console.log(walletData)
     return walletData
 }
 
@@ -392,8 +392,8 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
 }
 
 // Load Initial Pool Staked Data (Wallet Drawer & Earn Page)
-export const getPoolSharesData = async (member, poolArray) => {
-    console.log('start getPoolSharesData')
+export const getSharesData = async (member, poolArray) => {
+    console.log('start getSharesData')
     let results = 0
     const pagination = 3
     //console.log(poolArray)
@@ -402,42 +402,41 @@ export const getPoolSharesData = async (member, poolArray) => {
     }
     else {
         results = poolArray.length
-        //handleStates('poolSharesDataCompleted')
     }
-    let stakesData = []
+    let sharesData = []
     for (let i = 0; i < results; i++) {
         let stakesItem = await getPoolShares(member, poolArray[i])
         //if (stakesItem.locked + stakesItem.units > 0) {
-        stakesData.push(stakesItem)
+        sharesData.push(stakesItem)
         //}
     }
-    console.log('end getPoolSharesData')
-    //console.log(stakesData)
-    return stakesData
+    console.log('end getSharesData')
+    //console.log(sharesData)
+    return sharesData
 }
 
 // Load More Pool Staked Data (Wallet Drawer & Earn Page)
-export const getNextPoolSharesData = async (member, poolArray, prevStakesData) => {
-    console.log('start getNextPoolSharesData')
+export const getNextSharesData = async (member, poolArray, prevSharesData) => {
+    console.log('start getNextSharesData')
     let results = 0
     const pagination = 20
-    const currentLength = prevStakesData.length
+    const currentLength = prevSharesData.length
     if (poolArray.length > currentLength + pagination) {
         results = currentLength + pagination
     }
     else {
         results = poolArray.length
     }
-    let stakesData = prevStakesData
+    let sharesData = prevSharesData
     for (let i = currentLength; i < results; i++) {
         let stakesItem = await getPoolShares(member, poolArray[i])
         //if (stakesItem.locked + stakesItem.units > 0) {
-        stakesData.push(stakesItem)
+        sharesData.push(stakesItem)
         //}
     }
-    console.log('end getNextPoolSharesData')
-    //console.log(stakesData)
-    return stakesData
+    console.log('end getNextSharesData')
+    //console.log(sharesData)
+    return sharesData
 }
 
 export const getPoolShares = async (member, token) => {
@@ -462,8 +461,8 @@ export const getPoolShares = async (member, token) => {
     return share
 }
 
-export const getLiquidityData = async (address, stakesData) => {
-    const liquidityData = stakesData.find((item) => item.address === address)
+export const getLiquidityData = async (address, sharesData) => {
+    const liquidityData = sharesData.find((item) => item.address === address)
     return (liquidityData)
 }
 

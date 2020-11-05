@@ -26,8 +26,8 @@ import {
 import classnames from 'classnames';
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getTokenData, getTokenDetails, checkArrayComplete,
-    getPool, getPoolShares, WBNB_ADDR, getNextPoolsData, getNextWalletData, getNextPoolSharesData
+    getPoolData, getTokenData, getTokenDetails,
+    getPool, getPoolShares, WBNB_ADDR,
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
 import PoolPaneSide from "../components/Sections/PoolPaneSide"
@@ -92,19 +92,18 @@ const AddLiquidity = (props) => {
 
     useEffect(() => {
         checkPoolReady()
-        checkPoolSharesDataReady()
+        checkSharesDataReady()
     // eslint-disable-next-line
       }, []);
 
     const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
-        if (context.poolsData && !context.poolsDataLoading) {
+        if (context.poolsData && context.poolsDataLoading !== true) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
                 await checkWalletReady()
             }
             else {
-                await nextPoolsDataPage()
                 await pause(2000)
                 await checkPoolReady()
             }
@@ -117,14 +116,13 @@ const AddLiquidity = (props) => {
 
     const checkWalletReady = async () => {
         let params = queryString.parse(props.location.search)
-        if (context.walletData && !context.walletDataLoading) {
+        if (context.walletData && context.walletDataLoading !== true) {
             var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
             //console.log(context.walletData)
             if (existsInWalletData === true) {
                 await getData()
             }
             else {
-                await nextWalletDataPage()
                 await pause(2000)
                 await checkWalletReady()
             }
@@ -135,28 +133,27 @@ const AddLiquidity = (props) => {
         }
     }
 
-    const checkPoolSharesDataReady = async () => {
+    const checkSharesDataReady = async () => {
         let pool = ''
         let params = queryString.parse(props.location.search)
         if (params.pool === BNB_ADDR) {
             pool = WBNB_ADDR
         }
         else {pool = params.pool}
-        if (context.stakesData && !context.poolSharesDataLoading) {
-            var existsInStakesData = await context.stakesData.some(e => (e.address === pool))
-            //console.log(context.stakesData)
-            if (existsInStakesData === true) {
+        if (context.sharesData && context.sharesDataLoading !== true) {
+            var existsInSharesData = await context.sharesData.some(e => (e.address === pool))
+            //console.log(context.sharesData)
+            if (existsInSharesData === true) {
                 return
             }
             else {
-                await nextPoolSharesDataPage()
                 await pause(2000)
-                await checkPoolSharesDataReady()
+                await checkSharesDataReady()
             }
         }
         else {
             await pause(2000)
-            await checkPoolSharesDataReady()
+            await checkSharesDataReady()
         }
     }
 
@@ -188,36 +185,6 @@ const AddLiquidity = (props) => {
 
             await checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
             await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
-    }
-
-    const nextPoolsDataPage = async () => {
-        if (context.poolsData && !context.poolsDataLoading) {
-            var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
-            context.setContext({'poolsDataLoading': true})
-            context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
-            context.setContext({'poolsDataLoading': false})
-            context.setContext({'poolsDataComplete': lastPage})
-        }
-    }
-
-    const nextWalletDataPage = async () => {
-        if (context.walletData && !context.walletDataLoading) {
-            var lastPage = await checkArrayComplete(context.tokenArray, context.walletData)
-            context.setContext({'walletDataLoading': true})
-            context.setContext({'walletData': await getNextWalletData(context.account, context.tokenArray, context.walletData)})
-            context.setContext({'walletDataLoading': false})
-            context.setContext({'walletDataComplete': lastPage})
-        }
-      }
-
-    const nextPoolSharesDataPage = async () => {
-        if (context.stakesData && !context.poolSharesDataLoading) {
-            var lastPage = await checkArrayComplete(context.tokenArray, context.stakesData)
-            context.setContext({'poolSharesDataLoading': true})
-            context.setContext({'stakesData': await getNextPoolSharesData(context.account, context.tokenArray, context.stakesData)})
-            context.setContext({'poolSharesDataLoading': false})
-            context.setContext({'poolSharesDataComplete': lastPage})
-        }
     }
 
     const checkApproval = async (address) => {
@@ -424,7 +391,7 @@ const AddLiquidity = (props) => {
                         <Row>
                             <Col lg="6">
                                 <Card className="h-100">
-                                    {context.stakesData &&
+                                    {context.sharesData &&
                                         <CardBody>
                                             <Link to='/pools'>
                                                 <button type="button" tag="button" className="btn btn-light">
@@ -544,7 +511,7 @@ const AddLiquidity = (props) => {
                                             }
                                         </CardBody>
                                     }
-                                    {!context.stakesData &&
+                                    {!context.sharesData &&
                                         <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                     }
                                 </Card>
@@ -915,31 +882,31 @@ const RemoveLiquidityPane = (props) => {
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
-        checkPoolSharesDataReady(props)
+        checkSharesDataReady(props)
         // eslint-disable-next-line
     }, [])
 
-    const checkPoolSharesDataReady = async (props) => {
+    const checkSharesDataReady = async (props) => {
         let pool = ''
         let params = queryString.parse(location.search)
         if (params.pool === BNB_ADDR) {pool = WBNB_ADDR}
         else {pool = params.pool}
-        if (context.stakesData && !context.poolSharesDataLoading) {
-            var existsInStakesData = await context.stakesData.some(e => (e.address === pool))
-            //console.log(context.stakesData)
-            if (existsInStakesData === true) {
+        if (context.sharesData && context.sharesDataLoading !== true) {
+            var existsInSharesData = await context.sharesData.some(e => (e.address === pool))
+            //console.log(context.sharesData)
+            if (existsInSharesData === true) {
                 getLockedAmount(pool, props.pool)
             }
             else {
                 await pause(2000)
-                await checkPoolSharesDataReady()
+                await checkSharesDataReady()
             }
         }
     }
 
     const getLockedAmount = async (pool, poolData) => {
-        const lockedAmount = context.stakesData.find(x => x.address === pool).locked
-        const availAmount = context.stakesData.find(x => x.address === pool).units
+        const lockedAmount = context.sharesData.find(x => x.address === pool).locked
+        const availAmount = context.sharesData.find(x => x.address === pool).units
         setLockedAmnt(lockedAmount)
         setAvailAmnt(availAmount)
         getRates(poolData, lockedAmount)

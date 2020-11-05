@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Table, Progress } from "reactstrap";
 
 import {convertFromWei, formatAllUnits} from '../../utils'
-import {checkArrayComplete, getNextPoolSharesData, getNextWalletData} from '../../client/web3'
 
 import { manageBodyClass } from '../common';
 
@@ -76,7 +75,6 @@ const RightSidebar = (props) => {
                     <Row>
                       <Col sm="12">
                         <AssetTable 
-                          handleNextWalletDataPage={props.handleNextWalletDataPage}
                           walletDataCompleted={props.walletDataCompleted}
                           walletDataLoading={props.walletDataLoading}
                         />
@@ -104,14 +102,6 @@ const RightSidebar = (props) => {
 export const AssetTable = () => {
 
   const context = useContext(Context)
-
-  const nextWalletDataPage = async () => {
-    var lastPage = await checkArrayComplete(context.tokenArray, context.walletData)
-    context.setContext({'walletDataLoading': true})
-    context.setContext({'walletData': await getNextWalletData(context.account, context.tokenArray, context.walletData)})
-    context.setContext({'walletDataLoading': false})
-    context.setContext({'walletDataComplete': lastPage})
-  }
 
   //useEffect(() => {
       // updateWallet()
@@ -149,18 +139,10 @@ export const AssetTable = () => {
                   )}
                   <tr>
                     <td colSpan="5">
-                      {!context.walletDataLoading && !context.walletDataComplete &&
-                          <button color="primary"
-                          className="btn btn-primary waves-effect waves-light m-1"
-                          onClick={()=>nextWalletDataPage()}
-                          >
-                          Load More
-                          </button>
-                      }
-                      {context.walletDataLoading &&
+                      {context.walletDataLoading === true &&
                           <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                       }
-                      {!context.walletDataLoading && context.walletDataComplete &&
+                      {context.walletDataLoading !== true && context.walletDataComplete === true &&
                           <div className="text-center m-2">All Assets Loaded</div>
                       }
                     </td>
@@ -197,17 +179,8 @@ export const PoolShareTable = () => {
 
   const context = useContext(Context)
 
-  const nextPoolSharesDataPage = async () => {
-    var lastPage = await checkArrayComplete(context.tokenArray, context.stakesData)
-    context.setContext({'poolSharesDataLoading': true})
-    context.setContext({'stakesData': await getNextPoolSharesData(context.account, context.tokenArray, context.stakesData)})
-    context.setContext({'poolSharesDataLoading': false})
-    context.setContext({'poolSharesDataComplete': lastPage})
-    console.log(context.stakesData)
-  }
-
   //useEffect(() => {
-    //console.log(context.stakesData)
+    //console.log(context.sharesData)
     // getPoolSharess()
     // console.log(context.stakes)
     // eslint-disable-next-line
@@ -218,10 +191,10 @@ export const PoolShareTable = () => {
       <div>
         <Row>
           <Col>
-            {!context.stakesData &&
+            {!context.sharesData &&
               <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
             }
-            {context.stakesData &&
+            {context.sharesData &&
               <Table className="text-center">
                 <thead>
                   <tr>
@@ -230,7 +203,7 @@ export const PoolShareTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                      {context.stakesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                      {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
                         <PoolItem 
                           key={c.address}
                           symbol={c.symbol}
@@ -241,18 +214,10 @@ export const PoolShareTable = () => {
                       )}
                       <tr>
                           <td colSpan="5">
-                              {!context.poolSharesDataLoading && !context.poolSharesDataComplete &&
-                                  <button color="primary"
-                                  className="btn btn-primary waves-effect waves-light m-1"
-                                  onClick={()=>nextPoolSharesDataPage()}
-                                  >
-                                  Load More
-                                  </button>
-                              }
-                              {context.poolSharesDataLoading &&
+                              {context.sharesDataLoading === true &&
                                   <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                               }
-                              {!context.poolSharesDataLoading && context.poolSharesDataComplete &&
+                              {context.sharesDataLoading !== true && context.sharesDataComplete === true &&
                                   <div className="text-center m-2">All LP Tokens Loaded</div>
                               }
                           </td>

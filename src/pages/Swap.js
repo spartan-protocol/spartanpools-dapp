@@ -15,7 +15,7 @@ import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getNewTokenData, getTokenDetails, checkArrayComplete, getNextPoolsData,
+    getPoolData, getNewTokenData, getTokenDetails,
     getPool, WBNB_ADDR
 } from '../client/web3'
 
@@ -108,13 +108,12 @@ const NewSwap = (props) => {
 
       const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
-        if (context.poolsData && !context.poolsDataLoading) {
+        if (context.poolsData && context.poolsDataLoading !== true) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
                 await getData()
             }
             else {
-                await nextPoolsDataPage()
                 await checkPoolReady()
             }
         }
@@ -124,7 +123,7 @@ const NewSwap = (props) => {
         let params = queryString.parse(props.location.search)
         if (params.pool !== undefined) {
             setPoolURL(params.pool)
-            console.log(params.pool)
+            //console.log(params.pool)
             const pool = await getPoolData(params.pool, context.poolsData)
             setPool(pool)
 
@@ -140,16 +139,6 @@ const NewSwap = (props) => {
             await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
 
             // console.log(await checkApproval(SPARTA_ADDR))
-        }
-    };
-
-    const nextPoolsDataPage = async () => {
-        if (context.poolsData && !context.poolsDataLoading) {
-            var lastPage = await checkArrayComplete(context.tokenArray, context.poolsData)
-            context.setContext({'poolsDataLoading': true})
-            context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, context.poolsData)})
-            context.setContext({'poolsDataLoading': false})
-            context.setContext({'poolsDataComplete': lastPage})
         }
     }
 
