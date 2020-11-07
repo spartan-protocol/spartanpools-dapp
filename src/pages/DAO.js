@@ -73,7 +73,7 @@ const DAO = (props) => {
 
     const listAsset = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.listAssetWithClaim(asset, maxClaim, claimRate).send({ from: context.account })
+        let tx = await contract.methods.listAsset(asset, maxClaim, claimRate).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
 
@@ -108,10 +108,10 @@ const DAO = (props) => {
     }
 
     return (
-        <div>
+        <div  style={{marginLeft:100}}>
             <H1>DAO</H1>
             <p>The Spartan DAO can govern the contract.</p>
-            <Row>
+            <Row >
                 <Col xs={24}>
                     <Row>
                         <Col xs={24}>
