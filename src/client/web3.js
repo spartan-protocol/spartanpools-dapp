@@ -7,15 +7,17 @@ import ROUTER from '../artifacts/Router.json'
 import POOLS from '../artifacts/Pool.json'
 import UTILS from '../artifacts/Utils.json'
 import DAO from '../artifacts/Dao.json'
+import LOCK from '../artifacts/Lock.json'
 
-const net = '';
+const net = 'testnet';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
-export const WBNB_ADDR = net === 'testnet' ? '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-export const SPARTA_ADDR = net === 'testnet' ? '0xfb0349F08e2078a2944Ae3205446D176c3b45373' : '0xE4Ae305ebE1AbE663f261Bc00534067C80ad677C'
-export const UTILS_ADDR = net === 'testnet' ? '0xeFD9BfFe7c63Ab5962648E3e83e44306C4dAD747' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
-export const DAO_ADDR = net === 'testnet' ? '0x4b38dCD3E3f422F33Ef1F49eD3A3F11c7A5d27bC' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
-export const ROUTER_ADDR = net === 'testnet' ? '0x94fFAD4568fF00D921C76aA158848b33D7Bd65d3' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
+export const WBNB_ADDR = net === 'testnet' ? '0xCdf8726e914fa06e85299F89Aa0be4cd9542Da48' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+export const SPARTA_ADDR = net === 'testnet' ? '0xf301ae40B73a7d5D6fD9984939402c58FCf76E1B' : '0xE4Ae305ebE1AbE663f261Bc00534067C80ad677C'
+export const UTILS_ADDR = net === 'testnet' ? '0x38FB1fc2966d1B9013d60963b931826c845B5142' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
+export const DAO_ADDR = net === 'testnet' ? '0x44A66dA007b7e19D1b6BBFfD5B65b09D95415D4d' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
+export const ROUTER_ADDR = net === 'testnet' ? '0x0E5B01ea85e6E7e533234697E19a5e0646bfA5b2' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
+export const LOCK_ADDR = net === 'testnet' ? '0x7659748b19c5CF44bA1Dc85188EbFEC36f6Af09f' : ''
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -23,6 +25,7 @@ export const POOLS_ABI = POOLS.abi
 export const ERC20_ABI = ERC20.abi
 export const UTILS_ABI = UTILS.abi
 export const DAO_ABI = DAO.abi
+export const LOCK_ABI = LOCK.abi
 
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
@@ -95,6 +98,10 @@ export const getRouterContract = () => {
 export const getDaoContract = () => {
     var web3 = getWeb3()
     return new web3.eth.Contract(DAO_ABI, DAO_ADDR)
+}
+export const getLockContract = () => {
+    var web3 = getWeb3()
+    return new web3.eth.Contract(LOCK_ABI, LOCK_ADDR)
 }
 
 // Get just an array of tokens that can be upgraded
@@ -482,3 +489,15 @@ export const getTotalWeight = async () => {
     let totalWeight = await getDaoContract().methods.totalWeight().call()
     return totalWeight;
 }
+
+// Note that 'lastBlock' in the resulting array = UNIX timestamp
+export const getLockMemberDetail = async (member) => {
+    let memberDetails = await getLockContract().methods.getMemberDetails(member).call()
+    return memberDetails;
+}
+
+export const getClaimableLP = async (member) => {
+    let lockedLp = await getLockContract().methods.calcClaimableLockedLP(member).call()
+    return lockedLp;
+}
+
