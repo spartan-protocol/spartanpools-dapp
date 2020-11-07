@@ -53,8 +53,7 @@ export const getBNBBalance = async (acc) => {
 export const getSpartaPrice = async () => {
     console.log('start get sparta price')
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
-    console.log('end get sparta price')
-    console.log(resp.data["spartan-protocol-token"].usd)
+    //console.log(resp.data["spartan-protocol-token"].usd)
     return resp.data["spartan-protocol-token"].usd
 }
 
@@ -126,7 +125,6 @@ export const getTokenDetails = async (address, tokenArray) => {
             assetDetailsArray.push(assetDetails)
         }
     }
-    console.log('end getTokenDetails')
     console.log({ assetDetailsArray })
     return assetDetailsArray
 }
@@ -169,7 +167,6 @@ export const getListedTokens = async () => {
     console.log('start getlistedtokens')
     var contract = getUtilsContract()
     let tokenArray = await contract.methods.allTokens().call()
-    console.log('end getlistedtokens')
     //console.log(tokenArray)
     return tokenArray
 }
@@ -186,7 +183,6 @@ export const getListedPools= async () => {
     console.log('start getlistedpools')
     var contract = getUtilsContract()
     let poolArray = await contract.methods.allPools().call()
-    console.log('end getlistedpools')
     //console.log(poolArray)
     return poolArray
 }
@@ -206,7 +202,6 @@ export const getPoolsData = async (tokenArray) => {
     for (let i = 0; i < results; i++) {
         poolsData.push(await getPool(tokenArray[i]))
     }
-    console.log('end getPoolsData')
     //console.log(poolsData)
     return poolsData
 }
@@ -227,7 +222,6 @@ export const getNextPoolsData = async (tokenArray, prevPoolsData) => {
     for (let i = currentLength; i < results; i++) {
         poolsData.push(await getPool(tokenArray[i]))
     }
-    console.log('end getNextPoolsData')
     //console.log(poolsData)
     return poolsData
 }
@@ -283,12 +277,11 @@ export const getGlobalData = async ()  => {
     console.log('start getGlobalData')
     var contract = getUtilsContract()
     let globalData = await contract.methods.getGlobalDetails().call()
-    console.log('end getGlobalData')
     //console.log({globalData})
     return globalData
 }
 
-// Get SPARTA & BNB (Initial wallet assets load)
+// Get Wallet Data (Inital load; just SPARTA & BNB)
 export const getWalletData = async (address) => {
     console.log('start getWalletData')
     var walletData = []
@@ -304,11 +297,11 @@ export const getWalletData = async (address) => {
         'balance': await getBNBBalance(address),
         'address': BNB_ADDR
     })
-    console.log('end getWalletData')
-    //console.log(walletData)
+    console.log(walletData)
     return walletData
 }
 
+// Get Wallet Data (Remaining assets)
 export const getNextWalletData = async (account, tokenArray, prevWalletData) => {
     console.log('start getNextWalletData') 
     let results = 0
@@ -334,7 +327,42 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
             })
         //}
     }
-    console.log('end getNextWalletData')
+    //console.log(walletData)
+    return walletData
+}
+
+// Update Wallet Data (Specific Asset)
+export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
+    console.log('start updateWalletData') 
+    let walletData = prevWalletData
+    const findToken = (element) => element.address === tokenAddr
+    const index = walletData.findIndex(findToken)
+    // first half of old array
+    const part1 = walletData.slice(0, index)
+    // second half of old array
+    const part3 = walletData.slice(index + 1)
+    // updated data for target token
+    var part2 = []
+    if (tokenAddr === BNB_ADDR) {
+        part2.push({
+            'symbol': 'BNB',
+            'name': 'BNB',
+            'balance': await getBNBBalance(account),
+            'address': BNB_ADDR
+        })
+    }
+    else {
+        var balance = await getTokenContract(tokenAddr).methods.balanceOf(account).call()
+        var details = await getUtilsContract().methods.getTokenDetails(tokenAddr).call()
+        part2.push({
+            'symbol': details.symbol,
+            'name': details.name,
+            'balance': balance,
+            'address': tokenAddr
+        })
+    }
+    // combine arrays
+    walletData = part1.concat(part2, part3)
     //console.log(walletData)
     return walletData
 }
@@ -410,7 +438,6 @@ export const getSharesData = async (member, poolArray) => {
         sharesData.push(stakesItem)
         //}
     }
-    console.log('end getSharesData')
     //console.log(sharesData)
     return sharesData
 }
@@ -434,7 +461,6 @@ export const getNextSharesData = async (member, poolArray, prevSharesData) => {
         sharesData.push(stakesItem)
         //}
     }
-    console.log('end getNextSharesData')
     //console.log(sharesData)
     return sharesData
 }

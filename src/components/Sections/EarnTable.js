@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from "react"
 import {Context} from "../../context"
 
-import {getRewards, getDaoContract,
-    getSharesData,
-    getMemberDetail, getTotalWeight
+import {getRewards, getDaoContract, 
+    updateWalletData, BNB_ADDR, SPARTA_ADDR,
+    getMemberDetail, getTotalWeight,
 } from "../../client/web3"
 
 import Notification from '../../components/Common/notification'
@@ -58,10 +58,22 @@ const EarnTable = (props) => {
     }
 
     const refreshData = async () => {
-        let sharesData = await getSharesData(context.account, context.tokenArray)
-        context.setContext({ 'sharesData': sharesData })
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh SPARTA balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+        // Get new 'last harvest'
         getLastHarvest()
-        setNotifyMessage('Transaction Sent!');
+        // Notification to show txn complete
+        setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
     }
 
