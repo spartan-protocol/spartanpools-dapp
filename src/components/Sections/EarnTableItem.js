@@ -7,7 +7,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap'
 
-import {getDaoContract, getSharesData} from '../../client/web3'
+import {getDaoContract, updateSharesData, updateWalletData, BNB_ADDR} from '../../client/web3'
 import Notification from '../../components/Common/notification'
 
 import {withNamespaces} from "react-i18next";
@@ -32,7 +32,7 @@ export const EarnTableItem = (props) => {
         let contract = getDaoContract()
         let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.account })
         console.log(tx.transactionHash)
-        await refreshData()
+        await refreshData(record.symbAddr)
     }
 
     const withdraw = async (record) => {
@@ -40,13 +40,28 @@ export const EarnTableItem = (props) => {
         let contract = getDaoContract()
         let tx = await contract.methods.withdraw(record.address).send({ from: context.account })
         console.log(tx.transactionHash)
-        await refreshData()
+        await refreshData(record.symbAddr)
     }
 
-    const refreshData = async () => {
-        let sharesData = await getSharesData(context.account, context.tokenArray)
-        context.setContext({ 'sharesData': sharesData })
+    const refreshData = async (tokenAddr) => {
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+        if (context.sharesDataLoading !== true) {
+            // Refresh sharesData for specific token
+            console.log(tokenAddr)
+            let sharesData = await updateSharesData(context.account, context.sharesData, tokenAddr)
+            context.setContext({'sharesDataLoading': true})
+            context.setContext({'sharesData': sharesData})
+            context.setContext({'sharesDataLoading': false})
+        }
+        // Get new 'last harvest'
         props.getLastHarvest()
+        // Notification to show txn complete
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
     }
@@ -102,7 +117,6 @@ export const EarnTableItem = (props) => {
                             <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"/> Unlock
                         </button>
                     }
-
                     <Notification type={notifyType} message={notifyMessage}/>
 
                         <Modal isOpen={showLockModal} toggle={()=>toggleLock(props)}>
