@@ -337,32 +337,37 @@ export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
     let walletData = prevWalletData
     const findToken = (element) => element.address === tokenAddr
     const index = walletData.findIndex(findToken)
-    // first half of old array
-    const part1 = walletData.slice(0, index)
-    // second half of old array
-    const part3 = walletData.slice(index + 1)
-    // updated data for target token
-    var part2 = []
-    if (tokenAddr === BNB_ADDR) {
-        part2.push({
-            'symbol': 'BNB',
-            'name': 'BNB',
-            'balance': await getBNBBalance(account),
-            'address': BNB_ADDR
-        })
+    if (index === -1) {
+        console.log('error finding token in walletData')
     }
     else {
-        var balance = await getTokenContract(tokenAddr).methods.balanceOf(account).call()
-        var details = await getUtilsContract().methods.getTokenDetails(tokenAddr).call()
-        part2.push({
-            'symbol': details.symbol,
-            'name': details.name,
-            'balance': balance,
-            'address': tokenAddr
-        })
+        // first half of old array
+        const part1 = walletData.slice(0, index)
+        // second half of old array
+        const part3 = walletData.slice(index + 1)
+        // updated data for target token
+        var part2 = []
+        if (tokenAddr === BNB_ADDR) {
+            part2.push({
+                'symbol': 'BNB',
+                'name': 'BNB',
+                'balance': await getBNBBalance(account),
+                'address': BNB_ADDR
+            })
+        }
+        else {
+            var balance = await getTokenContract(tokenAddr).methods.balanceOf(account).call()
+            var details = await getUtilsContract().methods.getTokenDetails(tokenAddr).call()
+            part2.push({
+                'symbol': details.symbol,
+                'name': details.name,
+                'balance': balance,
+                'address': tokenAddr
+            })
+        }
+        // combine arrays
+        walletData = part1.concat(part2, part3)
     }
-    // combine arrays
-    walletData = part1.concat(part2, part3)
     //console.log(walletData)
     return walletData
 }
@@ -419,7 +424,7 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
     return tokensNotPool
 }
 
-// Load Initial Pool Staked Data (Wallet Drawer & Earn Page)
+// Load Initial Shares Data (Wallet Drawer & Earn Page)
 export const getSharesData = async (member, poolArray) => {
     console.log('start getSharesData')
     let results = 0
@@ -442,7 +447,7 @@ export const getSharesData = async (member, poolArray) => {
     return sharesData
 }
 
-// Load More Pool Staked Data (Wallet Drawer & Earn Page)
+// Load More Shares Data (Wallet Drawer & Earn Page)
 export const getNextSharesData = async (member, poolArray, prevSharesData) => {
     console.log('start getNextSharesData')
     let results = 0
@@ -462,6 +467,39 @@ export const getNextSharesData = async (member, poolArray, prevSharesData) => {
         //}
     }
     //console.log(sharesData)
+    return sharesData
+}
+
+// Update Shares Data (Specific Asset)
+export const updateSharesData = async (member, prevSharesData, tokenAddr) => {
+    console.log('start updateSharesData') 
+    let sharesData = prevSharesData
+    console.log(sharesData)
+    var newTokenAddr = tokenAddr
+    if (tokenAddr === BNB_ADDR) {newTokenAddr = WBNB_ADDR}
+    console.log(newTokenAddr)
+    const findPool = (element) => element.address === newTokenAddr
+    const index = sharesData.findIndex(findPool)
+    console.log(index)
+    if (index === -1) {
+        console.log('error finding pool in sharesData')
+    }
+    else {
+        // first half of old array
+        const part1 = sharesData.slice(0, index)
+        console.log(part1)
+        // second half of old array
+        const part3 = sharesData.slice(index + 1)
+        console.log(part3)
+        // updated data for target token
+        var part2 = []
+        let stakesItem = await getPoolShares(member, newTokenAddr)
+        part2.push(stakesItem)
+        console.log(part2)
+        // combine arrays
+        sharesData = part1.concat(part2, part3)
+    }
+    console.log(sharesData)
     return sharesData
 }
 
