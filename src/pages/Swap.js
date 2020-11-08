@@ -16,7 +16,7 @@ import Notification from '../components/Common/notification'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
     getPoolData, getNewTokenData, getTokenDetails,
-    getPool, WBNB_ADDR
+    getPool, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 
 import {
@@ -98,8 +98,8 @@ const NewSwap = (props) => {
 
     const [approval, setApproval] = useState(false)
     const [approvalS, setApprovalS] = useState(false)
-    const [startTx, setStartTx] = useState(false);
-    const [endTx, setEndTx] = useState(false);
+    const [startTx, setStartTx] = useState(false)
+    const [endTx, setEndTx] = useState(false)
 
     useEffect(() => {
         checkPoolReady()
@@ -243,6 +243,14 @@ const NewSwap = (props) => {
         setNotifyType('success')
         await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
         await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     };
 
     const buy = async () => {

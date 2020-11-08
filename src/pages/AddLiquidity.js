@@ -27,7 +27,7 @@ import classnames from 'classnames';
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
     getPoolData, getTokenData, getTokenDetails,
-    getPool, getPoolShares, WBNB_ADDR,
+    getPool, getPoolShares, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
 import PoolPaneSide from "../components/Sections/PoolPaneSide"
@@ -334,6 +334,16 @@ const AddLiquidity = (props) => {
         })
         setNotifyMessage('Approved')
         setNotifyType('success')
+        await checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
+        await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
+
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     }
 
     const addLiquidity = async () => {

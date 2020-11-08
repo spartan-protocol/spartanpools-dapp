@@ -22,7 +22,7 @@ import {Sublabel} from '../components/elements'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getRouterContract,
     getTokenData, getNewTokenData, getAssets, getListedTokens, getListedPools, getPoolsData,
-    getTokenDetails, getWalletData
+    getTokenDetails, getWalletData, updateWalletData,
 } from '../client/web3'
 
 import {convertToWei, formatBN} from '../utils'
@@ -260,6 +260,14 @@ const CreatePool = (props) => {
         })
         await checkApproval1(SPARTA_ADDR)
         await checkApproval2(address)
+
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     }
 
     const back = () => {
