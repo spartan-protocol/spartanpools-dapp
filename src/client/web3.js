@@ -125,7 +125,7 @@ export const getTokenDetails = async (address, tokenArray) => {
             assetDetailsArray.push(assetDetails)
         }
     }
-    console.log({ assetDetailsArray })
+    //console.log({ assetDetailsArray })
     return assetDetailsArray
 }
 
@@ -297,7 +297,7 @@ export const getWalletData = async (address) => {
         'balance': await getBNBBalance(address),
         'address': BNB_ADDR
     })
-    console.log(walletData)
+    //console.log(walletData)
     return walletData
 }
 
@@ -474,32 +474,26 @@ export const getNextSharesData = async (member, poolArray, prevSharesData) => {
 export const updateSharesData = async (member, prevSharesData, tokenAddr) => {
     console.log('start updateSharesData') 
     let sharesData = prevSharesData
-    console.log(sharesData)
     var newTokenAddr = tokenAddr
     if (tokenAddr === BNB_ADDR) {newTokenAddr = WBNB_ADDR}
-    console.log(newTokenAddr)
     const findPool = (element) => element.address === newTokenAddr
     const index = sharesData.findIndex(findPool)
-    console.log(index)
     if (index === -1) {
         console.log('error finding pool in sharesData')
     }
     else {
         // first half of old array
         const part1 = sharesData.slice(0, index)
-        console.log(part1)
         // second half of old array
         const part3 = sharesData.slice(index + 1)
-        console.log(part3)
         // updated data for target token
         var part2 = []
         let stakesItem = await getPoolShares(member, newTokenAddr)
         part2.push(stakesItem)
-        console.log(part2)
         // combine arrays
         sharesData = part1.concat(part2, part3)
     }
-    console.log(sharesData)
+    //console.log(sharesData)
     return sharesData
 }
 

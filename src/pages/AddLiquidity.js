@@ -26,7 +26,7 @@ import {
 import classnames from 'classnames';
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getTokenData, getTokenDetails,
+    getPoolData, getTokenData, updateSharesData,
     getPool, getPoolShares, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
@@ -361,7 +361,6 @@ const AddLiquidity = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     }
 
     const removeLiquidity = async () => {
@@ -377,11 +376,34 @@ const AddLiquidity = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     }
 
     const updatePool = async () => {
         setPool(await getPool(pool.address))
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh SPARTA balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh TOKEN balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, pool.address)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+        if (context.sharesDataLoading !== true) {
+            // Refresh sharesData for token
+            let sharesData = await updateSharesData(context.account, context.sharesData, pool.address)
+            context.setContext({'sharesDataLoading': true})
+            context.setContext({'sharesData': sharesData})
+            context.setContext({'sharesDataLoading': false})
+        }
     }
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -408,6 +430,9 @@ const AddLiquidity = (props) => {
                                                     <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Back to Liquidity Pools
                                                 </button>
                                             </Link>
+                                            <button type="button" tag="button" className="btn btn-light" onClick={updatePool}>
+                                                Refresh
+                                            </button>
                                             <div className="float-right mr-2">
                                                 <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                                                     <DropdownToggle type="button" tag="button" className="btn btn-light">
@@ -540,9 +565,7 @@ const AddLiquidity = (props) => {
 const AddSymmPane = (props) => {
 
     const [showModal, setShowModal] = useState(false);
-
     const toggle = () => setShowModal(!showModal);
-
     const remainder = convertFromWei(props.userData.balance - props.userData.input)
 
     const checkEnoughForGas = () => {

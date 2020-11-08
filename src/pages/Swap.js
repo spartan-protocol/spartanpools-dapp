@@ -15,7 +15,7 @@ import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getNewTokenData, getTokenDetails,
+    getPoolData, getNewTokenData,
     getPool, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 
@@ -267,7 +267,7 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
+        // ADD REFRESH FUNCTIONS HERE
     };
 
     const sell = async () => {
@@ -285,7 +285,7 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
+        // ADD REFRESH FUNCTIONS HERE
     };
 
     const updatePool = async () => {
