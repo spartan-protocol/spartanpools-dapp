@@ -83,6 +83,7 @@ const NewSwap = (props) => {
         fee: 0,
         estRate: 0
     });
+
     const [sellData, setSellData] = useState({
         address: BNB_ADDR,
         balance: 0,
@@ -106,7 +107,14 @@ const NewSwap = (props) => {
     // eslint-disable-next-line
     }, []);
 
-      const checkPoolReady = async () => {
+    useEffect(() => {
+        if (context.poolsDataComplete === true) {
+            getData()
+        }
+    // eslint-disable-next-line
+    }, [context.walletData]);
+
+    const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
         if (context.poolsData && context.poolsDataLoading !== true) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
@@ -137,13 +145,10 @@ const NewSwap = (props) => {
 
             await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
             await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
-
-            // console.log(await checkApproval(SPARTA_ADDR))
         }
     }
 
     const getSwapData = async (input, inputTokenData, outputTokenData, poolData, toBase) => {
-
         var output;
         var slip
         var fee
