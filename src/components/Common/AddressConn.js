@@ -56,15 +56,6 @@ const AddressConn = (props) => {
         context.setContext({'tokenArrayComplete': true})
         context.setContext({'tokenArrayLoading': false})
 
-        // eslint-disable-next-line
-        {/*
-        //3rd slowest - no longer required (was previously used for 'walletData')
-        setNotifyMessage('Loading token details array');
-        setNotifyType('dark')
-        let tokenDetailsArray = await getTokenDetails(account, tokenArray)
-        context.setContext({ 'tokenDetailsArray': tokenDetailsArray })
-        */}
-
         // (walletData) WALLET DATA | USED: RIGHT-BAR + EARN TABLE + POOL PANE SIDE + POOL TABLE + ADD LIQ + CREATE POOL
         context.setContext({'walletDataLoading': true})
         let walletData = await getWalletData(account)
