@@ -430,9 +430,6 @@ const AddLiquidity = (props) => {
                                                     <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Back to Liquidity Pools
                                                 </button>
                                             </Link>
-                                            <button type="button" tag="button" className="btn btn-light" onClick={updatePool}>
-                                                Refresh
-                                            </button>
                                             <div className="float-right mr-2">
                                                 <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                                                     <DropdownToggle type="button" tag="button" className="btn btn-light">
