@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { Context } from '../../context'
 
 import Web3 from 'web3'
@@ -15,36 +15,42 @@ import { getListedTokens, getSpartaPrice,
 const AddressConn = (props) => {
 
     const context = useContext(Context)
-    const [contLoad,setContLoad] = useState(false)
 
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
-        loadingGlobal(props)
-        connectWallet(props)
+        loadingGlobal()
+        connectWallet()
         // eslint-disable-next-line
     }, [])
 
-    const connectWallet = async (props) => {
-        if (contLoad === false) {
-            window.web3 = new Web3(window.ethereum)
-            if (window.web3._provider) {
-                context.setContext({'web3Wallet': true})
-                const account = (await window.web3.eth.getAccounts())[0]
-                if (account) {
-                    setContLoad(false)
+    const connectWallet = async (prevAccount) => {
+        //console.log('connecting wallet')
+        window.web3 = new Web3(window.ethereum)
+        if (window.web3._provider) {
+            context.setContext({'web3Wallet': true})
+            const account = (await window.web3.eth.getAccounts())[0]
+            if (account) {
+                if (account !== prevAccount) {
                     context.setContext({'account': account})
                     await loadingTokens(account)
-                } else {
-                    await enableMetaMask(props)
-                    setContLoad(true)
-                    await pause(3000)
-                    connectWallet(props)
+                    await pause(5000)
+                    connectWallet(account)
                 }
+                else {
+                    await pause(5000)
+                    connectWallet(account)
+                }
+            } else {
+                await enableMetaMask()
+                await pause(3000)
+                connectWallet()
             }
-            else {
-                context.setContext({'web3Wallet': false})
-            }
+        }
+        else {
+            context.setContext({'web3Wallet': false})
+            await pause(3000)
+            connectWallet()
         }
     }
 
@@ -62,7 +68,7 @@ const AddressConn = (props) => {
         context.setContext({'walletData': walletData})
         context.setContext({'walletDataLoading': false})
 
-        // (sharesData) STAKES DATA | USED: RIGHT-BAR + EARN TABLE + ADD LIQ
+        // (sharesData) SHARES DATA | USED: RIGHT-BAR + EARN TABLE + ADD LIQ
         let sharesData = await getSharesData(account, tokenArray)
         context.setContext({'sharesDataLoading': true})
         context.setContext({'sharesData': sharesData})
