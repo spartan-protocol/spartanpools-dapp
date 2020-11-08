@@ -142,21 +142,6 @@ const NewSwap = (props) => {
         }
     }
 
-    // MAKE SURE THESE ARE ALL VISIBLE TO USER:
-    // SWAP FEE | ACTUAL SLIP | SPOT RATE | OUTPUT | INPUT
-
-    // ACTUAL SLIP ALGO -> {props.tradeData.actualSlip}
-    // SLIP = (( X / ( y / x )) - 1)
-    // X = {pool.price} SPOT RATE
-    // y = {output} OUTPUT
-    // x = {input} INPUT
-
-    // SWAP FEE ALGO -> {props.tradeData.fee}
-    // FEE = (x * x * Y) / (x + X)^2
-    // x = {input} INPUT
-    // Y = {pool.baseAmount} SPARTA AMOUNT IN POOL
-    // X = {pool.tokenAmount} TOKEN AMOUNT IN POOL
-
     const getSwapData = async (input, inputTokenData, outputTokenData, poolData, toBase) => {
 
         var output;
@@ -267,7 +252,6 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        // ADD REFRESH FUNCTIONS HERE
     };
 
     const sell = async () => {
@@ -285,11 +269,27 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        // ADD REFRESH FUNCTIONS HERE
     };
 
     const updatePool = async () => {
         setPool(await getPool(pool.address))
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh SPARTA balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh TOKEN balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, pool.address)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     };
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
