@@ -96,6 +96,13 @@ const AddLiquidity = (props) => {
     // eslint-disable-next-line
       }, []);
 
+    useEffect(() => {
+        if (context.poolsDataComplete === true) {
+            getData()
+        }
+    // eslint-disable-next-line
+    }, [context.walletData]);
+
     const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
         if (context.poolsData && context.poolsDataLoading !== true) {
