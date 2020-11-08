@@ -15,7 +15,7 @@ import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getNewTokenData, getTokenDetails,
+    getPoolData, getNewTokenData,
     getPool, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 
