@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
 
 import {
-    getLockContract, BNB_ADDR, WBNB_ADDR, LOCK_ADDR, getClaimableLP,
+    getLockContract, BNB_ADDR,WBNB_ADDR, LOCK_ADDR, getClaimableLP,
     getTokenContract, getLockMemberDetail, SPARTA_ADDR, getPoolData, getTokenData,
 } from "../../client/web3"
 import Notification from '../../components/Common/notification'
@@ -43,21 +43,26 @@ const LockComponent = (props) => {
     const toggle = () => setShowModal(!showModal);
     const remainder = convertFromWei(userData.balance - userData.input)
     useEffect(() => {
+        if(context.poolsData){
+            getData()
+        }
         const interval = setInterval(() => {
-            if (context.walletData && context.poolsData) {
-                getData()
+            if (context.walletData) {
+                getLPData()
             }
         }, 3000);
         return () => clearInterval(interval);
+        
         // eslint-disable-next-line
     }, [context.walletData, context.poolsData]);
 
-    const getData = async () => {
+    const getLPData = async () => {
         let lpLocked = await getClaimableLP(context.account)
         setClaimableLP(lpLocked)
         let memberDetails = await getLockMemberDetail(context.account)
         setMember(memberDetails)
-
+    }
+    const getData = async () => {
         const pool = await getPoolData(BNB_ADDR, context.poolsData)
         if (!context.tokenData) {
             var tokenData = await getTokenData(pool.address, context.walletData)
@@ -123,8 +128,7 @@ const LockComponent = (props) => {
         }
     }
 
-    const onInputChange = async (amount) => {
-
+    const onChange = async (amount) => {
         const finalAmt = (bn(userData?.balance)).times(amount).div(100)
         let _userData = {
             'address': userData.address,
@@ -134,6 +138,19 @@ const LockComponent = (props) => {
         }
         setUserData(_userData)
     }
+    const onInputChange = async (e) => {
+        const input = e.target.value
+        let finalAmt = formatBN(convertToWei(input), 0)
+        
+        let _userData = {
+            'address': userData.address,
+            'symbol': userData.symbol,
+            'balance': userData.balance,
+            'input': formatBN(bn(finalAmt), 0),
+        }
+        setUserData(_userData)
+    }
+
     const unlockToken = async () => {
         unlock(userData.address)
     }
@@ -192,6 +209,7 @@ const LockComponent = (props) => {
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p></p>
+                                                <p> <strong>{formatAllUnits(convertFromWei(member.lockedLP))}</strong> SPARTA LP Tokens left to claim. </p>
                                                 <p>
                                                     <strong>{member.lastBlockTime > 0 && daysSince(member.lastBlockTime)}</strong> passed since your last claim.
                                                 </p>
@@ -211,7 +229,7 @@ const LockComponent = (props) => {
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
-                            {userData.symbol !== 'XXX' &&
+                          
                                 <div className="table-responsive">
                                     <CardTitle><h4>Deposit BNB</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
@@ -219,10 +237,10 @@ const LockComponent = (props) => {
                                         Earn extra SPARTA by locking these LP tokens in the DAO.
                                     </CardSubtitle>
                                     <Col sm="10" md="6">
-
+                                    {userData.symbol !== 'XXX' &&
                                         <div className="mb-3">
                                             <label className="card-radio-label mb-2">
-                                                <input type="radio" name="currency" id="depositAsset" className="card-radio-input" />
+                                                <input type="radio" name="currency" className="card-radio-input" />
                                                 <div className="card-radio">
                                                     <Row>
                                                         <Col md={3}>
@@ -238,7 +256,10 @@ const LockComponent = (props) => {
                                                 </div>
                                             </label>
                                         </div>
-
+                                        }
+                                        {userData.symbol === 'XXX' &&
+                                            <div className="text-center m-2"><i className="bx bx-spin bx-loader" /></div>
+                                        }
                                         <FormGroup>
                                             <Row>
                                                 <Col sm="12">
@@ -256,7 +277,7 @@ const LockComponent = (props) => {
                                         </FormGroup>
                                         <br />
                                         <div className="text-center">
-                                            <PercentButtonRow changeAmount={onInputChange} />
+                                            <PercentButtonRow changeAmount={onChange} />
                                         </div>
                                         <br />
                                         <Row>
@@ -328,10 +349,7 @@ const LockComponent = (props) => {
                                     </Modal>
                                 </div>
 
-                            }
-                            {userData.symbol === 'XXX' &&
-                                <div className="text-center m-2"><i className="bx bx-spin bx-loader" /></div>
-                            }
+                            
 
                             {context.sharesDataLoading !== true && !context.walletData &&
                                 <div className="text-center m-2">Please connect your wallet to proceed</div>
