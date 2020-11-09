@@ -32,19 +32,28 @@ const MobileNavbar = (props) => {
                 <div className="container-fluid">
                     <nav className="navbar navbar-light navbar-expand-lg topnav-menu" id="navigation">
                         <ul className="navbar-nav">
-                            <li className="nav-item dropdown">
+                            {/* <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown1} to="#">
                                     <i className="bx bx-customize mr-2"/>{props.t('Apps')}<div className="arrow-down ml-2"></div>
                                 </Link>
                                 <div className={classname("dropdown-menu", { show: !isDropdown1 })}>
                                     <Link to="/pools" className="dropdown-item m-2" onClick={closeDropdowns}><i className="bx bx-swim mr-2"/>{props.t('Pools')}</Link>
                                     <Link to="/earn" className="dropdown-item m-2" onClick={closeDropdowns}><i className="bx bx-money mr-2"/>{props.t('Earn')}</Link>
-                                    {/*
+                                    
                                     <Link to="/share" className="dropdown-item" onClick={closeDropdowns}>{props.t('Shares')}</Link>
                                     <Link to="/dao" className="dropdown-item" onClick={closeDropdowns}>{props.t('Dao')}</Link>
                                     <Link to="/swap" className="dropdown-item" onClick={closeDropdowns}>{props.t('Swap')}</Link>
-                                    */}
+                                   
                                 </div>
+                            </li> */}
+                            <li className="nav-item dropdown">
+                            <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2"/>{props.t('Pools')}</Link>
+                            </li>
+                            <li className="nav-item dropdown">
+                            <Link to="/earn" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-money mr-2"/>{props.t('Earn')}</Link>
+                            </li>
+                            <li className="nav-item dropdown">
+                            <Link to="/lock" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-lock mr-2"/>{props.t('Lock')}</Link>
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown2} to="#">

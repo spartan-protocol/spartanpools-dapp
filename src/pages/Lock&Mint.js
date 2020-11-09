@@ -12,7 +12,7 @@ const Earn = (props) => {
         <React.Fragment>
             <div className="page-content">
                 <Container fluid>
-                    <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Deposit & Mint")}/>
+                    <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Lock")}/>
                     <Row>
                         <Col xs="12">
                             <LockComponent/> 

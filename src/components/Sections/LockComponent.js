@@ -194,9 +194,9 @@ const LockComponent = (props) => {
                     <Col sm={12} className="mr-20">
                         <Card>
                             <CardBody>
-                                <CardTitle><h4>Claim LP Tokens</h4></CardTitle>
+                                <CardTitle><h4>Claim Locked LP Tokens</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
-                                    Deposit BNB to get SPARTA LP Tokens.<br />
+                                    Lock BNB to get SPARTA LP Tokens.<br />
                                 </CardSubtitle>
                                 {context.walletData &&
                                     <>
@@ -231,9 +231,9 @@ const LockComponent = (props) => {
                         <CardBody>
                           
                                 <div className="table-responsive">
-                                    <CardTitle><h4>Deposit BNB</h4></CardTitle>
+                                    <CardTitle><h4>Lock BNB</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
-                                        By depositing BNB you will receive 50% Spartan Protocol LP Tokens, the rest is locked and vested back over 12months.<br />
+                                        By locking BNB you will receive 50% Spartan Protocol LP Tokens, the rest is locked and vested back over 12months.<br />
                                         Earn extra SPARTA by locking these LP tokens in the DAO.
                                     </CardSubtitle>
                                     <Col sm="10" md="6">
@@ -291,11 +291,11 @@ const LockComponent = (props) => {
                                             <Col xs={12}>
                                                 {approvalToken && startTx && !endTx &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
-                                                        <i className="bx bx-spin bx-loader" /> DEPOSIT
+                                                        <i className="bx bx-spin bx-loader" /> LOCK
                                                         </div>
                                                 }
                                                 {approvalToken && !startTx &&
-                                                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>DEPOSIT</div>
+                                                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>LOCK</div>
                                                 }
                                             </Col>
                                         </Row>
