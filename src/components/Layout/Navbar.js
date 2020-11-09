@@ -13,7 +13,7 @@ const Navbar = (props) => {
                 <div className="container-fluid">
                     <nav className="navbar navbar-light navbar-expand-lg topnav-menu" id="navigation">
                         <ul className="navbar-nav">
-                            <li className="nav-item dropdown">
+                            {/* <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" to="#">
                                     <i className="bx bx-customize mr-2"/>{props.t('Apps')} <div className="arrow-down ml-2"></div>
                                 </Link>
@@ -23,12 +23,21 @@ const Navbar = (props) => {
                                     <Link to="/earn" className="dropdown-item">{props.t('Earn')}</Link>
                                     <Link to="/lock" className="dropdown-item">{props.t('Deposit & Mint')}</Link>
                                    
-                                    {/*
+                                    
                                     <Link to="/share" className="dropdown-item">{props.t('Shares')}</Link>
                                     <Link to="/dao" className="dropdown-item">{props.t('Dao')}</Link>
                                     <Link to="/swap" className="dropdown-item">{props.t('Swap')}</Link>
-                                    */}
+                                   
                                 </div>
+                            </li> */}
+                            <li className="nav-item dropdown">
+                            <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2"/>{props.t('Pools')}</Link>
+                            </li>
+                            <li className="nav-item dropdown">
+                            <Link to="/earn" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-money mr-2"/>{props.t('Earn')}</Link>
+                            </li>
+                            <li className="nav-item dropdown">
+                            <Link to="/lock" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-lock mr-2"/>{props.t('Lock')}</Link>
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" to="#">
