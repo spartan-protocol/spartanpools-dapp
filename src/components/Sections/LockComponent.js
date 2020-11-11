@@ -196,7 +196,7 @@ const LockComponent = (props) => {
                             <CardBody>
                                 <CardTitle><h4>Claim Locked LP Tokens</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
-                                    Lock BNB to get SPARTA LP Tokens.<br />
+                                    Claim back vested LP tokens.<br />
                                 </CardSubtitle>
                                 {context.walletData &&
                                     <>
@@ -231,9 +231,9 @@ const LockComponent = (props) => {
                         <CardBody>
                           
                                 <div className="table-responsive">
-                                    <CardTitle><h4>Lock BNB</h4></CardTitle>
+                                    <CardTitle><h4>Add BNB and Mint SPARTA</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
-                                        By locking BNB you will receive 50% Spartan Protocol LP Tokens, the rest is locked and vested back over 12months.<br />
+                                        By adding BNB you will receive an additional amount in SPARTA, then your liquidity is added to the pool. 50% of your LP tokens are given back to you, the rest is locked and vested back over 12 months.<br />
                                         Earn extra SPARTA by locking these LP tokens in the DAO.
                                     </CardSubtitle>
                                     <Col sm="10" md="6">
