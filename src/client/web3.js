@@ -17,7 +17,7 @@ export const SPARTA_ADDR = net === 'testnet' ? '0xb58a43D2D9809ff4393193de536F24
 export const UTILS_ADDR = net === 'testnet' ? '0x0a30aF25e652354832Ec5695981F2ce8b594e8B3' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
 export const DAO_ADDR = net === 'testnet' ? '0x1b83a813045165c81d84b9f5d6916067b57FF9C0' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
 export const ROUTER_ADDR = net === 'testnet' ? '0xd992130bB595f77B6cAC22fBdb5EBAc888CDe850' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
-export const LOCK_ADDR = net === 'testnet' ? '0x07dc3a8cD1B54CDFd55d223Ca15863dcA6B70C1A' : ''
+export const LOCK_ADDR = net === 'testnet' ? '0x5111Be05477F5555B12A641fc3b8028e3D29e975' : ''
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -491,13 +491,26 @@ export const getTotalWeight = async () => {
 }
 
 // Note that 'lastBlock' in the resulting array = UNIX timestamp
-export const getLockMemberDetail = async (member) => {
-    let memberDetails = await getLockContract().methods.getMemberDetails(member).call()
+export const getLockMemberDetail = async (member, asset) => {
+    let memberDetails = await getLockContract().methods.getMemberDetails(member, asset).call()
     return memberDetails;
 }
 
-export const getClaimableLP = async (member) => {
-    let lockedLp = await getLockContract().methods.calcClaimableLockedLP(member).call()
+export const getClaimableLP = async (member, asset) => {
+    let lockedLp = await getLockContract().methods.calcClaimLockedLP(member, asset).call()
     return lockedLp;
+}
+export const getListedCount = async () => {
+    let listedCount = await getLockContract().methods.assetListedCount().call()
+    return listedCount;
+}
+export const getAllListedAssets = async () => {
+    let allListedAssets = await getLockContract().methods.allListedAssets().call()
+    return allListedAssets;
+}
+
+export const checkListed = async (asset) => {
+    let isListed = await getLockContract().methods.isListed(asset).call()
+return isListed;
 }
 

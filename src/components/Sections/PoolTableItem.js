@@ -1,14 +1,30 @@
-import React, {useContext} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import {Context} from "../../context";
 import {TokenIcon} from '../Common/TokenIcon'
 import {convertFromWei, formatAllUSD} from "../../utils";
-
+import {checkListed
+} from "../../client/web3"
 import {withNamespaces} from "react-i18next";
 import {Link, withRouter} from "react-router-dom";
 
 export const PoolTableItem = (props) => {
 
     const context = useContext(Context);
+    const [listed, setListed] = useState(false)
+
+    useEffect(() => {
+        isListedAsset()
+        // eslint-disable-next-line
+      }, [context.walletData]); 
+
+    const isListedAsset = async () => {
+        let islisted = await checkListed(props.address)
+        if(islisted == true){
+            setListed(true)
+        }
+           
+
+    }
 
     return (
         <>
@@ -49,6 +65,15 @@ export const PoolTableItem = (props) => {
                             <button color="primary"
                                     className="btn btn-primary waves-effect waves-light m-1 w-75">
                                 <i className="bx bx-transfer-alt"/> {props.t("Swap")}
+
+                            </button>
+                        </Link>
+                    }
+                    {context.walletData && listed &&
+                        <Link to={`/lock?pool=${props.address}`}>
+                            <button color="primary"
+                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
+                                <i className="bx bx-lock "/> {props.t("Lock")}
 
                             </button>
                         </Link>

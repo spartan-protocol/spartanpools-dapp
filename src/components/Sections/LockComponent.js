@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
-
+import queryString from 'query-string';
 import {
-    getLockContract, BNB_ADDR,WBNB_ADDR, LOCK_ADDR, getClaimableLP,
+    getLockContract, BNB_ADDR,WBNB_ADDR, LOCK_ADDR, getClaimableLP,getAllListedAssets,
     getTokenContract, getLockMemberDetail, SPARTA_ADDR, getPoolData, getTokenData,
 } from "../../client/web3"
 import Notification from '../../components/Common/notification'
@@ -57,13 +57,15 @@ const LockComponent = (props) => {
     }, [context.walletData, context.poolsData]);
 
     const getLPData = async () => {
-        let lpLocked = await getClaimableLP(context.account)
+        let params = queryString.parse(props.location.search)
+        let lpLocked = await getClaimableLP(context.account, params.pool)
         setClaimableLP(lpLocked)
-        let memberDetails = await getLockMemberDetail(context.account)
+        let memberDetails = await getLockMemberDetail(context.account, params.pool)
         setMember(memberDetails)
     }
     const getData = async () => {
-        const pool = await getPoolData(BNB_ADDR, context.poolsData)
+        let params = queryString.parse(props.location.search)
+        const pool = await getPoolData(params.pool, context.poolsData)
         if (!context.tokenData) {
             var tokenData = await getTokenData(pool.address, context.walletData)
         } else {
@@ -89,7 +91,7 @@ const LockComponent = (props) => {
     const claimLP = async () => {
         setloadingLockedLP(true)
         let contract = getLockContract()
-        let address = BNB_ADDR
+        let address = userData.address
         let tx = await contract.methods.claim(address).send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
@@ -107,10 +109,8 @@ const LockComponent = (props) => {
                 setShowModal(true)
             }
             else depositAsset()
-        }
-
-        else {
-            props.depositAsset()
+        }else{
+            depositAsset()
         }
     }
     const checkApproval = async (address) => {
@@ -165,6 +165,7 @@ const LockComponent = (props) => {
         })
         setNotifyMessage('Approved')
         setNotifyType('success')
+        setApprovalToken(true)
     }
 
     const depositAsset = async () => {
@@ -196,7 +197,7 @@ const LockComponent = (props) => {
                             <CardBody>
                                 <CardTitle><h4>Claim Locked LP Tokens</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
-                                    Lock BNB to get SPARTA LP Tokens.<br />
+                                    Lock {userData.symbol} to get SPARTA LP Tokens.<br />
                                 </CardSubtitle>
                                 {context.walletData &&
                                     <>
@@ -231,9 +232,9 @@ const LockComponent = (props) => {
                         <CardBody>
                           
                                 <div className="table-responsive">
-                                    <CardTitle><h4>Lock BNB</h4></CardTitle>
+                                    <CardTitle><h4>Lock {userData.symbol}</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
-                                        By locking BNB you will receive 50% Spartan Protocol LP Tokens, the rest is locked and vested back over 12months.<br />
+                                        By locking {userData.symbol} you will receive 50% Spartan Protocol LP Tokens, the rest is locked and vested back over 12months.<br />
                                         Earn extra SPARTA by locking these LP tokens in the DAO.
                                     </CardSubtitle>
                                     <Col sm="10" md="6">
