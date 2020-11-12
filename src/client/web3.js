@@ -297,6 +297,12 @@ export const getWalletData = async (address) => {
         'balance': await getBNBBalance(address),
         'address': BNB_ADDR
     })
+    walletData.push({
+        'symbol': 'WBNB',
+        'name': 'Wrapped BNB',
+        'balance': await getTokenContract(WBNB_ADDR).methods.balanceOf(address).call(),
+        'address': WBNB_ADDR
+    })
     //console.log(walletData)
     return walletData
 }
@@ -314,7 +320,7 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
         results = tokenArray.length
     }
     let walletData = prevWalletData
-    for (let i = currentLength - 1; i < results; i++) {
+    for (let i = currentLength - 2; i < results; i++) {
         var addr = tokenArray[i]
         var balance = await getTokenContract(addr).methods.balanceOf(account).call()
         var details = await getUtilsContract().methods.getTokenDetails(addr).call()
