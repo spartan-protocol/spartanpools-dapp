@@ -8,7 +8,7 @@ import POOLS from '../artifacts/Pool.json'
 import UTILS from '../artifacts/Utils.json'
 import DAO from '../artifacts/Dao.json'
 
-const net = 'testnet';
+const net = '';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
 export const WBNB_ADDR = net === 'testnet' ? '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
