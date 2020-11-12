@@ -19,12 +19,23 @@ const AddressConn = (props) => {
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
-        loadingGlobal()
-        connectWallet()
+        getTokenArray()
         // eslint-disable-next-line
     }, [])
 
-    const connectWallet = async (prevAccount) => {
+    const getTokenArray = async (props) => {
+        // (tokenArray) LISTED TOKENS | USED: RIGHT-BAR + EARN TABLE + POOL TABLE + ADD LIQ + SWAP
+        context.setContext({'tokenArrayLoading': true})
+        let tokenArray = await getListedTokens()
+        context.setContext({'tokenArray': tokenArray})
+        context.setContext({'tokenArrayComplete': true})
+        context.setContext({'tokenArrayLoading': false})
+        // Connect web3 & load global arrays
+        loadingGlobal(tokenArray)
+        connectWallet(tokenArray)
+    }
+
+    const connectWallet = async (tokenArray, prevAccount) => {
         //console.log('connecting wallet')
         window.web3 = new Web3(window.ethereum)
         if (window.web3._provider) {
@@ -33,35 +44,28 @@ const AddressConn = (props) => {
             if (account) {
                 if (account !== prevAccount) {
                     context.setContext({'account': account})
-                    await loadingTokens(account)
+                    await loadingTokens(tokenArray, account)
                     await pause(5000)
-                    connectWallet(account)
+                    connectWallet(tokenArray, account)
                 }
                 else {
                     await pause(5000)
-                    connectWallet(account)
+                    connectWallet(tokenArray, account)
                 }
             } else {
                 await enableMetaMask()
                 await pause(3000)
-                connectWallet()
+                connectWallet(tokenArray)
             }
         }
         else {
             context.setContext({'web3Wallet': false})
             await pause(3000)
-            connectWallet()
+            connectWallet(tokenArray)
         }
     }
 
-    const loadingTokens = async (account) => {
-        // (tokenArray) LISTED TOKENS | USED: RIGHT-BAR + EARN TABLE + POOL TABLE + ADD LIQ + SWAP
-        context.setContext({'tokenArrayLoading': true})
-        let tokenArray = await getListedTokens()
-        context.setContext({'tokenArray': tokenArray})
-        context.setContext({'tokenArrayComplete': true})
-        context.setContext({'tokenArrayLoading': false})
-
+    const loadingTokens = async (tokenArray, account) => {
         // (walletData) WALLET DATA | USED: RIGHT-BAR + EARN TABLE + POOL PANE SIDE + POOL TABLE + ADD LIQ + CREATE POOL
         context.setContext({'walletDataLoading': true})
         let walletData = await getWalletData(account)
@@ -109,16 +113,9 @@ const AddressConn = (props) => {
         return false;
     }
 
-    const loadingGlobal = async () => {
+    const loadingGlobal = async (tokenArray) => {
         // (spartanPrice) SPARTA PRICE | USED: GLOBALLY
         context.setContext({'spartanPrice': await getSpartaPrice()})
-
-        // (tokenArray) LISTED TOKENS | USED: RIGHT-BAR + EARN TABLE + POOL TABLE + ADD LIQ + SWAP
-        context.setContext({'tokenArrayLoading': true})
-        let tokenArray = await getListedTokens()
-        context.setContext({'tokenArray': tokenArray})
-        context.setContext({'tokenArrayComplete': true})
-        context.setContext({'tokenArrayLoading': false})
 
         // (poolArray) LISTED POOLS | USED: GLOBALLY
         let poolArray = await getListedPools()
