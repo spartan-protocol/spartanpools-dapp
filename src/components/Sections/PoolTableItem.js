@@ -2,8 +2,6 @@ import React, {useContext, useState, useEffect} from "react";
 import {Context} from "../../context";
 import {TokenIcon} from '../Common/TokenIcon'
 import {convertFromWei, formatAllUSD} from "../../utils";
-import {checkListed
-} from "../../client/web3"
 import {withNamespaces} from "react-i18next";
 import {Link, withRouter} from "react-router-dom";
 
@@ -18,8 +16,7 @@ export const PoolTableItem = (props) => {
       }, [context.walletData]); 
 
     const isListedAsset = async () => {
-        let islisted = await checkListed(props.address)
-        if(islisted == true){
+        if(props.listed == true){
             setListed(true)
         }
            
@@ -69,7 +66,7 @@ export const PoolTableItem = (props) => {
                             </button>
                         </Link>
                     }
-                    {context.walletData && listed &&
+                    {context.walletData && props.listed &&
                         <Link to={`/lock?pool=${props.address}`}>
                             <button color="primary"
                                     className="btn btn-primary waves-effect waves-light m-1 w-75">
