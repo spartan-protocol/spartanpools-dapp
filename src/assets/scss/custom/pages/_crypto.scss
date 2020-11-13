@@ -2,31 +2,6 @@
 // crypto.scss
 //
 
-@media (min-width: 576px){
-    .currency-value{
-        position: relative;
-        &:after{
-            content: "\F04E1";
-            font-family: "Material Design Icons";
-            font-size: 24px;
-            position: absolute;
-            width: 45px;
-            height: 45px;
-            line-height: 45px;
-            border-radius: 50%;
-            text-align: center;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: $primary;
-            color: $white;
-            z-index: 9;
-            right: -34px;
-        }
-    }
-
-}
-
 .crypto-buy-sell-nav-content{
     border: 2px solid $gray-300;
     border-top: 0;

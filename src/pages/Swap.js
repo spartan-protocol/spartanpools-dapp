@@ -40,6 +40,11 @@ const NewSwap = (props) => {
     const toggle = tab => {
         if (activeTab !== tab) setActiveTab(tab);
     };
+
+    const toggleTab = () => {
+        if (activeTab === '1') {setActiveTab('2')}
+        else {setActiveTab('1')}
+    }
     
     const context = useContext(Context)
     const [poolURL, setPoolURL] = useState('')
@@ -315,17 +320,17 @@ const NewSwap = (props) => {
                             <Col lg="6">
                                 {pool &&
                                     <Card>
-                                        <CardBody>
+                                        <CardBody className='p-3 p-md-4'>
                                             <Link to='/pools'>
                                                 <button type="button" tag="button" className="btn btn-light">
-                                                    <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Back to Liquidity Pools
+                                                    <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Pools
                                                 </button>
                                             </Link>
                                             <div className="float-right mr-2">
                                                 <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                                                     <DropdownToggle type="button" tag="button" className="btn btn-light">
                                                         <i className="mdi mdi-wallet mr-1"/>
-                                                        <span className="d-none d-sm-inline-block ml-1">Balance <i className="mdi mdi-chevron-down"/></span>
+                                                        <span className="ml-1">Balance <i className="mdi mdi-chevron-down"/></span>
                                                     </DropdownToggle>
                                                     <DropdownMenu right className="dropdown-menu-md">
                                                         {pool.address !== 'XXX' &&
@@ -353,14 +358,14 @@ const NewSwap = (props) => {
                                             </div>
                                             <br/><br/>
                                             <div className="crypto-buy-sell-nav">
-                                                <Nav tabs className="nav-tabs-custom" role="tablist">
-                                                    <NavItem className="text-center w-50">
+                                                <Nav tabs className="nav-tabs-custom d-none" role="tablist">
+                                                    <NavItem className="text-center w-50 border rounded-top">
                                                         <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
                                                             <i className="bx bxs-chevron-down mr-1 bx-sm"/>
                                                             <br/>{props.t("BUY")} {pool.symbol}
                                                         </NavLink>
                                                     </NavItem>
-                                                    <NavItem className="text-center w-50">
+                                                    <NavItem className="text-center w-50 border rounded-top">
                                                         <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
                                                             <i className="bx bxs-chevron-up mr-1 bx-sm"/>
                                                             <br/>{props.t("SELL")} {pool.symbol}
@@ -379,7 +384,9 @@ const NewSwap = (props) => {
                                                             trade={buy}
                                                             startTx={startTx}
                                                             endTx={endTx}
-                                                            type={"Buy"}/>
+                                                            type={"Buy"}
+                                                            toggleTab={toggleTab}
+                                                        />
                                                     </TabPane>
                                                     <TabPane tabId="2" id="sell-tab">
                                                         <TradePaneBuy
@@ -393,6 +400,7 @@ const NewSwap = (props) => {
                                                             startTx={startTx}
                                                             endTx={endTx}
                                                             type={"Sell"}
+                                                            toggleTab={toggleTab}
                                                         />
                                                     </TabPane>
                                                 </TabContent>

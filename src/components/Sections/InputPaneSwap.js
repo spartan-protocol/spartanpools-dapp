@@ -2,9 +2,7 @@ import {convertFromWei, formatAllUnits} from "../../utils";
 import React from "react";
 import {PercentButtonRow} from "../common";
 
-import {withNamespaces} from "react-i18next";
-
-import {TokenIcon} from '../Common/TokenIcon'
+import {translate, withNamespaces} from "react-i18next";
 
 import {
     Col,
@@ -16,89 +14,15 @@ import {
     InputGroupAddon
 } from "reactstrap";
 import { withRouter } from "react-router-dom";
-import {SPARTA_ADDR} from "../../client/web3";
 
 export const InputPaneSwap = (props) => {
 
     return (
         <div>
-            <div>
-                <Row>
-                    <Col xs="12" md="6">
-                        <div className="mb-3">
-                            <label className="card-radio-label mb-2">
-                                <input type="radio" name="currency" id="buycurrencyoption1" className="card-radio-input"/>
-                                <div className="card-radio">
-                                    <Row>
-                                        <Col md={3}>
-                                            {props.address !== 'XXX' &&
-                                                <TokenIcon address={props.address}/>
-                                            }
-                                            {props.address === 'XXX' &&
-                                                <img src={process.env.PUBLIC_URL + "/fallback.png"} style={{height: 40, borderRadius: 21}} alt={"Fallback Token Icon"}/>
-                                            }
-                                            <span className="ml-2">
-                                                {props.paneData?.outputSymbol === 'SPARTA' &&
-                                                    props.paneData?.symbol
-                                                }
-                                                {props.paneData?.outputSymbol !== 'SPARTA' &&
-                                                    props.paneData?.outputSymbol
-                                                }
-                                            </span>
-                                        </Col>
-                                        <div className="ml-5">
-                                            <Col md={4}>
-                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
-                                                <h5 className="font-size-16">
-                                                    {props.paneData?.outputSymbol === 'SPARTA' &&
-                                                        formatAllUnits(convertFromWei(props.paneData?.balance))
-                                                    }
-                                                    {props.paneData?.outputSymbol !== 'SPARTA' &&
-                                                        formatAllUnits(convertFromWei(props.paneData?.outputBalance))
-                                                    }
-                                                </h5>
-                                            </Col>
-                                        </div>
-                                    </Row>
-                                </div>
-                            </label>
-                        </div>
-                    </Col>
-                    <Col xs="12" md="6">
-                        <div className="mb-3">
-                            <label className="card-radio-label mb-2">
-                                <input type="radio" name="currency" id="buycurrencyoption2" className="card-radio-input"/>
-                                <div className="card-radio">
-                                    <Row>
-                                        <Col md={3}>
-                                            <TokenIcon address={SPARTA_ADDR}/>
-                                            <span className="ml-2"> SPARTA</span></Col>
-                                        <div className="ml-5">
-                                            <Col md={4}>
-                                                <p className="text-muted mb-1"><i className="bx bx-wallet mr-1"/>Available:</p>
-                                                <h5 className="font-size-16">
-                                                    {props.paneData?.outputSymbol === 'SPARTA' &&
-                                                        formatAllUnits(convertFromWei(props.paneData?.outputBalance))
-                                                    }
-                                                    {props.paneData?.outputSymbol !== 'SPARTA' &&
-                                                        formatAllUnits(convertFromWei(props.paneData?.balance))
-                                                    }
-                                                </h5>
-                                            </Col>
-                                        </div>
-                                    </Row>
-                                </div>
-                            </label>
-                        </div>
-                    </Col>
-                </Row>
-            </div>
-            <br/>
             <FormGroup>
-                <Label>Amount :</Label>
-                <Row>
+                <Row style={{position:'relative'}}>
                     <Col sm="6">
-                        <InputGroup className="mb-2 currency-value">
+                        <InputGroup className="mb-1 currency-value">
                             <InputGroupAddon addonType="prepend">
                                 <span className="input-group-text">Sell {props.paneData?.symbol}</span>
                             </InputGroupAddon>
@@ -114,9 +38,10 @@ export const InputPaneSwap = (props) => {
                             </Input>
                         </InputGroup>
                     </Col>
+                    <i className='bx bx-sort bx-lg rounded-circle p-1' style={{backgroundColor:'#556ee6',color:'#FFF',zIndex:'5',position:'absolute',top:'50%',left:'50%',transform:'translate(-50%, -50%) rotate(90deg)'}} onClick={props.toggleTab} role='button' />
                     <Col sm="6">
-                        <InputGroup className="mb-2">
-                            <Input readOnly="readonly" type="text" className="form-control text-sm-right" placeholder={formatAllUnits(convertFromWei(props.paneData?.output))}/>
+                        <InputGroup className="mb-1">
+                            <Input readOnly="readonly" type="text" className="form-control text-right" placeholder={formatAllUnits(convertFromWei(props.paneData?.output))}/>
                             <InputGroupAddon addonType="append">
                                 <span className="input-group-text">Buy {props.paneData?.outputSymbol}</span>
                             </InputGroupAddon>
@@ -124,11 +49,9 @@ export const InputPaneSwap = (props) => {
                     </Col>
                 </Row>
             </FormGroup>
-            <br/>
             <div className="text-center">
                 <PercentButtonRow changeAmount={props.changeAmount}/>
             </div>
-            <br/>
         </div>
     )
 };

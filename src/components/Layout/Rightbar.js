@@ -346,7 +346,7 @@ const donutOptions = {
     <>
       <tr>
         <td className="align-middle w-50 p-4" style={{position:'relative'}}>
-          <Doughnut width={'68px'} height={'68px'} data={donutData} options={donutOptions}/>
+          <Doughnut width={68} height={68} data={donutData} options={donutOptions}/>
           <TokenIconChart address={props.address}/>
         </td>
         <td className="align-middle w-50 p-1">
