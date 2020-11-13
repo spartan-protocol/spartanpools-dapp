@@ -37,7 +37,8 @@ const PoolTable = (props) => {
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Volume")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Txns")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Revenue")}</th>
-                                                <th scope="col">{props.t("Action")}</th>
+                                                <th scope="col">{props.t("Lock")}</th>
+                                                <th scope="col">{props.t("Trade")}</th>
                                             </tr>
                                             </thead>
                                             <tbody>
