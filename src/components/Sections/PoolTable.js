@@ -30,7 +30,7 @@ const PoolTable = (props) => {
 
                                             <thead className="center">
                                             <tr>
-                                                <th scope="col">{props.t("Icon")}</th>
+                                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Icon")}</th>
                                                 <th scope="col">{props.t("Asset")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Price")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Depth")}</th>

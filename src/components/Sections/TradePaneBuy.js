@@ -45,7 +45,6 @@ export const TradePaneBuy = (props) => {
                 changeAmount={props.changeTradeAmount}
                 toggleTab={props.toggleTab}
             />
-            <br/>
 
             {/*
             // MAKE SURE THESE ARE ALL VISIBLE TO USER:
@@ -58,13 +57,11 @@ export const TradePaneBuy = (props) => {
             */}
 
             <Row className='align-items-center'>
-                <Col xs={12}><p className='text-center'>Below Figures Are Estimates</p></Col>
-
                 <Col xs={4} className='py-1'>
                     <h6 className='font-weight-light m-0'>{props.t("Rate")} <i className="bx bx-info-circle align-middle" id="tooltipBuyRate" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyRate">Estimated output rate (after fees and slippage)</UncontrolledTooltip>
                 </Col>
-                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0"> <i className="bx bx-plus-circle align-middle" id="outputToggler" role='button'/> {props.tradeData.estRate} SPARTA</h6></Col>
+                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0"> <i className="bx bx-plus-circle align-middle" id="outputToggler" role='button'/> {props.tradeData.estRate} SPARTA*</h6></Col>
 
                 <Col xs={6}>
                     <UncontrolledCollapse toggler="#outputToggler" className='py-1'>
@@ -74,7 +71,7 @@ export const TradePaneBuy = (props) => {
                 </Col>
                 <Col xs={6}>
                     <UncontrolledCollapse toggler="#outputToggler" className='py-1'>
-                        <h6 className="text-right font-weight-light m-0">{`${((props.tradeData.actualSlip) * 100).toFixed(3)}%`}</h6>
+                        <h6 className="text-right font-weight-light m-0">{`${((props.tradeData.actualSlip) * 100).toFixed(3)}%`}*</h6>
                     </UncontrolledCollapse>
                 </Col>
 
@@ -83,14 +80,14 @@ export const TradePaneBuy = (props) => {
                     <h6 className='font-weight-light m-0'>{props.t("Fee")} <i className="bx bx-info-circle align-middle" id="tooltipBuyFee" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyFee">Estimated pool fee for the swap. This fee is awarded to liquidity providers' pool holdings to incentivize deeper pools over time.</UncontrolledTooltip>
                 </Col>
-                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0">{formatGranularUnits(convertFromWei(props.tradeData.fee))} {props.tradeData.outputSymbol}</h6></Col>
+                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0">{formatGranularUnits(convertFromWei(props.tradeData.fee))} {props.tradeData.outputSymbol}*</h6></Col>
 
 
                 <Col xs={4} className='py-1'>
                     <h6 className='font-weight-light m-0'>{props.t("Slip")} <i className="bx bx-info-circle align-middle" id="tooltipBuyPoolSlip" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyPoolSlip">Estimated pool price slip; the difference between asset's price in the pool before/after this swap.</UncontrolledTooltip>
                 </Col>
-                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0">{`${((props.tradeData.slip) * 100).toFixed(3)}%`}</h6></Col>
+                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0">{`${((props.tradeData.slip) * 100).toFixed(3)}%`}*</h6></Col>
 
                 <Col xs={12} className='py-1'><hr className='m-0'/></Col>
 
@@ -98,9 +95,11 @@ export const TradePaneBuy = (props) => {
                     <h6 className='m-0'>{props.t("Output")} <i className="bx bx-info-circle align-middle" id="tooltipBuyOutput" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyOutput">Estimated final output from this swap.</UncontrolledTooltip>
                 </Col>
-                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatAllUnits(convertFromWei(props.tradeData.output))} {props.tradeData.outputSymbol}</h5></Col>
+                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatAllUnits(convertFromWei(props.tradeData.output))} {props.tradeData.outputSymbol}*</h5></Col>
 
                 <Col xs={12} className='py-1'><hr className='m-0'/></Col>
+
+                <Col xs={12}><p className='text-right'>Estimated*</p></Col>
             </Row>
 
             <div className="text-center">
