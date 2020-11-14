@@ -31,6 +31,8 @@ import {manageBodyClass} from "../components/common";
 
 const NewSwap = (props) => {
 
+    const context = useContext(Context);
+
     const [activeTab, setActiveTab] = useState('1');
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
@@ -40,7 +42,6 @@ const NewSwap = (props) => {
         else {setActiveTab('1')}
     }
     
-    const context = useContext(Context)
     const [poolURL, setPoolURL] = useState('')
     const [pool, setPool] = useState({
         'symbol': 'XXX',
@@ -101,28 +102,35 @@ const NewSwap = (props) => {
     const [startTx, setStartTx] = useState(false)
     const [endTx, setEndTx] = useState(false)
 
+    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
     useEffect(() => {
         checkPoolReady()
     // eslint-disable-next-line
-    }, []);
+    }, [context.poolsData])
 
     useEffect(() => {
         if (context.poolsDataComplete === true) {
             getData()
         }
     // eslint-disable-next-line
-    }, [context.walletData]);
+    }, [context.walletData])
 
     const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
-        if (context.poolsData && context.poolsDataLoading !== true) {
+        if (context.poolsData) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
-                await getData()
+                getData()
             }
             else {
-                await checkPoolReady()
+                await pause(3000)
+                checkPoolReady()
             }
+        }
+        else {
+            await pause(3000)
+            checkPoolReady()
         }
     }
 

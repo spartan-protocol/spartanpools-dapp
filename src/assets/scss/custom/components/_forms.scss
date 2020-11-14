@@ -53,6 +53,10 @@
     border-radius: 10px;
   }
 
+  .slider:focus {
+    outline:none;
+  }
+ 
   .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
