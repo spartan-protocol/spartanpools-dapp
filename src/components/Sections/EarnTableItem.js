@@ -90,10 +90,11 @@ export const EarnTableItem = (props) => {
     return (
         <>
             <tr>
-                <td>
+                <td className="d-none d-lg-table-cell">
                     <TokenIcon address={props.symbAddr}/>
                 </td>
                 <td>
+                    <div className='d-block d-lg-none'><TokenIcon address={props.symbAddr}/></div>
                     {props.symbol}
                 </td>
                 <td className="d-none d-lg-table-cell">
@@ -109,12 +110,12 @@ export const EarnTableItem = (props) => {
                 <td>
                     {props.units > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
-                            <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"/> Lock
+                            <i className="bx bx-lock font-size-16 align-middle mr-2"/> Lock
                         </button>
                     }
                     {props.locked > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
-                            <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"/> Unlock
+                            <i className="bx bx-lock-open font-size-16 align-middle mr-2"/> Unlock
                         </button>
                     }
                     <Notification type={notifyType} message={notifyMessage}/>

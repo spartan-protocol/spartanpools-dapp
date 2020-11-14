@@ -134,7 +134,7 @@ const EarnTable = (props) => {
 
                                         <thead className="center">
                                         <tr>
-                                            <th scope="col">{props.t("Icon")}</th>
+                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Icon")}</th>
                                             <th scope="col">{props.t("Symbol")}</th>
                                             <th className="d-none d-lg-table-cell" scope="col">{props.t("Unlocked")}</th>
                                             <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
