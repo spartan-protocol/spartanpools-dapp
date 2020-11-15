@@ -10,7 +10,7 @@ import AddLiquidity from './pages/AddLiquidity'
 import Swap from './pages/Swap'
 import CreatePool from './pages/CreatePool'
 import Earn from './pages/Earn'
-import Lock from './pages/Lock&Mint'
+import Bond from './pages/Bond'
 import Dao from './pages/DAO'
 
 import PagesStarter from "./pages/Utility/pages-starter";
@@ -62,7 +62,7 @@ const Base = () => {
                     <Route path="/pool/swap" exact component={Swap}/>
                     <Route path="/pool/create" exact component={CreatePool}/>
                     <Route path="/earn"><Earn/></Route>
-                    <Route path="/lock"><Lock/></Route>
+                    <Route path="/bond"><Bond/></Route>
                     <Route path="/dao" exact component={Dao} />
 
                     {/*Help*/}

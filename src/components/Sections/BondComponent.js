@@ -5,7 +5,7 @@ import {
     getLockContract, BNB_ADDR, WBNB_ADDR, LOCK_ADDR, getClaimableLP, getUtilsContract,
     getTokenContract, getLockMemberDetail, SPARTA_ADDR, getPoolData, getTokenData,
 } from "../../client/web3"
-import Notification from '../../components/Common/notification'
+import Notification from '../Common/notification'
 
 import { bn, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
 
@@ -21,7 +21,7 @@ import { withRouter } from "react-router-dom"
 
 import { Doughnut } from 'react-chartjs-2';
 
-const LockComponent = (props) => {
+const BondComponent = (props) => {
 
     const context = useContext(Context)
     const [claimableLP, setClaimableLP] = useState(0)
@@ -259,7 +259,7 @@ const LockComponent = (props) => {
                             <CardBody>
                                 <CardTitle><h4>Time-Locked LP Tokens</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
-                                    Lock {userData.symbol} to get SPARTA LP Tokens.<br />
+                                    Bond {userData.symbol} to get SPARTA LP Tokens.<br />
                                     Claim your vested LP tokens.<br />
                                 </CardSubtitle>
                                 {context.walletData &&
@@ -296,9 +296,9 @@ const LockComponent = (props) => {
                         <CardBody>
                                 
                                     <div className="table-responsive">
-                                    <CardTitle><h4>Add {userData.symbol} to Mint SPARTA</h4></CardTitle>
+                                    <CardTitle><h4>Bond {userData.symbol} to Mint SPARTA</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
-                                        <h6>Show your support for Sparta by time-locking your BNB.</h6>
+                                        <h6>Bond assets into the pools. </h6>
                                         <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the BNB:SPARTA liquidity pool.</li>
                                         <li>LP tokens will be issued as usual, however only 25% are available to you immediately.</li>
                                         <li>The remaining 75% will be vested to you over a 12 month period.</li>
@@ -400,7 +400,7 @@ const LockComponent = (props) => {
                                                     toggleLock();
                                                     depositAsset();
                                                 }}>
-                                                    Lock for 12 months!
+                                                    Bond for 12 months!
                                             </Button>
                                             }
                                             {userData.symbol === 'BNB' && remainder < 0.05 &&
@@ -412,7 +412,7 @@ const LockComponent = (props) => {
                                                         toggleLock();
                                                         depositAsset();
                                                     }}>
-                                                        Lock for 12 months (Low BNB; might fail!)
+                                                        Bond for 12 months (Low BNB; might fail!)
                                             </Button>
                                                 </>
                                             }
@@ -421,7 +421,7 @@ const LockComponent = (props) => {
                                                     toggleLock();
                                                     depositAsset();
                                                 }}>
-                                                    Lock for 12 months!
+                                                    Bond for 12 months!
                                             </Button>
                                             }
                                             <Button color="secondary" onClick={toggleLock}>Cancel</Button>
@@ -440,4 +440,4 @@ const LockComponent = (props) => {
     )
 };
 
-export default withRouter(withNamespaces()(LockComponent));
+export default withRouter(withNamespaces()(BondComponent));
