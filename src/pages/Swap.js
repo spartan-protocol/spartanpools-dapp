@@ -121,7 +121,7 @@ const NewSwap = (props) => {
         if (context.poolsData) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
-                getData(params)
+                getData()
             }
             else {
                 await pause(3000)
@@ -134,7 +134,8 @@ const NewSwap = (props) => {
         }
     }
 
-    const getData = async (params) => {
+    const getData = async () => {
+        let params = queryString.parse(props.location.search)
         if (params.pool !== undefined) {
             setPoolURL(params.pool)
             //console.log(params.pool)
