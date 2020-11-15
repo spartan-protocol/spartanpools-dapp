@@ -37,7 +37,7 @@ const Pools = (props) => {
         <React.Fragment>
             <div className="page-content">
                 <Container fluid>
-                    <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Liquidity Pools")}/>
+                    <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Pools")}/>
                     <Row>
                         {context.web3Wallet &&
                             <Col xs="12">
