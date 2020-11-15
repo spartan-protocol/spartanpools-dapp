@@ -1,4 +1,4 @@
-import {convertFromWei, formatAllUnits} from "../../utils";
+import {convertFromWei, formatGranularUnits} from "../../utils";
 import React from "react";
 import {PercentSliderSell, PercentSliderBuy} from "../common";
 
@@ -42,7 +42,7 @@ export const InputPaneSwap = (props) => {
                                 }
                             </InputGroupAddon>
                             <Input min={0} type="text" className="form-control" onChange={props.onInputChange}
-                                placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
+                                placeholder={formatGranularUnits(convertFromWei(props.paneData?.input))}
                             >
                             </Input>
 
@@ -55,7 +55,7 @@ export const InputPaneSwap = (props) => {
                     <i className='bx bx-sort bx-md rounded-circle p-1' style={{backgroundColor:'#556ee6',color:'#FFF',zIndex:'5',position:'absolute',top:'50%',left:'50%',transform:'translate(-50%, -50%) rotate(90deg)'}} onClick={props.toggleTab} role='button' />
                     <Col sm="6" className='px-1'>
                         <InputGroup className="mb-1">
-                            <Input readOnly="readonly" type="text" className="form-control text-right" placeholder={formatAllUnits(convertFromWei(props.paneData?.output))}/>
+                            <Input readOnly="readonly" type="text" className="form-control text-right" placeholder={formatGranularUnits(convertFromWei(props.paneData?.output))}/>
                             <InputGroupAddon addonType="append" className="input-group-text w-100 text-right">
                                 {props.pool.address !== "XXX" && props.paneData?.outputSymbol === 'SPARTA' &&
                                 <>

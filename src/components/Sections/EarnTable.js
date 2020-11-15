@@ -37,11 +37,12 @@ const EarnTable = (props) => {
       }, [context.walletData]);
 
     const getData = async () => {
-        let rewards = await getRewards(context.account)
+        let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
+        let rewards = data[0]
+        let memberDetails = data[1]
+        let weight = data[2]
         setReward(rewards)
-        let memberDetails = await getMemberDetail(context.account)
         setMember(memberDetails)
-        let weight = await getTotalWeight()
         setTotalWeight(weight)
     }
 

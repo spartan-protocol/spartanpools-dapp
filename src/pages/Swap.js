@@ -121,7 +121,7 @@ const NewSwap = (props) => {
         if (context.poolsData) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
-                getData()
+                getData(params)
             }
             else {
                 await pause(3000)
@@ -134,27 +134,29 @@ const NewSwap = (props) => {
         }
     }
 
-    const getData = async () => {
-        let params = queryString.parse(props.location.search)
+    const getData = async (params) => {
         if (params.pool !== undefined) {
             setPoolURL(params.pool)
             //console.log(params.pool)
             const pool = await getPoolData(params.pool, context.poolsData)
             setPool(pool)
 
-            const inputTokenData = await getNewTokenData(SPARTA_ADDR, context.account)
-            const outputTokenData = await getNewTokenData(pool.address, context.account)
+            let data = await Promise.all([getNewTokenData(SPARTA_ADDR, context.account), getNewTokenData(pool.address, context.account)])
+            const inputTokenData = data[0]
+            const outputTokenData = data[1]
             setInputTokenData(inputTokenData)
             setOutputTokenData(outputTokenData)
 
             const buyInitInput = (inputTokenData?.balance * 1) / 100
             const sellInitInput = (outputTokenData?.balance * 1) / 100
 
-            setBuyData(await getSwapData(buyInitInput, inputTokenData, outputTokenData, pool, false))
-            setSellData(await getSwapData(sellInitInput, outputTokenData, inputTokenData, pool, true))
+            data = await Promise.all([getSwapData(buyInitInput, inputTokenData, outputTokenData, pool, false), getSwapData(sellInitInput, outputTokenData, inputTokenData, pool, true)])
+            const tempBuyData = data[0]
+            const tempSellData = data[1]
+            setBuyData(tempBuyData)
+            setSellData(tempSellData)
 
-            await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
-            await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+            await Promise.all([checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false), checkApproval(pool.address) ? setApproval(true) : setApproval(false)])
         }
     }
 
@@ -241,8 +243,8 @@ const NewSwap = (props) => {
         })
         setNotifyMessage('Approved!')
         setNotifyType('success')
-        await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
-        await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+        
+        await Promise.all([checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false), checkApproval(pool.address) ? setApproval(true) : setApproval(false)])
 
         if (context.walletDataLoading !== true) {
             // Refresh BNB balance
