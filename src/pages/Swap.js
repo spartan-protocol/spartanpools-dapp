@@ -330,21 +330,18 @@ const NewSwap = (props) => {
                                     <Card>
                                         <CardBody className='p-3 p-md-4'>
                                             <Row className='align-middle'>
-                                                <Col xs={4} className='my-auto'>
+                                                <Col xs={6} className='my-auto'>
                                                     <Link to='/pools'>
-                                                        <button type="button" tag="button" className="btn btn-light">
-                                                            <i className="bx bx-arrow-back align-middle"/> Pools <i className="bx bx-swim align-middle d-none d-sm-inline-block"/>
+                                                        <button type="button" tag="button" className="btn btn-light w-100">
+                                                            <i className="bx bx-arrow-back align-middle"/> Pools <i className="bx bx-swim align-middle"/>
                                                         </button>
                                                     </Link>
                                                 </Col>
-                                                <Col xs={4} className='text-center my-auto'>
-                                                    <h4 className='mb-0'>Swap</h4>
-                                                </Col>
-                                                <Col xs={4} className='my-auto'>
-                                                    <div className="float-right">
+                                                <Col xs={6} className='my-auto'>
+                                                    <div className="float-right w-100">
                                                         <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                                                            <DropdownToggle type="button" tag="button" className="btn btn-light">
-                                                                <i className="bx bx-wallet align-middle d-none d-sm-inline-block"/>
+                                                            <DropdownToggle type="button" tag="button" className="btn btn-light w-100">
+                                                                <i className="bx bx-wallet align-middle"/>
                                                                 <span className="ml-1">Wallet <i className="mdi mdi-chevron-down"/></span>
                                                             </DropdownToggle>
                                                             <DropdownMenu right className="dropdown-menu-md">
