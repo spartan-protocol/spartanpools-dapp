@@ -1,6 +1,6 @@
 import React from 'react'
 import Breadcrumbs from "../components/Common/Breadcrumb";
-import LockComponent from '../components/Sections/LockComponent'
+import BondComponent from '../components/Sections/BondComponent'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
@@ -12,10 +12,10 @@ const Earn = (props) => {
         <React.Fragment>
             <div className="page-content">
                 <Container fluid>
-                    <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Lock")}/>
+                    <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Bond & Mint")}/>
                     <Row>
                         <Col xs="12">
-                            <LockComponent/> 
+                            <BondComponent/> 
                         </Col>
                     </Row>
                 </Container>

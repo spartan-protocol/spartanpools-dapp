@@ -51,10 +51,10 @@ export const PoolTableItem = (props) => {
                 </td>
                 <td>
                     {context.walletData && props.listed &&
-                        <Link to={`/lock?pool=${props.address}`}>
+                        <Link to={`/bond?pool=${props.address}`}>
                             <button color="primary"
                                     className="btn btn-primary waves-effect waves-light m-1 w-75">
-                                <i className="bx bx-lock "/> {props.t("Lock")}
+                                <i className="bx bx-lock "/> {props.t("Bond")}
 
                             </button>
                         </Link>

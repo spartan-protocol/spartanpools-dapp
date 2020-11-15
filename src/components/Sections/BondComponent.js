@@ -5,7 +5,7 @@ import {
     getLockContract, BNB_ADDR,WBNB_ADDR, LOCK_ADDR, getClaimableLP, getUtilsContract,
     getTokenContract, getLockMemberDetail, SPARTA_ADDR, getPoolData, getTokenData,
 } from "../../client/web3"
-import Notification from '../../components/Common/notification'
+import Notification from '../Common/notification'
 
 import { bn, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
 
@@ -21,7 +21,7 @@ import { withRouter } from "react-router-dom"
 
 import { Doughnut } from 'react-chartjs-2';
 
-const LockComponent = (props) => {
+const BondComponent = (props) => {
 
     const context = useContext(Context)
     const [claimableLP, setClaimableLP] = useState(0)
@@ -258,6 +258,7 @@ const LockComponent = (props) => {
                             <CardBody>
                                 <CardTitle><h4>Time-Locked LP Tokens</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
+                                    Bond {userData.symbol} to get SPARTA LP Tokens.<br />
                                     Claim your vested LP tokens.<br />
                                 </CardSubtitle>
                                 {context.walletData &&
@@ -292,30 +293,34 @@ const LockComponent = (props) => {
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
-                            <div className="table-responsive">
-                                <CardTitle><h4>Add BNB to Mint SPARTA</h4></CardTitle>
-                                <CardSubtitle className="mb-3">
-                                    <h6>Show your support for Sparta by time-locking your BNB.</h6>
-                                    <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the BNB:SPARTA liquidity pool.</li>
-                                    <li>LP tokens will be issued as usual, however only 25% are available to you immediately.</li>
-                                    <li>The remaining 75% will be vested to you over a 12 month period.</li>
-                                    <li>Farm extra SPARTA by locking your LP tokens on the Earn page.</li>
-                                </CardSubtitle>
-                                <Col sm="10" md="6">
-                                {userData.symbol !== 'XXX' &&
-                                    <div className="mb-3">
-                                        <label className="card-radio-label mb-2">
-                                            <input type="radio" name="currency" className="card-radio-input" />
-                                            <div className="card-radio">
-                                                <Row>
-                                                    <Col md={3}>
-                                                        <TokenIcon address={userData.address} />
-                                                        <span>  {userData.symbol}</span></Col>
-                                                    <div className="ml-5">
-                                                        <Col md={4}>
-                                                            <p className="text-muted mb-1"><i className="bx bx-wallet mr-1" />Available:</p>
-                                                            <h5 className="font-size-16">{formatAllUnits(convertFromWei(userData.balance))}</h5>
-                                                        </Col>
+                                
+                                    <div className="table-responsive">
+                                    <CardTitle><h4>Bond {userData.symbol} to Mint SPARTA</h4></CardTitle>
+                                    <CardSubtitle className="mb-3">
+                                        <h6>Bond assets into the pools. </h6>
+                                        <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the BNB:SPARTA liquidity pool.</li>
+                                        <li>LP tokens will be issued as usual, however only 25% are available to you immediately.</li>
+                                        <li>The remaining 75% will be vested to you over a 12 month period.</li>
+                                        <li>Farm extra SPARTA by locking your LP tokens on the Earn page.</li>
+                                    </CardSubtitle>
+                                    
+                                    <Col sm="10" md="6">
+                                        {userData.symbol !== 'XXX' &&
+                                            <div className="mb-3">
+                                                <label className="card-radio-label mb-2">
+                                                    <input type="radio" name="currency" className="card-radio-input" />
+                                                    <div className="card-radio">
+                                                        <Row>
+                                                            <Col md={3}>
+                                                                <TokenIcon address={userData.address} />
+                                                                <span>  {userData.symbol}</span></Col>
+                                                            <div className="ml-5">
+                                                                <Col md={4}>
+                                                                    <p className="text-muted mb-1"><i className="bx bx-wallet mr-1" />Available:</p>
+                                                                    <h5 className="font-size-16">{formatAllUnits(convertFromWei(userData.balance))}</h5>
+                                                                </Col>
+                                                            </div>
+                                                        </Row>
                                                     </div>
                                                 </Row>
                                             </div>
@@ -359,14 +364,8 @@ const LockComponent = (props) => {
                                                     getEstLiqTokens()
                                                     toggleLock()
                                                 }}>
-                                                    <i className="bx bx-spin bx-loader" /> LOCK
-                                                    </div>
-                                            }
-                                            {approvalToken && !startTx &&
-                                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
-                                                    getEstLiqTokens()
-                                                    toggleLock()
-                                                }}>LOCK</div>
+                                                    Bond for 12 months!
+                                            </Button>
                                             }
                                         </Col>
                                     </Row>
@@ -397,17 +396,20 @@ const LockComponent = (props) => {
                                             }}>
                                                 Lock for 12 months!
                                             </Button>
-                                        }
-                                        {userData.symbol === 'BNB' && remainder < 0.05 &&
-                                        <>
-                                            <Button color="primary" onClick={() => { onInputChange((0.999 - (0.05 / convertFromWei(userData.balance))) * 100); }}>
-                                                Change to ~{formatAllUnits(convertFromWei(userData.balance * (0.999 - (0.05 / convertFromWei(userData.balance)))))} BNB
+                                                    <Button color="danger" onClick={() => {
+                                                        toggleLock();
+                                                        depositAsset();
+                                                    }}>
+                                                        Bond for 12 months (Low BNB; might fail!)
                                             </Button>
-                                            <Button color="danger" onClick={() => {
-                                                toggleLock();
-                                                depositAsset();
-                                            }}>
-                                                Lock for 12 months (Low BNB; might fail!)
+                                                </>
+                                            }
+                                            {userData.symbol === 'BNB' && remainder >= 0.05 &&
+                                                <Button color="primary" onClick={() => {
+                                                    toggleLock();
+                                                    depositAsset();
+                                                }}>
+                                                    Bond for 12 months!
                                             </Button>
                                         </>
                                         }
@@ -434,4 +436,4 @@ const LockComponent = (props) => {
     )
 };
 
-export default withRouter(withNamespaces()(LockComponent));
+export default withRouter(withNamespaces()(BondComponent));
