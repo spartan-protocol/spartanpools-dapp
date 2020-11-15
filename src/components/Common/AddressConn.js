@@ -67,17 +67,16 @@ const AddressConn = (props) => {
 
     const loadingTokens = async (tokenArray, account) => {
         // (walletData) WALLET DATA | USED: RIGHT-BAR + EARN TABLE + POOL PANE SIDE + POOL TABLE + ADD LIQ + CREATE POOL
+        // (sharesData) SHARES DATA | USED: RIGHT-BAR + EARN TABLE + ADD LIQ
         context.setContext({'walletDataLoading': true})
-        let walletData = await getWalletData(account)
+        context.setContext({'sharesDataLoading': true})
+        let data = await Promise.all([getWalletData(account), getSharesData(account, tokenArray)])
+        let walletData = data[0]
         context.setContext({'walletData': walletData})
         context.setContext({'walletDataLoading': false})
-
-        // (sharesData) SHARES DATA | USED: RIGHT-BAR + EARN TABLE + ADD LIQ
-        let sharesData = await getSharesData(account, tokenArray)
-        context.setContext({'sharesDataLoading': true})
+        let sharesData = data[1]
         context.setContext({'sharesData': sharesData})
         context.setContext({'sharesDataLoading': false})
-
         nextWalletDataPage(tokenArray, walletData, account)
         nextSharesDataPage(tokenArray, sharesData, account)
     }
@@ -115,12 +114,13 @@ const AddressConn = (props) => {
 
     const loadingGlobal = async (tokenArray) => {
         // (spartanPrice) SPARTA PRICE | USED: GLOBALLY
-        context.setContext({'spartanPrice': await getSpartaPrice()})
-
         // (poolArray) LISTED POOLS | USED: GLOBALLY
-        let poolArray = await getListedPools()
-        context.setContext({'poolArray': poolArray})
+        let data = await Promise.all([getSpartaPrice(), getListedPools(), loadPoolsData(tokenArray)])
+        context.setContext({'spartanPrice': data[0]})
+        context.setContext({'poolArray': data[1]})
+    }
 
+    const loadPoolsData = async (tokenArray) => {
         // (poolsData) POOLS DATA | USED: POOLS TABLE + ADD LIQ + CREATE POOL + SWAP
         if (context.poolsDataLoading !== true) {
             context.setContext({'poolsDataLoading': true})

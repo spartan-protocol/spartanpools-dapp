@@ -172,7 +172,6 @@ export const AssetItem = (props) => {
       </tr>
     </>
   )
-
 }
 
 export const PoolShareTable = () => {
@@ -196,26 +195,26 @@ export const PoolShareTable = () => {
             }
             {context.sharesData &&
               <Table className="text-center">
-                <tbody>
-                      {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                        <PoolItem 
-                          key={c.address}
-                          symbol={c.symbol}
-                          address={c.address}
-                          units={c.units}
-                          locked={c.locked}
-                        />
-                      )}
-                      <tr>
-                          <td colSpan="5">
-                              {context.sharesDataLoading === true &&
-                                  <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                              }
-                              {context.sharesDataLoading !== true && context.sharesDataComplete === true &&
-                                  <div className="text-center m-2">All LP Tokens Loaded</div>
-                              }
-                          </td>
-                      </tr>
+                <tbody>                  
+                  {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                    <PoolItem 
+                      key={c.address}
+                      symbol={c.symbol}
+                      address={c.address}
+                      units={c.units}
+                      locked={c.locked}
+                    />
+                  )}
+                  <tr>
+                      <td colSpan="5">
+                          {context.sharesDataLoading === true &&
+                              <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                          }
+                          {context.sharesDataLoading !== true && context.sharesDataComplete === true &&
+                              <div className="text-center m-2">All LP Tokens Loaded</div>
+                          }
+                      </td>
+                  </tr>
                 </tbody>
               </Table>
             }
@@ -232,6 +231,8 @@ const units = new BigNumber(props.units)
 const locked = new BigNumber(props.locked)
 const total = units.plus(locked)
 //const lockedPC = locked.dividedBy(total).times(100).toFixed(0)
+var symbol = props.symbol
+symbol = symbol.substring(symbol.indexOf("-") + 1)
 
 const donutData = {
   labels: [
@@ -350,7 +351,8 @@ const donutOptions = {
           <TokenIconChart address={props.address}/>
         </td>
         <td className="align-middle w-50 p-1">
-          <p className='m-2'>{props.symbol}</p>
+          <h6>{symbol}:SPARTA</h6>
+          <p className='m-2 font-size-12'>({props.symbol})</p>
           <h5 className='m-2'>{formatAllUnits(convertFromWei(total))}</h5>
         </td>
       </tr>

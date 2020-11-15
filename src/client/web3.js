@@ -129,33 +129,6 @@ export const getTokenDetails = async (address, tokenArray) => {
     return assetDetailsArray
 }
 
-// eslint-disable-next-line
-{/*
-export const getNextTokenDetails = async (address, tokenArray, prevTokenData, page, isLoading, isNotLoading, isCompleteArray) => {
-    isLoading()
-    let results = 0
-    const pagination = 1
-    if (tokenArray.length > page * pagination) {
-        results = page * pagination
-    }
-    else {
-        results = tokenArray.length
-        isCompleteArray()
-    }
-    let assetDetailsArray = prevTokenData
-    for (let i = assetDetailsArray.length; i < results; i++) {
-        let utilsContract = getUtilsContract()
-        let token = tokenArray[i] === WBNB_ADDR ? BNB_ADDR : tokenArray[i]
-        let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(token, address).call()
-        if(+assetDetails.balance > 0) {
-            assetDetailsArray.push(assetDetails)
-        }
-    }
-    isNotLoading()
-    return assetDetailsArray
-}
-*/}
-
 // Filter tokens for eligiblity to upgrade
 export const getEligibleAssets = async (address, assetDetailsArray) => {
     const eligibleAssetArray = assetDetailsArray.find((item) => !item.hasClaimed)
@@ -172,8 +145,9 @@ export const getListedTokens = async () => {
 }
 
 export const getAlltokens = async () => {
-    let assetArray = await getAssets()
-    let tokenArray = await getListedTokens()
+    let data = await Promise.all([getAssets(), getListedTokens()])
+    let assetArray = data[0]
+    let tokenArray = data[1]
     let allTokens = assetArray.concat(tokenArray)
     var sortedTokens = [...new Set(allTokens)].sort()
     return sortedTokens;
@@ -229,9 +203,10 @@ export const getNextPoolsData = async (tokenArray, prevPoolsData) => {
 export const getPool = async (address) => {
     var contract = getUtilsContract()
     let token = address === WBNB_ADDR ? BNB_ADDR : address
-    let tokenDetails = await contract.methods.getTokenDetails(token).call()
-    let poolDataRaw = await contract.methods.getPoolData(token).call()
-    let apy = await contract.methods.getPoolAPY(token).call()
+    let data = await Promise.all([contract.methods.getTokenDetails(token).call(), contract.methods.getPoolData(token).call(), contract.methods.getPoolAPY(token).call()])
+    let tokenDetails = data[0]
+    let poolDataRaw = data[1]
+    let apy = data[2]
     let poolData = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
@@ -322,8 +297,9 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
     let walletData = prevWalletData
     for (let i = currentLength - 2; i < results; i++) {
         var addr = tokenArray[i]
-        var balance = await getTokenContract(addr).methods.balanceOf(account).call()
-        var details = await getUtilsContract().methods.getTokenDetails(addr).call()
+        let data = await Promise.all([getTokenContract(addr).methods.balanceOf(account).call(), getUtilsContract().methods.getTokenDetails(addr).call()])
+        var balance = data[0]
+        var details = data[1]
         //if (balance > 0) {
             walletData.push({
                 'symbol': details.symbol,
@@ -362,8 +338,9 @@ export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
             })
         }
         else {
-            var balance = await getTokenContract(tokenAddr).methods.balanceOf(account).call()
-            var details = await getUtilsContract().methods.getTokenDetails(tokenAddr).call()
+            let data = await Promise.all([getTokenContract(tokenAddr).methods.balanceOf(account).call(), getUtilsContract().methods.getTokenDetails(tokenAddr).call()])
+            var balance = data[0]
+            var details = data[1]
             part2.push({
                 'symbol': details.symbol,
                 'name': details.name,
@@ -505,11 +482,15 @@ export const updateSharesData = async (member, prevSharesData, tokenAddr) => {
 
 export const getPoolShares = async (member, token) => {
     var contract = getUtilsContract()
-    let poolAddress = await contract.methods.getPool(token).call()
-    let tokenDetails = await contract.methods.getTokenDetails(poolAddress).call()
-    let memberData = await contract.methods.getMemberShare(token, member).call()
-    let liquidityUnits = await getTokenContract(poolAddress).methods.balanceOf(member).call()
-    let locked = await getDaoContract().methods.mapMemberPool_balance(member, poolAddress).call()
+
+    let data = await Promise.all([contract.methods.getMemberShare(token, member).call(), contract.methods.getPool(token).call()])
+    let memberData = data[0]
+    let poolAddress = data[1]
+
+    let extraData = await Promise.all([contract.methods.getTokenDetails(poolAddress).call(), getTokenContract(poolAddress).methods.balanceOf(member).call(), getDaoContract().methods.mapMemberPool_balance(member, poolAddress).call()])
+    let tokenDetails = extraData[0]
+    let liquidityUnits = extraData[1]
+    let locked = extraData[2]
     let share = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
