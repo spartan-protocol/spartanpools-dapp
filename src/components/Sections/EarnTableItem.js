@@ -110,12 +110,12 @@ export const EarnTableItem = (props) => {
                 <td>
                     {props.units > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
-                            <i className="bx bx-lock font-size-16 align-middle mr-2"/> Lock
+                            <i className="bx bx-lock font-size-16 align-middle"/> Lock
                         </button>
                     }
                     {props.locked > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
-                            <i className="bx bx-lock-open font-size-16 align-middle mr-2"/> Unlock
+                            <i className="bx bx-lock-open font-size-16 align-middle"/> Unlock
                         </button>
                     }
                     <Notification type={notifyType} message={notifyMessage}/>

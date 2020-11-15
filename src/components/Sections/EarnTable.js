@@ -98,7 +98,7 @@ const EarnTable = (props) => {
                                             <Col xs='12' sm='3' className='text-center p-2'>
                                                 <h5><Spinner type="grow" color="primary" className='m-2' style={{height:'15px', width:'15px'}} />{formatGranularUnits(convertFromWei(reward))} SPARTA</h5>
                                                 <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
-                                                    <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"/> Harvest SPARTA
+                                                    <i className="bx bx-log-in-circle font-size-16 align-middle"/> Harvest
                                                 </button>
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
