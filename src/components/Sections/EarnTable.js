@@ -14,7 +14,7 @@ import {Row, Col, Table, Card, CardTitle, CardSubtitle, CardBody, Spinner} from 
 import {withNamespaces} from 'react-i18next'
 
 import EarnTableItem from "./EarnTableItem"
-import { withRouter } from "react-router-dom"
+import { Link, withRouter } from "react-router-dom"
 
 const EarnTable = (props) => {
 
@@ -104,9 +104,9 @@ const EarnTable = (props) => {
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
-                                                    <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}%</strong> of the total DAO weight represented by your wallet.<br/>
+                                                    <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}{member.weight <= 0 && 0}%</strong> of the total DAO weight represented by your wallet.<br/>
                                                     <strong>SPARTA</strong> rewards await your next visit, come back often to harvest!<br/>
-                                                    <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}</strong> passed since your last harvest.
+                                                    <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}{member.lastBlock <= 0 && '0 minutes'}</strong> passed since your last harvest
                                                 </p>
                                             </Col>
                                         </Row>
@@ -143,7 +143,7 @@ const EarnTable = (props) => {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            {context.sharesData.sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                            {context.sharesData.filter(x => x.units + x.locked > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
                                                 <EarnTableItem 
                                                     key={c.address}
                                                     symbAddr={c.address}
@@ -160,8 +160,11 @@ const EarnTable = (props) => {
                                             )}
                                             <tr>
                                                 <td colSpan="5">
-                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true &&
-                                                        <div className="text-center m-2">All LP Tokens Loaded</div>
+                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
+                                                        <div className="text-center m-2">All LP tokens loaded</div>
+                                                    }
+                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length <= 0 &&
+                                                        <div className="text-center m-2">You have no LP tokens, <Link to="/pools">visit the pools</Link> to add liquidity</div>
                                                     }
                                                 </td>
                                             </tr>
