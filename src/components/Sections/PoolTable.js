@@ -37,7 +37,8 @@ const PoolTable = (props) => {
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Volume")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Txns")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Revenue")}</th>
-                                                <th scope="col">{props.t("Action")}</th>
+                                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Bond")}</th>
+                                                <th scope="col">{props.t("Trade")}</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -52,6 +53,7 @@ const PoolTable = (props) => {
                                                 volume={c.volume}
                                                 txCount={c.txCount}
                                                 fees={c.fees}
+                                                listed={c.bondListed}
                                                 />
                                             )}
                                                 <tr>

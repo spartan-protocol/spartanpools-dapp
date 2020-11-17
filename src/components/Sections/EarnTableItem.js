@@ -30,16 +30,16 @@ export const EarnTableItem = (props) => {
     const deposit = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.account })
-        console.log(tx.transactionHash)
+        await contract.methods.deposit(record.address, record.units).send({ from: context.account })
+        //console.log(tx.transactionHash)
         await refreshData(record.symbAddr)
     }
 
     const withdraw = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.withdraw(record.address).send({ from: context.account })
-        console.log(tx.transactionHash)
+        await contract.methods.withdraw(record.address).send({ from: context.account })
+        //console.log(tx.transactionHash)
         await refreshData(record.symbAddr)
     }
 
