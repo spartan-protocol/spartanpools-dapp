@@ -9,7 +9,7 @@ import UTILS from '../artifacts/Utils.json'
 import DAO from '../artifacts/Dao.json'
 import BOND from '../artifacts/Bond.json'
 
-const net = 'testnet';
+const net = '';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
 export const WBNB_ADDR = net === 'testnet' ? '0x27c6487C9B115c184Bb04A1Cf549b670a22D2870' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
@@ -17,7 +17,7 @@ export const SPARTA_ADDR = net === 'testnet' ? '0xb58a43D2D9809ff4393193de536F24
 export const UTILS_ADDR = net === 'testnet' ? '0x0a30aF25e652354832Ec5695981F2ce8b594e8B3' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
 export const DAO_ADDR = net === 'testnet' ? '0x1b83a813045165c81d84b9f5d6916067b57FF9C0' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
 export const ROUTER_ADDR = net === 'testnet' ? '0xd992130bB595f77B6cAC22fBdb5EBAc888CDe850' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
-export const BOND_ADDR = net === 'testnet' ? '0xf7142E08e3D78AB02344eB34a0B6062fbFA613CD' : '0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da'
+export const BOND_ADDR = net === 'testnet' ? '0x7e44b5461A50adB15329895b80866275192a54f6' : '0xE6844821B03828Fd4067167Bc258FA1EEFD1cCdf'
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -544,7 +544,7 @@ export const getBondedMemberDetails = async (member, asset) => {
 }
 
 export const getClaimableLP = async (member, asset) => {
-    let bondedLp = await getBondContract().methods.calcClaimbondedLP(member, asset).call()
+    let bondedLp = await getBondContract().methods.calcClaimBondedLP(member, asset).call()
     return bondedLp;
 }
 export const getListedCount = async () => {
