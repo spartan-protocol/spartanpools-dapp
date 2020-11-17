@@ -68,10 +68,11 @@ const BondComponent = (props) => {
     const getData = async () => {
         let params = queryString.parse(props.location.search)
         const pool = await getPoolData(params.pool, context.poolsData)
+        var tokenData = ''
         if (!context.tokenData) {
-            var tokenData = await getTokenData(pool.address, context.walletData)
+            tokenData = await getTokenData(pool.address, context.walletData)
         } else {
-            var tokenData = context.tokenData
+            tokenData = context.tokenData
         }
         let _userData = {
             'address': tokenData?.address,
@@ -134,6 +135,7 @@ const BondComponent = (props) => {
         }
         setUserData(_userData)
     }
+
     const onInputChange = async (e) => {
         const input = e.target.value
         let finalAmt = formatBN(convertToWei(input), 0)
@@ -270,7 +272,7 @@ const BondComponent = (props) => {
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
-                                                    <strong>{formatAllUnits(convertFromWei(member.bondedLP))}</strong> SPARTA:BNB LP tokens remaining in time-locked contract.
+                                                    <strong>{formatAllUnits(convertFromWei(member.bondedLP))}</strong> SPARTA:{userData.symbol} LP tokens remaining in time-locked contract.
                                                 </p>
                                                 {member.bondedLP > 0 && 
                                                 <p>
@@ -300,7 +302,7 @@ const BondComponent = (props) => {
                                     <CardTitle><h4>Bond {userData.symbol} to Mint SPARTA</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
                                         <h6>Bond assets into the pools. </h6>
-                                        <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the BNB:SPARTA liquidity pool.</li>
+                                        <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the {userData.symbol}:SPARTA liquidity pool.</li>
                                         <li>LP tokens will be issued as usual, however only 25% are available to you immediately.</li>
                                         <li>The remaining 75% will be vested to you over a 12 month period.</li>
                                         <li>Farm extra SPARTA by locking your LP tokens on the Earn page.</li>

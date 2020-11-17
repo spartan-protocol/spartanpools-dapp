@@ -16,11 +16,9 @@ export const PoolTableItem = (props) => {
       }, [context.walletData]); 
 
     const isListedAsset = async () => {
-        if(props.listed == true){
+        if(props.listed === true){
             setListed(true)
         }
-           
-
     }
 
     return (
