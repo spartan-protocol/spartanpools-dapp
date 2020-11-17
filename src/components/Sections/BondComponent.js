@@ -44,7 +44,7 @@ const BondComponent = (props) => {
 
     const remainder = convertFromWei(userData.balance - userData.input)
     useEffect(() => {
-        if(context.poolsData){
+        if (context.poolsData) {
             getData()
         }
         const interval = setInterval(() => {
@@ -53,7 +53,7 @@ const BondComponent = (props) => {
             }
         }, 3000);
         return () => clearInterval(interval);
-        
+
         // eslint-disable-next-line
     }, [context.walletData, context.poolsData]);
 
@@ -139,7 +139,7 @@ const BondComponent = (props) => {
     const onInputChange = async (e) => {
         const input = e.target.value
         let finalAmt = formatBN(convertToWei(input), 0)
-        
+
         let _userData = {
             'address': userData.address,
             'symbol': userData.symbol,
@@ -166,7 +166,7 @@ const BondComponent = (props) => {
         setApprovalToken(true)
     }
 
-    const [estLiqTokens,setEstLiqTokens] = useState('0')
+    const [estLiqTokens, setEstLiqTokens] = useState('0')
 
     const getEstLiqTokens = async () => {
         const pool = await getPoolData(userData.address, context.poolsData)
@@ -326,26 +326,55 @@ const BondComponent = (props) => {
                                                             </div>
                                                         </Row>
                                                     </div>
-                                                </Row>
+                                                </label>
                                             </div>
-                                        </label>
-                                    </div>
-                                    }
-                                    {userData.symbol === 'XXX' &&
-                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader" /></div>
-                                    }
-                                    <FormGroup>
+                                        }
+                                        {userData.symbol === 'XXX' &&
+                                            <div className="text-center m-2"><i className="bx bx-spin bx-loader" /></div>
+                                        }
+                                        <FormGroup>
+                                            <Row>
+                                                <Col sm="12">
+                                                    <InputGroup className="mb-3">
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <Label className="input-group-text">{props.t("Total")}</Label>
+                                                        </InputGroupAddon>
+                                                        <Input type="text" className="form-control" onChange={onInputChange}
+                                                            placeholder={formatAllUnits(convertFromWei(userData.input))}
+                                                            bssize={'large'}
+                                                        ></Input>
+                                                    </InputGroup>
+                                                </Col>
+                                            </Row>
+                                        </FormGroup>
+                                        <br />
+                                        <div className="text-center">
+                                            <PercentButtonRow changeAmount={onChange} />
+                                        </div>
+                                        <br />
                                         <Row>
-                                            <Col sm="12">
-                                                <InputGroup className="mb-3">
-                                                    <InputGroupAddon addonType="prepend">
-                                                        <Label className="input-group-text">{props.t("Total")}</Label>
-                                                    </InputGroupAddon>
-                                                    <Input type="text" className="form-control" onChange={onInputChange}
-                                                        placeholder={formatAllUnits(convertFromWei(userData.input))}
-                                                        bssize={'large'}
-                                                    ></Input>
-                                                </InputGroup>
+                                            <Col xs={12}>
+                                                {!approvalToken &&
+                                                    <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={unlockToken}>
+                                                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Approve {userData.symbol}
+                                                    </button>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
+                                                {approvalToken && startTx && !endTx &&
+                                                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
+                                                        getEstLiqTokens()
+                                                        toggleLock()
+                                                    }}>
+                                                        <i className="bx bx-spin bx-loader" /> LOCK
+                                                    </div>
+                                                }
+                                                {approvalToken && !startTx &&
+                                                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
+                                                        getEstLiqTokens()
+                                                        toggleLock()
+                                                    }}>LOCK</div>
+                                                }
                                             </Col>
                                         </Row>
 
@@ -366,44 +395,21 @@ const BondComponent = (props) => {
                                                     <li>If you do not have BNB in your wallet you will not be able to transfer assets or interact with BSC DApps after this transaction.</li>
                                                 </>
                                             }
-                                        </Col>
-                                        <Col xs={12}>
-                                            {approvalToken && startTx && !endTx &&
-                                                <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
-                                                    getEstLiqTokens()
-                                                    toggleLock()
+                                            <Doughnut className='pt-2' width={474} height={260} data={chartData} options={chartOptions} />
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            {userData.symbol !== 'BNB' &&
+                                                <Button color="primary" onClick={() => {
+                                                    toggleLock();
+                                                    depositAsset();
                                                 }}>
                                                     Bond for 12 months!
                                             </Button>
                                             }
-                                        </Col>
-                                    </Row>
-
-                                </Col>
-                                <Modal isOpen={showLockModal} toggle={toggleLock}>
-                                    <ModalHeader toggle={toggleLock}>You are about to time-lock {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} for 12 months!</ModalHeader>
-                                    <ModalBody>                                    
-                                        <h6>Please proceed with caution!</h6>
-                                        <li>There will be no way to reverse this transaction!</li>
-                                        <li>{formatAllUnits(convertFromWei(estLiqTokens))} LP tokens will be generated from this transaction.</li>
-                                        <li>You will receive 25% straight after the transaction finalizes</li>
-                                        <li>75% will release to you linearly over the next 12 months</li>
-
-                                        {userData.symbol === 'BNB' && remainder < 0.05 &&
-                                            <>
-                                                <h6 className='mt-2'>You will be left with a very low BNB balance (~{formatAllUnits(remainder)} BNB)</h6>
-                                                <li>If you do not have BNB in your wallet you will not be able to transfer assets or interact with BSC DApps after this transaction.</li>
-                                            </>
-                                        }
-                                        <Doughnut className='pt-2' width={474} height={260} data={chartData} options={chartOptions}/>
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        {userData.symbol !== 'BNB' &&
-                                            <Button color="primary" onClick={() => {
-                                                toggleLock();
-                                                depositAsset();
-                                            }}>
-                                                Lock for 12 months!
+                                            {userData.symbol === 'BNB' && remainder < 0.05 &&
+                                                <>
+                                                    <Button color="primary" onClick={() => { onInputChange((0.999 - (0.05 / convertFromWei(userData.balance))) * 100); }}>
+                                                        Change to ~{formatAllUnits(convertFromWei(userData.balance * (0.999 - (0.05 / convertFromWei(userData.balance)))))} BNB
                                             </Button>
                                                     <Button color="danger" onClick={() => {
                                                         toggleLock();
@@ -420,23 +426,15 @@ const BondComponent = (props) => {
                                                 }}>
                                                     Bond for 12 months!
                                             </Button>
-                                        </>
-                                        }
-                                        {userData.symbol === 'BNB' && remainder >= 0.05 &&
-                                            <Button color="primary" onClick={() => {
-                                                toggleLock();
-                                                depositAsset();
-                                            }}>
-                                                Lock for 12 months!
-                                            </Button>
-                                        }
-                                        <Button color="secondary" onClick={toggleLock}>Cancel</Button>
-                                    </ModalFooter>
-                                </Modal>
-                            </div>
-                            {context.sharesDataLoading !== true && !context.walletData &&
-                                <div className="text-center m-2">Please connect your wallet to proceed</div>
-                            }
+                                            }
+                                            <Button color="secondary" onClick={toggleLock}>Cancel</Button>
+                                        </ModalFooter>
+                                    </Modal>
+                                </div>
+                                {context.sharesDataLoading !== true && !context.walletData &&
+                                    <div className="text-center m-2">Please connect your wallet to proceed</div>
+                                }
+                               
                         </CardBody>
                     </Card>
                 </Col>
