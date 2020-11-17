@@ -7,7 +7,7 @@ import ROUTER from '../artifacts/Router.json'
 import POOLS from '../artifacts/Pool.json'
 import UTILS from '../artifacts/Utils.json'
 import DAO from '../artifacts/Dao.json'
-import LOCK from '../artifacts/Lock.json'
+import BOND from '../artifacts/Bond.json'
 
 const net = 'testnet';
 
@@ -17,7 +17,7 @@ export const SPARTA_ADDR = net === 'testnet' ? '0xb58a43D2D9809ff4393193de536F24
 export const UTILS_ADDR = net === 'testnet' ? '0x0a30aF25e652354832Ec5695981F2ce8b594e8B3' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
 export const DAO_ADDR = net === 'testnet' ? '0x1b83a813045165c81d84b9f5d6916067b57FF9C0' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
 export const ROUTER_ADDR = net === 'testnet' ? '0xd992130bB595f77B6cAC22fBdb5EBAc888CDe850' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
-export const LOCK_ADDR = net === 'testnet' ? '0x5111Be05477F5555B12A641fc3b8028e3D29e975' : ''
+export const BOND_ADDR = net === 'testnet' ? '0xf7142E08e3D78AB02344eB34a0B6062fbFA613CD' : '0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da'
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -25,7 +25,7 @@ export const POOLS_ABI = POOLS.abi
 export const ERC20_ABI = ERC20.abi
 export const UTILS_ABI = UTILS.abi
 export const DAO_ABI = DAO.abi
-export const LOCK_ABI = LOCK.abi
+export const BOND_ABI = BOND.abi
 
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
@@ -99,9 +99,9 @@ export const getDaoContract = () => {
     var web3 = getWeb3()
     return new web3.eth.Contract(DAO_ABI, DAO_ADDR)
 }
-export const getLockContract = () => {
+export const getBondContract = () => {
     var web3 = getWeb3()
-    return new web3.eth.Contract(LOCK_ABI, LOCK_ADDR)
+    return new web3.eth.Contract(BOND_ABI, BOND_ADDR)
 }
 
 // Get just an array of tokens that can be upgraded
@@ -243,7 +243,7 @@ export const getPool = async (address) => {
     var contract = getUtilsContract()
     let token = address === WBNB_ADDR ? BNB_ADDR : address
     let tokenDetails = await contract.methods.getTokenDetails(token).call()
-    let tokenListed = await getLockContract().methods.isListed(token).call()
+    let tokenListed = await getBondContract().methods.isListed(token).call()
     let poolDataRaw = await contract.methods.getPoolData(token).call()
     let apy = await contract.methods.getPoolAPY(token).call()
     let poolData = {
@@ -494,26 +494,26 @@ export const getTotalWeight = async () => {
 }
 
 // Note that 'lastBlock' in the resulting array = UNIX timestamp
-export const getLockMemberDetail = async (member, asset) => {
-    let memberDetails = await getLockContract().methods.getMemberDetails(member, asset).call()
+export const getBondedMemberDetails = async (member, asset) => {
+    let memberDetails = await getBondContract().methods.getMemberDetails(member, asset).call()
     return memberDetails;
 }
 
 export const getClaimableLP = async (member, asset) => {
-    let lockedLp = await getLockContract().methods.calcClaimLockedLP(member, asset).call()
-    return lockedLp;
+    let bondedLp = await getBondContract().methods.calcClaimbondedLP(member, asset).call()
+    return bondedLp;
 }
 export const getListedCount = async () => {
-    let listedCount = await getLockContract().methods.assetListedCount().call()
+    let listedCount = await getBondContract().methods.assetListedCount().call()
     return listedCount;
 }
 export const getAllListedAssets = async () => {
-    let allListedAssets = await getLockContract().methods.allListedAssets().call()
+    let allListedAssets = await getBondContract().methods.allListedAssets().call()
     return allListedAssets;
 }
 
 export const checkListed = async (asset) => {
-    let isListed = await getLockContract().methods.isListed(asset).call()
+    let isListed = await getBondContract().methods.isListed(asset).call()
 return isListed;
 }
 
