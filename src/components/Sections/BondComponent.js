@@ -7,7 +7,7 @@ import {
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
-import { bn, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
+import { bn, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince } from '../../utils'
 
 import {
     Row, Col, InputGroup, InputGroupAddon, Label,
@@ -86,9 +86,9 @@ const BondComponent = (props) => {
         await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
     }
 
-    const [lastClaimed, setlastClaimed] = useState(100);
+    //const [lastClaimed, setlastClaimed] = useState(100);
 
-    const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
+    //const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
 
     const claimLP = async () => {
         setloadingBondedLP(true)
@@ -101,7 +101,7 @@ const BondComponent = (props) => {
     }
 
     const refreshData = async () => {
-        getLastClaim()
+        //getLastClaim()
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
     }
@@ -266,6 +266,9 @@ const BondComponent = (props) => {
                                                 <h5><Spinner type="grow" color="primary" className='m-2' style={{ height: '15px', width: '15px' }} />{formatGranularUnits(convertFromWei(claimableLP))} LP Tokens</h5>
                                                 <button type="button" className="btn btn-primary waves-effect waves-light" onClick={claimLP}>
                                                     <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens
+                                                    {loadingBondedLP === true &&
+                                                        <i className="bx bx-spin bx-loader ml-1"/>
+                                                    }
                                                 </button>
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
@@ -333,7 +336,7 @@ const BondComponent = (props) => {
                                         <FormGroup>
                                             <Row>
                                                 <Col sm="12">
-                                                    <InputGroup className="mb-3">
+                                                    <InputGroup className="mb-1">
                                                         <InputGroupAddon addonType="prepend">
                                                             <Label className="input-group-text">{props.t("Total")}</Label>
                                                         </InputGroupAddon>
@@ -345,7 +348,6 @@ const BondComponent = (props) => {
                                                 </Col>
                                             </Row>
                                         </FormGroup>
-                                        <br />
                                         <div className="text-center">
                                             <PercentButtonRow changeAmount={onChange} />
                                         </div>
@@ -375,7 +377,6 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                         </Row>
-
                                     </Col>
                                   
                                     <Modal isOpen={showBondModal} toggle={toggleLock}>
