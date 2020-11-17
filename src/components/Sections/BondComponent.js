@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
 import queryString from 'query-string';
 import {
-    getLockContract, BNB_ADDR,WBNB_ADDR, LOCK_ADDR, getClaimableLP, getUtilsContract,
-    getTokenContract, getLockMemberDetail, SPARTA_ADDR, getPoolData, getTokenData,
+    getBondContract, BNB_ADDR, WBNB_ADDR, BOND_ADDR, getClaimableLP, getUtilsContract,
+    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
@@ -28,7 +28,7 @@ const BondComponent = (props) => {
     const [member, setMember] = useState([])
     const [notifyMessage, setNotifyMessage] = useState("")
     const [notifyType, setNotifyType] = useState("dark")
-    const [loadingLockedLP, setloadingLockedLP] = useState(false)
+    const [loadingBondedLP, setloadingBondedLP] = useState(false)
     const [approvalToken, setApprovalToken] = useState(false)
 
     const [userData, setUserData] = useState({
@@ -40,7 +40,7 @@ const BondComponent = (props) => {
     const [startTx, setStartTx] = useState(false)
     const [endTx, setEndTx] = useState(false)
 
-    const [showLockModal, setShowLockModal] = useState(false);
+    const [showBondModal, setShowBondModal] = useState(false);
 
     const remainder = convertFromWei(userData.balance - userData.input)
     useEffect(() => {
@@ -59,9 +59,9 @@ const BondComponent = (props) => {
 
     const getLPData = async () => {
         let params = queryString.parse(props.location.search)
-        let lpLocked = await getClaimableLP(context.account, params.pool)
-        setClaimableLP(lpLocked)
-        let memberDetails = await getLockMemberDetail(context.account, params.pool)
+        let bondedLP = await getClaimableLP(context.account, params.pool)
+        setClaimableLP(bondedLP)
+        let memberDetails = await getBondedMemberDetails(context.account, params.pool)
         setMember(memberDetails)
     }
 
@@ -90,13 +90,13 @@ const BondComponent = (props) => {
     const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
 
     const claimLP = async () => {
-        setloadingLockedLP(true)
-        let contract = getLockContract()
+        setloadingBondedLP(true)
+        let contract = getBondContract()
         let address = userData.address
         let tx = await contract.methods.claim(address).send({ from: context.account })
         console.log(tx.transactionHash)
         await refreshData()
-        setloadingLockedLP(false)
+        setloadingBondedLP(false)
     }
 
     const refreshData = async () => {
@@ -106,7 +106,7 @@ const BondComponent = (props) => {
     }
 
     const toggleLock = () => {
-        setShowLockModal(!showLockModal)
+        setShowBondModal(!showBondModal)
     }
 
     const checkApproval = async (address) => {
@@ -115,7 +115,7 @@ const BondComponent = (props) => {
             return true
         } else {
             const contract = getTokenContract(address)
-            const approvalToken = await contract.methods.allowance(context.account, LOCK_ADDR).call()
+            const approvalToken = await contract.methods.allowance(context.account, BOND_ADDR).call()
             if (+approvalToken > 0) {
                 return true
             } else {
@@ -154,7 +154,7 @@ const BondComponent = (props) => {
     const unlock = async (address) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(LOCK_ADDR, supply).send({
+        await contract.methods.approve(BOND_ADDR, supply).send({
             from: context.account,
             gasPrice: '',
             gas: ''
@@ -168,8 +168,6 @@ const BondComponent = (props) => {
 
     const getEstLiqTokens = async () => {
         const pool = await getPoolData(userData.address, context.poolsData)
-        console.log(pool)
-
         let contract = getUtilsContract()
         console.log(userData.address)
         console.log(userData.input)
@@ -199,7 +197,7 @@ const BondComponent = (props) => {
 
     const depositAsset = async () => {
         setStartTx(true)
-        let contract = getLockContract()
+        let contract = getBondContract()
         console.log(userData.address, userData.input)
         await contract.methods.deposit(userData.address, userData.input).send({
             from: context.account,
@@ -271,12 +269,16 @@ const BondComponent = (props) => {
                                                 </button>
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
-                                                <p> 
-                                                    <strong>{formatAllUnits(convertFromWei(member.lockedLP))}</strong> SPARTA:BNB LP tokens remaining in time-locked contract. 
+                                                <p>
+                                                    <strong>{formatAllUnits(convertFromWei(member.bondedLP))}</strong> SPARTA:BNB LP tokens remaining in time-locked contract.
                                                 </p>
+                                                {member.bondedLP > 0 && 
                                                 <p>
                                                     <strong>{member.lastBlockTime > 0 && daysSince(member.lastBlockTime)}</strong> passed since your last claim.
+                                                   
+                                                    
                                                 </p>
+                                                 }
                                             </Col>
                                         </Row>
                                     </>
@@ -344,18 +346,23 @@ const BondComponent = (props) => {
                                                 </InputGroup>
                                             </Col>
                                         </Row>
-                                    </FormGroup>
-                                    <br />
-                                    <div className="text-center">
-                                        <PercentButtonRow changeAmount={onChange} />
-                                    </div>
-                                    <br />
-                                    <Row>
-                                        <Col xs={12}>
-                                            {!approvalToken &&
-                                                <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={unlockToken}>
-                                                    <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Approve {userData.symbol}
-                                                </button>
+
+                                    </Col>
+                                  
+                                    <Modal isOpen={showBondModal} toggle={toggleLock}>
+                                        <ModalHeader toggle={toggleLock}>You are about to time-lock {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} for 12 months!</ModalHeader>
+                                        <ModalBody>
+                                            <h6>Please proceed with caution!</h6>
+                                            <li>There will be no way to reverse this transaction!</li>
+                                            <li>{formatAllUnits(convertFromWei(estLiqTokens))} LP tokens will be generated from this transaction.</li>
+                                            <li>You will receive 25% straight after the transaction finalizes</li>
+                                            <li>75% will release to you linearly over the next 12 months</li>
+
+                                            {userData.symbol === 'BNB' && remainder < 0.05 &&
+                                                <>
+                                                    <h6 className='mt-2'>You will be left with a very low BNB balance (~{formatAllUnits(remainder)} BNB)</h6>
+                                                    <li>If you do not have BNB in your wallet you will not be able to transfer assets or interact with BSC DApps after this transaction.</li>
+                                                </>
                                             }
                                         </Col>
                                         <Col xs={12}>
