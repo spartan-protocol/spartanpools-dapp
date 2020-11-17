@@ -53,7 +53,7 @@ const PoolTable = (props) => {
                                                 volume={c.volume}
                                                 txCount={c.txCount}
                                                 fees={c.fees}
-                                                listed={c.lockListed}
+                                                listed={c.bondListed}
                                                 />
                                             )}
                                                 <tr>

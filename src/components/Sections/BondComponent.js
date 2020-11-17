@@ -18,7 +18,6 @@ import { withNamespaces } from 'react-i18next'
 import { TokenIcon } from "../Common/TokenIcon";
 import { PercentButtonRow } from "../common";
 import { withRouter } from "react-router-dom"
-
 import { Doughnut } from 'react-chartjs-2';
 
 const BondComponent = (props) => {
@@ -59,9 +58,10 @@ const BondComponent = (props) => {
 
     const getLPData = async () => {
         let params = queryString.parse(props.location.search)
-        let bondedLP = await getClaimableLP(context.account, params.pool)
+        let data = await Promise.all([getClaimableLP(context.account, params.pool), getBondedMemberDetails(context.account, params.pool)])
+        let bondedLP = data[0]
+        let memberDetails = data[1]
         setClaimableLP(bondedLP)
-        let memberDetails = await getBondedMemberDetails(context.account, params.pool)
         setMember(memberDetails)
     }
 
@@ -69,7 +69,7 @@ const BondComponent = (props) => {
         let params = queryString.parse(props.location.search)
         const pool = await getPoolData(params.pool, context.poolsData)
         var tokenData = ''
-        if (!context.tokenData) {
+        if (!context.tokenData && context.walletData) {
             tokenData = await getTokenData(pool.address, context.walletData)
         } else {
             tokenData = context.tokenData
@@ -94,8 +94,8 @@ const BondComponent = (props) => {
         setloadingBondedLP(true)
         let contract = getBondContract()
         let address = userData.address
-        let tx = await contract.methods.claim(address).send({ from: context.account })
-        console.log(tx.transactionHash)
+        await contract.methods.claim(address).send({ from: context.account })
+        //console.log(tx.transactionHash)
         await refreshData()
         setloadingBondedLP(false)
     }
@@ -169,15 +169,14 @@ const BondComponent = (props) => {
     const [estLiqTokens, setEstLiqTokens] = useState('0')
 
     const getEstLiqTokens = async () => {
-        const pool = await getPoolData(userData.address, context.poolsData)
         let contract = getUtilsContract()
-        console.log(userData.address)
-        console.log(userData.input)
-        const estBaseValue = await contract.methods.calcValueInBase(userData.address, userData.input).call()
-        console.log(estBaseValue)
-
+        let data = await Promise.all([getPoolData(userData.address, context.poolsData), contract.methods.calcValueInBase(userData.address, userData.input).call()])
+        const pool = data[0]
+        //console.log(userData.address)
+        //console.log(userData.input)
+        const estBaseValue = data[1]
+        //console.log(estBaseValue)
         const tokenInput = userData.input
-
         setEstLiqTokens(calcEstLiqUnits(estBaseValue, tokenInput, pool) * 2)
     }
 
@@ -258,8 +257,7 @@ const BondComponent = (props) => {
                             <CardBody>
                                 <CardTitle><h4>Time-Locked LP Tokens</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
-                                    Bond {userData.symbol} to get SPARTA LP Tokens.<br />
-                                    Claim your vested LP tokens.<br />
+                                    Bond {userData.symbol} to get SPARTA LP Tokens. Claim your vested LP tokens.
                                 </CardSubtitle>
                                 {context.walletData &&
                                     <>
@@ -267,7 +265,7 @@ const BondComponent = (props) => {
                                             <Col xs='12' sm='3' className='text-center p-2'>
                                                 <h5><Spinner type="grow" color="primary" className='m-2' style={{ height: '15px', width: '15px' }} />{formatGranularUnits(convertFromWei(claimableLP))} LP Tokens</h5>
                                                 <button type="button" className="btn btn-primary waves-effect waves-light" onClick={claimLP}>
-                                                    <i className="bx bx-log-in-circle font-size-16 align-middle mr-2" /> Claim LP Tokens
+                                                    <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens
                                                 </button>
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
@@ -373,7 +371,7 @@ const BondComponent = (props) => {
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
                                                         getEstLiqTokens()
                                                         toggleLock()
-                                                    }}>LOCK</div>
+                                                    }}>Lock</div>
                                                 }
                                             </Col>
                                         </Row>
