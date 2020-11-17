@@ -162,7 +162,9 @@ const AddLiquidity = (props) => {
         const estLiquidityUnits = await getLiquidityUnits(liquidityData, pool)
         setLiquidityUnits(estLiquidityUnits)
 
-        await Promise.all([checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false), checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)])
+        data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+        setApprovalBase(data[0])
+        setApprovalToken(data[1])
     }
 
     const checkSharesDataReady = async () => {
@@ -336,7 +338,9 @@ const AddLiquidity = (props) => {
         })
         setNotifyMessage('Approved')
         setNotifyType('success')
-        await Promise.all([checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false), checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)])
+        let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+        setApprovalBase(data[0])
+        setApprovalToken(data[1])
 
         if (context.walletDataLoading !== true) {
             // Refresh BNB balance
