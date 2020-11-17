@@ -157,7 +157,9 @@ const NewSwap = (props) => {
             setBuyData(tempBuyData)
             setSellData(tempSellData)
 
-            await Promise.all([checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false), checkApproval(pool.address) ? setApproval(true) : setApproval(false)])
+            data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+            setApprovalS(data[0])
+            setApproval(data[1])
         }
     }
 
@@ -245,7 +247,9 @@ const NewSwap = (props) => {
         setNotifyMessage('Approved!')
         setNotifyType('success')
         
-        await Promise.all([checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false), checkApproval(pool.address) ? setApproval(true) : setApproval(false)])
+        let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+        setApprovalS(data[0])
+        setApproval(data[1])
 
         if (context.walletDataLoading !== true) {
             // Refresh BNB balance
