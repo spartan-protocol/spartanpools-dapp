@@ -68,10 +68,11 @@ const BondComponent = (props) => {
     const getData = async () => {
         let params = queryString.parse(props.location.search)
         const pool = await getPoolData(params.pool, context.poolsData)
-        if (!context.tokenData) {
-            var tokenData = await getTokenData(pool.address, context.walletData)
+        var tokenData = ''
+        if (!context.tokenData && context.walletData) {
+            tokenData = await getTokenData(pool.address, context.walletData)
         } else {
-            var tokenData = context.tokenData
+            tokenData = context.tokenData
         }
         let _userData = {
             'address': tokenData?.address,
@@ -167,9 +168,13 @@ const BondComponent = (props) => {
     const [estLiqTokens, setEstLiqTokens] = useState('0')
 
     const getEstLiqTokens = async () => {
-        const pool = await getPoolData(userData.address, context.poolsData)
         let contract = getUtilsContract()
-        const estBaseValue = await contract.methods.calcValueInBase(userData.address, userData.input).call()
+        let data = await Promise.all([getPoolData(userData.address, context.poolsData), contract.methods.calcValueInBase(userData.address, userData.input).call()])
+        const pool = data[0]
+        //console.log(userData.address)
+        //console.log(userData.input)
+        const estBaseValue = data[1]
+        //console.log(estBaseValue)
         setSpartaAllocation(estBaseValue)
         const tokenInput = userData.input
         setEstLiqTokens(formatBN(calcLiquidityUnits(estBaseValue, pool.baseAmount, tokenInput, pool.tokenAmount, pool.units ), 0))

@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from "react";
+import React, {useContext} from "react";
 import {Context} from "../../context";
 import {TokenIcon} from '../Common/TokenIcon'
 import {convertFromWei, formatAllUSD} from "../../utils";
@@ -8,20 +8,6 @@ import {Link, withRouter} from "react-router-dom";
 export const PoolTableItem = (props) => {
 
     const context = useContext(Context);
-    const [listed, setListed] = useState(false)
-
-    useEffect(() => {
-        isListedAsset()
-        // eslint-disable-next-line
-      }, [context.walletData]); 
-
-    const isListedAsset = async () => {
-        if(props.listed == true){
-            setListed(true)
-        }
-           
-
-    }
 
     return (
         <>
