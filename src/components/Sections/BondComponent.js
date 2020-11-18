@@ -165,7 +165,6 @@ const BondComponent = (props) => {
         setNotifyType('success')
         setApprovalToken(true)
     }
-
     const [estLiqTokens, setEstLiqTokens] = useState('0')
 
     const getEstLiqTokens = async () => {
