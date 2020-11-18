@@ -73,11 +73,7 @@ const DAO = (props) => {
 
     const listAsset = async () => {
         let contract = getSpartaContract()
-<<<<<<< HEAD
-        let tx = await contract.methods.listAsset(asset, maxClaim, claimRate).send({ from: context.account })
-=======
         await contract.methods.listAsset(asset, maxClaim, claimRate).send({ from: context.account })
->>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
         //console.log(tx.transactionHash)
     }
 

@@ -210,18 +210,11 @@ export const getNextPoolsData = async (tokenArray, prevPoolsData) => {
 export const getPool = async (address) => {
     var contract = getUtilsContract()
     let token = address === WBNB_ADDR ? BNB_ADDR : address
-<<<<<<< HEAD
-    let tokenDetails = await contract.methods.getTokenDetails(token).call()
-    let tokenListed = await getBondContract().methods.isListed(token).call()
-    let poolDataRaw = await contract.methods.getPoolData(token).call()
-    let apy = await contract.methods.getPoolAPY(token).call()
-=======
     let data = await Promise.all([contract.methods.getTokenDetails(token).call(), getBondContract().methods.isListed(token).call(), contract.methods.getPoolData(token).call(), contract.methods.getPoolAPY(token).call()])
     let tokenDetails = data[0]
     let bondListed = data[1]
     let poolDataRaw = data[2]
     let apy = data[3]
->>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
     let poolData = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
@@ -235,12 +228,7 @@ export const getPool = async (address) => {
         'apy': +apy,
         'units': +poolDataRaw.poolUnits,
         'fees': +poolDataRaw.fees,
-<<<<<<< HEAD
-        'lockListed':tokenListed
-
-=======
         'bondListed':bondListed
->>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
     }
     return poolData
 }

@@ -87,13 +87,6 @@ export const PoolTableItem = (props) => {
                             </button>
                         </Link>
                     }
-<<<<<<< HEAD
-                    </td>
-                    
-                    {!context.walletData && context.walletDataLoading !== true &&
-                        <div><h6 className="m-1">Connect Wallet</h6></div>
-                    }
-=======
 
                     {context.walletData && props.listed &&
                         <Link to={`/bond?pool=${props.address}`} className='d-block d-lg-none'>
@@ -107,7 +100,6 @@ export const PoolTableItem = (props) => {
                 {!context.walletData && context.walletDataLoading !== true &&
                     <div><h6 className="m-1">Connect Wallet</h6></div>
                 }
->>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
                
             </tr>
         </>
