@@ -3,7 +3,7 @@ import { Context } from "../../context"
 import queryString from 'query-string';
 import {
     getBondContract, BNB_ADDR, WBNB_ADDR, BOND_ADDR, getClaimableLP, getUtilsContract, updateSharesData,
-    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData,
+    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
@@ -12,13 +12,15 @@ import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatG
 import {
     Row, Col, InputGroup, InputGroupAddon, Label,
     FormGroup, Card, CardTitle, CardSubtitle, CardBody,
-    Spinner, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button
+    Spinner, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, Progress
 } from "reactstrap"
+
 import { withNamespaces } from 'react-i18next'
 import { TokenIcon } from "../Common/TokenIcon";
 import { PercentButtonRow } from "../common";
 import { withRouter } from "react-router-dom"
 import { Doughnut } from 'react-chartjs-2';
+
 
 const BondComponent = (props) => {
 
@@ -62,6 +64,8 @@ const BondComponent = (props) => {
         let data = await Promise.all([getClaimableLP(context.account, params.pool), getBondedMemberDetails(context.account, params.pool)])
         let bondedLP = data[0]
         let memberDetails = data[1]
+        let allocation = await getBaseAllocation()
+        setSpartaAllocation(allocation)
         setClaimableLP(bondedLP)
         setMember(memberDetails)
     }
@@ -70,8 +74,10 @@ const BondComponent = (props) => {
         let params = queryString.parse(props.location.search)
         const pool = await getPoolData(params.pool, context.poolsData)
         var tokenData = ''
+        
         if (!context.tokenData && context.walletData) {
             tokenData = await getTokenData(pool.address, context.walletData)
+           
         } else {
             tokenData = context.tokenData
         }
@@ -278,6 +284,7 @@ const BondComponent = (props) => {
         }
     }
 
+
     return (
         <>
             <Notification
@@ -309,13 +316,13 @@ const BondComponent = (props) => {
                                                 <p>
                                                     <strong>{formatAllUnits(convertFromWei(member.bondedLP))}</strong> SPARTA:{userData.symbol} LP tokens remaining in time-locked contract.
                                                 </p>
-                                                {member.bondedLP > 0 && 
+                                                {member.bondedLP > 0 &&
+                                               
                                                 <p>
                                                     <strong>{member.lastBlockTime > 0 && daysSince(member.lastBlockTime)}</strong> passed since your last claim.
-                                                   
-                                                    
                                                 </p>
                                                  }
+                                                 
                                             </Col>
                                         </Row>
                                     </>
@@ -341,9 +348,15 @@ const BondComponent = (props) => {
                                         <li>LP tokens will be issued as usual, however only 25% are available to you immediately.</li>
                                         <li>The remaining 75% will be vested to you over a 12 month period.</li>
                                         <li>Farm extra SPARTA by locking your LP tokens on the Earn page.</li>
+
+                                        
                                     </CardSubtitle>
                                     
                                     <Col sm="10" md="6">
+                                    <p><strong>{formatAllUnits(convertFromWei(spartaAllocation))}</strong>  Remaining Sparta Allocation.</p>
+                                        <div><Progress color="info" value={(5000000 - convertFromWei(spartaAllocation))*100/5000000} /></div>
+                                        <br/>
+                                              
                                         {userData.symbol !== 'XXX' &&
                                             <div className="mb-3">
                                                 <label className="card-radio-label mb-2">
