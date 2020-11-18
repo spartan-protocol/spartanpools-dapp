@@ -7,7 +7,7 @@ import {
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
-import { bn, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince } from '../../utils'
+import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince } from '../../utils'
 
 import {
     Row, Col, InputGroup, InputGroupAddon, Label,
@@ -29,6 +29,7 @@ const BondComponent = (props) => {
     const [notifyType, setNotifyType] = useState("dark")
     const [loadingBondedLP, setloadingBondedLP] = useState(false)
     const [approvalToken, setApprovalToken] = useState(false)
+    const [spartaAllocation, setSpartaAllocation] = useState("")
 
     const [userData, setUserData] = useState({
         'address': SPARTA_ADDR,
@@ -135,7 +136,6 @@ const BondComponent = (props) => {
         }
         setUserData(_userData)
     }
-
     const onInputChange = async (e) => {
         const input = e.target.value
         let finalAmt = formatBN(convertToWei(input), 0)
@@ -165,35 +165,49 @@ const BondComponent = (props) => {
         setNotifyType('success')
         setApprovalToken(true)
     }
-
     const [estLiqTokens, setEstLiqTokens] = useState('0')
 
     const getEstLiqTokens = async () => {
         let contract = getUtilsContract()
         let data = await Promise.all([getPoolData(userData.address, context.poolsData), contract.methods.calcValueInBase(userData.address, userData.input).call()])
         const pool = data[0]
-        //console.log(userData.address)
-        //console.log(userData.input)
         const estBaseValue = data[1]
-        //console.log(estBaseValue)
+        setSpartaAllocation(estBaseValue)
         const tokenInput = userData.input
-        setEstLiqTokens(calcEstLiqUnits(estBaseValue, tokenInput, pool) * 2)
+        setEstLiqTokens(formatBN(calcLiquidityUnits(estBaseValue, pool.baseAmount, tokenInput, pool.tokenAmount, pool.units ), 0))
     }
 
-    const calcEstLiqUnits = (estBaseValue, tokenInput, pool) => {
-        // formula: ((V + T) (v T + V t))/(4 V T)
-        // part1 * (part2 + part3) / denominator
-        const v = bn(estBaseValue)
-        const t = bn(tokenInput)
-        const V = bn(pool.baseAmount).plus(v) // Must add r first
-        const T = bn(pool.tokenAmount).plus(t) // Must add t first
-        const part1 = V.plus(T)
-        const part2 = v.times(T)
-        const part3 = V.times(t)
-        const numerator = part1.times(part2.plus(part3))
-        const denominator = V.times(T).times(4)
-        const result = numerator.div(denominator)
-        return result
+    const calcLiquidityUnits = (_b, _B, _t, _T, _P) => {
+            let b = bn(_b)
+            let B = bn(_B)
+            let t = bn(_t)
+            let T = bn(_T)
+            let P = bn(_P)
+            let slipAdjustment = getSlipAdustment(b, B, t, T);
+            let part1 = t.times(B);
+            let part2 = T.times(b);
+            let part3 = T.times(B).times(2);
+            let _units = (P.times(part1.plus(part2))).div(part3);
+            return _units.times(slipAdjustment).div(one);  // Divide by 10**18
+    
+    }
+
+    const getSlipAdustment = ( b,  B,  t,  T) => {
+        // slipAdjustment = (1 - ABS((B t - b T)/((2 b + B) (t + T))))
+        // 1 - ABS(part1 - part2)/(part3 * part4))
+        let _one = bn(one);
+        let part1 = B.times(t);
+        let part2 = b.times(T);
+        let part3 = b.times(2).plus(B);
+        let part4 = t.plus(T);
+        let numerator;
+        if(part1 > part2){
+            numerator = part1.minus(part2);
+        } else {
+            numerator = part2.minus(part1);
+        }
+        let denominator = part3.times(part4);
+        return _one.minus((numerator.times(_one)).div(denominator)); // Multiply by 10**18
     }
 
     const depositAsset = async () => {
@@ -377,16 +391,18 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                         </Row>
+
                                     </Col>
                                   
                                     <Modal isOpen={showBondModal} toggle={toggleLock}>
-                                        <ModalHeader toggle={toggleLock}>You are about to time-lock {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} for 12 months!</ModalHeader>
+                                        <ModalHeader toggle={toggleLock}>You are bonding {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} and {formatAllUnits(convertFromWei(spartaAllocation))} SPARTA into the pool for 12 months!</ModalHeader>
                                         <ModalBody>
                                             <h6>Please proceed with caution!</h6>
                                             <li>There will be no way to reverse this transaction!</li>
-                                            <li>{formatAllUnits(convertFromWei(estLiqTokens))} LP tokens will be generated from this transaction.</li>
-                                            <li>You will receive 25% straight after the transaction finalizes</li>
-                                            <li>75% will release to you linearly over the next 12 months</li>
+                                            <li>{formatAllUnits(convertFromWei(estLiqTokens))} estimated LP tokens will be generated from this transaction.</li>
+                                            <li>You will receive 25% ({formatAllUnits(convertFromWei(estLiqTokens)*25/100)} LP tokens) straight after the transaction finalizes</li>
+                                            <li>75% ({formatAllUnits(convertFromWei(estLiqTokens)*75/100)} LP tokens) will be released to you linearly over the next 12 months</li>
+
 
                                             {userData.symbol === 'BNB' && remainder < 0.05 &&
                                                 <>
