@@ -3,7 +3,7 @@ import { Context } from "../../context"
 import queryString from 'query-string';
 import {
     getBondContract, BNB_ADDR, WBNB_ADDR, BOND_ADDR, getClaimableLP, getUtilsContract, updateSharesData,
-    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData,
+    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
