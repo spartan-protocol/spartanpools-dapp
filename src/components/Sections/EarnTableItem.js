@@ -136,7 +136,7 @@ export const EarnTableItem = (props) => {
                                     Check in daily to harvest your rewards!<br/>
                                 </>
                             }
-                            {isMember === true && lastHarvest <= 0.04 &&
+                            {isMember === true && lastHarvest <= 2 &&
                                 <>
                                     Locking your tokens enables them to earn yield.<br/>
                                     Doing so increases your weight in the DAO.<br/>
@@ -146,7 +146,7 @@ export const EarnTableItem = (props) => {
                                     Check in daily to harvest your rewards!<br/>
                                 </>
                             }
-                            {isMember === true && lastHarvest > 0.04 &&
+                            {isMember === true && lastHarvest > 2 &&
                                 <>
                                     Before you lock your tokens a harvest must be performed.<br/>
                                     This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -165,7 +165,7 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && lastHarvest <= 0.04 &&
+                                {isMember === true && lastHarvest <= 2 &&
                                     <Button 
                                         color="primary" 
                                         onClick={() => {
@@ -175,7 +175,7 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && lastHarvest > 0.04 && props.loadingHarvest === false &&
+                                {isMember === true && lastHarvest > 2 && props.loadingHarvest === false &&
                                     <Button 
                                         color="primary" 
                                         onClick={async () => {
@@ -204,7 +204,7 @@ export const EarnTableItem = (props) => {
                                     However, you can re-lock them any time.<br/>
                                 </>
                             }
-                            {isMember === true && lastHarvest <= 0.04 &&
+                            {isMember === true && lastHarvest <= 2 &&
                                 <>
                                     Unlocking your tokens disables them from earning yield.<br/>
                                     Doing so also decreases your weight in the DAO.<br/>
@@ -212,7 +212,7 @@ export const EarnTableItem = (props) => {
                                     However, you can re-lock them any time.<br/>
                                 </>
                             }
-                            {isMember === true && lastHarvest > 0.04 &&
+                            {isMember === true && lastHarvest > 2 &&
                                 <>
                                     Before you unlock your tokens, a harvest must be performed.<br/>
                                     This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -232,7 +232,7 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && lastHarvest <= 0.04 &&
+                            {isMember === true && lastHarvest <= 2 &&
                                 <Button 
                                 color="primary" 
                                 onClick={() => {
@@ -242,7 +242,7 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && lastHarvest > 0.04 && props.loadingHarvest === false &&
+                            {isMember === true && lastHarvest > 2 && props.loadingHarvest === false &&
                                 <Button 
                                     color="primary" 
                                     onClick={async () => {
