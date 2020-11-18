@@ -59,9 +59,10 @@ const BondComponent = (props) => {
 
     const getLPData = async () => {
         let params = queryString.parse(props.location.search)
-        let bondedLP = await getClaimableLP(context.account, params.pool)
+        let data = await Promise.all([getClaimableLP(context.account, params.pool), getBondedMemberDetails(context.account, params.pool)])
+        let bondedLP = data[0]
+        let memberDetails = data[1]
         setClaimableLP(bondedLP)
-        let memberDetails = await getBondedMemberDetails(context.account, params.pool)
         setMember(memberDetails)
     }
 
@@ -390,7 +391,7 @@ const BondComponent = (props) => {
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
                                                         getEstLiqTokens()
                                                         toggleLock()
-                                                    }}>LOCK</div>
+                                                    }}>Lock</div>
                                                 }
                                             </Col>
                                         </Row>

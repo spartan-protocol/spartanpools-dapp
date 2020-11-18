@@ -44,8 +44,6 @@ export const PoolTableItem = (props) => {
                         </Link>
                     }
                 </td>
-               
-               
                     <td>
                     {context.walletData &&
                         <Link to={`/pool/stake?pool=${props.address}`}>
