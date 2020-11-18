@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
 import queryString from 'query-string';
 import {
-    getBondContract, BNB_ADDR, WBNB_ADDR, BOND_ADDR, getClaimableLP, getUtilsContract,
-    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData,getBaseAllocation
+    getBondContract, BNB_ADDR, WBNB_ADDR, BOND_ADDR, getClaimableLP, getUtilsContract, updateSharesData,
+    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
@@ -108,8 +108,27 @@ const BondComponent = (props) => {
     }
 
     const refreshData = async () => {
-        //getLastClaim()
-        setNotifyMessage('Transaction Sent!');
+        let params = queryString.parse(props.location.search)
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh TOKEN balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, params.pool)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+        if (context.sharesDataLoading !== true) {
+            // Refresh sharesData for token
+            let sharesData = await updateSharesData(context.account, context.sharesData, params.pool)
+            context.setContext({'sharesDataLoading': true})
+            context.setContext({'sharesData': sharesData})
+            context.setContext({'sharesDataLoading': false})
+        }
+        setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
     }
 
@@ -219,7 +238,7 @@ const BondComponent = (props) => {
     const depositAsset = async () => {
         setStartTx(true)
         let contract = getBondContract()
-        console.log(userData.address, userData.input)
+        //console.log(userData.address, userData.input)
         await contract.methods.deposit(userData.address, userData.input).send({
             from: context.account,
             gasPrice: '',
@@ -230,6 +249,7 @@ const BondComponent = (props) => {
         setNotifyType('success')
         setStartTx(false)
         setEndTx(true)
+        await refreshData()
         context.setContext({ 'tokenData': await getTokenData(userData.address, context.walletData) })
     }
 
