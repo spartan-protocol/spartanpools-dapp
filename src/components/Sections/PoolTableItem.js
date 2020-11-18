@@ -44,8 +44,7 @@ export const PoolTableItem = (props) => {
                         </Link>
                     }
                 </td>
-               
-                <td>
+                    <td>
                     {context.walletData &&
                         <Link to={`/pool/stake?pool=${props.address}`}>
                             <button color="primary" className="btn btn-primary waves-effect waves-light m-1 w-75">
