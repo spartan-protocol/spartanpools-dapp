@@ -72,7 +72,7 @@ export const PoolTableItem = (props) => {
                 </td>
                     
                 {!context.walletData && context.walletDataLoading !== true &&
-                    <div><h6 className="m-1">Connect Wallet</h6></div>
+                    <h6 className="m-1">Connect Wallet</h6>
                 }
                
             </tr>
