@@ -26,28 +26,39 @@ export const PoolTableItem = (props) => {
     return (
         <>
             <tr>
-                <td>
+                <td className="d-none d-lg-table-cell">
                     <TokenIcon address={props.address}/>
                 </td>
                 <td>
-                    {props.symbol}
+                    <div className="d-block d-lg-none mb-1"><TokenIcon address={props.address}/></div>
+                    <h6 className='mb-1 font-weight-light'>{props.symbol}</h6>
                     <h6 className="d-block d-lg-none mb-0">{formatAllUSD(props.price, context.spartanPrice)}</h6>
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatAllUSD(props.price, context.spartanPrice)}
+                    <h6 className='mb-0 font-weight-light'>{formatAllUSD(props.price, context.spartanPrice)}</h6>
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatAllUSD(convertFromWei(props.depth), context.spartanPrice)}
+                    <h6 className='mb-0 font-weight-light'>{formatAllUSD(convertFromWei(props.depth), context.spartanPrice)}</h6>
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatAllUSD(convertFromWei(props.volume), context.spartanPrice)}
+                    <h6 className='mb-0 font-weight-light'>{formatAllUSD(convertFromWei(props.volume), context.spartanPrice)}</h6>
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {props.txCount.toLocaleString()}
+                    <h6 className='mb-0 font-weight-light'>{props.txCount.toLocaleString()}</h6>
                 </td>
                 <td className="d-none d-lg-table-cell">
-                    {formatAllUSD(convertFromWei(props.fees), context.spartanPrice)}
+                    <h6 className='mb-0 font-weight-light'>{formatAllUSD(convertFromWei(props.fees), context.spartanPrice)}</h6>
                 </td>
+                <td className='d-none d-lg-table-cell'>
+                    {context.walletData && props.listed &&
+                        <Link to={`/bond?pool=${props.address}`}>
+                            <button color="primary" className="btn btn-primary waves-effect waves-light m-1 w-75">
+                                <i className="bx bx-lock"/> {props.t("Bond")}
+                            </button>
+                        </Link>
+                    }
+                </td>
+               
                 <td>
                     {context.walletData && props.listed &&
                         <Link to={`/bond?pool=${props.address}`}>
@@ -63,8 +74,7 @@ export const PoolTableItem = (props) => {
                     <td>
                     {context.walletData &&
                         <Link to={`/pool/stake?pool=${props.address}`}>
-                            <button color="primary"
-                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
+                            <button color="primary" className="btn btn-primary waves-effect waves-light m-1 w-75">
                                 <i className="bx bx-log-in-circle"/> {props.t("Join")}
                             </button>
                         </Link>
@@ -72,18 +82,32 @@ export const PoolTableItem = (props) => {
                     
                     {context.walletData &&
                         <Link to={`/pool/swap?pool=${props.address}`}>
-                            <button color="primary"
-                                    className="btn btn-primary waves-effect waves-light m-1 w-75">
+                            <button color="primary" className="btn btn-primary waves-effect waves-light m-1 w-75">
                                 <i className="bx bx-transfer-alt"/> {props.t("Swap")}
-
                             </button>
                         </Link>
                     }
+<<<<<<< HEAD
                     </td>
                     
                     {!context.walletData && context.walletDataLoading !== true &&
                         <div><h6 className="m-1">Connect Wallet</h6></div>
                     }
+=======
+
+                    {context.walletData && props.listed &&
+                        <Link to={`/bond?pool=${props.address}`} className='d-block d-lg-none'>
+                            <button color="primary" className="btn btn-primary waves-effect waves-light m-1 w-75">
+                                <i className="bx bx-lock"/> {props.t("Bond")}
+                            </button>
+                        </Link>
+                    }
+                </td>
+                    
+                {!context.walletData && context.walletDataLoading !== true &&
+                    <div><h6 className="m-1">Connect Wallet</h6></div>
+                }
+>>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
                
             </tr>
         </>

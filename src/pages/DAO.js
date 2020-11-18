@@ -45,14 +45,15 @@ const DAO = (props) => {
 
     }
 
-
     const changeAsset = (e) => {
         setAsset(e.target.value)
     }
+
     const changeMaxClaim = (e) => {
         let wei = utils.parseEther(e.target.value)
         setMaxClaim(wei.toString())
     }
+
     const changeClaimRate = (e) => {
         let wei = utils.parseEther(e.target.value)
         setClaimRate(wei.toString())
@@ -70,36 +71,43 @@ const DAO = (props) => {
         setIncentiveAddress(e.target.value)
     }
 
-
     const listAsset = async () => {
         let contract = getSpartaContract()
+<<<<<<< HEAD
         let tx = await contract.methods.listAsset(asset, maxClaim, claimRate).send({ from: context.account })
+=======
+        await contract.methods.listAsset(asset, maxClaim, claimRate).send({ from: context.account })
+>>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
         //console.log(tx.transactionHash)
     }
+
     const listDAO = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.changeDAO(daoAddress).send({ from: context.account })
+        contract.methods.changeDAO(daoAddress).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
+
     const listRouter = async () => {
         let contract = getDaoContract()
-        let tx = await contract.methods.setGenesisRouter(routerAddress).send({ from: context.account })
+        await contract.methods.setGenesisRouter(routerAddress).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
+
     const changeIncentiveAddr= async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.changeIncentiveAddress(incentiveAddress).send({ from: context.account })
+        await contract.methods.changeIncentiveAddress(incentiveAddress).send({ from: context.account })
         //console.log(tx.transactionHash)
     }
 
     const startEmissions = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.startEmissions().send({ from: context.account })
+        await contract.methods.startEmissions().send({ from: context.account })
         //console.log(tx.transactionHash)
     }
+    
     const stopEmissions = async () => {
         let contract = getSpartaContract()
-        let tx = await contract.methods.stopEmissions().send({ from: context.account })
+        await contract.methods.stopEmissions().send({ from: context.account })
         //console.log(tx.transactionHash)
     }
 

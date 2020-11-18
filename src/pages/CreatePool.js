@@ -22,7 +22,7 @@ import {Sublabel} from '../components/elements'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getTokenContract, getRouterContract,
     getTokenData, getNewTokenData, getAssets, getListedTokens, getListedPools, getPoolsData,
-    getTokenDetails, getWalletData
+    getTokenDetails, getWalletData, updateWalletData,
 } from '../client/web3'
 
 import {convertToWei, formatBN} from '../utils'
@@ -122,9 +122,7 @@ const CreatePool = (props) => {
                         setNotifyMessage('You do not have that token on your address')
                         setNotifyType('danger')
                     }
-
-                    await checkApproval1(SPARTA_ADDR)
-                    await checkApproval2(addressSelected)
+                    await Promise.all([checkApproval1(SPARTA_ADDR), checkApproval2(addressSelected)])
                 } catch (err) {
                     setNotifyMessage('Not a valid token')
                     setNotifyType('danger')
@@ -216,28 +214,29 @@ const CreatePool = (props) => {
     //     return '$1234.54'
     // }
 
-
     const checkApproval1 = async (address) => {
         const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
-        const tokenData = await getTokenData(address, context.walletData)
+        let data = await Promise.all([contract.methods.allowance(context.account, ROUTER_ADDR).call(), getTokenData(address, context.walletData)])
+        const approval = data[0]
+        const tokenData = data[1]
         if (+approval >= tokenData.balance) {
             setApproval1(true)
         }
     }
+
     const checkApproval2 = async (address) => {
         if (address === BNB_ADDR) {
             setApproval2(true)
         } else {
             const contract = getTokenContract(address)
-            const approval = await contract.methods.allowance(context.account, ROUTER_ADDR).call()
-            var tokenData = await getNewTokenData(address, context.account)
+            let data = await Promise.all([contract.methods.allowance(context.account, ROUTER_ADDR).call(), getNewTokenData(address, context.account)])
+            const approval = data[0]
+            var tokenData = data[1]
             if (+approval >= +tokenData.balance) {
                 setApproval2(true)
             }
             //console.log(address, +approval, +tokenData.balance)
         }
-
     }
 
     const unlockSparta = async () => {
@@ -258,8 +257,15 @@ const CreatePool = (props) => {
             gasPrice: '',
             gas: ''
         })
-        await checkApproval1(SPARTA_ADDR)
-        await checkApproval2(address)
+        await Promise.all([checkApproval1(SPARTA_ADDR), checkApproval2(address)])
+
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     }
 
     const back = () => {
@@ -273,9 +279,7 @@ const CreatePool = (props) => {
 
     const createPool = async () => {
         const poolContract = getRouterContract()
-
         //console.log(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
-
         await poolContract.methods.createPool(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected).send({
             from: context.account,
             gasPrice: '',
@@ -288,18 +292,21 @@ const CreatePool = (props) => {
     }
 
     const reloadData = async () => {
-        let assetArray = await getAssets()
-        let tokenArray = await getListedTokens()
-        var sortedTokens = [...new Set(assetArray.concat(tokenArray))].sort()
-        let poolArray = await getListedPools()
+        let data = await Promise.all([getAssets(), getListedTokens(), getListedPools()])
+        let assetArray = data[0]
+        let tokenArray = data[1]
+        let poolArray = data[2]
         let poolsData = await getPoolsData(tokenArray)
-        // let sharesData = await getSharesData(context.account, poolArray)
+        var sortedTokens = [...new Set(assetArray.concat(tokenArray))].sort()
+        // REWORK BELOW LINE (change tokendetailsarray)
         let tokenDetailsArray = await getTokenDetails(context.account, sortedTokens)
+        // REWORK BELOW LINE (change tokendetailsarray)
         let walletData = await getWalletData(context.account, tokenDetailsArray)
         context.setContext({'tokenArray': tokenArray})
         context.setContext({'poolArray': poolArray})
         context.setContext({'poolsData': poolsData})
         // context.setContext({ 'sharesData': sharesData })
+        // REWORK BELOW LINE (change tokendetailsarray)
         context.setContext({'tokenDetailsArray': tokenDetailsArray})
         context.setContext({'walletData': walletData})
     }

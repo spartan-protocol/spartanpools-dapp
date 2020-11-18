@@ -15,33 +15,33 @@ import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getNewTokenData, getTokenDetails,
-    getPool, WBNB_ADDR
+    getPoolData, getNewTokenData,
+    getPool, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 
 import {
     Card, CardBody,
     Col, Row, Container,
-    Nav, NavItem, NavLink,
     TabContent, TabPane,
     Dropdown, DropdownToggle, DropdownMenu, DropdownItem,
 } from "reactstrap";
 
-import classnames from 'classnames';
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import {manageBodyClass} from "../components/common";
 
 const NewSwap = (props) => {
 
+    const context = useContext(Context);
+
     const [activeTab, setActiveTab] = useState('1');
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
 
-    const toggle = tab => {
-        if (activeTab !== tab) setActiveTab(tab);
-    };
+    const toggleTab = () => {
+        if (activeTab === '1') {setActiveTab('2')}
+        else {setActiveTab('1')}
+    }
     
-    const context = useContext(Context)
     const [poolURL, setPoolURL] = useState('')
     const [pool, setPool] = useState({
         'symbol': 'XXX',
@@ -83,6 +83,7 @@ const NewSwap = (props) => {
         fee: 0,
         estRate: 0
     });
+
     const [sellData, setSellData] = useState({
         address: BNB_ADDR,
         balance: 0,
@@ -98,24 +99,38 @@ const NewSwap = (props) => {
 
     const [approval, setApproval] = useState(false)
     const [approvalS, setApprovalS] = useState(false)
-    const [startTx, setStartTx] = useState(false);
-    const [endTx, setEndTx] = useState(false);
+    const [startTx, setStartTx] = useState(false)
+    const [endTx, setEndTx] = useState(false)
+
+    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
         checkPoolReady()
     // eslint-disable-next-line
-    }, []);
+    }, [context.poolsData])
 
-      const checkPoolReady = async () => {
+    useEffect(() => {
+        if (context.poolsDataComplete === true) {
+            getData()
+        }
+    // eslint-disable-next-line
+    }, [context.walletData])
+
+    const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
-        if (context.poolsData && context.poolsDataLoading !== true) {
+        if (context.poolsData) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
-                await getData()
+                getData()
             }
             else {
-                await checkPoolReady()
+                await pause(3000)
+                checkPoolReady()
             }
+        }
+        else {
+            await pause(3000)
+            checkPoolReady()
         }
     }
 
@@ -127,38 +142,28 @@ const NewSwap = (props) => {
             const pool = await getPoolData(params.pool, context.poolsData)
             setPool(pool)
 
-            const inputTokenData = await getNewTokenData(SPARTA_ADDR, context.account)
-            const outputTokenData = await getNewTokenData(pool.address, context.account)
+            let data = await Promise.all([getNewTokenData(SPARTA_ADDR, context.account), getNewTokenData(pool.address, context.account)])
+            const inputTokenData = data[0]
+            const outputTokenData = data[1]
             setInputTokenData(inputTokenData)
             setOutputTokenData(outputTokenData)
 
-            setBuyData(await getSwapData(inputTokenData?.balance, inputTokenData, outputTokenData, pool, false))
-            setSellData(await getSwapData(outputTokenData?.balance, outputTokenData, inputTokenData, pool, true))
+            const buyInitInput = (inputTokenData?.balance * 1) / 100
+            const sellInitInput = (outputTokenData?.balance * 1) / 100
 
-            await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
-            await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+            data = await Promise.all([getSwapData(buyInitInput, inputTokenData, outputTokenData, pool, false), getSwapData(sellInitInput, outputTokenData, inputTokenData, pool, true)])
+            const tempBuyData = data[0]
+            const tempSellData = data[1]
+            setBuyData(tempBuyData)
+            setSellData(tempSellData)
 
-            // console.log(await checkApproval(SPARTA_ADDR))
+            data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+            setApprovalS(data[0])
+            setApproval(data[1])
         }
     }
 
-    // MAKE SURE THESE ARE ALL VISIBLE TO USER:
-    // SWAP FEE | ACTUAL SLIP | SPOT RATE | OUTPUT | INPUT
-
-    // ACTUAL SLIP ALGO -> {props.tradeData.actualSlip}
-    // SLIP = (( X / ( y / x )) - 1)
-    // X = {pool.price} SPOT RATE
-    // y = {output} OUTPUT
-    // x = {input} INPUT
-
-    // SWAP FEE ALGO -> {props.tradeData.fee}
-    // FEE = (x * x * Y) / (x + X)^2
-    // x = {input} INPUT
-    // Y = {pool.baseAmount} SPARTA AMOUNT IN POOL
-    // X = {pool.tokenAmount} TOKEN AMOUNT IN POOL
-
     const getSwapData = async (input, inputTokenData, outputTokenData, poolData, toBase) => {
-
         var output;
         var slip
         var fee
@@ -241,8 +246,18 @@ const NewSwap = (props) => {
         })
         setNotifyMessage('Approved!')
         setNotifyType('success')
-        await checkApproval(SPARTA_ADDR) ? setApprovalS(true) : setApprovalS(false)
-        await checkApproval(pool.address) ? setApproval(true) : setApproval(false)
+        
+        let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+        setApprovalS(data[0])
+        setApproval(data[1])
+
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     };
 
     const buy = async () => {
@@ -259,7 +274,6 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     };
 
     const sell = async () => {
@@ -277,11 +291,27 @@ const NewSwap = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     };
 
     const updatePool = async () => {
         setPool(await getPool(pool.address))
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh SPARTA balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh TOKEN balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, pool.address)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     };
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -302,58 +332,50 @@ const NewSwap = (props) => {
                             <Col lg="6">
                                 {pool &&
                                     <Card>
-                                        <CardBody>
-                                            <Link to='/pools'>
-                                                <button type="button" tag="button" className="btn btn-light">
-                                                    <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Back to Liquidity Pools
-                                                </button>
-                                            </Link>
-                                            <div className="float-right mr-2">
-                                                <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                                                    <DropdownToggle type="button" tag="button" className="btn btn-light">
-                                                        <i className="mdi mdi-wallet mr-1"/>
-                                                        <span className="d-none d-sm-inline-block ml-1">Balance <i className="mdi mdi-chevron-down"/></span>
-                                                    </DropdownToggle>
-                                                    <DropdownMenu right className="dropdown-menu-md">
-                                                        {pool.address !== 'XXX' &&
-                                                            <>
-                                                                <div className="dropdown-item-text">
-                                                                    <div>
-                                                                        <p className="text-muted mb-2">Available Balance</p>
-                                                                    </div>
-                                                                </div>
-                                                                <DropdownItem divider/>
-                                                                <DropdownItem href="">
-                                                                    SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.balance))}</span>
-                                                                </DropdownItem>
-                                                                <DropdownItem href="">
-                                                                    {buyData.outputSymbol} : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.outputBalance))}</span>
-                                                                </DropdownItem>
-                                                                <DropdownItem divider/>
-                                                                <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
-                                                                    View all assets
-                                                                </DropdownItem>
-                                                            </>
-                                                        }
-                                                    </DropdownMenu>
-                                                </Dropdown>
-                                            </div>
-                                            <br/><br/>
+                                        <CardBody className='p-3 p-md-4'>
+                                            <Row className='align-middle'>
+                                                <Col xs={6} className='my-auto'>
+                                                    <Link to='/pools'>
+                                                        <button type="button" tag="button" className="btn btn-light w-100">
+                                                            <i className="bx bx-arrow-back align-middle"/> Pools <i className="bx bx-swim align-middle"/>
+                                                        </button>
+                                                    </Link>
+                                                </Col>
+                                                <Col xs={6} className='my-auto'>
+                                                    <div className="float-right w-100">
+                                                        <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                                                            <DropdownToggle type="button" tag="button" className="btn btn-light w-100">
+                                                                <i className="bx bx-wallet align-middle"/>
+                                                                <span className="ml-1">Wallet <i className="mdi mdi-chevron-down"/></span>
+                                                            </DropdownToggle>
+                                                            <DropdownMenu right className="dropdown-menu-md">
+                                                                {pool.address !== 'XXX' &&
+                                                                    <>
+                                                                        <div className="dropdown-item-text">
+                                                                            <div>
+                                                                                <p className="text-muted mb-2">Available Balance</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <DropdownItem divider/>
+                                                                        <DropdownItem href="">
+                                                                            SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.balance))}</span>
+                                                                        </DropdownItem>
+                                                                        <DropdownItem href="">
+                                                                            {buyData.outputSymbol} : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.outputBalance))}</span>
+                                                                        </DropdownItem>
+                                                                        <DropdownItem divider/>
+                                                                        <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
+                                                                            View all assets
+                                                                        </DropdownItem>
+                                                                    </>
+                                                                }
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <br/>
                                             <div className="crypto-buy-sell-nav">
-                                                <Nav tabs className="nav-tabs-custom" role="tablist">
-                                                    <NavItem className="text-center w-50">
-                                                        <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggle('1');}}>
-                                                            <i className="bx bxs-chevron-down mr-1 bx-sm"/>
-                                                            <br/>{props.t("BUY")} {pool.symbol}
-                                                        </NavLink>
-                                                    </NavItem>
-                                                    <NavItem className="text-center w-50">
-                                                        <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggle('2');}}>
-                                                            <i className="bx bxs-chevron-up mr-1 bx-sm"/>
-                                                            <br/>{props.t("SELL")} {pool.symbol}
-                                                        </NavLink>
-                                                    </NavItem>
-                                                </Nav>
                                                 <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
                                                     <TabPane tabId="1" id="buy">
                                                         <TradePaneBuy
@@ -366,7 +388,9 @@ const NewSwap = (props) => {
                                                             trade={buy}
                                                             startTx={startTx}
                                                             endTx={endTx}
-                                                            type={"Buy"}/>
+                                                            type={"Buy"}
+                                                            toggleTab={toggleTab}
+                                                        />
                                                     </TabPane>
                                                     <TabPane tabId="2" id="sell-tab">
                                                         <TradePaneBuy
@@ -380,6 +404,7 @@ const NewSwap = (props) => {
                                                             startTx={startTx}
                                                             endTx={endTx}
                                                             type={"Sell"}
+                                                            toggleTab={toggleTab}
                                                         />
                                                     </TabPane>
                                                 </TabContent>

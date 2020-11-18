@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from "react"
 import {Context} from "../../context"
 
-import {getRewards, getDaoContract,
-    getSharesData,
-    getMemberDetail, getTotalWeight
+import {getRewards, getDaoContract, 
+    updateWalletData, BNB_ADDR, SPARTA_ADDR,
+    getMemberDetail, getTotalWeight,
 } from "../../client/web3"
 
 import Notification from '../../components/Common/notification'
@@ -14,7 +14,7 @@ import {Row, Col, Table, Card, CardTitle, CardSubtitle, CardBody, Spinner} from 
 import {withNamespaces} from 'react-i18next'
 
 import EarnTableItem from "./EarnTableItem"
-import { withRouter } from "react-router-dom"
+import { Link, withRouter } from "react-router-dom"
 
 const EarnTable = (props) => {
 
@@ -37,11 +37,12 @@ const EarnTable = (props) => {
       }, [context.walletData]);
 
     const getData = async () => {
-        let rewards = await getRewards(context.account)
+        let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
+        let rewards = data[0]
+        let memberDetails = data[1]
+        let weight = data[2]
         setReward(rewards)
-        let memberDetails = await getMemberDetail(context.account)
         setMember(memberDetails)
-        let weight = await getTotalWeight()
         setTotalWeight(weight)
     }
 
@@ -58,10 +59,22 @@ const EarnTable = (props) => {
     }
 
     const refreshData = async () => {
-        let sharesData = await getSharesData(context.account, context.tokenArray)
-        context.setContext({ 'sharesData': sharesData })
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh SPARTA balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+        // Get new 'last harvest'
         getLastHarvest()
-        setNotifyMessage('Transaction Sent!');
+        // Notification to show txn complete
+        setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
     }
 
@@ -86,14 +99,14 @@ const EarnTable = (props) => {
                                             <Col xs='12' sm='3' className='text-center p-2'>
                                                 <h5><Spinner type="grow" color="primary" className='m-2' style={{height:'15px', width:'15px'}} />{formatGranularUnits(convertFromWei(reward))} SPARTA</h5>
                                                 <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
-                                                    <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"/> Harvest SPARTA
+                                                    <i className="bx bx-log-in-circle font-size-16 align-middle"/> Harvest
                                                 </button>
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
-                                                    <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}%</strong> of the total DAO weight represented by your wallet.<br/>
+                                                    <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}{member.weight <= 0 && 0}%</strong> of the total DAO weight represented by your wallet.<br/>
                                                     <strong>SPARTA</strong> rewards await your next visit, come back often to harvest!<br/>
-                                                    <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}</strong> passed since your last harvest.
+                                                    <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}{member.lastBlock <= 0 && '0 minutes'}</strong> passed since your last harvest
                                                 </p>
                                             </Col>
                                         </Row>
@@ -122,7 +135,7 @@ const EarnTable = (props) => {
 
                                         <thead className="center">
                                         <tr>
-                                            <th scope="col">{props.t("Icon")}</th>
+                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Icon")}</th>
                                             <th scope="col">{props.t("Symbol")}</th>
                                             <th className="d-none d-lg-table-cell" scope="col">{props.t("Unlocked")}</th>
                                             <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
@@ -130,7 +143,7 @@ const EarnTable = (props) => {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            {context.sharesData.sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                            {context.sharesData.filter(x => x.units + x.locked > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
                                                 <EarnTableItem 
                                                     key={c.address}
                                                     symbAddr={c.address}
@@ -147,8 +160,11 @@ const EarnTable = (props) => {
                                             )}
                                             <tr>
                                                 <td colSpan="5">
-                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true &&
-                                                        <div className="text-center m-2">All LP Tokens Loaded</div>
+                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
+                                                        <div className="text-center m-2">All LP tokens loaded</div>
+                                                    }
+                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length <= 0 &&
+                                                        <div className="text-center m-2">You have no LP tokens, <Link to="/pools">visit the pools</Link> to add liquidity</div>
                                                     }
                                                 </td>
                                             </tr>

@@ -15,7 +15,6 @@ const PoolPaneSide = (props) => {
     return (
         <Card>
             <CardBody>
-                <h4 className="card-title mb-4 text-center">{props.t("Overview")}</h4>
                 {props.pool && context.walletData &&
                     <Row>
                         <Col xs="6">
@@ -25,7 +24,7 @@ const PoolPaneSide = (props) => {
                                         <TokenIconPane address={props.pool.address}/>
                                     }
                                     {props.pool.address === "XXX" &&
-                                        <img src={process.env.PUBLIC_URL + "/fallback.png"} style={{height: 60, borderRadius: 30}} alt={"Fallback Token Icon"}/>
+                                        <img src={process.env.PUBLIC_URL + "/fallback.png"} style={{height: 50, borderRadius: 26}} alt={"Fallback Token Icon"}/>
                                     }
                                 </div>
                                 {props.pool.address !== "XXX" &&
@@ -34,7 +33,7 @@ const PoolPaneSide = (props) => {
                                 {props.pool.address === "XXX" &&
                                     <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                 }
-                                <p>{props.t("Price")}</p>
+                                <p className='mb-2'>{props.t("Price")}</p>
                                 <h4 className="strong">{formatAllUSD(props.pool.price, props.price)}</h4>
                             </div>
                         </Col>
@@ -44,7 +43,7 @@ const PoolPaneSide = (props) => {
                                     <TokenIconPane address={SPARTA_ADDR}/>
                                 </div>
                                 <h4>SPARTA</h4>
-                                <p>{props.t("Price")}</p>
+                                <p className='mb-2'>{props.t("Price")}</p>
                                 <h4 className="strong">{formatAllUSD(props.price, 1)}</h4>
                             </div>
                         </Col>
@@ -53,7 +52,7 @@ const PoolPaneSide = (props) => {
                                 <table className="table table-centered table-nowrap  mb-2">
                                     <tbody>
                                         <tr>
-                                            <td className='text-center'>
+                                            <td className='text-center w-50'>
                                                 <p className="mb-0">Spot Price</p>
                                             </td>
                                             <td className='text-center'>
@@ -125,11 +124,6 @@ const PoolPaneSide = (props) => {
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                             }
                         </div>
-                        <Col>
-                            <br/>
-                            <br/>
-                            <br/>
-                        </Col>
                     </Row>
                 }
             </CardBody>

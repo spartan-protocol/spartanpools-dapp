@@ -26,8 +26,8 @@ import {
 import classnames from 'classnames';
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getTokenData, getTokenDetails,
-    getPool, getPoolShares, WBNB_ADDR,
+    getPoolData, getTokenData, updateSharesData,
+    getPool, getPoolShares, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
 import PoolPaneSide from "../components/Sections/PoolPaneSide"
@@ -94,14 +94,21 @@ const AddLiquidity = (props) => {
         checkPoolReady()
         checkSharesDataReady()
     // eslint-disable-next-line
-      }, []);
+      }, [context.poolsData, context.walletData])
+
+    useEffect(() => {
+        if (context.poolsDataComplete === true) {
+            getData()
+        }
+    // eslint-disable-next-line
+    }, [context.walletData])
 
     const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
-        if (context.poolsData && context.poolsDataLoading !== true) {
+        if (context.poolsData) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
-                await checkWalletReady()
+                await checkWalletReady(params)
             }
             else {
                 await pause(2000)
@@ -114,23 +121,50 @@ const AddLiquidity = (props) => {
         }
     }
 
-    const checkWalletReady = async () => {
-        let params = queryString.parse(props.location.search)
-        if (context.walletData && context.walletDataLoading !== true) {
+    const checkWalletReady = async (params) => {
+        if (context.walletData) {
             var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-            //console.log(context.walletData)
             if (existsInWalletData === true) {
                 await getData()
             }
             else {
                 await pause(2000)
-                await checkWalletReady()
+                await checkWalletReady(params)
             }
         }
         else {
             await pause(2000)
-            await checkWalletReady()
+            await checkWalletReady(params)
         }
+    }
+
+    const getData = async () => {
+        let params = queryString.parse(props.location.search)
+        const pool = await getPoolData(params.pool, context.poolsData)
+        setPool(pool)
+        let data = await Promise.all([getTokenData(SPARTA_ADDR, context.walletData), getTokenData(pool.address, context.walletData)])
+        const baseData = data[0]
+        const tokenData = data[1]
+
+        let _userData = {
+            'baseBalance': baseData?.balance,
+            'tokenBalance': tokenData?.balance,
+            'address': tokenData?.address,
+            'symbol': tokenData?.symbol,
+            'balance': tokenData?.balance,
+            'input': 0,
+        }
+        setUserData(_userData)
+        //console.log(baseData?.balance, tokenData?.balance)
+
+        let liquidityData = await getPairedAmount(baseData?.balance, tokenData?.balance, pool)
+        setLiquidityData(liquidityData)
+        const estLiquidityUnits = await getLiquidityUnits(liquidityData, pool)
+        setLiquidityUnits(estLiquidityUnits)
+
+        data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+        setApprovalBase(data[0])
+        setApprovalToken(data[1])
     }
 
     const checkSharesDataReady = async () => {
@@ -155,36 +189,6 @@ const AddLiquidity = (props) => {
             await pause(2000)
             await checkSharesDataReady()
         }
-    }
-
-    const getData = async () => {
-            let params = queryString.parse(props.location.search)
-            const pool = await getPoolData(params.pool, context.poolsData)
-            setPool(pool)
-            
-            const baseData = await getTokenData(SPARTA_ADDR, context.walletData)
-            const tokenData = await getTokenData(pool.address, context.walletData)
-
-            let _userData = {
-                'baseBalance': baseData?.balance,
-                'tokenBalance': tokenData?.balance,
-                'address': tokenData?.address,
-                'symbol': tokenData?.symbol,
-                'balance': tokenData?.balance,
-                'input': 0,
-            }
-
-            setUserData(_userData)
-
-            //console.log(baseData?.balance, tokenData?.balance)
-
-            let liquidityData = getPairedAmount(baseData?.balance, tokenData?.balance, pool)
-            setLiquidityData(liquidityData)
-            const estLiquidityUnits = getLiquidityUnits(liquidityData, pool)
-            setLiquidityUnits(estLiquidityUnits)
-
-            await checkApproval(SPARTA_ADDR) ? setApprovalBase(true) : setApprovalBase(false)
-            await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
     }
 
     const checkApproval = async (address) => {
@@ -334,6 +338,17 @@ const AddLiquidity = (props) => {
         })
         setNotifyMessage('Approved')
         setNotifyType('success')
+        let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+        setApprovalBase(data[0])
+        setApprovalToken(data[1])
+
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
     }
 
     const addLiquidity = async () => {
@@ -351,7 +366,6 @@ const AddLiquidity = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     }
 
     const removeLiquidity = async () => {
@@ -367,11 +381,34 @@ const AddLiquidity = (props) => {
         setStartTx(false)
         setEndTx(true)
         updatePool()
-        context.setContext({'tokenDetailsArray': await getTokenDetails(context.account, context.tokenArray)})
     }
 
     const updatePool = async () => {
         setPool(await getPool(pool.address))
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh SPARTA balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+            // Refresh TOKEN balance
+            context.setContext({'walletDataLoading': true})
+            walletData = await updateWalletData(context.account, context.walletData, pool.address)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+        if (context.sharesDataLoading !== true) {
+            // Refresh sharesData for token
+            let sharesData = await updateSharesData(context.account, context.sharesData, pool.address)
+            context.setContext({'sharesDataLoading': true})
+            context.setContext({'sharesData': sharesData})
+            context.setContext({'sharesDataLoading': false})
+        }
     }
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -530,9 +567,7 @@ const AddLiquidity = (props) => {
 const AddSymmPane = (props) => {
 
     const [showModal, setShowModal] = useState(false);
-
     const toggle = () => setShowModal(!showModal);
-
     const remainder = convertFromWei(props.userData.balance - props.userData.input)
 
     const checkEnoughForGas = () => {
@@ -844,20 +879,14 @@ const AddAsymmPane = (props) => {
                     }
                     {remainder < 0.05 &&
                         <>
-                            <Button 
-                            color="primary" 
-                            onClick={() => {
-                                props.changeAmount((0.999 - (0.05 / convertFromWei(props.userData.balance))) * 100);
-                            }}>
+                            <Button color="primary" onClick={() => {props.changeAmount((0.999 - (0.05 / convertFromWei(props.userData.balance))) * 100);}}>
                                 Change to ~{formatAllUnits(convertFromWei(props.userData.balance * (0.999 - (0.05 / convertFromWei(props.userData.balance)))))} BNB
                             </Button>
-                            <Button 
-                                color="danger" 
-                                onClick={() => {
-                                    toggle();
-                                    props.addLiquidity();
-                                }}>
-                                    Continue (Might Fail!)
+                            <Button color="danger" onClick={() => {
+                                toggle();
+                                props.addLiquidity();
+                            }}>
+                                Continue (Might Fail!)
                             </Button>
                         </>
                     }
@@ -891,9 +920,8 @@ const RemoveLiquidityPane = (props) => {
         let params = queryString.parse(location.search)
         if (params.pool === BNB_ADDR) {pool = WBNB_ADDR}
         else {pool = params.pool}
-        if (context.sharesData && context.sharesDataLoading !== true) {
+        if (context.sharesData) {
             var existsInSharesData = await context.sharesData.some(e => (e.address === pool))
-            //console.log(context.sharesData)
             if (existsInSharesData === true) {
                 getLockedAmount(pool, props.pool)
             }
@@ -901,6 +929,10 @@ const RemoveLiquidityPane = (props) => {
                 await pause(2000)
                 await checkSharesDataReady()
             }
+        }
+        else {
+            await pause(2000)
+            await checkSharesDataReady()
         }
     }
 

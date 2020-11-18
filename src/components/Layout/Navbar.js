@@ -19,7 +19,6 @@ const Navbar = (props) => {
                                 </Link>
                                 <div className={classname("dropdown-menu")}>
                                     <Link to="/pools" className="dropdown-item">{props.t('Pools')}</Link>
-                                    
                                     <Link to="/earn" className="dropdown-item">{props.t('Earn')}</Link>
                                     <Link to="/lock" className="dropdown-item">{props.t('Deposit & Mint')}</Link>
                                    

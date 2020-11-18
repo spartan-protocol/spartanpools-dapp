@@ -7,7 +7,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap'
 
-import {getDaoContract, getSharesData} from '../../client/web3'
+import {getDaoContract, updateSharesData, updateWalletData, BNB_ADDR} from '../../client/web3'
 import Notification from '../../components/Common/notification'
 
 import {withNamespaces} from "react-i18next";
@@ -30,23 +30,38 @@ export const EarnTableItem = (props) => {
     const deposit = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.deposit(record.address, record.units).send({ from: context.account })
-        console.log(tx.transactionHash)
-        await refreshData()
+        await contract.methods.deposit(record.address, record.units).send({ from: context.account })
+        //console.log(tx.transactionHash)
+        await refreshData(record.symbAddr)
     }
 
     const withdraw = async (record) => {
         console.log(record)
         let contract = getDaoContract()
-        let tx = await contract.methods.withdraw(record.address).send({ from: context.account })
-        console.log(tx.transactionHash)
-        await refreshData()
+        await contract.methods.withdraw(record.address).send({ from: context.account })
+        //console.log(tx.transactionHash)
+        await refreshData(record.symbAddr)
     }
 
-    const refreshData = async () => {
-        let sharesData = await getSharesData(context.account, context.tokenArray)
-        context.setContext({ 'sharesData': sharesData })
+    const refreshData = async (tokenAddr) => {
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+        if (context.sharesDataLoading !== true) {
+            // Refresh sharesData for specific token
+            console.log(tokenAddr)
+            let sharesData = await updateSharesData(context.account, context.sharesData, tokenAddr)
+            context.setContext({'sharesDataLoading': true})
+            context.setContext({'sharesData': sharesData})
+            context.setContext({'sharesDataLoading': false})
+        }
+        // Get new 'last harvest'
         props.getLastHarvest()
+        // Notification to show txn complete
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
     }
@@ -75,10 +90,11 @@ export const EarnTableItem = (props) => {
     return (
         <>
             <tr>
-                <td>
+                <td className="d-none d-lg-table-cell">
                     <TokenIcon address={props.symbAddr}/>
                 </td>
                 <td>
+                    <div className='d-block d-lg-none'><TokenIcon address={props.symbAddr}/></div>
                     {props.symbol}
                 </td>
                 <td className="d-none d-lg-table-cell">
@@ -94,15 +110,14 @@ export const EarnTableItem = (props) => {
                 <td>
                     {props.units > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
-                            <i className="bx bx-log-in-circle font-size-16 align-middle mr-2"/> Lock
+                            <i className="bx bx-lock font-size-16 align-middle"/> Lock
                         </button>
                     }
                     {props.locked > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
-                            <i className="bx bx-transfer-alt font-size-16 align-middle mr-2"/> Unlock
+                            <i className="bx bx-lock-open font-size-16 align-middle"/> Unlock
                         </button>
                     }
-
                     <Notification type={notifyType} message={notifyMessage}/>
 
                         <Modal isOpen={showLockModal} toggle={()=>toggleLock(props)}>

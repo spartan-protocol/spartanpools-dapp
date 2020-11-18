@@ -18,9 +18,7 @@ import { withNamespaces } from 'react-i18next'
 import { TokenIcon } from "../Common/TokenIcon";
 import { PercentButtonRow } from "../common";
 import { withRouter } from "react-router-dom"
-
 import { Doughnut } from 'react-chartjs-2';
-import { constants } from "ethers";
 
 const BondComponent = (props) => {
 
@@ -87,27 +85,26 @@ const BondComponent = (props) => {
         await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
     }
 
-    const [lastClaimed, setlastClaimed] = useState(100);
+    //const [lastClaimed, setlastClaimed] = useState(100);
 
-    const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
+    //const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
 
     const claimLP = async () => {
         setloadingBondedLP(true)
         let contract = getBondContract()
         let address = userData.address
-        let tx = await contract.methods.claim(address).send({ from: context.account })
-        console.log(tx.transactionHash)
+        await contract.methods.claim(address).send({ from: context.account })
+        //console.log(tx.transactionHash)
         await refreshData()
         setloadingBondedLP(false)
     }
 
     const refreshData = async () => {
-        getLastClaim()
+        //getLastClaim()
         setNotifyMessage('Transaction Sent!');
         setNotifyType('success')
     }
-   
-    
+
     const toggleLock = () => {
         setShowBondModal(!showBondModal)
     }
@@ -272,8 +269,7 @@ const BondComponent = (props) => {
                             <CardBody>
                                 <CardTitle><h4>Time-Locked LP Tokens</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
-                                    Bond {userData.symbol} to get SPARTA LP Tokens.<br />
-                                    Claim your vested LP tokens.<br />
+                                    Bond {userData.symbol} to get SPARTA LP Tokens. Claim your vested LP tokens.
                                 </CardSubtitle>
                                 {context.walletData &&
                                     <>
@@ -281,12 +277,15 @@ const BondComponent = (props) => {
                                             <Col xs='12' sm='3' className='text-center p-2'>
                                                 <h5><Spinner type="grow" color="primary" className='m-2' style={{ height: '15px', width: '15px' }} />{formatGranularUnits(convertFromWei(claimableLP))} LP Tokens</h5>
                                                 <button type="button" className="btn btn-primary waves-effect waves-light" onClick={claimLP}>
-                                                    <i className="bx bx-log-in-circle font-size-16 align-middle mr-2" /> Claim LP Tokens
+                                                    <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens
+                                                    {loadingBondedLP === true &&
+                                                        <i className="bx bx-spin bx-loader ml-1"/>
+                                                    }
                                                 </button>
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
-                                                    <strong>{formatAllUnits(convertFromWei(member.bondedLP))}</strong> SPARTA:BNB LP tokens remaining in time-locked contract.
+                                                    <strong>{formatAllUnits(convertFromWei(member.bondedLP))}</strong> SPARTA:{userData.symbol} LP tokens remaining in time-locked contract.
                                                 </p>
                                                 {member.bondedLP > 0 && 
                                                 <p>
@@ -316,7 +315,7 @@ const BondComponent = (props) => {
                                     <CardTitle><h4>Bond {userData.symbol} to Mint SPARTA</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
                                         <h6>Bond assets into the pools. </h6>
-                                        <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the BNB:SPARTA liquidity pool.</li>
+                                        <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the {userData.symbol}:SPARTA liquidity pool.</li>
                                         <li>LP tokens will be issued as usual, however only 25% are available to you immediately.</li>
                                         <li>The remaining 75% will be vested to you over a 12 month period.</li>
                                         <li>Farm extra SPARTA by locking your LP tokens on the Earn page.</li>
@@ -349,7 +348,7 @@ const BondComponent = (props) => {
                                         <FormGroup>
                                             <Row>
                                                 <Col sm="12">
-                                                    <InputGroup className="mb-3">
+                                                    <InputGroup className="mb-1">
                                                         <InputGroupAddon addonType="prepend">
                                                             <Label className="input-group-text">{props.t("Total")}</Label>
                                                         </InputGroupAddon>
@@ -361,7 +360,6 @@ const BondComponent = (props) => {
                                                 </Col>
                                             </Row>
                                         </FormGroup>
-                                        <br />
                                         <div className="text-center">
                                             <PercentButtonRow changeAmount={onChange} />
                                         </div>

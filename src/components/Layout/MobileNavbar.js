@@ -7,23 +7,26 @@ import { withNamespaces } from 'react-i18next';
 
 const MobileNavbar = (props) => {
 
-    const [isDropdown1,setIsDropdown1] = useState(false)
+    //const [isDropdown1,setIsDropdown1] = useState(false)
     const [isDropdown2,setIsDropdown2] = useState(true)
 
+    // eslint-disable-next-line
+    {/*
     const toggleDropdown1 = () => {
         setIsDropdown1(!isDropdown1)
         setIsDropdown2(false)
     }
+    */}
 
     const toggleDropdown2 = () => {
         setIsDropdown2(!isDropdown2)
-        setIsDropdown1(false)
+        //setIsDropdown1(false)
     }
 
     const closeDropdowns = () => {
         props.setNavIsOpen(false)
         setIsDropdown2(false)
-        setIsDropdown1(false)
+        //setIsDropdown1(false)
     }
 
     return (
@@ -46,6 +49,7 @@ const MobileNavbar = (props) => {
                                    
                                 </div>
                             </li> */}
+<<<<<<< HEAD
                             <li className="nav-item dropdown">
                             <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2"/>{props.t('Pools')}</Link>
                             </li>
@@ -54,6 +58,16 @@ const MobileNavbar = (props) => {
                             </li>
                             {/* <li className="nav-item dropdown">
                             <Link to="/lock" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-lock mr-2"/>{props.t('Lock')}</Link>
+=======
+                            <li className="nav-item dropdown" onClick={closeDropdowns}>
+                                <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2"/>{props.t('Pools')}</Link>
+                            </li>
+                            <li className="nav-item dropdown" onClick={closeDropdowns}>
+                                <Link to="/earn" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-money mr-2"/>{props.t('Earn')}</Link>
+                            </li>
+                            {/* <li className="nav-item dropdown">
+                                <Link to="/lock" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-lock mr-2"/>{props.t('Lock')}</Link>
+>>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
                             </li> */}
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown2} to="#">

@@ -177,6 +177,44 @@ export const PercentButtonRow = (props) => {
     )
 }
 
+export const PercentSliderBuy = (props) => {
+    var slider = document.getElementById("percentSliderBuy")
+    
+    const change = () => {
+        props.changeAmount(slider.value)
+    }
+
+    return (
+        <>
+            <div>
+                <input type='range' min='0' max='100' step='0.5' defaultValue='1' className='slider w-75' id='percentSliderBuy' onInputCapture={change}/>
+                {slider &&
+                    <h6>{slider.value} %</h6>
+                }
+            </div>
+        </>
+    )
+}
+
+export const PercentSliderSell = (props) => {
+    var slider = document.getElementById("percentSliderSell")
+    
+    const change = () => {
+        props.changeAmount(slider.value)
+    }
+
+    return (
+        <>
+            <div>
+                <input type='range' min='0' max='100' step='0.5' defaultValue='1' className='slider' id='percentSliderSell' onInputCapture={change}/>
+                {slider &&
+                    <h6>{slider.value} %</h6>
+                }
+            </div>
+        </>
+    )
+}
+
 // eslint-disable-next-line
 {/*
 export const TokenDropDown = (props) => {

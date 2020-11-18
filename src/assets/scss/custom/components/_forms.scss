@@ -40,3 +40,39 @@
   .custom-control-label::before {
     background-color: $btn-header-secondary;
   }
+
+  .slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 75%;
+    height: 15px; /* Specified height */
+    background: #32394e;
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+    border-radius: 10px;
+  }
+
+  .slider:focus {
+    outline:none;
+  }
+ 
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    background: url('../../../spartan-coin.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    background: url('../../../spartan-coin.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+  }

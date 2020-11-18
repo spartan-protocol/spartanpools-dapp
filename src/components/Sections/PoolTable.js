@@ -30,14 +30,18 @@ const PoolTable = (props) => {
 
                                             <thead className="center">
                                             <tr>
-                                                <th scope="col">{props.t("Icon")}</th>
+                                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Icon")}</th>
                                                 <th scope="col">{props.t("Asset")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Price")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Depth")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Volume")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Txns")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Revenue")}</th>
+<<<<<<< HEAD
                                                 <th scope="col">{props.t("Bond")}</th>
+=======
+                                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Bond")}</th>
+>>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
                                                 <th scope="col">{props.t("Trade")}</th>
                                             </tr>
                                             </thead>
@@ -53,7 +57,11 @@ const PoolTable = (props) => {
                                                 volume={c.volume}
                                                 txCount={c.txCount}
                                                 fees={c.fees}
+<<<<<<< HEAD
                                                 listed={c.lockListed}
+=======
+                                                listed={c.bondListed}
+>>>>>>> 5cef3c4d26c9cd7cc31116684ed6b1b6a053e5b1
                                                 />
                                             )}
                                                 <tr>
