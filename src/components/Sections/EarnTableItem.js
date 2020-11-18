@@ -67,7 +67,7 @@ export const EarnTableItem = (props) => {
     }
 
     const [isMember, setIsMember] = useState(false)
-    const getIsMember = (props) => {
+    const getIsMember = () => {
         if (props.member.weight > 0) {setIsMember(true)}
         if (props.member.weight === 0) {setIsMember(false)}
     }
@@ -75,15 +75,18 @@ export const EarnTableItem = (props) => {
     const [showLockModal, setShowLockModal] = useState(false)
     const [showUnlockModal, setShowUnlockModal] = useState(false)
 
-    const toggleLock = (props) => {
+    const [lastHarvest,setlastHarvest] = useState(props.lastHarvest)
+    const resetLastHarvest = () => setlastHarvest(0)
+
+    const toggleLock = () => {
         props.getLastHarvest()
-        getIsMember(props)
+        getIsMember()
         setShowLockModal(!showLockModal)
     }
 
-    const toggleUnlock = (props) => {
+    const toggleUnlock = () => {
         props.getLastHarvest()
-        getIsMember(props)
+        getIsMember()
         setShowUnlockModal(!showUnlockModal)
     }
 
@@ -109,19 +112,19 @@ export const EarnTableItem = (props) => {
                 </td>
                 <td>
                     {props.units > 0 &&
-                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock(props)}>
+                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock()}>
                             <i className="bx bx-lock font-size-16 align-middle"/> Lock
                         </button>
                     }
                     {props.locked > 0 &&
-                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock(props)}>
+                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock()}>
                             <i className="bx bx-lock-open font-size-16 align-middle"/> Unlock
                         </button>
                     }
                     <Notification type={notifyType} message={notifyMessage}/>
 
-                        <Modal isOpen={showLockModal} toggle={()=>toggleLock(props)}>
-                            <ModalHeader toggle={()=>toggleLock(props)}>You are locking your tokens!</ModalHeader>
+                        <Modal isOpen={showLockModal} toggle={()=>toggleLock()}>
+                            <ModalHeader toggle={()=>toggleLock()}>You are locking your tokens!</ModalHeader>
                             <ModalBody>
                                 {isMember === false &&
                                     <>
@@ -133,7 +136,7 @@ export const EarnTableItem = (props) => {
                                         Check in daily to harvest your rewards!<br/>
                                     </>
                                 }
-                                {isMember === true && props.lastHarvest <= 1 &&
+                                {isMember === true && lastHarvest <= 1 &&
                                     <>
                                         Locking your tokens enables them to earn yield.<br/>
                                         Doing so increases your weight in the DAO.<br/>
@@ -143,7 +146,7 @@ export const EarnTableItem = (props) => {
                                         Check in daily to harvest your rewards!<br/>
                                     </>
                                 }
-                                {isMember === true && props.lastHarvest > 1 &&
+                                {isMember === true && lastHarvest > 1 &&
                                     <>
                                         Before you lock your tokens a harvest must be performed.<br/>
                                         This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -152,43 +155,46 @@ export const EarnTableItem = (props) => {
                                 }
                             </ModalBody>
                             <ModalFooter>
-                                {isMember === false &&
-                                    <Button 
-                                        color="primary" 
-                                        onClick={() => {
-                                            toggleLock(props)
-                                            deposit(props)
-                                        }}>
-                                            Lock Tokens!
-                                    </Button>
-                                }
-                                {isMember === true && props.lastHarvest <= 1 &&
-                                    <Button 
-                                        color="primary" 
-                                        onClick={() => {
-                                            toggleLock(props)
-                                            deposit(props)
-                                        }}>
-                                            Lock Tokens!
-                                    </Button>
-                                }
-                                {isMember === true && props.lastHarvest > 1 && props.loadingHarvest === false &&
-                                    <Button 
-                                        color="primary" 
-                                        onClick={() => props.harvest()}>
-                                            Harvest SPARTA!
-                                    </Button>
-                                }
-                                {props.loadingHarvest === true &&
-                                    <Button>
-                                        <i className="bx bx-spin bx-loader"/>
-                                    </Button>
-                                }
-                                <Button color="secondary" onClick={()=>toggleLock(props)}>Cancel</Button>
+                                    {isMember === false &&
+                                        <Button 
+                                            color="primary" 
+                                            onClick={() => {
+                                                toggleLock()
+                                                deposit()
+                                            }}>
+                                                Lock Tokens!
+                                        </Button>
+                                    }
+                                    {isMember === true && lastHarvest <= 1 &&
+                                        <Button 
+                                            color="primary" 
+                                            onClick={() => {
+                                                toggleLock()
+                                                deposit()
+                                            }}>
+                                                Lock Tokens!
+                                        </Button>
+                                    }
+                                    {isMember === true && lastHarvest > 1 && props.loadingHarvest === false &&
+                                        <Button 
+                                            color="primary" 
+                                            onClick={async () => {
+                                                await props.harvest()
+                                                resetLastHarvest()
+                                            }}>
+                                                Harvest SPARTA!
+                                        </Button>
+                                    }
+                                    {props.loadingHarvest === true &&
+                                        <Button>
+                                            <i className="bx bx-spin bx-loader"/>
+                                        </Button>
+                                    }
+                                    <Button color="secondary" onClick={()=>toggleLock()}>Cancel</Button>
                             </ModalFooter>
                         </Modal>
-                        <Modal isOpen={showUnlockModal} toggle={()=>toggleUnlock(props)}>
-                            <ModalHeader toggle={()=>toggleUnlock(props)}>You are unlocking your tokens!</ModalHeader>
+                        <Modal isOpen={showUnlockModal} toggle={()=>toggleUnlock()}>
+                            <ModalHeader toggle={()=>toggleUnlock()}>You are unlocking your tokens!</ModalHeader>
                             <ModalBody>
                                 {isMember === false &&
                                     <>
@@ -198,7 +204,7 @@ export const EarnTableItem = (props) => {
                                         However, you can re-lock them any time.<br/>
                                     </>
                                 }
-                                {isMember === true && props.lastHarvest <= 1 &&
+                                {isMember === true && lastHarvest <= 1 &&
                                     <>
                                         Unlocking your tokens disables them from earning yield.<br/>
                                         Doing so also decreases your weight in the DAO.<br/>
@@ -206,7 +212,7 @@ export const EarnTableItem = (props) => {
                                         However, you can re-lock them any time.<br/>
                                     </>
                                 }
-                                {isMember === true && props.lastHarvest > 1 &&
+                                {isMember === true && lastHarvest > 1 &&
                                     <>
                                         Before you unlock your tokens, a harvest must be performed.<br/>
                                         This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -215,31 +221,33 @@ export const EarnTableItem = (props) => {
                                 }
                             </ModalBody>
                             <ModalFooter>
+
                                 {isMember === false &&
                                     <Button 
                                     color="primary" 
                                     onClick={() => {
-                                        toggleUnlock(props)
-                                        withdraw(props)
+                                        toggleUnlock()
+                                        withdraw()
                                     }}>
                                         Unlock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && props.lastHarvest <= 1 &&
+                                {isMember === true && lastHarvest <= 1 &&
                                     <Button 
                                     color="primary" 
                                     onClick={() => {
-                                        toggleUnlock(props)
-                                        withdraw(props)
+                                        toggleUnlock()
+                                        withdraw()
                                     }}>
                                         Unlock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && props.lastHarvest > 1 && props.loadingHarvest === false &&
+                                {isMember === true && lastHarvest > 1 && props.loadingHarvest === false &&
                                     <Button 
                                         color="primary" 
-                                        onClick={() => {
-                                            props.harvest()
+                                        onClick={async () => {
+                                            await props.harvest()
+                                            resetLastHarvest()
                                         }}>
                                             Harvest SPARTA!
                                     </Button>
@@ -249,7 +257,8 @@ export const EarnTableItem = (props) => {
                                         <i className="bx bx-spin bx-loader"/>
                                     </Button>
                                 }
-                                <Button color="secondary" onClick={()=>toggleUnlock(props)}>Cancel</Button>
+                                <Button color="secondary" onClick={()=>toggleUnlock()}>Cancel</Button>
+
                             </ModalFooter>
                         </Modal>
                 </td>

@@ -46,7 +46,7 @@ const EarnTable = (props) => {
         setTotalWeight(weight)
     }
 
-    const [lastHarvest,setlastHarvest] = useState(100);
+    const [lastHarvest,setlastHarvest] = useState(100)
     const getLastHarvest = () => setlastHarvest(hoursSince(member.lastBlock))
 
     const harvest = async () => {
