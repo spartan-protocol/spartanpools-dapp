@@ -561,3 +561,7 @@ export const checkListed = async (asset) => {
 return isListed;
 }
 
+export const getBaseAllocation = async () => {
+    let allocation = await getSpartaContract().methods.balanceOf(BOND_ADDR).call()
+return allocation;
+}
