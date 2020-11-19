@@ -260,7 +260,7 @@ const BondComponent = (props) => {
         ],
         datasets: [
             {
-                data: [formatAllUnits(convertFromWei(estLiqTokens)) * 0.25, formatAllUnits(convertFromWei(estLiqTokens)) * 0.75],
+                data: [(convertFromWei(estLiqTokens)*25/100).toFixed(2),(convertFromWei(estLiqTokens)*75/100).toFixed(2)],
                 backgroundColor: [
                     "#556ee6",
                     "#34c38f"
@@ -410,17 +410,17 @@ const BondComponent = (props) => {
                                             <Col xs={12}>
                                                 {approvalToken && startTx && !endTx &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
-                                                        getEstLiqTokens()
-                                                        toggleLock()
+                                                        getEstLiqTokens();
+                                                        toggleLock();
                                                     }}>
                                                         <i className="bx bx-spin bx-loader" /> LOCK
                                                     </div>
                                                 }
                                                 {approvalToken && !startTx &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
-                                                        getEstLiqTokens()
-                                                        toggleLock()
-                                                    }}>Lock</div>
+                                                        getEstLiqTokens();
+                                                        toggleLock();
+                                                    }}>Bond</div>
                                                 }
                                             </Col>
                                         </Row>
@@ -452,19 +452,22 @@ const BondComponent = (props) => {
                                                     depositAsset();
                                                 }}>
                                                     Bond for 12 months!
-                                            </Button>
+                                                </Button>
                                             }
                                             {userData.symbol === 'BNB' && remainder < 0.05 &&
                                                 <>
-                                                    <Button color="primary" onClick={() => { onInputChange((0.999 - (0.05 / convertFromWei(userData.balance))) * 100); }}>
+                                                    <Button color="primary" onClick={() => {
+                                                        onChange((0.999 - (0.05 / convertFromWei(userData.balance))) * 100); 
+                                                        getEstLiqTokens();
+                                                    }}>
                                                         Change to ~{formatAllUnits(convertFromWei(userData.balance * (0.999 - (0.05 / convertFromWei(userData.balance)))))} BNB
-                                            </Button>
+                                                    </Button>
                                                     <Button color="danger" onClick={() => {
                                                         toggleLock();
                                                         depositAsset();
                                                     }}>
                                                         Bond for 12 months (Low BNB; might fail!)
-                                            </Button>
+                                                    </Button>
                                                 </>
                                             }
                                             {userData.symbol === 'BNB' && remainder >= 0.05 &&
@@ -473,7 +476,7 @@ const BondComponent = (props) => {
                                                     depositAsset();
                                                 }}>
                                                     Bond for 12 months!
-                                            </Button>
+                                                </Button>
                                             }
                                             <Button color="secondary" onClick={toggleLock}>Cancel</Button>
                                         </ModalFooter>
