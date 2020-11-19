@@ -25,29 +25,33 @@ const EarnTable = (props) => {
     const [notifyMessage, setNotifyMessage] = useState("")
     const [notifyType, setNotifyType] = useState("dark")
     const [loadingHarvest, setLoadingHarvest] = useState(false)
+    const [lastHarvest,setlastHarvest] = useState('100')
+
+    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (context.walletData) {
-                getData()
-            }
-        }, 3000);
-        return () => clearInterval(interval);
+        getData()
         // eslint-disable-next-line
-      }, [context.walletData]);
+      }, [context.walletData])
 
     const getData = async () => {
-        let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
-        let rewards = data[0]
-        let memberDetails = data[1]
-        let weight = data[2]
-        setReward(rewards)
-        setMember(memberDetails)
-        setTotalWeight(weight)
+        if (context.walletData) {
+            let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
+            let rewards = data[0]
+            let memberDetails = data[1]
+            let weight = data[2]
+            setReward(rewards)
+            setMember(memberDetails)
+            setTotalWeight(weight)
+            getLastHarvest(memberDetails)
+        }
+        await pause(5000)
+        getData()
     }
 
-    const [lastHarvest,setlastHarvest] = useState(100)
-    const getLastHarvest = () => setlastHarvest(hoursSince(member.lastBlock))
+    const getLastHarvest = (memberDetails) => {
+        setlastHarvest(hoursSince(memberDetails.lastBlock))
+    }
 
     const harvest = async () => {
         setLoadingHarvest(true)
@@ -71,8 +75,6 @@ const EarnTable = (props) => {
             context.setContext({'walletData': walletData})
             context.setContext({'walletDataLoading': false})
         }
-        // Get new 'last harvest'
-        getLastHarvest()
         // Notification to show txn complete
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
@@ -155,7 +157,6 @@ const EarnTable = (props) => {
                                                     harvest={harvest}
                                                     loadingHarvest={loadingHarvest}
                                                     lastHarvest={lastHarvest}
-                                                    getLastHarvest={getLastHarvest}
                                                 />
                                             )}
                                             <tr>
