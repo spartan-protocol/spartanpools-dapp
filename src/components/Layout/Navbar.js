@@ -30,17 +30,17 @@ const Navbar = (props) => {
                                 </div>
                             </li> */}
                             <li className="nav-item dropdown">
-                            <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2"/>{props.t('Pools')}</Link>
+                            <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2 align-middle"/>{props.t('Pools')}</Link>
                             </li>
                             <li className="nav-item dropdown">
-                            <Link to="/earn" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-money mr-2"/>{props.t('Earn')}</Link>
+                            <Link to="/earn" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-money mr-2 align-middle"/>{props.t('Earn')}</Link>
                             </li>
                             {/* <li className="nav-item dropdown">
-                            <Link to="/lock" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-lock mr-2"/>{props.t('Lock')}</Link>
+                            <Link to="/lock" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-lock mr-2 align-middle"/>{props.t('Lock')}</Link>
                             </li> */}
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" to="#">
-                                    <i className="bx bx-info-circle mr-2"/>{props.t('Info')} <div className="arrow-down ml-2"></div>
+                                    <i className="bx bx-info-circle mr-2 align-middle"/>{props.t('Info')}<div className="arrow-down ml-1 align-middle"></div>
                                 </Link>
                                 <div className={classname("dropdown-menu")}>
                                     <Link to="/faq" className="dropdown-item">{props.t('FAQ')}</Link>
