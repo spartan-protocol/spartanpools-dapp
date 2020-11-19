@@ -141,28 +141,42 @@ const AddressConn = (props) => {
         }
     }
 
-    /**
-   * Toggles the sidebar
-   */
-    const toggleRightbar = (cssClass) => {
+    const toggleRightbar = () => {
         manageBodyClass("right-bar-enabled");
     }
 
     return (
         <>
             {!context.walletData && context.walletDataLoading !== true &&
-                <div className="btn header-white mx-1" onClick={()=>connectWallet(props)}>
-                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-x-circle mx-1 float-right" style={{fontSize:22}}/></div>
-                </div>
+                <>
+                    <div className="btn ml-1" onClick={()=>connectWallet(props)}>
+                        <i className="bx bx-xs bx-border-circle bx-tada-hover bx-wallet bg-danger text-light float-left" />
+                    </div>
+                    <div className="btn mr-1" onClick={()=>connectWallet(props)}>
+                        <i className="bx bx-xs bx-border-circle bx-tada-hover bx-refresh bg-light text-danger float-right" />
+                    </div>
+                </>
             }
-            <div className="btn header-white mx-1" onClick={toggleRightbar}>
-                {context.walletData && context.walletDataLoading === true &&
-                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-loader-alt bx-spin mx-1 float-right" style={{fontSize:22}}/></div>
-                }
-                {context.walletData && context.walletDataLoading !== true &&
-                    <div><i className="bx bx-wallet float-left" style={{fontSize:22}}/><i className="bx bx-check-circle mx-1 float-right" style={{fontSize:22}}/></div>
-                }
-            </div>
+            {context.walletDataLoading === true &&
+                <>
+                    <div className="btn ml-1" onClick={toggleRightbar}>
+                        <i className="bx bx-xs bx-border-circle bx-wallet bg-warning text-light float-left" />
+                    </div>
+                    <div className="btn mr-1" onClick={getTokenArray}>
+                        <i className="bx bx-xs bx-border-circle bx-spin bx-loader bg-light text-warning float-right" />
+                    </div>
+                </>
+            }
+            {context.walletData && context.walletDataLoading !== true &&
+                <>
+                    <div className="btn ml-1" onClick={toggleRightbar}>
+                        <i className="bx bx-xs bx-border-circle bx-wallet bg-success text-light float-left d-inline-block" />
+                    </div>
+                    <div className="btn mr-1" onClick={getTokenArray}>
+                        <i className="bx bx-xs bx-border-circle bx-refresh bg-light text-success float-right" />
+                    </div>
+                </>
+            }
         </>
     )
 }
