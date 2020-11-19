@@ -67,35 +67,35 @@ const LanguageDropdown = (props) => {
         className="d-inline-block"
       >
         <DropdownToggle
-          className="btn header-item waves-effect mx-1"
+          className="btn header-item waves-effect mx-0"
           tag="button"
         >
           <img
             src={flag}
             alt="Spartan"
             height="22"
-            className="mr-1"
+            className=""
           />
         </DropdownToggle>
         <DropdownMenu className="language-switch" right>
           <DropdownItem tag="a" href="#" onClick={() => changeLanguageAction('eng')} className={`notify-item ${lng === 'English' ? 'active' : 'none'}`}>
-            <img src={usFlag} alt="Spartan" className="mr-1" height="12" />
+            <img src={usFlag} alt="Spartan" height="12" />
             <span className="align-middle">English</span>
           </DropdownItem>
           <DropdownItem tag="a" href="#" onClick={() => changeLanguageAction('sp')} className={`notify-item ${lng === 'Chinese' ? 'active' : 'none'}`}>
-            <img src={china} alt="Spartan" className="mr-1" height="12" />
+            <img src={china} alt="Spartan" height="12" />
             <span className="align-middle">Chinese</span>
           </DropdownItem>
           <DropdownItem tag="a" href="#" onClick={() => changeLanguageAction('gr')} className={`notify-item ${lng === 'German' ? 'active' : 'none'}`}>
-            <img src={russia} alt="Spartan" className="mr-1" height="12" />
+            <img src={russia} alt="Spartan" height="12" />
             <span className="align-middle">Russian</span>
           </DropdownItem>
           <DropdownItem tag="a" href="#" onClick={() => changeLanguageAction('it')} className={`notify-item ${lng === 'Italian' ? 'active' : 'none'}`}>
-            <img src={turkey} alt="Spartan" className="mr-1" height="12" />
+            <img src={turkey} alt="Spartan" height="12" />
             <span className="align-middle">Turkish</span>
           </DropdownItem>
             <DropdownItem tag="a" href="#" onClick={() => changeLanguageAction('vi')} className={`notify-item ${lng === 'Vietnamese' ? 'active' : 'none'}`}>
-                <img src={vietnam} alt="Spartan" className="mr-1" height="12" />
+                <img src={vietnam} alt="Spartan" height="12" />
                 <span className="align-middle">Vietnamese</span>
             </DropdownItem>
         </DropdownMenu>

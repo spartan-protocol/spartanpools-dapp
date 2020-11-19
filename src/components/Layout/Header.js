@@ -27,7 +27,7 @@ const Header = (props) => {
             <Container style={{maxWidth:'100%'}}>
               <Row className="align-items-center">
 
-                <Col xs={7} className="px-1 text-left">
+                <Col xs={6} className="px-1 text-left">
                   <Link to="/" className="logo d-block d-sm-none float-left mx-1">
                     <img src={logoLightSvg} alt="" height="40" />
                   </Link>
@@ -44,7 +44,7 @@ const Header = (props) => {
                   <ThemeSwitch />
                 </Col>
 
-                <Col xs={5} className="px-1 text-right">
+                <Col xs={6} className="px-1 text-right">
                   <LanguageDropdown/>
                   <AddressConn 
                     changeStates={props.changeStates}
