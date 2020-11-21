@@ -215,16 +215,16 @@ export const getPool = async (address) => {
     let bondListed = data[1]
     let poolDataRaw = data[2]
     let apy = data[3]
-    let decDiff = 18 - tokenDetails.decimals
+    let decDiff = 10 ** (18 - tokenDetails.decimals)
     let poolData = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
         'decimals': tokenDetails.decimals,
         'address': token,
-        'price': +poolDataRaw.baseAmount / (+poolDataRaw.tokenAmount * 10**decDiff),
+        'price': +poolDataRaw.baseAmount / (+poolDataRaw.tokenAmount * decDiff),
         'volume': +poolDataRaw.volume,
         'baseAmount': +poolDataRaw.baseAmount,
-        'tokenAmount': +poolDataRaw.tokenAmount,
+        'tokenAmount': (+poolDataRaw.tokenAmount * decDiff),
         'depth': 2 * +poolDataRaw.baseAmount,
         'txCount': +poolDataRaw.txCount,
         'apy': +apy,
@@ -314,12 +314,13 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
         let data = await Promise.all([getTokenContract(addr).methods.balanceOf(account).call(), getUtilsContract().methods.getTokenDetails(addr).call()])
         var balance = data[0]
         var details = data[1]
+        let decDiff = 10 ** (18 - details.decimals)
         //if (balance > 0) {
             walletData.push({
                 'symbol': details.symbol,
                 'name': details.name,
                 'decimals': details.decimals,
-                'balance': balance,
+                'balance': balance * decDiff,
                 'address': addr
             })
         //}
@@ -384,13 +385,17 @@ export const getNewTokenData = async (address, member) => {
         'address': token
     }
 
-    //console.log(tokenData)
+    console.log(tokenData)
     return tokenData
 }
 
 export const getTokenData = async (address, walletData) => {
-    const tokenData = walletData.find((item) => item.address === address)
-    return (tokenData)
+    var tokenData = []
+    console.log(walletData)
+    if (walletData.length > 0) {
+        tokenData = walletData.find((item) => item.address === address)
+    }
+    return tokenData
 }
 
 // Get all tokens on wallet that have a pool - swapping
