@@ -358,7 +358,7 @@ const AddLiquidity = (props) => {
         let tokenAmnt = liquidityData.tokenAmount / decDiff
         let contract = getRouterContract()
         //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, tokenAmnt, pool.address)
-        await contract.methods.addLiquidity(liquidityData.baseAmount, tokenAmnt.toString, pool.address).send({
+        await contract.methods.addLiquidity(liquidityData.baseAmount, tokenAmnt.toFixed(0), pool.address).send({
             from: context.account,
             gasPrice: '',
             gas: '',
