@@ -294,11 +294,11 @@ const NewSwap = (props) => {
         let inputAmount = sellData.input / decDiff
         let contract = getRouterContract()
         //console.log(sellData.input, outputTokenData.symbol, poolURL)
-        await contract.methods.swap(inputAmount, poolURL, SPARTA_ADDR).send({
+        await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).send({
             from: context.account,
             gasPrice: '',
             gas: '',
-            value: pool.address === BNB_ADDR ? inputAmount : 0
+            value: pool.address === BNB_ADDR ? inputAmount.toFixed(0) : 0
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
