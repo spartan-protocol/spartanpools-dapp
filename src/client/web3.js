@@ -325,7 +325,7 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
             })
         //}
     }
-    console.log(walletData)
+    //console.log(walletData)
     return walletData
 }
 
@@ -358,11 +358,12 @@ export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
             let data = await Promise.all([getTokenContract(tokenAddr).methods.balanceOf(account).call(), getUtilsContract().methods.getTokenDetails(tokenAddr).call()])
             var balance = data[0]
             var details = data[1]
+            let decDiff = 10 ** (18 - details.decimals)
             part2.push({
                 'symbol': details.symbol,
                 'name': details.name,
                 'decimals': details.decimals,
-                'balance': balance,
+                'balance': balance * decDiff,
                 'address': tokenAddr
             })
         }
@@ -377,21 +378,19 @@ export const getNewTokenData = async (address, member) => {
     let token = address === WBNB_ADDR ? BNB_ADDR : address
     var obj = await getUtilsContract().methods.getTokenDetailsWithMember(token, member).call()
     // var tokenBalance = await getTokenContract(token).methods.balanceOf(address).call()
-
     var tokenData = {
         'symbol': obj.symbol,
         'name': obj.name,
         'balance': token === BNB_ADDR ? await getBNBBalance(member) : obj.balance,
         'address': token
     }
-
-    console.log(tokenData)
+    //console.log(tokenData)
     return tokenData
 }
 
 export const getTokenData = async (address, walletData) => {
     var tokenData = []
-    console.log(walletData)
+    //console.log(walletData)
     if (walletData.length > 0) {
         tokenData = walletData.find((item) => item.address === address)
     }

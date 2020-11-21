@@ -48,6 +48,7 @@ const AddLiquidity = (props) => {
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
+        'decimals': 18,
         'address': 'XXX',
         'price': 0,
         'volume': 0,
@@ -353,13 +354,15 @@ const AddLiquidity = (props) => {
 
     const addLiquidity = async () => {
         setStartTx(true)
+        let decDiff = 10 ** (18 - pool.decimals)
+        let tokenAmnt = liquidityData.tokenAmount / decDiff
         let contract = getRouterContract()
-        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address)
-        await contract.methods.addLiquidity(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address).send({
+        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, tokenAmnt, pool.address)
+        await contract.methods.addLiquidity(liquidityData.baseAmount, tokenAmnt.toString, pool.address).send({
             from: context.account,
             gasPrice: '',
             gas: '',
-            value: pool.address === BNB_ADDR ? liquidityData.tokenAmount : 0
+            value: pool.address === BNB_ADDR ? tokenAmnt : 0
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
@@ -813,20 +816,20 @@ const AddAsymmPane = (props) => {
                         <br/>
                         <br/>
                         <br/>
-                        {convertFromWei(props.pool.depth) < 10000 && !props.approvalToken &&
+                        {convertFromWei(props.pool.depth) > 10000 && !props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
                                 <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve {props.pool.symbol}
                             </button>
                         }
                     </Col>
                     <Col xs={12}>
-                        {convertFromWei(props.pool.depth) < 10000 && props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 <i className="bx bx-spin bx-loader"/> ADD TO POOL
                             </div>
                         }
 
-                        {convertFromWei(props.pool.depth) < 10000 && props.approvalBase && props.approvalToken && !props.startTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && !props.startTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 ADD TO POOL
                             </div>
