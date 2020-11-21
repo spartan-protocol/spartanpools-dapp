@@ -46,6 +46,7 @@ const NewSwap = (props) => {
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
+        'decimals': 18,
         'address': 'XXX',
         'price': 0,
         'volume': 0,

@@ -813,20 +813,20 @@ const AddAsymmPane = (props) => {
                         <br/>
                         <br/>
                         <br/>
-                        {convertFromWei(props.pool.depth) > 10000 && !props.approvalToken &&
+                        {convertFromWei(props.pool.depth) < 10000 && !props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
-                                <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Unlock {props.pool.symbol}
+                                <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve {props.pool.symbol}
                             </button>
                         }
                     </Col>
                     <Col xs={12}>
-                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                        {convertFromWei(props.pool.depth) < 10000 && props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 <i className="bx bx-spin bx-loader"/> ADD TO POOL
                             </div>
                         }
 
-                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && !props.startTx &&
+                        {convertFromWei(props.pool.depth) < 10000 && props.approvalBase && props.approvalToken && !props.startTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 ADD TO POOL
                             </div>
@@ -911,11 +911,11 @@ const RemoveLiquidityPane = (props) => {
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
-        checkSharesDataReady(props)
+        checkSharesDataReady()
         // eslint-disable-next-line
     }, [])
 
-    const checkSharesDataReady = async (props) => {
+    const checkSharesDataReady = async () => {
         let pool = ''
         let params = queryString.parse(location.search)
         if (params.pool === BNB_ADDR) {pool = WBNB_ADDR}

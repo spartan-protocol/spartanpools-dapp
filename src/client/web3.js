@@ -215,11 +215,13 @@ export const getPool = async (address) => {
     let bondListed = data[1]
     let poolDataRaw = data[2]
     let apy = data[3]
+    let decDiff = 18 - tokenDetails.decimals
     let poolData = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
+        'decimals': tokenDetails.decimals,
         'address': token,
-        'price': +poolDataRaw.baseAmount / +poolDataRaw.tokenAmount,
+        'price': +poolDataRaw.baseAmount / (+poolDataRaw.tokenAmount * 10**decDiff),
         'volume': +poolDataRaw.volume,
         'baseAmount': +poolDataRaw.baseAmount,
         'tokenAmount': +poolDataRaw.tokenAmount,
@@ -272,18 +274,21 @@ export const getWalletData = async (address) => {
     walletData.push({
         'symbol': 'SPARTA',
         'name': 'Sparta',
+        'decimals': 18,
         'balance': await getTokenContract(SPARTA_ADDR).methods.balanceOf(address).call(),
         'address': SPARTA_ADDR
     })
     walletData.push({
         'symbol': 'BNB',
         'name': 'BNB',
+        'decimals': 18,
         'balance': await getBNBBalance(address),
         'address': BNB_ADDR
     })
     walletData.push({
         'symbol': 'WBNB',
         'name': 'Wrapped BNB',
+        'decimals': 18,
         'balance': await getTokenContract(WBNB_ADDR).methods.balanceOf(address).call(),
         'address': WBNB_ADDR
     })
@@ -313,12 +318,13 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
             walletData.push({
                 'symbol': details.symbol,
                 'name': details.name,
+                'decimals': details.decimals,
                 'balance': balance,
                 'address': addr
             })
         //}
     }
-    //console.log(walletData)
+    console.log(walletData)
     return walletData
 }
 
@@ -342,6 +348,7 @@ export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
             part2.push({
                 'symbol': 'BNB',
                 'name': 'BNB',
+                'decimals': 18,
                 'balance': await getBNBBalance(account),
                 'address': BNB_ADDR
             })
@@ -353,6 +360,7 @@ export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
             part2.push({
                 'symbol': details.symbol,
                 'name': details.name,
+                'decimals': details.decimals,
                 'balance': balance,
                 'address': tokenAddr
             })

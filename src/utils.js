@@ -19,15 +19,17 @@ export function formatBN(BN, n=2){
 
 export const one = 10**18;
 
-export function convertFromWei(number) {
+export function convertFromWei(number, decimals) {
+    if (decimals === undefined) {decimals = 18}
     var num = new BigNumber(number)
-    var final = num.div(10**18)
+    var final = num.div(10**decimals)
     return final
 }
 
-export function convertToWei(number) {
+export function convertToWei(number, decimals) {
+    if (decimals === undefined) {decimals = 18}
     var num = new BigNumber(number)
-    var final = num.multipliedBy(10**18)
+    var final = num.multipliedBy(10**decimals)
     return final
 }
 

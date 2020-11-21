@@ -133,6 +133,7 @@ export const AssetTable = () => {
                     <AssetItem 
                       key={c.address}
                       symbol={c.symbol}
+                      decimals={c.decimals}
                       address={c.address}
                       balance={c.balance}
                     />
@@ -166,7 +167,7 @@ export const AssetItem = (props) => {
           <TokenIcon address={props.address}/>
         </td>
         <td>
-          <h5>{formatAllUnits(convertFromWei(props.balance))}</h5>
+          <h5>{formatAllUnits(convertFromWei(props.balance, props.decimals))}</h5>
           <h6>{props.symbol}</h6>
         </td>
       </tr>
