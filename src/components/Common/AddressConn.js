@@ -23,7 +23,7 @@ const AddressConn = (props) => {
         // eslint-disable-next-line
     }, [])
 
-    const getTokenArray = async (props) => {
+    const getTokenArray = async () => {
         // (tokenArray) LISTED TOKENS | USED: RIGHT-BAR + EARN TABLE + POOL TABLE + ADD LIQ + SWAP
         context.setContext({'tokenArrayLoading': true})
         let tokenArray = await getListedTokens()

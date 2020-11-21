@@ -48,6 +48,7 @@ const AddLiquidity = (props) => {
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
+        'decimals': 18,
         'address': 'XXX',
         'price': 0,
         'volume': 0,
@@ -353,13 +354,15 @@ const AddLiquidity = (props) => {
 
     const addLiquidity = async () => {
         setStartTx(true)
+        let decDiff = 10 ** (18 - pool.decimals)
+        let tokenAmnt = liquidityData.tokenAmount / decDiff
         let contract = getRouterContract()
-        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address)
-        await contract.methods.addLiquidity(liquidityData.baseAmount, liquidityData.tokenAmount, pool.address).send({
+        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, tokenAmnt, pool.address)
+        await contract.methods.addLiquidity(liquidityData.baseAmount, tokenAmnt.toString, pool.address).send({
             from: context.account,
             gasPrice: '',
             gas: '',
-            value: pool.address === BNB_ADDR ? liquidityData.tokenAmount : 0
+            value: pool.address === BNB_ADDR ? tokenAmnt : 0
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
@@ -815,7 +818,7 @@ const AddAsymmPane = (props) => {
                         <br/>
                         {convertFromWei(props.pool.depth) > 10000 && !props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
-                                <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Unlock {props.pool.symbol}
+                                <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve {props.pool.symbol}
                             </button>
                         }
                     </Col>
@@ -911,11 +914,11 @@ const RemoveLiquidityPane = (props) => {
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     useEffect(() => {
-        checkSharesDataReady(props)
+        checkSharesDataReady()
         // eslint-disable-next-line
     }, [])
 
-    const checkSharesDataReady = async (props) => {
+    const checkSharesDataReady = async () => {
         let pool = ''
         let params = queryString.parse(location.search)
         if (params.pool === BNB_ADDR) {pool = WBNB_ADDR}

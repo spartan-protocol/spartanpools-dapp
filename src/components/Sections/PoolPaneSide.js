@@ -108,7 +108,7 @@ const PoolPaneSide = (props) => {
                                                 <p className="mb-0">Depth</p>
                                             </td>
                                             <td className='text-center'>
-                                                <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.tokenAmount))} {props.pool.symbol}</h5>
+                                                <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.tokenAmount, props.pool.decimals))} {props.pool.symbol}</h5>
                                                 <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.baseAmount))} SPARTA</h5>
                                             </td>
                                             {/*

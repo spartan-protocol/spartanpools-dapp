@@ -15,7 +15,7 @@ import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getNewTokenData,
+    getPoolData, getTokenData,
     getPool, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 
@@ -46,6 +46,7 @@ const NewSwap = (props) => {
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
+        'decimals': 18,
         'address': 'XXX',
         'price': 0,
         'volume': 0,
@@ -107,21 +108,14 @@ const NewSwap = (props) => {
     useEffect(() => {
         checkPoolReady()
     // eslint-disable-next-line
-    }, [context.poolsData])
-
-    useEffect(() => {
-        if (context.poolsDataComplete === true) {
-            getData()
-        }
-    // eslint-disable-next-line
-    }, [context.walletData])
+    }, [context.poolsData,context.walletData])
 
     const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
         if (context.poolsData) {
             var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
             if (existsInPoolsData === true) {
-                getData()
+                checkWalletReady()
             }
             else {
                 await pause(3000)
@@ -134,6 +128,24 @@ const NewSwap = (props) => {
         }
     }
 
+    const checkWalletReady = async () => {
+        let params = queryString.parse(props.location.search)
+        if (context.walletData) {
+            var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
+            if (existsInWalletData === true) {
+                getData()
+            }
+            else {
+                await pause(3000)
+                checkWalletReady()
+            }
+        }
+        else {
+            await pause(3000)
+            checkWalletReady()
+        }
+    }
+
     const getData = async () => {
         let params = queryString.parse(props.location.search)
         if (params.pool !== undefined) {
@@ -142,7 +154,7 @@ const NewSwap = (props) => {
             const pool = await getPoolData(params.pool, context.poolsData)
             setPool(pool)
 
-            let data = await Promise.all([getNewTokenData(SPARTA_ADDR, context.account), getNewTokenData(pool.address, context.account)])
+            let data = await Promise.all([getTokenData(SPARTA_ADDR, context.walletData), getTokenData(pool.address, context.walletData)])
             const inputTokenData = data[0]
             const outputTokenData = data[1]
             setInputTokenData(inputTokenData)
@@ -164,7 +176,7 @@ const NewSwap = (props) => {
     }
 
     const getSwapData = async (input, inputTokenData, outputTokenData, poolData, toBase) => {
-        var output;
+        var output
         var slip
         var fee
         var actualSlip
@@ -278,13 +290,15 @@ const NewSwap = (props) => {
 
     const sell = async () => {
         setStartTx(true)
+        let decDiff = 10 ** (18 - pool.decimals)
+        let inputAmount = sellData.input / decDiff
         let contract = getRouterContract()
         //console.log(sellData.input, outputTokenData.symbol, poolURL)
-        await contract.methods.swap(sellData.input, poolURL, SPARTA_ADDR).send({
+        await contract.methods.swap(inputAmount, poolURL, SPARTA_ADDR).send({
             from: context.account,
             gasPrice: '',
             gas: '',
-            value: pool.address === BNB_ADDR ? sellData.input : 0
+            value: pool.address === BNB_ADDR ? inputAmount : 0
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
@@ -317,7 +331,7 @@ const NewSwap = (props) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
-    const toggleRightbar = (cssClass) => {
+    const toggleRightbar = () => {
         manageBodyClass("right-bar-enabled");
     };
 

@@ -25,7 +25,7 @@ export const InputPaneSwap = (props) => {
                     <Col sm="6" className='px-1'>
                         <InputGroup className="mb-1 currency-value">
                             <InputGroupAddon addonType="prepend" className="input-group-text w-100">
-                                {props.pool.address !== "XXX" && props.paneData?.symbol === 'SPARTA' &&
+                                {props.paneData?.symbol === 'SPARTA' &&
                                 <>
                                     <TokenIcon address={SPARTA_ADDR}/><h5 className='mb-0 ml-2'>Sell SPARTA</h5>
                                 </>

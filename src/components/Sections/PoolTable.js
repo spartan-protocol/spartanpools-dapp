@@ -48,6 +48,7 @@ const PoolTable = (props) => {
                                                 scope="row"
                                                 address={c.address}
                                                 symbol={c.symbol}
+                                                decimals={c.decimals}
                                                 price={c.price}
                                                 depth={c.depth}
                                                 volume={c.volume}
