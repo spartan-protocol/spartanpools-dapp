@@ -110,14 +110,10 @@ const BondComponent = (props) => {
     const refreshData = async () => {
         let params = queryString.parse(props.location.search)
         if (context.walletDataLoading !== true) {
-            // Refresh BNB balance
+            // Refresh BNB & TOKEN balance
             context.setContext({'walletDataLoading': true})
             let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
-            // Refresh TOKEN balance
-            context.setContext({'walletDataLoading': true})
-            walletData = await updateWalletData(context.account, context.walletData, params.pool)
+            walletData = await updateWalletData(context.account, walletData, params.pool)
             context.setContext({'walletData': walletData})
             context.setContext({'walletDataLoading': false})
         }

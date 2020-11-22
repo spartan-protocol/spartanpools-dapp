@@ -64,14 +64,10 @@ const EarnTable = (props) => {
 
     const refreshData = async () => {
         if (context.walletDataLoading !== true) {
-            // Refresh BNB balance
+            // Refresh BNB & SPARTA balance
             context.setContext({'walletDataLoading': true})
             let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
-            // Refresh SPARTA balance
-            context.setContext({'walletDataLoading': true})
-            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
+            walletData = await updateWalletData(context.account, walletData, SPARTA_ADDR)
             context.setContext({'walletData': walletData})
             context.setContext({'walletDataLoading': false})
         }
