@@ -95,14 +95,7 @@ const AddLiquidity = (props) => {
         checkPoolReady()
         checkSharesDataReady()
     // eslint-disable-next-line
-      }, [context.poolsData, context.walletData])
-
-    useEffect(() => {
-        if (context.poolsDataComplete === true) {
-            getData()
-        }
-    // eslint-disable-next-line
-    }, [context.walletData])
+    }, [context.poolsData, context.walletData])
 
     const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
@@ -141,9 +134,9 @@ const AddLiquidity = (props) => {
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
-        const pool = await getPoolData(params.pool, context.poolsData)
-        setPool(pool)
-        let data = await Promise.all([getTokenData(SPARTA_ADDR, context.walletData), getTokenData(pool.address, context.walletData)])
+        const tempPool = await getPoolData(params.pool, context.poolsData)
+        setPool(tempPool)
+        let data = await Promise.all([getTokenData(SPARTA_ADDR, context.walletData), getTokenData(tempPool.address, context.walletData)])
         const baseData = data[0]
         const tokenData = data[1]
 
@@ -158,12 +151,12 @@ const AddLiquidity = (props) => {
         setUserData(_userData)
         //console.log(baseData?.balance, tokenData?.balance)
 
-        let liquidityData = await getPairedAmount(baseData?.balance, tokenData?.balance, pool)
+        let liquidityData = await getPairedAmount(baseData?.balance, tokenData?.balance, tempPool)
         setLiquidityData(liquidityData)
-        const estLiquidityUnits = await getLiquidityUnits(liquidityData, pool)
+        const estLiquidityUnits = await getLiquidityUnits(liquidityData, tempPool)
         setLiquidityUnits(estLiquidityUnits)
 
-        data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+        data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(tempPool.address)])
         setApprovalBase(data[0])
         setApprovalToken(data[1])
     }
@@ -306,10 +299,12 @@ const AddLiquidity = (props) => {
 
     const changeWithdrawAmount = async (amount) => {
         setWithdrawAmount(amount)
+        let decDiff = 10 ** (18 - pool.decimals)
         let poolShare = await getPoolShares(context.account, pool.address)
+        let tokenAmnt = +poolShare.tokenAmount * decDiff
         let withdrawData = {
             'baseAmount': (+poolShare.baseAmount * amount) / 100,
-            'tokenAmount': (+poolShare.tokenAmount * amount) / 100,
+            'tokenAmount': (+tokenAmnt * amount) / 100,
             'lpAmount': (+poolShare.units * amount) / 100,
         }
         setWithdrawData(withdrawData)
@@ -389,19 +384,11 @@ const AddLiquidity = (props) => {
     const updatePool = async () => {
         setPool(await getPool(pool.address))
         if (context.walletDataLoading !== true) {
-            // Refresh BNB balance
+            // Refresh BNB, SPARTA & TOKEN balance
             context.setContext({'walletDataLoading': true})
             let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
-            // Refresh SPARTA balance
-            context.setContext({'walletDataLoading': true})
-            walletData = await updateWalletData(context.account, context.walletData, SPARTA_ADDR)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
-            // Refresh TOKEN balance
-            context.setContext({'walletDataLoading': true})
-            walletData = await updateWalletData(context.account, context.walletData, pool.address)
+            walletData = await updateWalletData(context.account, walletData, SPARTA_ADDR)
+            walletData = await updateWalletData(context.account, walletData, pool.address)
             context.setContext({'walletData': walletData})
             context.setContext({'walletDataLoading': false})
         }
@@ -417,7 +404,7 @@ const AddLiquidity = (props) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
-    const toggleRightbar = (cssClass) => {
+    const toggleRightbar = () => {
         manageBodyClass("right-bar-enabled");
     };
 
@@ -634,11 +621,11 @@ const AddSymmPane = (props) => {
                                     <UncontrolledTooltip placement="right" target="tooltipUnits">
                                         An estimate of the amount of LP tokens you will receive from this transaction.
                                     </UncontrolledTooltip>
-                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h6>
+                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))}</h6>
                                 </div>
                             </td>
                             <td className="d-none d-lg-table-cell">
-                                <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
+                                <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))}</h5>
                             </td>
                         </tr>
                         <tr>
@@ -916,7 +903,7 @@ const RemoveLiquidityPane = (props) => {
     useEffect(() => {
         checkSharesDataReady()
         // eslint-disable-next-line
-    }, [])
+    }, [context.sharesData])
 
     const checkSharesDataReady = async () => {
         let pool = ''
