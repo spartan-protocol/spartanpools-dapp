@@ -558,7 +558,7 @@ const AddSymmPane = (props) => {
 
     const [showModal, setShowModal] = useState(false);
     const toggle = () => setShowModal(!showModal);
-    const remainder = convertFromWei(props.userData.balance - props.userData.input)
+    const remainder = convertFromWei(props.userData.balance - props.liquidityData.tokenAmnt)
 
     const checkEnoughForGas = () => {
         if (props.userData.symbol === 'BNB') { // if input Symbol is BNB
@@ -764,6 +764,20 @@ const AddAsymmPane = (props) => {
             <div className="table-responsive mt-6">
                 <table className="table table-centered table-nowrap mb-0">
                     <tbody>
+                    <tr>
+                        <td style={{width: "100%"}}>
+                            <div className="mb-0 text-left">
+                                <span id="tooltipAddBaseAsym">Add {props.userData.symbol} <i className="bx bx-info-circle align-middle"/></span>
+                                <UncontrolledTooltip placement="right" target="tooltipAddBaseAsym">
+                                    The quantity of {props.userData.symbol} you are adding to the pool.
+                                </UncontrolledTooltip>
+                                <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h6>
+                            </div>
+                        </td>
+                        <td className="d-none d-lg-table-cell">
+                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h5>
+                        </td>
+                    </tr>
                     <tr>
                         <td style={{width: "100%"}}>
                             <div className="mb-0 text-left">
