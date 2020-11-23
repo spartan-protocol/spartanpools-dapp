@@ -70,11 +70,13 @@ export const PoolTableItem = (props) => {
                         </Link>
                     }
                 </td>
-                    
-                {!context.walletData && context.walletDataLoading !== true &&
-                    <h6 className="m-1">Connect Wallet</h6>
-                }
-               
+            </tr>
+            <tr>
+                <td>
+                    {!context.walletData && context.walletDataLoading !== true &&
+                        <h6 className="m-1">Connect Wallet</h6>
+                    }
+                </td>
             </tr>
         </>
 )
