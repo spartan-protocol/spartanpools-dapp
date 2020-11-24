@@ -477,7 +477,7 @@ const AddLiquidity = (props) => {
                                                         </NavItem>
                                                     </Nav>
                                                     <TabContent activeTab={activeTab} className="crypto-buy-sell-nav-content p-4">
-                                                        <TabPane tabId="1" id="buy">
+                                                        <TabPane tabId="1" id="buy-tab">
                                                             <AddSymmPane
                                                                 pool={pool}
                                                                 userData={userData}
@@ -494,6 +494,7 @@ const AddLiquidity = (props) => {
                                                                 startTx={startTx}
                                                                 endTx={endTx}
                                                                 activeTab={activeTab}
+                                                                tabId='1'
                                                             />
                                                         </TabPane>
                                                         <TabPane tabId="2" id="sell-tab">
@@ -514,9 +515,10 @@ const AddLiquidity = (props) => {
                                                                 endTx={endTx}
                                                                 activeTab={activeTab}
                                                                 toggleTab={toggleTab}
+                                                                tabId='2'
                                                             />
                                                         </TabPane>
-                                                        <TabPane tabId="3" id="sell-tab">
+                                                        <TabPane tabId="3" id="remove-tab">
                                                             <RemoveLiquidityPane
                                                                 pool={pool}
                                                                 userData={userData}
@@ -527,6 +529,7 @@ const AddLiquidity = (props) => {
                                                                 withdrawData={withdrawData}
                                                                 startTx={startTx}
                                                                 endTx={endTx}
+                                                                tabId='3'
                                                                 location={props.location.search}
                                                             />
                                                         </TabPane>
@@ -581,6 +584,7 @@ const AddSymmPane = (props) => {
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}
                 activeTab={props.activeTab}
+                tabId={props.tabId}
             />
             <br/>
             <div className="table-responsive mt-6">
@@ -755,6 +759,7 @@ const AddAsymmPane = (props) => {
                 paneData={props.userData}
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}
+                tabId={props.tabId}
             />
             <br/>
             <UncontrolledAlert color="secondary" className="alert-dismissible fade show" role="alert">
@@ -960,7 +965,7 @@ const RemoveLiquidityPane = (props) => {
     return (
         <>
 
-            <OutputPane changeAmount={props.changeWithdrawAmount}/>
+            <OutputPane changeAmount={props.changeWithdrawAmount} tabId={props.tabId} />
 
             <div className="table-responsive mt-6">
                 <table className="table table-centered table-nowrap mb-0">

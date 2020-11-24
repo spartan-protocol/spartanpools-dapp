@@ -105,7 +105,7 @@ export const OutputPane = (props) => {
     return (
         <div className="text-center">
 
-            <PercentButtonRow changeAmount={props.changeAmount}/>
+            <PercentButtonRow changeAmount={props.changeAmount} tabId={props.tabId} />
                 {/* // eslint-disable-next-line
                 <Center>
                     {!secondToken &&
@@ -166,17 +166,30 @@ export const PercentButtonRow = (props) => {
         minWidth: '15%',
     }
 
-    // USE THIS TO CLEAR INPUT ON PRESS: document.getElementsByClassName('manualInput').value = '';
+    const clearManualInput = () => {
+        const inputEl = document.getElementById('manualInput' + props.tabId)
+        if (inputEl) {inputEl.value = ''}
+    }
+
     return (
         <>
             <Col xs={24}>
                 <Button color="primary" type="button" style={btnStyle} onClick={()=>{
+                    clearManualInput();
                     change25();
-                    document.getElementsByClassName('manualInput').value = '';
                 }}>25%</Button>
-                <Button color="primary" type="button" style={btnStyle} onClick={change50}>50%</Button>
-                <Button color="primary" type="button" style={btnStyle} onClick={change75}>75%</Button>
-                <Button color="primary" style={btnStyle} onClick={change100}>All</Button>
+                <Button color="primary" type="button" style={btnStyle} onClick={()=>{
+                    clearManualInput();
+                    change50();
+                }}>50%</Button>
+                <Button color="primary" type="button" style={btnStyle} onClick={()=>{
+                    clearManualInput();
+                    change75();
+                }}>75%</Button>
+                <Button color="primary" style={btnStyle} onClick={()=>{
+                    clearManualInput();
+                    change100();
+                }}>All</Button>
             </Col>
         </>
     )
