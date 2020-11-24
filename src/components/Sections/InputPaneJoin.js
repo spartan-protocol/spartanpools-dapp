@@ -76,11 +76,11 @@ export const InputPaneJoin = (props) => {
                     <Col sm="12">
                         <InputGroup className="mb-3">
                             <InputGroupAddon addonType="prepend">
-                                <Label className="input-group-text">{props.t("Total")}</Label>
+                                <Label className="input-group-text">{props.t("Input")}</Label>
                             </InputGroupAddon>
                             <Input type="text" className="form-control" onChange={props.onInputChange}
-                                   placeholder={formatAllUnits(convertFromWei(props.paneData?.input))}
-                                   bssize={'large'}
+                                   bssize={'large'} id={"manualInput" + props.tabId}
+                                   placeholder={'Manually input ' + props.paneData?.symbol + ' here'}
                                 // defaultValue={convertFromWei(props.paneData?.input)}
                                 //   allowClear={true}
                                 // addonAfter={<TokenDropDown default={props.paneData?.address}
@@ -93,7 +93,7 @@ export const InputPaneJoin = (props) => {
             </FormGroup>
             <br/>
             <div className="text-center">
-                <PercentButtonRow changeAmount={props.changeAmount}/>
+                <PercentButtonRow changeAmount={props.changeAmount} tabId={props.tabId} />
             </div>
             <br/>
         </div>
