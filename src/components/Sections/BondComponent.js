@@ -10,14 +10,14 @@ import Notification from '../Common/notification'
 import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince } from '../../utils'
 
 import {
-    Row, Col, InputGroup, InputGroupAddon, Label,
+    Row, Col, InputGroup, InputGroupAddon, Label, UncontrolledTooltip,
     FormGroup, Card, CardTitle, CardSubtitle, CardBody,
     Spinner, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, Progress
 } from "reactstrap"
 
 import { withNamespaces } from 'react-i18next'
 import { TokenIcon } from "../Common/TokenIcon";
-import { PercentButtonRow } from "../common";
+import { PercentSlider } from "../common";
 import { withRouter } from "react-router-dom"
 import { Doughnut } from 'react-chartjs-2';
 
@@ -88,7 +88,7 @@ const BondComponent = (props) => {
         const pool = await getPoolData(params.pool, context.poolsData)
         var tokenData = ''
         
-        if (!context.tokenData && context.walletData) {
+        if (!context.tokenData && context.walletData && pool) {
             tokenData = await getTokenData(pool.address, context.walletData)
            
         } else {
@@ -293,7 +293,7 @@ const BondComponent = (props) => {
         ],
         datasets: [
             {
-                data: [(convertFromWei(estLiqTokens)*25/100).toFixed(2),(convertFromWei(estLiqTokens)*75/100).toFixed(2)],
+                data: [(0),(convertFromWei(estLiqTokens)*100/100).toFixed(2)],
                 backgroundColor: [
                     "#556ee6",
                     "#34c38f"
@@ -373,23 +373,19 @@ const BondComponent = (props) => {
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
-                                
+                            {userData.symbol !== 'XXX' &&
                                 <div className="table-responsive">
                                     <CardTitle><h4>Bond {userData.symbol} to Mint SPARTA</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
                                         <h6>Bond assets into the pools. </h6>
                                         <li>The equivalent purchasing power in SPARTA is minted with both assets added symmetrically to the {userData.symbol}:SPARTA liquidity pool.</li>
                                         <li>LP tokens will be issued as usual and vested to you over a 12 month period.</li>
-
-                                        
                                     </CardSubtitle>
                                     
                                     <Col sm="10" md="6">
                                     <p><strong>{formatAllUnits(convertFromWei(spartaAllocation))}</strong>  Remaining Sparta Allocation.</p>
                                         <div><Progress color="info" value={(2500000 - convertFromWei(spartaAllocation))*100/2500000} /></div>
                                         <br/>
-                                              
-                                        {userData.symbol !== 'XXX' &&
                                             <div className="mb-3">
                                                 <label className="card-radio-label mb-2">
                                                     <input type="radio" name="currency" className="card-radio-input" />
@@ -408,28 +404,33 @@ const BondComponent = (props) => {
                                                     </div>
                                                 </label>
                                             </div>
-                                        }
-                                        {userData.symbol === 'XXX' &&
-                                            <div className="text-center m-2"><i className="bx bx-spin bx-loader" /></div>
-                                        }
                                         <FormGroup>
                                             <Row>
                                                 <Col sm="12">
                                                     <InputGroup className="mb-1">
                                                         <InputGroupAddon addonType="prepend">
-                                                            <Label className="input-group-text">{props.t("Total")}</Label>
+                                                            <Label className="input-group-text">{props.t("Input")}</Label>
                                                         </InputGroupAddon>
                                                         <Input type="text" className="form-control" onChange={onInputChange}
-                                                            placeholder={formatAllUnits(convertFromWei(userData.input))}
-                                                            bssize={'large'}
+                                                            placeholder={'Manually input ' + userData.symbol + ' here'}
+                                                            bssize={'large'} id={"manualInput-" + props.name}
                                                         ></Input>
                                                     </InputGroup>
                                                 </Col>
                                             </Row>
                                         </FormGroup>
                                         <div className="text-center">
-                                            <PercentButtonRow changeAmount={onChange} />
+                                            <PercentSlider changeAmount={onChange} name={props.name} />
                                         </div>
+
+                                        <Row>
+                                            <Col xs={4} className='py-1'>
+                                                <h6 className='font-weight-light m-0'>{props.t("Input")} <i className="bx bx-info-circle align-middle" id="tooltipBondInput" role='button'/></h6>
+                                                <UncontrolledTooltip placement="right" target="tooltipBondInput">Estimated input amount</UncontrolledTooltip>
+                                            </Col>
+                                            <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(userData.input))} {userData.symbol}*</h6></Col>
+                                        </Row>
+
                                         <br />
                                         <Row>
                                             <Col xs={12}>
@@ -458,7 +459,7 @@ const BondComponent = (props) => {
                                         </Row>
 
                                     </Col>
-                                  
+                                
                                     <Modal isOpen={showBondModal} toggle={toggleLock}>
                                         <ModalHeader toggle={toggleLock}>You are bonding {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} and {formatAllUnits(convertFromWei(spartaEstimatedAllocation))} SPARTA into the pool for 12 months!</ModalHeader>
                                         <ModalBody>
@@ -522,7 +523,7 @@ const BondComponent = (props) => {
                                         <h6>For your convenience, LP Tokens will be locked into the DAO to earn more SPARTA for you</h6> 
                                         </div>
                                         }
-                                           
+                                        
                                             {formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && 
                                             <div>
                                                 <h6>Early Bonder Found!</h6>
@@ -531,41 +532,47 @@ const BondComponent = (props) => {
                                                 <li><strong>2.</strong> Claim and Lock LP Tokens</li>
                                             </div>
                                             }
-                                             
+                                            
                                         </ModalBody>
                                         <ModalFooter>
                                             {showClaimNewModal && 
-                                              <Button color="primary" onClick={() => {
-                                                  if(formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001){
+                                            <Button color="primary" onClick={() => {
+                                                if(formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001){
                                                     toggleNewClaim()
-                                                  }else{
-                                                      toggleClaim()
-                                                  }
+                                                }else{
+                                                    toggleClaim()
+                                                }
                                                 
-                                                     claimOldLP();
+                                                    claimOldLP();
                                                 }}>
                                                 Claim Early Bonder LP Tokens!
                                                 </Button>
-                                          
-                                             }
-                                             {!showClaimNewModal && 
-                                       
-                                             <Button color="primary" onClick={() => {
-                                                toggleClaim();
-                                               claimNewLP();
-                                           }}>
-                                           Claim and Lock LP Tokens!
-                                           </Button>
+                                        
+                                            }
+                                            {!showClaimNewModal && 
                                     
-                                             }
+                                            <Button color="primary" onClick={() => {
+                                                toggleClaim();
+                                            claimNewLP();
+                                        }}>
+                                        Claim and Lock LP Tokens!
+                                        </Button>
+                                    
+                                            }
                                         </ModalFooter>
                                         
-                                     </Modal>
+                                    </Modal>
                                     }
                                 </div>
-                                {context.sharesDataLoading !== true && !context.walletData &&
-                                    <div className="text-center m-2">Please connect your wallet to proceed</div>
-                                }
+
+                            }
+                            {userData.symbol === 'XXX' &&
+                                <div className="text-center m-2"><i className="bx bx-spin bx-loader" /></div>
+                            }
+
+                            {context.sharesDataLoading !== true && !context.walletData &&
+                                <div className="text-center m-2">Please connect your wallet to proceed</div>
+                            }
                                
                         </CardBody>
                     </Card>
