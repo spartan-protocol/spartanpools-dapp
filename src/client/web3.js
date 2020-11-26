@@ -7,7 +7,8 @@ import ROUTER from '../artifacts/Router.json'
 import POOLS from '../artifacts/Pool.json'
 import UTILS from '../artifacts/Utils.json'
 import DAO from '../artifacts/Dao.json'
-import BOND from '../artifacts/Bond.json'
+import Bondv2 from '../artifacts/BondV2.json'
+import Bondv3 from '../artifacts/BondV3.json'
 
 const net = '';
 
@@ -17,7 +18,8 @@ export const SPARTA_ADDR = net === 'testnet' ? '0xb58a43D2D9809ff4393193de536F24
 export const UTILS_ADDR = net === 'testnet' ? '0x0a30aF25e652354832Ec5695981F2ce8b594e8B3' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
 export const DAO_ADDR = net === 'testnet' ? '0x1b83a813045165c81d84b9f5d6916067b57FF9C0' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
 export const ROUTER_ADDR = net === 'testnet' ? '0xd992130bB595f77B6cAC22fBdb5EBAc888CDe850' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
-export const BOND_ADDR = net === 'testnet' ? '0x7e44b5461A50adB15329895b80866275192a54f6' : '0xE6844821B03828Fd4067167Bc258FA1EEFD1cCdf'
+export const BONDv2_ADDR = net === 'testnet' ? '0x7e44b5461A50adB15329895b80866275192a54f6' : '0xE6844821B03828Fd4067167Bc258FA1EEFD1cCdf'
+export const BONDv3_ADDR = net === 'testnet' ? '0xa11D0a9F919EDc6D72aF8F90D56735cAd0EBE836' : '0xf2EbA4b92fAFD47a6403d24a567b38C07D7A5b43'
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -25,7 +27,8 @@ export const POOLS_ABI = POOLS.abi
 export const ERC20_ABI = ERC20.abi
 export const UTILS_ABI = UTILS.abi
 export const DAO_ABI = DAO.abi
-export const BOND_ABI = BOND.abi
+export const BONDv2_ABI = Bondv2.abi
+export const BONDv3_ABI = Bondv3.abi
 
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "http://localhost:7545")
@@ -98,9 +101,13 @@ export const getDaoContract = () => {
     var web3 = getWeb3()
     return new web3.eth.Contract(DAO_ABI, DAO_ADDR)
 }
-export const getBondContract = () => {
+export const getBondv2Contract = () => {
     var web3 = getWeb3()
-    return new web3.eth.Contract(BOND_ABI, BOND_ADDR)
+    return new web3.eth.Contract(BONDv2_ABI, BONDv2_ADDR)
+}
+export const getBondv3Contract = () => {
+    var web3 = getWeb3()
+    return new web3.eth.Contract(BONDv3_ABI, BONDv3_ADDR)
 }
 
 // Get just an array of tokens that can be upgraded
@@ -210,7 +217,7 @@ export const getNextPoolsData = async (tokenArray, prevPoolsData) => {
 export const getPool = async (address) => {
     var contract = getUtilsContract()
     let token = address === WBNB_ADDR ? BNB_ADDR : address
-    let data = await Promise.all([contract.methods.getTokenDetails(token).call(), getBondContract().methods.isListed(token).call(), contract.methods.getPoolData(token).call(), contract.methods.getPoolAPY(token).call()])
+    let data = await Promise.all([contract.methods.getTokenDetails(token).call(), getBondv3Contract().methods.isListed(token).call(), contract.methods.getPoolData(token).call(), contract.methods.getPoolAPY(token).call()])
     let tokenDetails = data[0]
     let bondListed = data[1]
     let poolDataRaw = data[2]
@@ -550,30 +557,30 @@ export const getTotalWeight = async () => {
 }
 
 // Note that 'lastBlock' in the resulting array = UNIX timestamp
-export const getBondedMemberDetails = async (member, asset) => {
-    let memberDetails = await getBondContract().methods.getMemberDetails(member, asset).call()
+export const getBondedv2MemberDetails = async (member, asset) => {
+    let memberDetails = await getBondv2Contract().methods.getMemberDetails(member, asset).call()
+    return memberDetails;
+}
+export const getBondedv3MemberDetails = async (member, asset) => {
+    let memberDetails = await getBondv3Contract().methods.getMemberDetails(member, asset).call()
     return memberDetails;
 }
 
-export const getClaimableLP = async (member, asset) => {
-    let bondedLp = await getBondContract().methods.calcClaimBondedLP(member, asset).call()
+export const getClaimableLPBondv2 = async (member, asset) => {
+    let bondedLp = await getBondv2Contract().methods.calcClaimBondedLP(member, asset).call()
     return bondedLp;
 }
-export const getListedCount = async () => {
-    let listedCount = await getBondContract().methods.assetListedCount().call()
-    return listedCount;
-}
-export const getAllListedAssets = async () => {
-    let allListedAssets = await getBondContract().methods.allListedAssets().call()
-    return allListedAssets;
-}
-
-export const checkListed = async (asset) => {
-    let isListed = await getBondContract().methods.isListed(asset).call()
-return isListed;
+export const getClaimableLPBondv3 = async (member, asset) => {
+    let MemberDetails = await getBondedv3MemberDetails(member,asset);
+    let bondedLp = 0;
+    if(MemberDetails.isMember){
+        bondedLp = await getBondv3Contract().methods.calcClaimBondedLP(member, asset).call()
+        console.log(bondedLp/1*10**18)
+    }
+    return bondedLp;
 }
 
 export const getBaseAllocation = async () => {
-    let allocation = await getSpartaContract().methods.balanceOf(BOND_ADDR).call()
+    let allocation = await getSpartaContract().methods.balanceOf(BONDv3_ADDR).call()
 return allocation;
 }

@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
 import queryString from 'query-string';
 import {
-    getBondContract, BNB_ADDR, WBNB_ADDR, BOND_ADDR, getClaimableLP, getUtilsContract, updateSharesData,
-    getTokenContract, getBondedMemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation,
+    getBondv2Contract,getBondv3Contract, BNB_ADDR, WBNB_ADDR,BONDv3_ADDR, getClaimableLPBondv2,getClaimableLPBondv3, getUtilsContract, updateSharesData,
+    getTokenContract, getBondedv2MemberDetails,getBondedv3MemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
@@ -25,13 +25,16 @@ import { Doughnut } from 'react-chartjs-2';
 const BondComponent = (props) => {
 
     const context = useContext(Context)
-    const [claimableLP, setClaimableLP] = useState(0)
-    const [member, setMember] = useState([])
+    const [claimableLPBondv2, setClaimableLPBondv2] = useState(0)
+    const [claimableLPBondv3, setClaimableLPBondv3] = useState(0)
+    const [memberBondv2, setBondv2Member] = useState([])
+    const [memberBondv3, setBondv3Member] = useState([])
     const [notifyMessage, setNotifyMessage] = useState("")
     const [notifyType, setNotifyType] = useState("dark")
     const [loadingBondedLP, setloadingBondedLP] = useState(false)
     const [approvalToken, setApprovalToken] = useState(false)
     const [spartaAllocation, setSpartaAllocation] = useState("")
+    const [spartaEstimatedAllocation, setSpartaEstimatedAllocation] = useState("")
 
     const [userData, setUserData] = useState({
         'address': SPARTA_ADDR,
@@ -43,6 +46,8 @@ const BondComponent = (props) => {
     const [endTx, setEndTx] = useState(false)
 
     const [showBondModal, setShowBondModal] = useState(false);
+    const [showClaimModal, setShowClaimModal] = useState(false);
+    const [showClaimNewModal, setShowClaimNewModal] = useState(false);
 
     const remainder = convertFromWei(userData.balance - userData.input)
     useEffect(() => {
@@ -61,13 +66,21 @@ const BondComponent = (props) => {
 
     const getLPData = async () => {
         let params = queryString.parse(props.location.search)
-        let data = await Promise.all([getClaimableLP(context.account, params.pool), getBondedMemberDetails(context.account, params.pool)])
-        let bondedLP = data[0]
-        let memberDetails = data[1]
+        let data = await Promise.all([
+            getClaimableLPBondv2(context.account, params.pool), getBondedv2MemberDetails(context.account, params.pool),
+            getClaimableLPBondv3(context.account, params.pool), getBondedv3MemberDetails(context.account, params.pool)
+        ])
+    
+        let bondedLPBondv2 = data[0]
+        let bondv2MemberDetails = data[1]
+        let bondedLPBondv3 = data[2]
+        let bondv3MemberDetails = data[3]
         let allocation = await getBaseAllocation()
         setSpartaAllocation(allocation)
-        setClaimableLP(bondedLP)
-        setMember(memberDetails)
+        setClaimableLPBondv2(bondedLPBondv2)
+        setClaimableLPBondv3(bondedLPBondv3)
+        setBondv2Member(bondv2MemberDetails)
+        setBondv3Member(bondv3MemberDetails)
     }
 
     const getData = async () => {
@@ -97,12 +110,20 @@ const BondComponent = (props) => {
 
     //const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
 
-    const claimLP = async () => {
+    const claimOldLP = async () => {
         setloadingBondedLP(true)
-        let contract = getBondContract()
+        let contractBondv2 = getBondv2Contract()
         let address = userData.address
-        await contract.methods.claim(address).send({ from: context.account })
-        //console.log(tx.transactionHash)
+         await contractBondv2.methods.claim(address).send({ from: context.account })
+         
+        await refreshData()
+        setloadingBondedLP(false)
+    }
+    const claimNewLP = async () => {
+        setloadingBondedLP(true)
+        let contractBondv3 = getBondv3Contract()
+        let address = userData.address
+        await contractBondv3.methods.claimAndLock(address).send({ from: context.account })
         await refreshData()
         setloadingBondedLP(false)
     }
@@ -129,8 +150,24 @@ const BondComponent = (props) => {
     }
 
     const toggleLock = () => {
+        
         setShowBondModal(!showBondModal)
     }
+    const toggleClaim = () => {
+        if(formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && !memberBondv3.isMember){
+            claimOldLP();
+        }else if(formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01){
+            toggleNewClaim();
+            setShowClaimModal(!showClaimModal)
+        }else {
+            setShowClaimModal(!showClaimModal)
+        }
+        
+    }
+    const toggleNewClaim = () => {
+        setShowClaimNewModal(!showClaimNewModal)
+    }
+
 
     const checkApproval = async (address) => {
         if (address === BNB_ADDR || address === WBNB_ADDR) {
@@ -138,7 +175,7 @@ const BondComponent = (props) => {
             return true
         } else {
             const contract = getTokenContract(address)
-            const approvalToken = await contract.methods.allowance(context.account, BOND_ADDR).call()
+            const approvalToken = await contract.methods.allowance(context.account, BONDv3_ADDR).call()
             if (+approvalToken > 0) {
                 return true
             } else {
@@ -177,7 +214,7 @@ const BondComponent = (props) => {
     const unlock = async (address) => {
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(BOND_ADDR, supply).send({
+        await contract.methods.approve(BONDv3_ADDR, supply).send({
             from: context.account,
             gasPrice: '',
             gas: ''
@@ -190,10 +227,10 @@ const BondComponent = (props) => {
 
     const getEstLiqTokens = async () => {
         let contract = getUtilsContract()
-        let data = await Promise.all([getPoolData(userData.address, context.poolsData), contract.methods.calcValueInBase(userData.address, userData.input).call()])
+        let data = await Promise.all([getPoolData(userData.address, context.poolsData), contract.methods.calcTokenPPinBase(userData.address, userData.input).call()])
         const pool = data[0]
         const estBaseValue = data[1]
-        setSpartaAllocation(estBaseValue)
+        setSpartaEstimatedAllocation(estBaseValue)
         const tokenInput = userData.input
         setEstLiqTokens(formatBN(calcLiquidityUnits(estBaseValue, pool.baseAmount, tokenInput, pool.tokenAmount, pool.units ), 0))
     }
@@ -233,7 +270,7 @@ const BondComponent = (props) => {
 
     const depositAsset = async () => {
         setStartTx(true)
-        let contract = getBondContract()
+        let contract = getBondv3Contract()
         //console.log(userData.address, userData.input)
         await contract.methods.deposit(userData.address, userData.input).send({
             from: context.account,
@@ -300,8 +337,9 @@ const BondComponent = (props) => {
                                     <>
                                         <Row>
                                             <Col xs='12' sm='3' className='text-center p-2'>
-                                                <h5><Spinner type="grow" color="primary" className='m-2' style={{ height: '15px', width: '15px' }} />{formatGranularUnits(convertFromWei(claimableLP))} LP Tokens</h5>
-                                                <button type="button" className="btn btn-primary waves-effect waves-light" onClick={claimLP}>
+                                                <h5><Spinner type="grow" color="primary" className='m-2' style={{ height: '15px', width: '15px' }} />{formatGranularUnits(convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2)))} LP Tokens</h5>
+                                               
+                                                <button type="button" className="btn btn-primary waves-effect waves-light" onClick={toggleClaim}>
                                                     <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens
                                                     {loadingBondedLP === true &&
                                                         <i className="bx bx-spin bx-loader ml-1"/>
@@ -310,12 +348,12 @@ const BondComponent = (props) => {
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
-                                                    <strong>{formatAllUnits(convertFromWei(member.bondedLP))}</strong> SPARTA:{userData.symbol} LP tokens remaining in time-locked contract.
+                                                    <strong>{formatAllUnits(convertFromWei(memberBondv3.bondedLP).plus(convertFromWei(memberBondv2.bondedLP)))}</strong> SPARTA:{userData.symbol} LP tokens remaining in time-locked contract.
                                                 </p>
-                                                {member.bondedLP > 0 &&
-                                               
+                                                
+                                                {memberBondv3.bondedLP > 0 &&
                                                 <p>
-                                                    <strong>{member.lastBlockTime > 0 && daysSince(member.lastBlockTime)}</strong> passed since your last claim.
+                                                    <strong>{memberBondv3.lastBlockTime > 0 && daysSince(memberBondv3.lastBlockTime)}</strong> passed since your last claim.
                                                 </p>
                                                  }
                                                  
@@ -336,21 +374,19 @@ const BondComponent = (props) => {
                     <Card>
                         <CardBody>
                                 
-                                    <div className="table-responsive">
+                                <div className="table-responsive">
                                     <CardTitle><h4>Bond {userData.symbol} to Mint SPARTA</h4></CardTitle>
                                     <CardSubtitle className="mb-3">
                                         <h6>Bond assets into the pools. </h6>
-                                        <li>The equivalent value in SPARTA is minted with both assets added symmetrically to the {userData.symbol}:SPARTA liquidity pool.</li>
-                                        <li>LP tokens will be issued as usual, however only 25% are available to you immediately.</li>
-                                        <li>The remaining 75% will be vested to you over a 12 month period.</li>
-                                        <li>Farm extra SPARTA by locking your LP tokens on the Earn page.</li>
+                                        <li>The equivalent purchasing power in SPARTA is minted with both assets added symmetrically to the {userData.symbol}:SPARTA liquidity pool.</li>
+                                        <li>LP tokens will be issued as usual and vested to you over a 12 month period.</li>
 
                                         
                                     </CardSubtitle>
                                     
                                     <Col sm="10" md="6">
                                     <p><strong>{formatAllUnits(convertFromWei(spartaAllocation))}</strong>  Remaining Sparta Allocation.</p>
-                                        <div><Progress color="info" value={(5000000 - convertFromWei(spartaAllocation))*100/5000000} /></div>
+                                        <div><Progress color="info" value={(2500000 - convertFromWei(spartaAllocation))*100/2500000} /></div>
                                         <br/>
                                               
                                         {userData.symbol !== 'XXX' &&
@@ -424,13 +460,12 @@ const BondComponent = (props) => {
                                     </Col>
                                   
                                     <Modal isOpen={showBondModal} toggle={toggleLock}>
-                                        <ModalHeader toggle={toggleLock}>You are bonding {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} and {formatAllUnits(convertFromWei(spartaAllocation))} SPARTA into the pool for 12 months!</ModalHeader>
+                                        <ModalHeader toggle={toggleLock}>You are bonding {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} and {formatAllUnits(convertFromWei(spartaEstimatedAllocation))} SPARTA into the pool for 12 months!</ModalHeader>
                                         <ModalBody>
                                             <h6>Please proceed with caution!</h6>
                                             <li>There will be no way to reverse this transaction!</li>
                                             <li>{formatAllUnits(convertFromWei(estLiqTokens))} estimated LP tokens will be generated from this transaction.</li>
-                                            <li>You will receive 25% ({formatAllUnits(convertFromWei(estLiqTokens)*25/100)} LP tokens) straight after the transaction finalizes</li>
-                                            <li>75% ({formatAllUnits(convertFromWei(estLiqTokens)*75/100)} LP tokens) will be released to you linearly over the next 12 months</li>
+                                            <li>100% ({formatAllUnits(convertFromWei(estLiqTokens))} LP tokens) will be released to you linearly over the next 12 months</li>
 
 
                                             {userData.symbol === 'BNB' && remainder < 0.05 &&
@@ -477,6 +512,56 @@ const BondComponent = (props) => {
                                             <Button color="secondary" onClick={toggleLock}>Cancel</Button>
                                         </ModalFooter>
                                     </Modal>
+                                    {formatGranularUnits(convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2))) > 0.00 && 
+                                    <Modal isOpen={showClaimModal} toggle={toggleClaim}>
+                                        <ModalHeader toggle={toggleClaim}>Claim Locked LP Tokens </ModalHeader>
+                                        
+                                        <ModalBody>
+                                        {formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001 && 
+                                        <div>
+                                        <h6>For your convenience, LP Tokens will be locked into the DAO to earn more SPARTA for you</h6> 
+                                        </div>
+                                        }
+                                           
+                                            {formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && 
+                                            <div>
+                                                <h6>Early Bonder Found!</h6>
+                                                <li><strong>Alert!</strong> You will need to confirm two transactions!</li>
+                                                <li><strong>1.</strong> Claim Early Bonder LP Tokens</li>
+                                                <li><strong>2.</strong> Claim and Lock LP Tokens</li>
+                                            </div>
+                                            }
+                                             
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            {showClaimNewModal && 
+                                              <Button color="primary" onClick={() => {
+                                                  if(formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001){
+                                                    toggleNewClaim()
+                                                  }else{
+                                                      toggleClaim()
+                                                  }
+                                                
+                                                     claimOldLP();
+                                                }}>
+                                                Claim Early Bonder LP Tokens!
+                                                </Button>
+                                          
+                                             }
+                                             {!showClaimNewModal && 
+                                       
+                                             <Button color="primary" onClick={() => {
+                                                toggleClaim();
+                                               claimNewLP();
+                                           }}>
+                                           Claim and Lock LP Tokens!
+                                           </Button>
+                                    
+                                             }
+                                        </ModalFooter>
+                                        
+                                     </Modal>
+                                    }
                                 </div>
                                 {context.sharesDataLoading !== true && !context.walletData &&
                                     <div className="text-center m-2">Please connect your wallet to proceed</div>
