@@ -1,6 +1,6 @@
 import {convertFromWei, formatGranularUnits} from "../../utils";
 import React from "react";
-import {PercentSliderSell, PercentSliderBuy} from "../common";
+import {PercentSlider} from "../common";
 
 import {withNamespaces} from "react-i18next";
 import {TokenIcon} from "../Common/TokenIcon"
@@ -43,6 +43,7 @@ export const InputPaneSwap = (props) => {
                             </InputGroupAddon>
                             <Input min={0} type="text" className="form-control" onChange={props.onInputChange}
                                 placeholder={formatGranularUnits(convertFromWei(props.paneData?.input))}
+                                id={'manualInput-' + props.name}
                             >
                             </Input>
 
@@ -79,10 +80,10 @@ export const InputPaneSwap = (props) => {
             </FormGroup>
             <div className="text-center">
                 {props.paneData?.outputSymbol !== 'SPARTA' && props.paneData.balance > 0 &&
-                    <PercentSliderSell changeAmount={props.changeAmount} paneData={props.paneData}/>
+                    <PercentSlider changeAmount={props.changeAmount} paneData={props.paneData} name={props.name} />
                 }
                 {props.paneData?.outputSymbol === 'SPARTA' && props.paneData.balance > 0 &&
-                    <PercentSliderBuy changeAmount={props.changeAmount} paneData={props.paneData}/>
+                    <PercentSlider changeAmount={props.changeAmount} paneData={props.paneData} name={props.name} />
                 }
             </div>
         </div>

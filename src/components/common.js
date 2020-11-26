@@ -105,7 +105,7 @@ export const OutputPane = (props) => {
     return (
         <div className="text-center">
 
-            <PercentButtonRow changeAmount={props.changeAmount} tabId={props.tabId} />
+            <PercentSlider changeAmount={props.changeAmount} name={props.name} />
                 {/* // eslint-disable-next-line
                 <Center>
                     {!secondToken &&
@@ -167,7 +167,7 @@ export const PercentButtonRow = (props) => {
     }
 
     const clearManualInput = () => {
-        const inputEl = document.getElementById('manualInput' + props.tabId)
+        const inputEl = document.getElementById('manualInput' + props.name)
         if (inputEl) {inputEl.value = ''}
     }
 
@@ -195,40 +195,56 @@ export const PercentButtonRow = (props) => {
     )
 }
 
-export const PercentSliderBuy = (props) => {
-    var slider = document.getElementById("percentSliderBuy")
+export const PercentSlider = (props) => {
+    var slider = document.getElementById("percentSlider-" + props.name)
     
     const change = () => {
-        props.changeAmount(slider.value)
+        if (slider) {props.changeAmount(slider.value)}
+    }
+
+    const clearManualInput = () => {
+        const inputEl = document.getElementById('manualInput-' + props.name)
+        if (inputEl) {inputEl.value = ''}
+    }
+
+    const incrSlider = () => {
+        var prevVal = parseFloat(slider.value)
+        if (slider) {slider.value = (prevVal + 10).toString()}
+        //console.log(slider.value)
+    }
+
+    const decrSlider = () => {
+        var prevVal = parseFloat(slider.value)
+        if (slider) {slider.value = (prevVal - 10).toString()}
+        //console.log(slider.value)
     }
 
     return (
         <>
-            <div>
-                <input type='range' min='0' max='100' step='0.5' defaultValue='1' className='slider w-75' id='percentSliderBuy' onInputCapture={change}/>
-                {slider &&
-                    <h6>{slider.value} %</h6>
-                }
-            </div>
-        </>
-    )
-}
-
-export const PercentSliderSell = (props) => {
-    var slider = document.getElementById("percentSliderSell")
-    
-    const change = () => {
-        props.changeAmount(slider.value)
-    }
-
-    return (
-        <>
-            <div>
-                <input type='range' min='0' max='100' step='0.5' defaultValue='1' className='slider' id='percentSliderSell' onInputCapture={change}/>
-                {slider &&
-                    <h6>{slider.value} %</h6>
-                }
-            </div>
+            <Row>
+                <Col xs='2'>
+                    <i className='bx bx-minus-circle bx-sm align-middle text-success' role='button' onClick={()=>{
+                        clearManualInput();
+                        decrSlider();
+                        change();   
+                    }} />
+                </Col>
+                <Col xs='8'>
+                    <input type='range' min='0' max='100' step='0.5' defaultValue='0' className='slider align-middle w-100' id={'percentSlider-' + props.name} onFocus={clearManualInput} onInputCapture={change}/>
+                </Col>
+                <Col xs='2'>
+                    <i className='bx bx-plus-circle bx-sm align-middle text-success' role='button' onClick={()=>{
+                        clearManualInput();
+                        incrSlider();
+                        change();   
+                    }} />
+                </Col>
+                <Col xs='12'>
+                    {slider &&
+                        <h6>{slider.value} %</h6>
+                    }
+                </Col>
+            </Row>
         </>
     )
 }
