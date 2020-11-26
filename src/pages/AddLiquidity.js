@@ -763,7 +763,9 @@ const AddAsymmPane = (props) => {
             />
             <br/>
             <UncontrolledAlert color="secondary" className="alert-dismissible fade show" role="alert">
-                <i className="bx bxs-error mr-2"/>Please ensure you understand the risks related to asymmetric staking of assets!
+                <i className="bx bxs-error mr-2"/>Please ensure you understand the risks related to this asymmetric add!<br/>
+                50% of the input {props.userData.symbol} will be swapped to SPARTA before adding both to the pool.<br/>
+                This is subject to the usual swap fees and may have unfavourable 'impermanent loss' vs hodling your assets!
             </UncontrolledAlert>
             <br/>
             <div className="table-responsive mt-6">
