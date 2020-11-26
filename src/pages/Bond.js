@@ -15,7 +15,7 @@ const Earn = (props) => {
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Bond & Mint")}/>
                     <Row>
                         <Col xs="12">
-                            <BondComponent/> 
+                            <BondComponent name='bond' /> 
                         </Col>
                     </Row>
                 </Container>

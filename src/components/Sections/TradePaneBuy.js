@@ -57,7 +57,7 @@ export const TradePaneBuy = (props) => {
             // INPUT | {input}
             */}
             <Row className='align-items-center'>
-            <Col xs={4} className='py-1'>
+                <Col xs={4} className='py-1'>
                     <h6 className='font-weight-light m-0'>{props.t("Input")} <i className="bx bx-info-circle align-middle" id="tooltipBuyInput" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyInput">Estimated input amount</UncontrolledTooltip>
                 </Col>
