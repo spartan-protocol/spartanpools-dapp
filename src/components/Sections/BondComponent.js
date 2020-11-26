@@ -34,6 +34,7 @@ const BondComponent = (props) => {
     const [loadingBondedLP, setloadingBondedLP] = useState(false)
     const [approvalToken, setApprovalToken] = useState(false)
     const [spartaAllocation, setSpartaAllocation] = useState("")
+    const [spartaEstimatedAllocation, setSpartaEstimatedAllocation] = useState("")
 
     const [userData, setUserData] = useState({
         'address': SPARTA_ADDR,
@@ -46,6 +47,7 @@ const BondComponent = (props) => {
 
     const [showBondModal, setShowBondModal] = useState(false);
     const [showClaimModal, setShowClaimModal] = useState(false);
+    const [showClaimNewModal, setShowClaimNewModal] = useState(false);
 
     const remainder = convertFromWei(userData.balance - userData.input)
     useEffect(() => {
@@ -108,19 +110,20 @@ const BondComponent = (props) => {
 
     //const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
 
-    const claimLP = async () => {
+    const claimOldLP = async () => {
         setloadingBondedLP(true)
         let contractBondv2 = getBondv2Contract()
+        let address = userData.address
+         await contractBondv2.methods.claim(address).send({ from: context.account })
+         
+        await refreshData()
+        setloadingBondedLP(false)
+    }
+    const claimNewLP = async () => {
+        setloadingBondedLP(true)
         let contractBondv3 = getBondv3Contract()
         let address = userData.address
-        
-        if(claimableLPBondv2 >= 0.1*10**18){
-         (await contractBondv2.methods.claim(address).send({ from: context.account }))
-        }
-        if(!claimableLPBondv3 === 0){
-         await contractBondv3.methods.claimAndLock(address).send({ from: context.account })
-        }
-        //console.log(tx.transactionHash)
+        await contractBondv3.methods.claimAndLock(address).send({ from: context.account })
         await refreshData()
         setloadingBondedLP(false)
     }
@@ -147,11 +150,24 @@ const BondComponent = (props) => {
     }
 
     const toggleLock = () => {
+        
         setShowBondModal(!showBondModal)
     }
     const toggleClaim = () => {
-        setShowClaimModal(!showClaimModal)
+        if(formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && !memberBondv3.isMember){
+            claimOldLP();
+        }else if(formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01){
+            toggleNewClaim();
+            setShowClaimModal(!showClaimModal)
+        }else {
+            setShowClaimModal(!showClaimModal)
+        }
+        
     }
+    const toggleNewClaim = () => {
+        setShowClaimNewModal(!showClaimNewModal)
+    }
+
 
     const checkApproval = async (address) => {
         if (address === BNB_ADDR || address === WBNB_ADDR) {
@@ -214,7 +230,7 @@ const BondComponent = (props) => {
         let data = await Promise.all([getPoolData(userData.address, context.poolsData), contract.methods.calcTokenPPinBase(userData.address, userData.input).call()])
         const pool = data[0]
         const estBaseValue = data[1]
-        setSpartaAllocation(estBaseValue)
+        setSpartaEstimatedAllocation(estBaseValue)
         const tokenInput = userData.input
         setEstLiqTokens(formatBN(calcLiquidityUnits(estBaseValue, pool.baseAmount, tokenInput, pool.tokenAmount, pool.units ), 0))
     }
@@ -322,6 +338,7 @@ const BondComponent = (props) => {
                                         <Row>
                                             <Col xs='12' sm='3' className='text-center p-2'>
                                                 <h5><Spinner type="grow" color="primary" className='m-2' style={{ height: '15px', width: '15px' }} />{formatGranularUnits(convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2)))} LP Tokens</h5>
+                                               
                                                 <button type="button" className="btn btn-primary waves-effect waves-light" onClick={toggleClaim}>
                                                     <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens
                                                     {loadingBondedLP === true &&
@@ -369,7 +386,7 @@ const BondComponent = (props) => {
                                     
                                     <Col sm="10" md="6">
                                     <p><strong>{formatAllUnits(convertFromWei(spartaAllocation))}</strong>  Remaining Sparta Allocation.</p>
-                                        <div><Progress color="info" value={(5000000 - convertFromWei(spartaAllocation))*100/5000000} /></div>
+                                        <div><Progress color="info" value={(2500000 - convertFromWei(spartaAllocation))*100/2500000} /></div>
                                         <br/>
                                               
                                         {userData.symbol !== 'XXX' &&
@@ -443,7 +460,7 @@ const BondComponent = (props) => {
                                     </Col>
                                   
                                     <Modal isOpen={showBondModal} toggle={toggleLock}>
-                                        <ModalHeader toggle={toggleLock}>You are bonding {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} and {formatAllUnits(convertFromWei(spartaAllocation))} SPARTA into the pool for 12 months!</ModalHeader>
+                                        <ModalHeader toggle={toggleLock}>You are bonding {formatAllUnits(convertFromWei(userData.input))} {userData.symbol} and {formatAllUnits(convertFromWei(spartaEstimatedAllocation))} SPARTA into the pool for 12 months!</ModalHeader>
                                         <ModalBody>
                                             <h6>Please proceed with caution!</h6>
                                             <li>There will be no way to reverse this transaction!</li>
@@ -495,30 +512,56 @@ const BondComponent = (props) => {
                                             <Button color="secondary" onClick={toggleLock}>Cancel</Button>
                                         </ModalFooter>
                                     </Modal>
-                                    
+                                    {formatGranularUnits(convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2))) > 0.00 && 
                                     <Modal isOpen={showClaimModal} toggle={toggleClaim}>
-                                        <ModalHeader toggle={toggleClaim}>Claiming SPARTA LP Tokens </ModalHeader>
+                                        <ModalHeader toggle={toggleClaim}>Claim Locked LP Tokens </ModalHeader>
                                         
                                         <ModalBody>
-                                            <h6>For your convenience, LP Tokens are locked into DAO to earn more SPARTA</h6>
-                                            {claimableLPBondv2 > 0.1 && 
+                                        {formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001 && 
+                                        <div>
+                                        <h6>For your convenience, LP Tokens will be locked into the DAO to earn more SPARTA for you</h6> 
+                                        </div>
+                                        }
+                                           
+                                            {formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && 
                                             <div>
-                                                <li>Early Sparta Bonder Found!</li>
-                                                <li>You will need to confirm two transactions!</li>
-                                                </div>
-                                             }
+                                                <h6>Early Bonder Found!</h6>
+                                                <li><strong>Alert!</strong> You will need to confirm two transactions!</li>
+                                                <li><strong>1.</strong> Claim Early Bonder LP Tokens</li>
+                                                <li><strong>2.</strong> Claim and Lock LP Tokens</li>
+                                            </div>
+                                            }
+                                             
                                         </ModalBody>
                                         <ModalFooter>
-                                        <Button color="primary" onClick={() => {
-                                                    toggleClaim();
-                                                    claimLP();
+                                            {showClaimNewModal && 
+                                              <Button color="primary" onClick={() => {
+                                                  if(formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001){
+                                                    toggleNewClaim()
+                                                  }else{
+                                                      toggleClaim()
+                                                  }
+                                                
+                                                     claimOldLP();
                                                 }}>
-                                                    Claim and Lock LP Tokens!
+                                                Claim Early Bonder LP Tokens!
                                                 </Button>
+                                          
+                                             }
+                                             {!showClaimNewModal && 
+                                       
+                                             <Button color="primary" onClick={() => {
+                                                toggleClaim();
+                                               claimNewLP();
+                                           }}>
+                                           Claim and Lock LP Tokens!
+                                           </Button>
+                                    
+                                             }
                                         </ModalFooter>
                                         
                                      </Modal>
-                                  
+                                    }
                                 </div>
                                 {context.sharesDataLoading !== true && !context.walletData &&
                                     <div className="text-center m-2">Please connect your wallet to proceed</div>
