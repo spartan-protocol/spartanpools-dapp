@@ -44,6 +44,7 @@ export const TradePaneBuy = (props) => {
                 onInputChange={props.onTradeChange}
                 changeAmount={props.changeTradeAmount}
                 toggleTab={props.toggleTab}
+                name={props.type}
             />
 
             {/*

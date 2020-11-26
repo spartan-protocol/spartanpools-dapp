@@ -273,10 +273,8 @@ const AddLiquidity = (props) => {
     }
 
     const getPairedAmount = (baseBalance, tokenAmount, pool) => {
-
         let price = pool.baseAmount / pool.tokenAmount  // 10:100 100/10 = 10
         let baseAmount = price * +tokenAmount  // 10 * 1 = 10
-
         let liquidityData = {
             baseAmount: "",
             tokenAmount: "",
@@ -350,14 +348,14 @@ const AddLiquidity = (props) => {
     const addLiquidity = async () => {
         setStartTx(true)
         let decDiff = 10 ** (18 - pool.decimals)
-        let tokenAmnt = liquidityData.tokenAmount / decDiff
+        let tokenAmnt = bn(liquidityData.tokenAmount).div(decDiff)
         let contract = getRouterContract()
-        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, tokenAmnt, pool.address)
-        await contract.methods.addLiquidity(liquidityData.baseAmount, tokenAmnt.toFixed(0), pool.address).send({
+        console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, formatBN(tokenAmnt, 0))
+        await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).send({
             from: context.account,
             gasPrice: '',
             gas: '',
-            value: pool.address === BNB_ADDR ? tokenAmnt : 0
+            value: pool.address === BNB_ADDR ? tokenAmnt : '0'
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
@@ -494,7 +492,7 @@ const AddLiquidity = (props) => {
                                                                 startTx={startTx}
                                                                 endTx={endTx}
                                                                 activeTab={activeTab}
-                                                                tabId='1'
+                                                                name='addsymm'
                                                             />
                                                         </TabPane>
                                                         <TabPane tabId="2" id="sell-tab">
@@ -515,7 +513,7 @@ const AddLiquidity = (props) => {
                                                                 endTx={endTx}
                                                                 activeTab={activeTab}
                                                                 toggleTab={toggleTab}
-                                                                tabId='2'
+                                                                name='addasymm'
                                                             />
                                                         </TabPane>
                                                         <TabPane tabId="3" id="remove-tab">
@@ -529,7 +527,7 @@ const AddLiquidity = (props) => {
                                                                 withdrawData={withdrawData}
                                                                 startTx={startTx}
                                                                 endTx={endTx}
-                                                                tabId='3'
+                                                                name='remove'
                                                                 location={props.location.search}
                                                             />
                                                         </TabPane>
@@ -584,7 +582,7 @@ const AddSymmPane = (props) => {
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}
                 activeTab={props.activeTab}
-                tabId={props.tabId}
+                name={props.name}
             />
             <br/>
             <div className="table-responsive mt-6">
@@ -759,7 +757,7 @@ const AddAsymmPane = (props) => {
                 paneData={props.userData}
                 onInputChange={props.onAddChange}
                 changeAmount={props.changeAmount}
-                tabId={props.tabId}
+                name={props.name}
             />
             <br/>
             <UncontrolledAlert color="secondary" className="alert-dismissible fade show" role="alert">
@@ -966,9 +964,7 @@ const RemoveLiquidityPane = (props) => {
 
     return (
         <>
-
-            <OutputPane changeAmount={props.changeWithdrawAmount} tabId={props.tabId} />
-
+            <OutputPane changeAmount={props.changeWithdrawAmount} name={props.name} />
             <div className="table-responsive mt-6">
                 <table className="table table-centered table-nowrap mb-0">
                     <tbody>

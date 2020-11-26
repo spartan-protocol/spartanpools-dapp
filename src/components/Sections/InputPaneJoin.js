@@ -1,6 +1,6 @@
 import {convertFromWei, formatAllUnits} from "../../utils";
 import React from "react";
-import {PercentButtonRow} from "../common";
+import {PercentSlider} from "../common";
 
 import {withNamespaces} from "react-i18next";
 
@@ -67,7 +67,6 @@ export const InputPaneJoin = (props) => {
                             </label>
                         </div>
                     </Col>
-                    {props.activeTab === "1" && <> </>}
                 </Row>
             </div>
             <br/>
@@ -79,7 +78,7 @@ export const InputPaneJoin = (props) => {
                                 <Label className="input-group-text">{props.t("Input")}</Label>
                             </InputGroupAddon>
                             <Input type="text" className="form-control" onChange={props.onInputChange}
-                                   bssize={'large'} id={"manualInput" + props.tabId}
+                                   bssize={'large'} id={"manualInput-" + props.name}
                                    placeholder={'Manually input ' + props.paneData?.symbol + ' here'}
                                 // defaultValue={convertFromWei(props.paneData?.input)}
                                 //   allowClear={true}
@@ -93,7 +92,7 @@ export const InputPaneJoin = (props) => {
             </FormGroup>
             <br/>
             <div className="text-center">
-                <PercentButtonRow changeAmount={props.changeAmount} tabId={props.tabId} />
+                <PercentSlider changeAmount={props.changeAmount} name={props.name} />
             </div>
             <br/>
         </div>
