@@ -6,7 +6,6 @@ import queryString from 'query-string';
 
 import InputPaneJoin from "../components/Sections/InputPaneJoin";
 
-import {OutputPane} from '../components/common'
 import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits} from '../utils'
 import {getLiquidityUnits} from '../math'
 import Breadcrumbs from "../components/Common/Breadcrumb";
@@ -19,7 +18,6 @@ import {
     Nav, NavItem, NavLink,
     TabPane, TabContent,
     Dropdown, DropdownToggle, DropdownMenu, DropdownItem,
-    UncontrolledAlert,
     Modal, ModalHeader, ModalBody, ModalFooter
 } from "reactstrap";
 
@@ -417,60 +415,73 @@ const AddLiquidity = (props) => {
                             <Col lg="6">
                                 <Card className="h-100">
                                     {context.sharesData &&
-                                        <CardBody>
-                                            <Link to='/pools'>
-                                                <button type="button" tag="button" className="btn btn-light">
-                                                    <i className="bx bx-arrow-back font-size-20 align-middle mr-2"/> Back to Liquidity Pools
-                                                </button>
-                                            </Link>
-                                            <div className="float-right mr-2">
-                                                <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                                                    <DropdownToggle type="button" tag="button" className="btn btn-light">
-                                                        <i className="mdi mdi-wallet mr-1"/>
-                                                        <span className="d-none d-sm-inline-block ml-1">Balance <i className="mdi mdi-chevron-down"/></span>
-                                                    </DropdownToggle>
-                                                        <DropdownMenu right className="dropdown-menu-md">
-                                                            <div className="dropdown-item-text">
-                                                                <div>
-                                                                    <p className="text-muted mb-2">Available Balance</p>
-                                                                </div>
-                                                            </div>
-                                                            <DropdownItem divider/>
-                                                            <DropdownItem href="">
-                                                                SPARTA : <span
-                                                                className="float-right">{formatAllUnits(convertFromWei(userData.baseBalance))}</span>
-                                                            </DropdownItem>
-                                                            <DropdownItem href="">
-                                                                {userData.symbol} : <span className="float-right">{formatAllUnits(convertFromWei(userData.tokenBalance))}</span>
-                                                            </DropdownItem>
-                                                            <DropdownItem divider/>
-                                                            <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
-                                                                View all assets
-                                                            </DropdownItem>
-                                                        </DropdownMenu>
-                                                </Dropdown>
-                                            </div>
+                                        <CardBody className='p-3 p-md-4'>
+                                            <Row className='align-middle'>
+                                                <Col xs={6} className='my-auto'>
+                                                    <Link to='/pools'>
+                                                        <button type="button" tag="button" className="btn btn-light w-100">
+                                                            <i className="bx bx-arrow-back align-middle"/> Pools <i className="bx bx-swim align-middle"/>
+                                                        </button>
+                                                    </Link>
+                                                </Col>
+
+                                                <Col xs={6} className='my-auto'>
+                                                    <div className="float-right w-100">
+                                                        <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                                                            <DropdownToggle type="button" tag="button" className="btn btn-light w-100">
+                                                                <i className="bx bx-wallet align-middle"/>
+                                                                <span className="ml-1">Wallet <i className="mdi mdi-chevron-down"/></span>
+                                                            </DropdownToggle>
+                                                            <DropdownMenu right className="dropdown-menu-md">
+                                                                {pool.address !== 'XXX' &&
+                                                                    <>
+                                                                        <div className="dropdown-item-text">
+                                                                            <div>
+                                                                                <p className="text-muted mb-2">Available Balance</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <DropdownItem divider/>
+                                                                        <DropdownItem href="">
+                                                                            SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(userData.baseBalance))}</span>
+                                                                        </DropdownItem>
+                                                                        <DropdownItem href="">
+                                                                            {userData.symbol} : <span className="float-right">{formatAllUnits(convertFromWei(userData.tokenBalance))}</span>
+                                                                        </DropdownItem>
+                                                                        <DropdownItem divider/>
+                                                                        <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>
+                                                                            View all assets
+                                                                        </DropdownItem>
+                                                                    </>
+                                                                }
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+
                                             {pool.address !== 'XXX' &&
                                                 <div className="crypto-buy-sell-nav">
                                                     <br />
                                                     <Nav tabs className="nav-tabs-custom" role="tablist">
                                                         <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggleTab('1');}}>
-                                                                <i className="bx bxs-chevrons-up mr-1 bx-sm"/>
-                                                                <br/>{`${props.t("ADD")} BOTH`}
+                                                                <i className="bx bxs-chevrons-up bx-sm"/>
+                                                                <br/>
+                                                                <h6 style={{fontSize:'0.68rem'}}>{`${props.t("ADD")} BOTH`}</h6>
                                                             </NavLink>
                                                         </NavItem>
                                                         <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '2'})} onClick={() => {toggleTab('2');}}>
-                                                                <i className="bx bxs-chevron-up mr-1 bx-sm"/>
-                                                                <br/>{`${props.t("ADD")} ${pool.symbol}`}
+                                                                <i className="bx bxs-chevron-up bx-sm"/>
+                                                                <br/>
+                                                                <h6 style={{fontSize:'0.68rem'}}>{`${props.t("ADD")} ${pool.symbol}`}</h6>
                                                             </NavLink>
                                                         </NavItem>
                                                         <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggleTab('3');}}>
-                                                                <i className="bx bxs-chevrons-down mr-1 bx-sm"/>
+                                                                <i className="bx bxs-chevrons-down bx-sm"/>
                                                                 <br/>
-                                                                {`${props.t("REMOVE")} BOTH`}
+                                                                <h6 style={{fontSize:'0.68rem'}}>{`${props.t("REMOVE")} BOTH`}</h6>
                                                             </NavLink>
                                                         </NavItem>
                                                     </Nav>
@@ -584,70 +595,35 @@ const AddSymmPane = (props) => {
                 activeTab={props.activeTab}
                 name={props.name}
             />
-            <br/>
-            <div className="table-responsive mt-6">
-                <table className="table table-centered table-nowrap mb-0">
-                    <tbody>
-                        <tr>
-                            <td style={{width: "100%"}}>
-                                <div className="mb-0 text-left">
-                                    <span id="tooltipAddBase">Add {props.userData.symbol} <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipAddBase">
-                                        The quantity of {props.userData.symbol} you are adding to the pool.
-                                    </UncontrolledTooltip>
-                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h6>
-                                </div>
-                            </td>
-                            <td className="d-none d-lg-table-cell">
-                                <h2 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h2>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style={{width: "100%"}}>
-                                <div className="mb-0 text-left">
-                                    <span id="tooltipAddToken">& Add SPARTA <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipAddToken">
-                                        The quantity of SPARTA you are adding to the pool.
-                                    </UncontrolledTooltip>
-                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))}</h6>
-                                </div>
-                            </td>
-                            <td className="d-none d-lg-table-cell">
-                                <h2 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))}</h2>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style={{width: "100%"}}>
-                                <div className="mb-0 text-left">
-                                    <span id="tooltipUnits">Est. LP Units <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipUnits">
-                                        An estimate of the amount of LP tokens you will receive from this transaction.
-                                    </UncontrolledTooltip>
-                                    <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))}</h6>
-                                </div>
-                            </td>
-                            <td className="d-none d-lg-table-cell">
-                                <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))}</h5>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style={{width: "100%"}}>
-                                <div className="mb-0 text-left">
-                                    <span id="tooltipPoolShare">Est. Pool Share <i className="bx bx-info-circle align-middle"/></span>
-                                    <UncontrolledTooltip placement="right" target="tooltipPoolShare">
-                                        An estimate of the total share of the pool that this liquidity-add represents.
-                                    </UncontrolledTooltip>
-                                    <h6 className="d-block d-lg-none mb-0 text-left">{`${props.getEstShare()}%`}</h6>
-                                </div>
-                            </td>
-                            <td className="d-none d-lg-table-cell">
-                                <h5 className="mb-0 text-right">{`${props.getEstShare()}%`}</h5>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <br/>
+
+            <Row className='align-items-center'>
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Input <i className="bx bx-info-circle align-middle" id="tooltipAddBase" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipAddBase">The quantity of {props.userData.symbol} & SPARTA you are adding to the pool.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'>
+                    <h6 className="text-right font-weight-light m-0 mb-1">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))} of {formatAllUnits(convertFromWei(props.userData.balance))} {props.userData.symbol}*</h6>
+                    <h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(props.liquidityData.baseAmount))} of {formatAllUnits(convertFromWei(props.userData.baseBalance))} SPARTA*</h6>
+                </Col>
+
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Share <i className="bx bx-info-circle align-middle" id="tooltipPoolShare" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipPoolShare">An estimate of the total share of the pool that this liquidity-add represents.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'><h6 className="text-right font-weight-light m-0">{`${props.getEstShare()}%`}*</h6></Col>
+
+                <Col xs={12} className='py-1'><hr className='m-0'/></Col>
+
+                <Col xs={5} className='py-1'>
+                    <h6 className='m-0'>Output <i className="bx bx-info-circle align-middle" id="tooltipUnits" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipUnits">An estimate of the amount of LP tokens you will receive from this transaction.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))} *</h5></Col>
+
+                <Col xs={12} className='py-1'><hr className='m-0'/></Col>
+
+                <Col xs={12}><p className='text-right'>Estimated*</p></Col>
+            </Row>
             <div className="text-center">
                 <Row>
                     <Col xs={12}>
@@ -759,68 +735,35 @@ const AddAsymmPane = (props) => {
                 changeAmount={props.changeAmount}
                 name={props.name}
             />
-            <br/>
-            <UncontrolledAlert color="secondary" className="alert-dismissible fade show" role="alert">
-                <i className="bx bxs-error mr-2"/>Please ensure you understand the risks related to this asymmetric add!<br/>
-                50% of the input {props.userData.symbol} will be swapped to SPARTA before adding both to the pool.<br/>
-                This is subject to the usual swap fees and may have unfavourable 'impermanent loss' vs hodling your assets!
-            </UncontrolledAlert>
-            <br/>
-            <div className="table-responsive mt-6">
-                <table className="table table-centered table-nowrap mb-0">
-                    <tbody>
-                    <tr>
-                        <td style={{width: "100%"}}>
-                            <div className="mb-0 text-left">
-                                <span id="tooltipAddBaseAsym">Add {props.userData.symbol} <i className="bx bx-info-circle align-middle"/></span>
-                                <UncontrolledTooltip placement="right" target="tooltipAddBaseAsym">
-                                    The quantity of {props.userData.symbol} you are adding to the pool.
-                                </UncontrolledTooltip>
-                                <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h6>
-                            </div>
-                        </td>
-                        <td className="d-none d-lg-table-cell">
-                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))}</h5>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{width: "100%"}}>
-                            <div className="mb-0 text-left">
-                                <span id="tooltipUnitsAsym">Est. LP Units <i className="bx bx-info-circle align-middle"/></span>
-                                <UncontrolledTooltip placement="right" target="tooltipUnitsAsym">
-                                    Estimate of the amount of LP tokens you will receive from this transaction.
-                                </UncontrolledTooltip>
-                                <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h6>
-                            </div>
-                        </td>
-                        <td className="d-none d-lg-table-cell">
-                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.estLiquidityUnits))}</h5>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{width: "100%"}}>
-                            <div className="mb-0 text-left">
-                                <span id="tooltipShareAsym">Est. Pool Share <i
-                                    className="bx bx-info-circle align-middle"/></span>
-                                <UncontrolledTooltip placement="right" target="tooltipShareAsym">
-                                    Estimate of the total share of the pool this liquidity add represents.
-                                </UncontrolledTooltip>
-                                <h6 className="d-block d-lg-none mb-0 text-left">{`${props.getEstShare()}%`}</h6>
-                            </div>
-                        </td>
-                        <td className="d-none d-lg-table-cell">
-                            <h5 className="mb-0 text-right">{`${props.getEstShare()}%`}</h5>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div className="text-center">
-                <Row>
+
+            <Row className='align-items-center'>
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Input <i className="bx bx-info-circle align-middle" id="tooltipAddBaseAsym" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipAddBaseAsym">The quantity of {props.userData.symbol} you are adding to the pool.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'><h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))} of {formatAllUnits(convertFromWei(props.userData.balance))} {props.userData.symbol}*</h6></Col>
+
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Share <i className="bx bx-info-circle align-middle" id="tooltipPoolShare" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipPoolShare">An estimate of the total share of the pool that this liquidity-add represents.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'><h6 className="text-right font-weight-light m-0">{`${props.getEstShare()}%`}*</h6></Col>
+
+                <Col xs={12} className='py-1'><hr className='m-0'/></Col>
+
+                <Col xs={5} className='py-1'>
+                    <h6 className='m-0'>Output <i className="bx bx-info-circle align-middle" id="tooltipUnits" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipUnits">An estimate of the amount of LP tokens you will receive from this transaction.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))} *</h5></Col>
+
+                <Col xs={12} className='py-1'><hr className='m-0'/></Col>
+
+                <Col xs={12}><p className='text-right'>Estimated*</p></Col>
+            </Row>
+
+                <Row className='text-center'>
                     <Col xs={12}>
-                        <br/>
-                        <br/>
-                        <br/>
                         <br/>
                         {convertFromWei(props.pool.depth) > 10000 && !props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
@@ -852,7 +795,12 @@ const AddAsymmPane = (props) => {
                         }
                     </Col>
                 </Row>
-            </div>
+
+                <Card className='text-center mt-2'>
+                    <h5><i className="bx bxs-error mr-1"/>Please ensure you understand the risks related to this asymmetric add!</h5>
+                    <h6>50% of the input {props.userData.symbol} will be swapped to SPARTA before adding both to the pool.</h6>
+                    <h6>This is subject to the usual swap fees and may have unfavourable 'impermanent loss' vs hodling your assets!</h6>
+                </Card>
 
             <Modal isOpen={showModal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>BNB balance will be low after this transaction!</ModalHeader>
@@ -964,41 +912,28 @@ const RemoveLiquidityPane = (props) => {
 
     return (
         <>
-            <OutputPane changeAmount={props.changeWithdrawAmount} name={props.name} />
-            <div className="table-responsive mt-6">
-                <table className="table table-centered table-nowrap mb-0">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <p className="mb-0 text-left">Redeem LP Tokens</p>
-                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(props.withdrawData.lpAmount))} of {formatAllUnits(convertFromWei(availAmnt))}</h6>
-                        </td>
-                        <td className="d-none d-lg-table-cell">
-                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(props.withdrawData.lpAmount))} of {formatAllUnits(convertFromWei(availAmnt))}</h5>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p className="mb-0 text-left">Receive {props.pool.symbol}</p>
-                            <h6 className="d-block d-lg-none mb-0 text-left">~ {formatAllUnits(convertFromWei(props.withdrawData.tokenAmount))}</h6>
-                        </td>
-                        <td className="d-none d-lg-table-cell">
-                            <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(props.withdrawData.tokenAmount))}</h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p className="mb-0 text-left">Receive SPARTA</p>
-                            <h6 className="d-block d-lg-none mb-0 text-left">~ {formatAllUnits(convertFromWei(props.withdrawData.baseAmount))}</h6>
-                        </td>
-                        <td className="d-none d-lg-table-cell">
-                            <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(props.withdrawData.baseAmount))}</h6>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <br/>
+            <InputPaneJoin changeAmount={props.changeWithdrawAmount} name={props.name} paneData={props.userData} />
+
+            <Row className='align-items-center'>
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Redeem LP Tokens <i className="bx bx-info-circle align-middle" id="tooltipRedeem" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipRedeem">The amount of LP tokens you are redeeming to withdraw liquidity from the pool.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'><h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(props.withdrawData.lpAmount))} of {formatAllUnits(convertFromWei(availAmnt))}</h6></Col>
+
+                <Col xs={12} className='py-1'><hr className='m-0'/></Col>
+
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Receive <i className="bx bx-info-circle align-middle" id="tooltipReceive" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipReceive">The quantity of {props.userData.symbol} & SPARTA you are receiving from the pool.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1 mb-3'>
+                    <h6 className="text-right font-weight-light m-0 mb-1">{formatAllUnits(convertFromWei(props.withdrawData.tokenAmount))} {props.pool.symbol}*</h6>
+                    <h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(props.withdrawData.baseAmount))} SPARTA*</h6>
+                </Col>
+
+            </Row>
+
             <div className="text-center">
                 {props.approvalToken &&
                     <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.removeLiquidity}>
@@ -1006,40 +941,27 @@ const RemoveLiquidityPane = (props) => {
                     </button>
                 }
             </div>
-            <br/>
-            <div>
-            <table className="table table-centered table-nowrap mb-0">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <p className="mb-0 text-left">Locked LP tokens</p>
-                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(lockedAmnt))}</h6>
-                        </td>
-                        <td className="d-none d-lg-table-cell">        
-                            <h5 className="mb-0 text-right">{formatAllUnits(convertFromWei(lockedAmnt))}</h5>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p className="mb-0 text-left">Locked {props.pool.symbol}</p>
-                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(token))}</h6>
-                        </td>
-                        <td className="d-none d-lg-table-cell">      
-                            <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(token))}</h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p className="mb-0 text-left">Locked SPARTA</p>
-                            <h6 className="d-block d-lg-none mb-0 text-left">{formatAllUnits(convertFromWei(base))}</h6>
-                        </td>
-                        <td className="d-none d-lg-table-cell">
-                            <h6 className="mb-0 text-right">~ {formatAllUnits(convertFromWei(base))}</h6>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+
+            <Row className='align-items-center mt-3'>
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Staked LP Tokens <i className="bx bx-info-circle align-middle" id="tooltipStakedTokens" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipStakedTokens">Your LP tokens that are staked in the DAO.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'><h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(lockedAmnt))}</h6></Col>
+
+                <Col xs={12} className='py-1'><hr className='m-0'/></Col>
+
+                <Col xs={5} className='py-1'>
+                    <h6 className='font-weight-light m-0'>Projected Output <i className="bx bx-info-circle align-middle" id="tooltipStakedOutput" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipStakedOutput">Estimate of the quantity of {props.userData.symbol} & SPARTA you would receive if you unstaked your LP tokens and redeemed them.</UncontrolledTooltip>
+                </Col>
+                <Col xs={7} className='py-1'>
+                    <h6 className="text-right font-weight-light m-0 mb-1">{formatAllUnits(convertFromWei(token))} {props.pool.symbol}*</h6>
+                    <h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(base))} SPARTA*</h6>
+                </Col>
+
+                <Col xs={12}><p className='text-right'>Estimated*</p></Col>
+            </Row>
         </>
     )
 }

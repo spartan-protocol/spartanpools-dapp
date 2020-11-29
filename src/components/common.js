@@ -222,18 +222,18 @@ export const PercentSlider = (props) => {
     return (
         <>
             <Row>
-                <Col xs='2'>
-                    <i className='bx bx-minus-circle bx-sm align-middle text-success' role='button' onClick={()=>{
+                <Col xs='2' className='p-0'>
+                    <i className='bx bx-minus-circle bx-sm align-middle text-success float-right' role='button' onClick={()=>{
                         clearManualInput();
                         decrSlider();
                         change();   
                     }} />
                 </Col>
                 <Col xs='8'>
-                    <input type='range' min='0' max='100' step='0.5' defaultValue='0' className='slider align-middle w-100' id={'percentSlider-' + props.name} onFocus={clearManualInput} onInputCapture={change}/>
+                    <input type='range' min='0' max='100' step='0.5' defaultValue='0' className='slider align-middle w-100' id={'percentSlider-' + props.name} onFocus={clearManualInput} onTouchStart={clearManualInput} onInputCapture={change} />
                 </Col>
-                <Col xs='2'>
-                    <i className='bx bx-plus-circle bx-sm align-middle text-success' role='button' onClick={()=>{
+                <Col xs='2' className='p-0'>
+                    <i className='bx bx-plus-circle bx-sm align-middle text-success float-left' role='button' onClick={()=>{
                         clearManualInput();
                         incrSlider();
                         change();   
