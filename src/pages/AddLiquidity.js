@@ -599,7 +599,7 @@ const AddSymmPane = (props) => {
             <Row className='align-items-center'>
                 <Col xs={5} className='py-1'>
                     <h6 className='font-weight-light m-0'>Input <i className="bx bx-info-circle align-middle" id="tooltipAddBase" role='button'/></h6>
-                    <UncontrolledTooltip placement="right" target="tooltipAddBase">The quantity of {props.userData.symbol} you are adding to the pool.</UncontrolledTooltip>
+                    <UncontrolledTooltip placement="right" target="tooltipAddBase">The quantity of {props.userData.symbol} & SPARTA you are adding to the pool.</UncontrolledTooltip>
                 </Col>
                 <Col xs={7} className='py-1'>
                     <h6 className="text-right font-weight-light m-0 mb-1">{formatAllUnits(convertFromWei(props.liquidityData.tokenAmount))} of {formatAllUnits(convertFromWei(props.userData.balance))} {props.userData.symbol}*</h6>
@@ -952,8 +952,8 @@ const RemoveLiquidityPane = (props) => {
                 <Col xs={12} className='py-1'><hr className='m-0'/></Col>
 
                 <Col xs={5} className='py-1'>
-                    <h6 className='font-weight-light m-0'>Projected Output <i className="bx bx-info-circle align-middle" id="tooltipAddBase" role='button'/></h6>
-                    <UncontrolledTooltip placement="right" target="tooltipAddBase">Estimate of the quantity of {props.userData.symbol} & SPARTA you would receive if you unstaked your LP tokens and redeemed them.</UncontrolledTooltip>
+                    <h6 className='font-weight-light m-0'>Projected Output <i className="bx bx-info-circle align-middle" id="tooltipStakedOutput" role='button'/></h6>
+                    <UncontrolledTooltip placement="right" target="tooltipStakedOutput">Estimate of the quantity of {props.userData.symbol} & SPARTA you would receive if you unstaked your LP tokens and redeemed them.</UncontrolledTooltip>
                 </Col>
                 <Col xs={7} className='py-1'>
                     <h6 className="text-right font-weight-light m-0 mb-1">{formatAllUnits(convertFromWei(token))} {props.pool.symbol}*</h6>
