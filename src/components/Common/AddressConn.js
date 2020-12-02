@@ -74,9 +74,11 @@ const AddressConn = (props) => {
         let walletData = data[0]
         context.setContext({'walletData': walletData})
         context.setContext({'walletDataLoading': false})
+        //console.log(walletData)
         let sharesData = data[1]
         context.setContext({'sharesData': sharesData})
         context.setContext({'sharesDataLoading': false})
+        //console.log(sharesData)
         nextWalletDataPage(tokenArray, walletData, account)
         nextSharesDataPage(tokenArray, sharesData, account)
     }
@@ -118,6 +120,7 @@ const AddressConn = (props) => {
         let data = await Promise.all([getSpartaPrice(), getListedPools(), loadPoolsData(tokenArray)])
         context.setContext({'spartanPrice': data[0]})
         context.setContext({'poolArray': data[1]})
+        //console.log(data[1])
     }
 
     const loadPoolsData = async (tokenArray) => {
@@ -127,6 +130,7 @@ const AddressConn = (props) => {
             const getPools = await getPoolsData(tokenArray)
             context.setContext({'poolsData': getPools})
             context.setContext({'poolsDataLoading': false})
+            //console.log(getPools)
             nextPoolsDataPage(tokenArray, getPools)
         }
     }
