@@ -561,6 +561,7 @@ export const getBondedv2MemberDetails = async (member, asset) => {
     let memberDetails = await getBondv2Contract().methods.getMemberDetails(member, asset).call()
     return memberDetails;
 }
+
 export const getBondedv3MemberDetails = async (member, asset) => {
     let memberDetails = await getBondv3Contract().methods.getMemberDetails(member, asset).call()
     return memberDetails;
@@ -570,12 +571,13 @@ export const getClaimableLPBondv2 = async (member, asset) => {
     let bondedLp = await getBondv2Contract().methods.calcClaimBondedLP(member, asset).call()
     return bondedLp;
 }
+
 export const getClaimableLPBondv3 = async (member, asset) => {
     let MemberDetails = await getBondedv3MemberDetails(member,asset);
     let bondedLp = 0;
     if(MemberDetails.isMember){
         bondedLp = await getBondv3Contract().methods.calcClaimBondedLP(member, asset).call()
-        console.log(bondedLp/1*10**18)
+        //console.log(bondedLp/1*10**18)
     }
     return bondedLp;
 }

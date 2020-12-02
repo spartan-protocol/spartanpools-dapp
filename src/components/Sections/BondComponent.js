@@ -7,7 +7,7 @@ import {
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
-import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince } from '../../utils'
+import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
 
 import {
     Row, Col, InputGroup, InputGroupAddon, Label, UncontrolledTooltip,
@@ -20,7 +20,6 @@ import { TokenIcon } from "../Common/TokenIcon";
 import { PercentSlider } from "../common";
 import { withRouter } from "react-router-dom"
 import { Doughnut } from 'react-chartjs-2';
-
 
 const BondComponent = (props) => {
 
@@ -35,6 +34,7 @@ const BondComponent = (props) => {
     const [approvalToken, setApprovalToken] = useState(false)
     const [spartaAllocation, setSpartaAllocation] = useState("")
     const [spartaEstimatedAllocation, setSpartaEstimatedAllocation] = useState("")
+    const [poolTokenDepth, setPoolTokenDepth] = useState('')
 
     const [userData, setUserData] = useState({
         'address': SPARTA_ADDR,
@@ -42,6 +42,7 @@ const BondComponent = (props) => {
         'balance': 0,
         'input': 0,
     })
+
     const [startTx, setStartTx] = useState(false)
     const [endTx, setEndTx] = useState(false)
 
@@ -70,7 +71,6 @@ const BondComponent = (props) => {
             getClaimableLPBondv2(context.account, params.pool), getBondedv2MemberDetails(context.account, params.pool),
             getClaimableLPBondv3(context.account, params.pool), getBondedv3MemberDetails(context.account, params.pool)
         ])
-    
         let bondedLPBondv2 = data[0]
         let bondv2MemberDetails = data[1]
         let bondedLPBondv3 = data[2]
@@ -86,6 +86,7 @@ const BondComponent = (props) => {
     const getData = async () => {
         let params = queryString.parse(props.location.search)
         const pool = await getPoolData(params.pool, context.poolsData)
+        setPoolTokenDepth(pool.tokenAmount)
         var tokenData = ''
         
         if (!context.tokenData && context.walletData && pool) {
@@ -100,7 +101,6 @@ const BondComponent = (props) => {
             'balance': tokenData?.balance,
             'input': 0,
         }
-
         setUserData(_userData)
 
         await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
@@ -150,9 +150,9 @@ const BondComponent = (props) => {
     }
 
     const toggleLock = () => {
-        
         setShowBondModal(!showBondModal)
     }
+
     const toggleClaim = () => {
         if(formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && !memberBondv3.isMember){
             claimOldLP();
@@ -164,10 +164,10 @@ const BondComponent = (props) => {
         }
         
     }
+
     const toggleNewClaim = () => {
         setShowClaimNewModal(!showClaimNewModal)
     }
-
 
     const checkApproval = async (address) => {
         if (address === BNB_ADDR || address === WBNB_ADDR) {
@@ -193,7 +193,9 @@ const BondComponent = (props) => {
             'input': formatBN(bn(finalAmt), 0),
         }
         setUserData(_userData)
+        console.log(userData)
     }
+
     const onInputChange = async (e) => {
         const input = e.target.value
         let finalAmt = formatBN(convertToWei(input), 0)
@@ -247,7 +249,6 @@ const BondComponent = (props) => {
             let part3 = T.times(B).times(2);
             let _units = (P.times(part1.plus(part2))).div(part3);
             return _units.times(slipAdjustment).div(one);  // Divide by 10**18
-    
     }
 
     const getSlipAdustment = ( b,  B,  t,  T) => {
@@ -316,7 +317,6 @@ const BondComponent = (props) => {
             }
         }
     }
-
 
     return (
         <>
@@ -441,15 +441,50 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                             <Col xs={12}>
+                                                {approvalToken && (userData.input / 1) > (userData.balance / 1) &&
+                                                    <div className='text-center'>
+                                                        <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
+                                                            <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {userData.symbol} in Wallet!
+                                                        </button>
+                                                    </div>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
+                                                {approvalToken && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) > (poolTokenDepth / 5) &&
+                                                    <div className='text-center'>
+                                                        <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
+                                                            <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Bond Too High!
+                                                        </button>
+                                                        <h6 className='mt-2'>Please reduce your bond input.</h6>
+                                                        <h6>Max bond amount is ~10% of the pools total depth.</h6>
+                                                        <h6>This is to protect you against slippage and prevent manipulation.</h6>
+                                                    </div>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
+                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) && hoursSince(memberBondv3.lastBlockTime) > 3 &&
+                                                    <div className='text-center'>
+                                                        <button type="button" className="btn btn-primary btn-lg waves-effect waves-light" onClick={toggleClaim}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens First!
+                                                            {loadingBondedLP === true &&
+                                                                <i className="bx bx-spin bx-loader ml-1"/>
+                                                            }
+                                                        </button>
+                                                        <h6 className='mt-2'>Bonding will reset your 'last claim' time.</h6>
+                                                        <h6>Ensure you claim LP tokens first if you have not claimed in a while.</h6>
+                                                    </div>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
                                                 {approvalToken && startTx && !endTx &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
                                                         getEstLiqTokens();
                                                         toggleLock();
                                                     }}>
-                                                        <i className="bx bx-spin bx-loader" /> LOCK
+                                                        <i className="bx bx-spin bx-loader" /> Bond
                                                     </div>
                                                 }
-                                                {approvalToken && !startTx &&
+                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) && hoursSince(memberBondv3.lastBlockTime) <= 3 &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
                                                         getEstLiqTokens();
                                                         toggleLock();
