@@ -194,7 +194,7 @@ const BondComponent = (props) => {
             'input': formatBN(bn(finalAmt), 0),
         }
         setUserData(_userData)
-        console.log(userData)
+        //console.log(userData)
     }
 
     const onInputChange = async (e) => {
