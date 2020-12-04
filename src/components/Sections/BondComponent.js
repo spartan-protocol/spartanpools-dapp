@@ -119,6 +119,7 @@ const BondComponent = (props) => {
         await refreshData()
         setloadingBondedLP(false)
     }
+
     const claimNewLP = async () => {
         setloadingBondedLP(true)
         let contractBondv3 = getBondv3Contract()
@@ -462,7 +463,7 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                             <Col xs={12}>
-                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) && hoursSince(memberBondv3.lastBlockTime) > 3 &&
+                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) && hoursSince(memberBondv3.lastBlockTime) > 3 && memberBondv3.isMember &&
                                                     <div className='text-center'>
                                                         <button type="button" className="btn btn-primary btn-lg waves-effect waves-light" onClick={toggleClaim}>
                                                             <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens First!
@@ -484,7 +485,7 @@ const BondComponent = (props) => {
                                                         <i className="bx bx-spin bx-loader" /> Bond
                                                     </div>
                                                 }
-                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) && hoursSince(memberBondv3.lastBlockTime) <= 3 &&
+                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
                                                         getEstLiqTokens();
                                                         toggleLock();
