@@ -275,7 +275,7 @@ const NewSwap = (props) => {
     const buy = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        //console.log(buyData.input, outputTokenData.symbol, poolURL)
+        //console.log(buyData.input)
         await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
             from: context.account,
             gasPrice: '',
@@ -291,9 +291,9 @@ const NewSwap = (props) => {
     const sell = async () => {
         setStartTx(true)
         let decDiff = 10 ** (18 - pool.decimals)
-        let inputAmount = sellData.input / decDiff
+        let inputAmount = bn(sellData.input).div(decDiff)
         let contract = getRouterContract()
-        //console.log(sellData.input, outputTokenData.symbol, poolURL)
+        //console.log(sellData.input, inputAmount, inputAmount.toFixed(0))
         await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).send({
             from: context.account,
             gasPrice: '',
