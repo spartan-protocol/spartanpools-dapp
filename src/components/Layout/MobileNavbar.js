@@ -55,9 +55,9 @@ const MobileNavbar = (props) => {
                             <li className="nav-item dropdown" onClick={closeDropdowns}>
                                 <Link to="/earn" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-money mr-2 align-middle"/>{props.t('Earn')}</Link>
                             </li>
-                            {/* <li className="nav-item dropdown">
-                                <Link to="/lock" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-lock mr-2 align-middle"/>{props.t('Lock')}</Link>
-                            </li> */}
+                            <li className="nav-item dropdown">
+                                <Link to="/dao" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-group mr-2 align-middle"/>{props.t('DAO')}</Link>
+                            </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" onClick={toggleDropdown2} to="#">
                                     <i className="bx bx-info-circle mr-2 align-middle"/>{props.t('Info')} <div className="arrow-down ml-2"></div>
