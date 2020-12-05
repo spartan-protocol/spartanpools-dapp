@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { getSpartaContract, getDaoContract, getProposals } from '../client/web3'
+import {getSpartaContract, getDaoContract, getProposals, getBondv3Contract} from '../client/web3'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
@@ -63,6 +63,21 @@ const DAO = (props) => {
         let contract = getDaoContract()
         console.log(grantAddress, grantAmount, context.account)
         await contract.methods.newGrantProposal(grantAddress, grantAmount).send({ from: context.account })
+        getData()
+        //console.log(tx.transactionHash)
+    }
+
+    const [bondAssetAddress, setBondAssetAddress] = useState(false);
+    const changeBondAssetAddress = (e) => {
+        setBondAssetAddress(e.target.value)
+        console.log(e.target.value)
+    }
+    // AVAILABLE 'TYPES' = LIST, DELIST, COOL_OFF, MINT
+    const proposeBondAsset = async (type) => {
+        let contract = getBondv3Contract()
+        console.log(bondAssetAddress, type, context.account)
+        await contract.methods.newAddressProposal(bondAssetAddress, type).send({ from: context.account })
+        getData()
         //console.log(tx.transactionHash)
     }
 
@@ -161,9 +176,29 @@ const DAO = (props) => {
                                                                 <InputGroupText>SPARTA</InputGroupText>
                                                             </InputGroupAddon>
                                                         </InputGroup>
-                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={proposeGrant}>
-                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> New Grant Proposal
-                                                            </button>
+                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={proposeGrant}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> New Grant Proposal
+                                                        </button>
+                                                    </Col>
+
+                                                    <Col xs={6}>
+                                                        <h5 className='mt-2'>Manage Bond Assets</h5>
+                                                        <Input onChange={changeBondAssetAddress}
+                                                            placeholder={'Enter Asset Address'}
+                                                            className='my-1'>
+                                                        </Input>
+                                                        <button className="btn btn-primary waves-effect waves-light my-1 mr-1" onClick={()=>{proposeBondAsset('LIST')}}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> List Bond Asset
+                                                        </button>
+                                                        <button className="btn btn-primary waves-effect waves-light my-1 ml-1" onClick={()=>{proposeBondAsset('DELIST')}}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> De-List Bond Asset
+                                                        </button>
+                                                    </Col>
+
+                                                    <Col xs={12}>
+                                                        <hr/>
+                                                        <h5 className='text-center'>Functions below ported from old DAO page</h5>
+                                                        <hr/>
                                                     </Col>
 
                                                     <Col xs={6}>
@@ -251,7 +286,7 @@ const DAO = (props) => {
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {context.proposalArray.sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                                            {context.proposalArray.filter(x => x.type !== '').sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                                                 <ProposalItem 
                                                                     key={c.id}
                                                                     finalised={c.finalised}
