@@ -175,12 +175,58 @@ export const getAlltokens = async () => {
     return sortedTokens;
 }
 
-export const getListedPools= async () => {
+export const getListedPools = async () => {
     console.log('start getlistedpools')
     var contract = getUtilsContract()
     let poolArray = await contract.methods.allPools().call()
     //console.log(poolArray)
     return poolArray
+}
+
+// Get Proposals Count
+export const getProposalCount = async () => {
+    console.log('start getproposalcount')
+    var contract = getDaoContract()
+    let proposalCount = await contract.methods.proposalCount().call()
+    //console.log(proposalCount)
+    return proposalCount
+}
+
+// Get Proposal Array
+export const getProposals = async () => {
+    console.log('start getproposals')
+    let proposalCount = await getProposalCount()
+    let proposalsData = []
+    for (let i = 0; i < proposalCount; i++) {
+        proposalsData.push(await getProposal(i))
+    }
+    //console.log(proposalsData)
+    return proposalsData
+}
+
+// Get Each Proposal
+export const getProposal = async (pid) => {
+    var contract = getDaoContract()
+    let data = await Promise.all([contract.methods.getProposalDetails(pid).call(), contract.methods.hasMajority(pid).call(), contract.methods.hasMinority(pid).call(), contract.methods.hasQuorum(pid).call()])
+    let proposalDetails = data[0]
+    let majority = data[1]
+    let minority = data[2]
+    let quorum = data[3]
+    let poolData = {
+        'id': proposalDetails.id,
+        'type': proposalDetails.proposalType,
+        'votes': proposalDetails.votes,
+        'timeStart': proposalDetails.timeStart,
+        'finalising': proposalDetails.finalising,
+        'finalised': proposalDetails.finalised,
+        'param': proposalDetails.param,
+        'proposedAddress': proposalDetails.proposedAddress,
+        'list': proposalDetails.list,
+        'majority': majority,
+        'quorum': quorum,
+        'minority': minority,
+    }
+    return poolData
 }
 
 // Get Pools Table Data (initial load)

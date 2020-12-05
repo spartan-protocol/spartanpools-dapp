@@ -1,13 +1,16 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Context } from '../context'
 
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { getSpartaContract, getDaoContract } from '../client/web3'
+import { getSpartaContract, getDaoContract, getProposals } from '../client/web3'
+
+import { ProposalItem } from '../components/Sections/ProposalItem'
 
 import {
-    Container,
+    Container, 
+    InputGroup, InputGroupAddon, InputGroupText,
     Card, CardBody, CardTitle,
     Table, Input, Row, Col
 } from "reactstrap";
@@ -27,6 +30,41 @@ const DAO = (props) => {
     // - ADD DROPDOWN BOX 'SORT' FOR: TYPE, VOTES, PROPOSED DATE, STATUS, WEIGHT
 
     const context = useContext(Context)
+
+    useEffect(() => {
+        getData()
+        return function cleanup() {
+            getData()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const getData = async () => {
+        // (proposalArray) PROPOSALS
+        context.setContext({'proposalArrayLoading': true})
+        let proposalArray = await getProposals()
+        context.setContext({'proposalArray': proposalArray})
+        context.setContext({'proposalArrayComplete': true})
+        context.setContext({'proposalArrayLoading': false})
+        console.log(proposalArray)
+    }
+
+    const [grantAddress, setGrantAddress] = useState(false);
+    const [grantAmount, setGrantAmount] = useState(false);
+    const changeGrantAddress = (e) => {
+        setGrantAddress(e.target.value)
+        console.log(e.target.value)
+    }
+    const changeGrantAmount = (e) => {
+        let wei = utils.parseEther(e.target.value)
+        setGrantAmount(wei.toString())
+    }
+    const proposeGrant = async () => {
+        let contract = getDaoContract()
+        console.log(grantAddress, grantAmount, context.account)
+        await contract.methods.newGrantProposal(grantAddress, grantAmount).send({ from: context.account })
+        //console.log(tx.transactionHash)
+    }
 
     const [asset, setAsset] = useState(false);
     const [claimRate, setClaimRate] = useState(false);
@@ -108,19 +146,36 @@ const DAO = (props) => {
                                             <CardBody>
                                                 <CardTitle><h4>The Spartan DAO can govern the contract.</h4></CardTitle>
                                                 <Row>
+
+                                                    <Col xs={6}>
+                                                        <h5 className='mt-2'>New Grant</h5>
+                                                        <Input onChange={changeGrantAddress}
+                                                            placeholder={'Enter Recipient Address'}
+                                                            className='my-1'>
+                                                        </Input>
+                                                        <InputGroup className='my-1'>
+                                                            <Input onChange={changeGrantAmount}
+                                                                placeholder={'Enter Grant Amount'}
+                                                            ></Input>
+                                                            <InputGroupAddon addonType="append" className='d-inline-block'>
+                                                                <InputGroupText>SPARTA</InputGroupText>
+                                                            </InputGroupAddon>
+                                                        </InputGroup>
+                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={proposeGrant}>
+                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> New Grant Proposal
+                                                            </button>
+                                                    </Col>
+
                                                     <Col xs={6}>
                                                         <h5 className='mt-2'>List Asset for Earn</h5>
                                                         <Input onChange={changeAsset}
                                                             placeholder={'Enter BEP2E Asset Address'}
-                                                            allowClear={true}
                                                             className='my-1'></Input>
                                                         <Input onChange={changeMaxClaim}
                                                             placeholder={'Enter Max Claim'}
-                                                            allowClear={true}
                                                             className='my-1'></Input>
                                                         <Input onChange={changeClaimRate}
                                                             placeholder={'Enter Claim Rate'}
-                                                            allowClear={true}
                                                             className='my-1'></Input>
                                                             <button className="btn btn-primary waves-effect waves-light my-1" onClick={listAsset}>
                                                                 <i className="bx bx-log-in-circle font-size-16 align-middle"/> List Asset
@@ -131,7 +186,6 @@ const DAO = (props) => {
                                                         <h5 className='mt-2'>Change DAO Address</h5>
                                                         <Input onChange={changeDAOAddress}
                                                             placeholder={'Enter BEP2E Asset Address'}
-                                                            allowClear={true}
                                                             className='my-1'></Input>
                                                             <button className="btn btn-primary waves-effect waves-light my-1" onClick={listDAO}>
                                                                 <i className="bx bx-log-in-circle font-size-16 align-middle"/> Change DAO
@@ -142,12 +196,10 @@ const DAO = (props) => {
                                                         <h5 className='mt-2'>Change Router & Utils Address</h5>
                                                         <Input onChange={changeRouterAddress}
                                                             placeholder={'Enter New Router Address'}
-                                                            allowClear={true}
                                                             className='my-1'>
                                                         </Input>
                                                         <Input onChange={changeUtilsAddress}
                                                             placeholder={'Enter New Utils Address'}
-                                                            allowClear={true}
                                                             className='my-1'>
                                                         </Input>
                                                             <button className="btn btn-primary waves-effect waves-light my-1" onClick={listRouter}>
@@ -159,7 +211,6 @@ const DAO = (props) => {
                                                         <h5 className='mt-2'>Change Incentive Address</h5>
                                                         <Input onChange={changeIncentiveAddress}
                                                             placeholder={'Enter BEP2E Asset Address'}
-                                                            allowClear={true}
                                                             className='my-1'></Input>
                                                             <button className="btn btn-primary waves-effect waves-light my-1" onClick={changeIncentiveAddr}>
                                                                 <i className="bx bx-log-in-circle font-size-16 align-middle"/> Change Incentive Address
@@ -191,59 +242,38 @@ const DAO = (props) => {
                                                     <Table className="table-centered mb-0">
                                                         <thead className="center">
                                                         <tr>
-                                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Proposal")}</th>
                                                             <th scope="col">{props.t("Type")}</th>
-                                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Votes")}</th>
-                                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Proposed")}</th>
+                                                            <th scope="col">{props.t("Votes")}</th>
+                                                            <th scope="col">{props.t("Proposed")}</th>
                                                             <th scope="col">{props.t("Status")}</th>
                                                             <th scope="col">{props.t("Weight")}</th>
+                                                            <th scope="col">{props.t("Action")}</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {/* EXAMPLE DATA */}
-                                                            <tr>
-                                                                <td>List RAVEN for bond</td>
-                                                                <td>Bond listing</td>
-                                                                <td>67</td>
-                                                                <td>3 days ago</td>
-                                                                <td>Finalized</td>
-                                                                <td>(53%) Majority</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Grant for marketing</td>
-                                                                <td>Grant</td>
-                                                                <td>50</td>
-                                                                <td>1 hour ago</td>
-                                                                <td>Finalizing</td>
-                                                                <td>(27%) Quorum</td>
-                                                            </tr>
-
-                                                            {/*
-                                                            {context.sharesData.filter(x => x.units + x.locked > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                                                                <EarnTableItem 
-                                                                    key={c.address}
-                                                                    symbAddr={c.address}
-                                                                    address={c.poolAddress}
-                                                                    symbol={c.symbol}
-                                                                    units={c.units}
-                                                                    locked={c.locked}
-                                                                    member={member}
-                                                                    harvest={harvest}
-                                                                    loadingHarvest={loadingHarvest}
-                                                                    lastHarvest={lastHarvest}
+                                                            {context.proposalArray.sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                                                <ProposalItem 
+                                                                    key={c.id}
+                                                                    finalised={c.finalised}
+                                                                    finalising={c.finalising}
+                                                                    list={c.list}
+                                                                    majority={c.majority}
+                                                                    minority={c.minority}
+                                                                    param={c.param}
+                                                                    proposedAddress={c.proposedAddress}
+                                                                    quorum={c.quorum}
+                                                                    timeStart={c.timeStart}
+                                                                    type={c.type}
+                                                                    votes={c.votes}
                                                                 />
                                                             )}
                                                             <tr>
-                                                                <td colSpan="5">
-                                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
-                                                                        <div className="text-center m-2">All LP tokens loaded</div>
-                                                                    }
-                                                                    {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length <= 0 &&
-                                                                        <div className="text-center m-2">You have no LP tokens, <Link to="/pools">visit the pools</Link> to add liquidity</div>
+                                                                <td colSpan="6">
+                                                                    {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
+                                                                        <div className="text-center m-2">All proposals loaded</div>
                                                                     }
                                                                 </td>
                                                             </tr>
-                                                            */}
                                                         </tbody>
                                                     </Table>
                                                 </div>
