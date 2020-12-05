@@ -40,7 +40,8 @@ const AddressConn = (props) => {
         window.web3 = new Web3(window.ethereum)
         if (window.web3._provider) {
             context.setContext({'web3Wallet': true})
-            const account = (await window.web3.eth.getAccounts())[0]
+            const accounts = await window.web3.eth.requestAccounts()
+            const account = accounts[0]
             if (account) {
                 if (account !== prevAccount) {
                     context.setContext({'account': account})
@@ -53,7 +54,6 @@ const AddressConn = (props) => {
                     connectWallet(tokenArray, account)
                 }
             } else {
-                await enableMetaMask()
                 await pause(3000)
                 connectWallet(tokenArray)
             }
@@ -101,17 +101,6 @@ const AddressConn = (props) => {
             context.setContext({'sharesDataLoading': false})
             context.setContext({'sharesDataComplete': lastPage})
         }
-    }
-
-    const enableMetaMask = async () => {
-        //console.log('connecting')
-        if (window.ethereum) {
-            window.web3 = new Web3(window.ethereum)
-            window.ethereum.enable()
-            //await connectWallet()
-            return true;
-        }
-        return false;
     }
 
     const loadingGlobal = async (tokenArray) => {
