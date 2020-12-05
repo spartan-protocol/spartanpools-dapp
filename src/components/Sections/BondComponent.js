@@ -51,22 +51,67 @@ const BondComponent = (props) => {
     const [showClaimNewModal, setShowClaimNewModal] = useState(false);
 
     const remainder = convertFromWei(userData.balance - userData.input)
+
     useEffect(() => {
-        if (context.poolsData) {
-            getData()
-        }
-        const interval = setInterval(() => {
-            if (context.walletData) {
-                getLPData()
-            }
-        }, 3000);
-        return () => clearInterval(interval);
-
+        checkPoolReady()
         // eslint-disable-next-line
-    }, [context.walletData, context.poolsData]);
+    }, [context.walletData, context.poolsData])
 
-    const getLPData = async () => {
+    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
+    const checkPoolReady = async () => {
         let params = queryString.parse(props.location.search)
+        if (context.poolsData) {
+            var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
+            if (existsInPoolsData === true) {
+                await checkWalletReady(params)
+            }
+            else {
+                await pause(2000)
+                await checkPoolReady()
+            }
+        }
+        else {
+            await pause(2000)
+            await checkPoolReady()
+        }
+    }
+
+    const checkWalletReady = async (params) => {
+        if (context.walletData) {
+            var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
+            if (existsInWalletData === true) {
+                await getData(params)
+            }
+            else {
+                await pause(2000)
+                await checkWalletReady(params)
+            }
+        }
+        else {
+            await pause(2000)
+            await checkWalletReady(params)
+        }
+    }
+
+    const getData = async (params) => {
+        const pool = await getPoolData(params.pool, context.poolsData)
+        setPoolTokenDepth(pool.tokenAmount)
+        const tokenData = await getTokenData(pool.address, context.walletData)
+    
+        let _userData = {
+            'address': tokenData?.address,
+            'symbol': tokenData?.symbol,
+            'balance': tokenData?.balance,
+            'input': 0,
+        }
+        setUserData(_userData)
+
+        await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
+        getLPData(params)
+    }
+
+    const getLPData = async (params) => {
         let data = await Promise.all([
             getClaimableLPBondv2(context.account, params.pool), getBondedv2MemberDetails(context.account, params.pool),
             getClaimableLPBondv3(context.account, params.pool), getBondedv3MemberDetails(context.account, params.pool)
@@ -81,29 +126,8 @@ const BondComponent = (props) => {
         setClaimableLPBondv3(bondedLPBondv3)
         setBondv2Member(bondv2MemberDetails)
         setBondv3Member(bondv3MemberDetails)
-    }
-
-    const getData = async () => {
-        let params = queryString.parse(props.location.search)
-        const pool = await getPoolData(params.pool, context.poolsData)
-        setPoolTokenDepth(pool.tokenAmount)
-        var tokenData = ''
-        
-        if (!context.tokenData && context.walletData && pool) {
-            tokenData = await getTokenData(pool.address, context.walletData)
-           
-        } else {
-            tokenData = context.tokenData
-        }
-        let _userData = {
-            'address': tokenData?.address,
-            'symbol': tokenData?.symbol,
-            'balance': tokenData?.balance,
-            'input': 0,
-        }
-        setUserData(_userData)
-
-        await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
+        await pause(3000)
+        getLPData(params)
     }
 
     //const [lastClaimed, setlastClaimed] = useState(100);
@@ -114,8 +138,7 @@ const BondComponent = (props) => {
         setloadingBondedLP(true)
         let contractBondv2 = getBondv2Contract()
         let address = userData.address
-         await contractBondv2.methods.claim(address).send({ from: context.account })
-         
+        await contractBondv2.methods.claim(address).send({ from: context.account })
         await refreshData()
         setloadingBondedLP(false)
     }
@@ -163,7 +186,6 @@ const BondComponent = (props) => {
         }else {
             setShowClaimModal(!showClaimModal)
         }
-        
     }
 
     const toggleNewClaim = () => {
@@ -285,7 +307,6 @@ const BondComponent = (props) => {
         setStartTx(false)
         setEndTx(true)
         await refreshData()
-        context.setContext({ 'tokenData': await getTokenData(userData.address, context.walletData) })
     }
 
     const chartData = {
