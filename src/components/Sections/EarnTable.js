@@ -45,10 +45,6 @@ const EarnTable = (props) => {
         setReward(rewards)
         setMember(memberDetails)
         setTotalWeight(weight)
-        getLastHarvest(memberDetails)
-    }
-
-    const getLastHarvest = (memberDetails) => {
         setlastHarvest(hoursSince(memberDetails.lastBlock))
     }
 
