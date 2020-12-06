@@ -27,26 +27,25 @@ const EarnTable = (props) => {
     const [loadingHarvest, setLoadingHarvest] = useState(false)
     const [lastHarvest,setlastHarvest] = useState('100')
 
-    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
     useEffect(() => {
-        getData()
+        const interval = setInterval(() => {
+            if (context.account && context.walletData) {
+                getData()
+            }
+        }, 3000);
+        return () => clearInterval(interval)
         // eslint-disable-next-line
-      }, [context.walletData])
+    }, [context.walletData, context.account])
 
     const getData = async () => {
-        if (context.walletData) {
-            let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
-            let rewards = data[0]
-            let memberDetails = data[1]
-            let weight = data[2]
-            setReward(rewards)
-            setMember(memberDetails)
-            setTotalWeight(weight)
-            getLastHarvest(memberDetails)
-        }
-        await pause(5000)
-        getData()
+        let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
+        let rewards = data[0]
+        let memberDetails = data[1]
+        let weight = data[2]
+        setReward(rewards)
+        setMember(memberDetails)
+        setTotalWeight(weight)
+        getLastHarvest(memberDetails)
     }
 
     const getLastHarvest = (memberDetails) => {

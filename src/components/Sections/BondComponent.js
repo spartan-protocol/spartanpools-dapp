@@ -24,6 +24,7 @@ import { Doughnut } from 'react-chartjs-2';
 const BondComponent = (props) => {
 
     const context = useContext(Context)
+    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
     const [claimableLPBondv2, setClaimableLPBondv2] = useState(0)
     const [claimableLPBondv3, setClaimableLPBondv3] = useState(0)
     const [memberBondv2, setBondv2Member] = useState([])
@@ -52,66 +53,49 @@ const BondComponent = (props) => {
 
     const remainder = convertFromWei(userData.balance - userData.input)
 
+    const [getDataCount, setGetDataCount] = useState(0)
     useEffect(() => {
-        checkPoolReady()
+        if (context.poolsData && context.walletData) {
+            getData()
+        }
         // eslint-disable-next-line
-    }, [context.walletData, context.poolsData])
+    }, [context.poolsData, context.walletData, getDataCount])
 
-    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-    const checkPoolReady = async () => {
+    const getData = async () => {
         let params = queryString.parse(props.location.search)
-        if (context.poolsData) {
-            var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
-            if (existsInPoolsData === true) {
-                await checkWalletReady(params)
+        var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
+        var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
+        if (existsInPoolsData === true && existsInWalletData === true) {
+            const pool = await getPoolData(params.pool, context.poolsData)
+            setPoolTokenDepth(pool.tokenAmount)
+            const tokenData = await getTokenData(pool.address, context.walletData)
+            let _userData = {
+                'address': tokenData?.address,
+                'symbol': tokenData?.symbol,
+                'balance': tokenData?.balance,
+                'input': 0,
             }
-            else {
-                await pause(2000)
-                await checkPoolReady()
-            }
+            setUserData(_userData)
+            await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
         }
         else {
             await pause(2000)
-            await checkPoolReady()
+            setGetDataCount(getDataCount + 1)
         }
     }
 
-    const checkWalletReady = async (params) => {
-        if (context.walletData) {
-            var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-            if (existsInWalletData === true) {
-                await getData(params)
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (context.account && userData.symbol !== 'XXX') {
+                getLPData()
             }
-            else {
-                await pause(2000)
-                await checkWalletReady(params)
-            }
-        }
-        else {
-            await pause(2000)
-            await checkWalletReady(params)
-        }
-    }
+        }, 3000);
+        return () => clearInterval(interval)
+        // eslint-disable-next-line
+    }, [context.account, userData])
 
-    const getData = async (params) => {
-        const pool = await getPoolData(params.pool, context.poolsData)
-        setPoolTokenDepth(pool.tokenAmount)
-        const tokenData = await getTokenData(pool.address, context.walletData)
-    
-        let _userData = {
-            'address': tokenData?.address,
-            'symbol': tokenData?.symbol,
-            'balance': tokenData?.balance,
-            'input': 0,
-        }
-        setUserData(_userData)
-
-        await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
-        getLPData(params)
-    }
-
-    const getLPData = async (params) => {
+    const getLPData = async () => {
+        let params = queryString.parse(props.location.search)
         let data = await Promise.all([
             getClaimableLPBondv2(context.account, params.pool), getBondedv2MemberDetails(context.account, params.pool),
             getClaimableLPBondv3(context.account, params.pool), getBondedv3MemberDetails(context.account, params.pool)
@@ -126,13 +110,7 @@ const BondComponent = (props) => {
         setClaimableLPBondv3(bondedLPBondv3)
         setBondv2Member(bondv2MemberDetails)
         setBondv3Member(bondv3MemberDetails)
-        await pause(3000)
-        getLPData(params)
     }
-
-    //const [lastClaimed, setlastClaimed] = useState(100);
-
-    //const getLastClaim = () => setlastClaimed(hoursSince(member.lastBlockTime))
 
     const claimOldLP = async () => {
         setloadingBondedLP(true)
@@ -178,9 +156,9 @@ const BondComponent = (props) => {
     }
 
     const toggleClaim = () => {
-        if(formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && !memberBondv3.isMember){
+        if(convertFromWei(claimableLPBondv2) > 0 && !memberBondv3.isMember){
             claimOldLP();
-        }else if(formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01){
+        }else if(convertFromWei(claimableLPBondv2) > 0){
             toggleNewClaim();
             setShowClaimModal(!showClaimModal)
         }else {
@@ -194,7 +172,6 @@ const BondComponent = (props) => {
 
     const checkApproval = async (address) => {
         if (address === BNB_ADDR || address === WBNB_ADDR) {
-            //console.log("BNB")
             return true
         } else {
             const contract = getTokenContract(address)
@@ -377,7 +354,7 @@ const BondComponent = (props) => {
                                                 <p>
                                                     <strong>{memberBondv3.lastBlockTime > 0 && daysSince(memberBondv3.lastBlockTime)}</strong> passed since your last claim.
                                                 </p>
-                                                 }
+                                                }
                                                  
                                             </Col>
                                         </Row>
@@ -570,18 +547,18 @@ const BondComponent = (props) => {
                                             <Button color="secondary" onClick={toggleLock}>Cancel</Button>
                                         </ModalFooter>
                                     </Modal>
-                                    {formatGranularUnits(convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2))) > 0.00 && 
+                                    {convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2)) > 0 && 
                                     <Modal isOpen={showClaimModal} toggle={toggleClaim}>
                                         <ModalHeader toggle={toggleClaim}>Claim Locked LP Tokens </ModalHeader>
                                         
                                         <ModalBody>
-                                        {formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001 && 
+                                        {convertFromWei(claimableLPBondv3) > 0 && 
                                         <div>
                                         <h6>For your convenience, LP Tokens will be locked into the DAO to earn more SPARTA for you</h6> 
                                         </div>
                                         }
                                         
-                                            {formatGranularUnits(convertFromWei(claimableLPBondv2)) > 0.01 && 
+                                            {convertFromWei(claimableLPBondv2) > 0 && 
                                             <div>
                                                 <h6>Early Bonder Found!</h6>
                                                 <li><strong>Alert!</strong> You will need to confirm two transactions!</li>
@@ -594,12 +571,11 @@ const BondComponent = (props) => {
                                         <ModalFooter>
                                             {showClaimNewModal && 
                                             <Button color="primary" onClick={() => {
-                                                if(formatGranularUnits(convertFromWei(claimableLPBondv3)) > 0.0000001){
+                                                if(convertFromWei(claimableLPBondv3) > 0){
                                                     toggleNewClaim()
                                                 }else{
                                                     toggleClaim()
                                                 }
-                                                
                                                     claimOldLP();
                                                 }}>
                                                 Claim Early Bonder LP Tokens!
@@ -608,12 +584,12 @@ const BondComponent = (props) => {
                                             }
                                             {!showClaimNewModal && 
                                     
-                                            <Button color="primary" onClick={() => {
-                                                toggleClaim();
-                                            claimNewLP();
-                                        }}>
-                                        Claim and Lock LP Tokens!
-                                        </Button>
+                                                <Button color="primary" onClick={() => {
+                                                    toggleClaim();
+                                                    claimNewLP();
+                                                }}>
+                                                    Claim and Lock LP Tokens!
+                                                </Button>
                                     
                                             }
                                         </ModalFooter>
