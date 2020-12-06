@@ -105,50 +105,19 @@ const NewSwap = (props) => {
 
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
+    const [getDataCount, setGetDataCount] = useState(0)
     useEffect(() => {
-        checkPoolReady()
-    // eslint-disable-next-line
-    }, [context.poolsData,context.walletData])
-
-    const checkPoolReady = async () => {
-        let params = queryString.parse(props.location.search)
-        if (context.poolsData) {
-            var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
-            if (existsInPoolsData === true) {
-                checkWalletReady()
-            }
-            else {
-                await pause(3000)
-                checkPoolReady()
-            }
+        if (context.poolsData && context.walletData) {
+            getData()
         }
-        else {
-            await pause(3000)
-            checkPoolReady()
-        }
-    }
-
-    const checkWalletReady = async () => {
-        let params = queryString.parse(props.location.search)
-        if (context.walletData) {
-            var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-            if (existsInWalletData === true) {
-                getData()
-            }
-            else {
-                await pause(3000)
-                checkWalletReady()
-            }
-        }
-        else {
-            await pause(3000)
-            checkWalletReady()
-        }
-    }
+        // eslint-disable-next-line
+    }, [context.poolsData, context.walletData, getDataCount])
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
-        if (params.pool !== undefined) {
+        var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
+        var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
+        if (existsInPoolsData === true && existsInWalletData === true) {
             setPoolURL(params.pool)
             //console.log(params.pool)
             const pool = await getPoolData(params.pool, context.poolsData)
@@ -172,6 +141,10 @@ const NewSwap = (props) => {
             data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
             setApprovalS(data[0])
             setApproval(data[1])
+        }
+        else {
+            await pause(2000)
+            setGetDataCount(getDataCount + 1)
         }
     }
 
