@@ -89,97 +89,47 @@ const AddLiquidity = (props) => {
 
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
+    const [getDataCount, setGetDataCount] = useState(0)
     useEffect(() => {
-        checkPoolReady()
-        checkSharesDataReady()
-    // eslint-disable-next-line
-    }, [context.poolsData, context.walletData])
-
-    const checkPoolReady = async () => {
-        let params = queryString.parse(props.location.search)
-        if (context.poolsData) {
-            var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
-            if (existsInPoolsData === true) {
-                await checkWalletReady(params)
-            }
-            else {
-                await pause(2000)
-                await checkPoolReady()
-            }
+        if (context.poolsData && context.walletData) {
+            getData()
         }
-        else {
-            await pause(2000)
-            await checkPoolReady()
-        }
-    }
-
-    const checkWalletReady = async (params) => {
-        if (context.walletData) {
-            var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-            if (existsInWalletData === true) {
-                await getData()
-            }
-            else {
-                await pause(2000)
-                await checkWalletReady(params)
-            }
-        }
-        else {
-            await pause(2000)
-            await checkWalletReady(params)
-        }
-    }
+        // eslint-disable-next-line
+    }, [context.poolsData, context.walletData, getDataCount])
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
-        const tempPool = await getPoolData(params.pool, context.poolsData)
-        setPool(tempPool)
-        let data = await Promise.all([getTokenData(SPARTA_ADDR, context.walletData), getTokenData(tempPool.address, context.walletData)])
-        const baseData = data[0]
-        const tokenData = data[1]
-
-        let _userData = {
-            'baseBalance': baseData?.balance,
-            'tokenBalance': tokenData?.balance,
-            'address': tokenData?.address,
-            'symbol': tokenData?.symbol,
-            'balance': tokenData?.balance,
-            'input': 0,
-        }
-        setUserData(_userData)
-        //console.log(baseData?.balance, tokenData?.balance)
-
-        let liquidityData = await getPairedAmount(baseData?.balance, tokenData?.balance, tempPool)
-        setLiquidityData(liquidityData)
-        const estLiquidityUnits = await getLiquidityUnits(liquidityData, tempPool)
-        setLiquidityUnits(estLiquidityUnits)
-
-        data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(tempPool.address)])
-        setApprovalBase(data[0])
-        setApprovalToken(data[1])
-    }
-
-    const checkSharesDataReady = async () => {
-        let pool = ''
-        let params = queryString.parse(props.location.search)
-        if (params.pool === BNB_ADDR) {
-            pool = WBNB_ADDR
-        }
-        else {pool = params.pool}
-        if (context.sharesData && context.sharesDataLoading !== true) {
-            var existsInSharesData = await context.sharesData.some(e => (e.address === pool))
-            //console.log(context.sharesData)
-            if (existsInSharesData === true) {
-                return
+        var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
+        var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
+        if (existsInPoolsData === true && existsInWalletData === true) {
+            const tempPool = await getPoolData(params.pool, context.poolsData)
+            setPool(tempPool)
+            let data = await Promise.all([getTokenData(SPARTA_ADDR, context.walletData), getTokenData(tempPool.address, context.walletData)])
+            const baseData = data[0]
+            const tokenData = data[1]
+            let _userData = {
+                'baseBalance': baseData?.balance,
+                'tokenBalance': tokenData?.balance,
+                'address': tokenData?.address,
+                'symbol': tokenData?.symbol,
+                'balance': tokenData?.balance,
+                'input': 0,
             }
-            else {
-                await pause(2000)
-                await checkSharesDataReady()
-            }
+            setUserData(_userData)
+            //console.log(baseData?.balance, tokenData?.balance)
+    
+            let liquidityData = await getPairedAmount(baseData?.balance, tokenData?.balance, tempPool)
+            setLiquidityData(liquidityData)
+            const estLiquidityUnits = await getLiquidityUnits(liquidityData, tempPool)
+            setLiquidityUnits(estLiquidityUnits)
+    
+            data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(tempPool.address)])
+            setApprovalBase(data[0])
+            setApprovalToken(data[1])
         }
         else {
             await pause(2000)
-            await checkSharesDataReady()
+            setGetDataCount(getDataCount + 1)
         }
     }
 
@@ -867,47 +817,36 @@ const RemoveLiquidityPane = (props) => {
 
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
+    const [getDataCount, setGetDataCount] = useState(0)
     useEffect(() => {
-        checkSharesDataReady()
+        if (context.sharesData) {
+            getData()
+        }
         // eslint-disable-next-line
-    }, [context.sharesData])
+    }, [context.sharesData, getDataCount])
 
-    const checkSharesDataReady = async () => {
+    const getData = async () => {
         let pool = ''
         let params = queryString.parse(location.search)
         if (params.pool === BNB_ADDR) {pool = WBNB_ADDR}
         else {pool = params.pool}
-        if (context.sharesData) {
-            var existsInSharesData = await context.sharesData.some(e => (e.address === pool))
-            if (existsInSharesData === true) {
-                getLockedAmount(pool, props.pool)
-            }
-            else {
-                await pause(2000)
-                await checkSharesDataReady()
-            }
+        var existsInSharesData = await context.sharesData.some(e => (e.address === pool))
+        if (existsInSharesData === true) {
+            const lockedAmount = context.sharesData.find(x => x.address === pool).locked
+            const availAmount = context.sharesData.find(x => x.address === pool).units
+            setLockedAmnt(lockedAmount)
+            setAvailAmnt(availAmount)
+            let units = props.pool.units
+            let sparta = props.pool.baseAmount
+            let tokens = props.pool.tokenAmount
+            let share = lockedAmount / units
+            setBase(bn(sparta) * bn(share))
+            setToken(bn(tokens) * bn(share))
         }
         else {
             await pause(2000)
-            await checkSharesDataReady()
+            setGetDataCount(getDataCount + 1)
         }
-    }
-
-    const getLockedAmount = async (pool, poolData) => {
-        const lockedAmount = context.sharesData.find(x => x.address === pool).locked
-        const availAmount = context.sharesData.find(x => x.address === pool).units
-        setLockedAmnt(lockedAmount)
-        setAvailAmnt(availAmount)
-        getRates(poolData, lockedAmount)
-    }
-
-    const getRates = (poolData, lockedAmount) => {
-        let units = poolData.units
-        let sparta = poolData.baseAmount
-        let tokens = poolData.tokenAmount
-        let share = lockedAmount / units
-        setBase(bn(sparta) * bn(share))
-        setToken(bn(tokens) * bn(share))
     }
 
     return (

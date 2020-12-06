@@ -28,7 +28,6 @@ const EarnTable = (props) => {
     const [lastHarvest,setlastHarvest] = useState('100')
 
     useEffect(() => {
-        console.log('UE')
         const interval = setInterval(() => {
             if (context.account && context.walletData) {
                 getData()
@@ -39,7 +38,6 @@ const EarnTable = (props) => {
     }, [context.walletData, context.account])
 
     const getData = async () => {
-        console.log('getData')
         let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
         let rewards = data[0]
         let memberDetails = data[1]
