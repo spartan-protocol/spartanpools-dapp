@@ -722,13 +722,13 @@ const AddAsymmPane = (props) => {
                         }
                     </Col>
                     <Col xs={12}>
-                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalToken && props.startTx && !props.endTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 <i className="bx bx-spin bx-loader"/> ADD TO POOL
                             </div>
                         }
 
-                        {convertFromWei(props.pool.depth) > 10000 && props.approvalBase && props.approvalToken && !props.startTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalToken && !props.startTx &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 ADD TO POOL
                             </div>
