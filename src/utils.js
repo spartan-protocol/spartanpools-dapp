@@ -31,6 +31,18 @@ export function convertToWei(number) {
     return final
 }
 
+export function convertGweiToWei(number) {
+    var num = new BigNumber(number)
+    var final = num.multipliedBy(10**9)
+    return final
+}
+
+export function convertFromGwei(number) {
+    var num = new BigNumber(number)
+    var final = num.div(10**9)
+    return final
+}
+
 export const getAddressShort = (address) => {
     const addr = address ? address : '0x000000000000000'
     const addrShort = addr.substring(0,5) + '...' + addr?.substring(addr.length-3, addr.length)

@@ -10,7 +10,7 @@ import DAO from '../artifacts/Dao.json'
 import Bondv2 from '../artifacts/BondV2.json'
 import Bondv3 from '../artifacts/BondV3.json'
 
-const net = '';
+const net = 'testnet';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
 export const WBNB_ADDR = net === 'testnet' ? '0x27c6487C9B115c184Bb04A1Cf549b670a22D2870' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
@@ -54,6 +54,12 @@ export const getBNBBalance = async (acc) => {
     var web3_ = getWeb3()
     var bal_ = await web3_.eth.getBalance(acc)
     return bal_
+}
+
+export const getGasPrice = async () => {
+    var web3_ = getWeb3()
+    var gas = await web3_.eth.getGasPrice()
+    return gas
 }
 
 export const getSpartaPrice = async () => {
