@@ -286,6 +286,7 @@ const BondComponent = (props) => {
             gas: '',
             value: userData.address === BNB_ADDR ? inputAmount : 0
         }, function(error, gasAmount) {
+            if (error) {console.log(error)}
             gasFee = Math.floor(gasAmount * 1.5)
             gasFee = gasFee * convertFromGwei(estGasPrice)
         })

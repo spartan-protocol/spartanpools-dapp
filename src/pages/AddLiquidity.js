@@ -307,6 +307,7 @@ const AddLiquidity = (props) => {
             gas: '',
             value: pool.address === BNB_ADDR ? tokenAmnt : '0'
         }, function(error, gasAmount) {
+            if (error) {console.log(error)}
             gasFee = Math.floor(gasAmount * 1.55)
             gasFee = gasFee * convertFromGwei(estGasPrice)
         })

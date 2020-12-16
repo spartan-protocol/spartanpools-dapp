@@ -283,17 +283,19 @@ const NewSwap = (props) => {
             gas: '',
             value: pool.address === BNB_ADDR ? inputAmount.toFixed(0) : 0
         }, function(error, gasAmount) {
-            gasFee = Math.floor(gasAmount * 1.5)
+            if (error) {console.log(error)}
+            gasFee = Math.floor(gasAmount * 1.6)
             gasFee = gasFee * convertFromGwei(estGasPrice)
         })
         if (pool.address === BNB_ADDR  && inputAmount >= sellData.balance - convertGweiToWei(gasFee)) {
-            inputAmount = (inputAmount.minus(convertGweiToWei(gasFee))).toFixed(0)
+            inputAmount = (inputAmount.minus(convertGweiToWei(gasFee)))
         }
-        await contract.methods.swap(inputAmount, poolURL, SPARTA_ADDR).send({
+        //console.log(inputAmount.toFixed(0))
+        await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).send({
             from: context.account,
             gasPrice: '',
             gas: '',
-            value: pool.address === BNB_ADDR ? inputAmount : 0
+            value: pool.address === BNB_ADDR ? inputAmount.toFixed(0) : 0
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
