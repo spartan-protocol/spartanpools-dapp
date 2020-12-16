@@ -132,7 +132,7 @@ export const TradePaneBuy = (props) => {
                 }
                 {props.approval && (props.tradeData.input / 1) > (props.tradeData.balance / 1) &&
                     <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
-                        <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {props.pool.symbol} in Wallet!
+                        <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {props.tradeData.symbol} in Wallet!
                     </button>
                 }
                 <Modal isOpen={showModal} toggle={toggle}>
