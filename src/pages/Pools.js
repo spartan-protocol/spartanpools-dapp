@@ -1,7 +1,5 @@
-import React, {useEffect, useState, useContext} from 'react'
+import React, {useEffect, useState} from 'react'
 import {withRouter} from "react-router-dom";
-
-import { Context } from '../context'
 
 import {getGlobalData} from '../client/web3'
 
@@ -13,8 +11,6 @@ import PoolTable from "../components/Sections/PoolTable";
 import PoolsPaneSide from "../components/Sections/PoolsPaneSide";
 
 const Pools = (props) => {
-
-    const context = useContext(Context)
 
     const [globalData, setGlobalData] = useState({
         totalPooled: 0,
@@ -39,11 +35,9 @@ const Pools = (props) => {
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Pools")}/>
                     <Row>
-                        {context.web3Wallet &&
-                            <Col xs="12">
-                                <PoolsPaneSide globalData={globalData}/>
-                            </Col>
-                        }
+                        <Col xs="12">
+                            <PoolsPaneSide globalData={globalData}/>
+                        </Col>
                         <Col xs="12">
                             <PoolTable/>
                         </Col>
@@ -53,7 +47,6 @@ const Pools = (props) => {
         </React.Fragment>
     )
 };
-
 
 export default withRouter(withNamespaces()(Pools));
 

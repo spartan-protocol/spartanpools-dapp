@@ -31,7 +31,7 @@ export const BONDv2_ABI = Bondv2.abi
 export const BONDv3_ABI = Bondv3.abi
 
 export const getWeb3 = () => {
-    return new Web3(Web3.givenProvider || "http://localhost:7545")
+    return new Web3(Web3.givenProvider || "https://bsc-dataseed.binance.org/")
 }
 
 export const getExplorerURL = () => {

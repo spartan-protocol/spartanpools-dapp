@@ -105,7 +105,7 @@ const EarnTable = (props) => {
                                         </Row>
                                     </>
                                 }
-                                {!context.walletData &&
+                                {!context.walletData && context.web3Wallet &&
                                     <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                 }
                             </CardBody>

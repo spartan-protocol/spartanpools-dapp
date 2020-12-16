@@ -37,8 +37,12 @@ const PoolTable = (props) => {
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Volume")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Txns")}</th>
                                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Revenue")}</th>
-                                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Bond")}</th>
-                                                <th scope="col">{props.t("Trade")}</th>
+                                                {context.web3Wallet &&
+                                                    <>
+                                                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Bond")}</th>
+                                                        <th scope="col">{props.t("Trade")}</th>
+                                                    </>
+                                                }
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -57,20 +61,16 @@ const PoolTable = (props) => {
                                                 listed={c.bondListed}
                                                 />
                                             )}
-                                                <tr>
-                                                    <td colSpan="8">
-                                                        {context.poolsDataLoading === true &&
-                                                            <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                                        }
-                                                        {context.poolsDataLoading !== true && context.poolsDataComplete === true &&
-                                                            <div className="text-center m-2">All Assets Loaded</div>
-                                                        }
-                                                    </td>
-                                                </tr>
                                             </tbody>
                                         </Table>
                                     </div>
                                 </>
+                            }
+                            {context.poolsDataLoading === true &&
+                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                            }
+                            {context.poolsDataLoading !== true && context.poolsDataComplete === true &&
+                                <div className="text-center m-2">All Assets Loaded</div>
                             }
                             {!context.poolsData && context.web3Wallet &&
                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
