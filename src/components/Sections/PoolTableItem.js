@@ -49,6 +49,14 @@ export const PoolTableItem = (props) => {
                     </td>
                 
                     <td>
+                        {!context.web3Wallet &&
+                        <div className='d-block d-lg-none'>
+                            <h6 className='mb-1 font-weight-light'>DEPTH</h6>
+                            <h6 className='mb-2'>{formatAllUSD(convertFromWei(props.depth), context.spartanPrice)}</h6>
+                            <h6 className='mb-1 font-weight-light'>VOLUME</h6>
+                            <h6 className='mb-0'>{formatAllUSD(convertFromWei(props.volume), context.spartanPrice)}</h6>
+                        </div>
+                        }
                         {context.walletData &&
                             <Link to={`/pool/stake?pool=${props.address}`}>
                                 <button color="primary" className="btn btn-primary waves-effect waves-light m-1 w-75">
