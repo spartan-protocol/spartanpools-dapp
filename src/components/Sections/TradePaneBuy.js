@@ -125,10 +125,15 @@ export const TradePaneBuy = (props) => {
                         <i className="bx bx-loader-alt bx-spin mx-1 float-right"/>{`${props.type} ${props.pool.symbol}`}
                     </Button>
                 }
-                {props.approval && !props.startTx && (props.tradeData.balance > 0) &&
+                {props.approval && !props.startTx && (props.tradeData.balance > 0) && (props.tradeData.input / 1) <= (props.tradeData.balance / 1) &&
                     <Button size="lg" color="success" onClick={checkEnoughForGas} className="m-1">
                         {`${props.type} ${props.pool.symbol}`}
                     </Button>
+                }
+                {props.approval && (props.tradeData.input / 1) > (props.tradeData.balance / 1) &&
+                    <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
+                        <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {props.pool.symbol} in Wallet!
+                    </button>
                 }
                 <Modal isOpen={showModal} toggle={toggle}>
                     <ModalHeader toggle={toggle}>BNB balance will be low after this transaction!</ModalHeader>

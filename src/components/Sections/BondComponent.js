@@ -3,11 +3,11 @@ import { Context } from "../../context"
 import queryString from 'query-string';
 import {
     getBondv2Contract,getBondv3Contract, BNB_ADDR, WBNB_ADDR,BONDv3_ADDR, getClaimableLPBondv2,getClaimableLPBondv3, getUtilsContract, updateSharesData,
-    getTokenContract, getBondedv2MemberDetails,getBondedv3MemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation,
+    getTokenContract, getBondedv2MemberDetails,getBondedv3MemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation, getGasPrice,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
-import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
+import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince, convertGweiToWei, convertFromGwei } from '../../utils'
 
 import {
     Row, Col, InputGroup, InputGroupAddon, Label, UncontrolledTooltip,
@@ -185,7 +185,11 @@ const BondComponent = (props) => {
     }
 
     const onChange = async (amount) => {
-        const finalAmt = (bn(userData?.balance)).times(amount).div(100)
+        let finalAmt = ''
+        if (amount === '100') {finalAmt = bn(userData?.balance)}
+        else {
+            finalAmt = (bn(userData?.balance)).times(amount).div(100)
+        }
         let _userData = {
             'address': userData.address,
             'symbol': userData.symbol,
@@ -271,13 +275,28 @@ const BondComponent = (props) => {
 
     const depositAsset = async () => {
         setStartTx(true)
+        let gasFee = 0
+        const estGasPrice = await getGasPrice()
+        let inputAmount = userData.input
         let contract = getBondv3Contract()
-        //console.log(userData.address, userData.input)
-        await contract.methods.deposit(userData.address, userData.input).send({
+        //console.log(userData.address, userData.input, inputAmount)
+        await contract.methods.deposit(userData.address, inputAmount).estimateGas({
             from: context.account,
             gasPrice: '',
             gas: '',
-            value: userData.address === BNB_ADDR ? userData.input : 0
+            value: userData.address === BNB_ADDR ? inputAmount : 0
+        }, function(error, gasAmount) {
+            gasFee = Math.floor(gasAmount * 1.5)
+            gasFee = gasFee * convertFromGwei(estGasPrice)
+        })
+        if (userData.address === BNB_ADDR && inputAmount >= userData.balance - convertGweiToWei(gasFee)) {
+            inputAmount = (inputAmount - convertGweiToWei(gasFee)).toFixed(0)
+        }
+        await contract.methods.deposit(userData.address, inputAmount).send({
+            from: context.account,
+            gasPrice: '',
+            gas: '',
+            value: userData.address === BNB_ADDR ? inputAmount : 0
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')
