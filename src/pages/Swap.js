@@ -8,14 +8,14 @@ import TradePaneBuy from "../components/Sections/TradePaneBuy";
 
 import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
-import {bn, formatBN, convertToWei, formatAllUnits, convertFromWei} from '../utils'
+import {bn, formatBN, convertToWei, formatAllUnits, convertFromWei, convertGweiToWei, convertFromGwei} from '../utils'
 import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} from '../math'
 
 import Notification from '../components/Common/notification'
 
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getTokenData,
+    getPoolData, getTokenData, getGasPrice,
     getPool, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 
@@ -200,7 +200,11 @@ const NewSwap = (props) => {
     };
 
     const changeBuyAmount = async (amount) => {
-        const finalAmt = (amount * buyData?.balance) / 100
+        let finalAmt = ''
+        if (amount === '100') {finalAmt = buyData?.balance}
+        else {
+            finalAmt = (amount * buyData?.balance) / 100
+        }
         setBuyData(await getSwapData(finalAmt, inputTokenData, outputTokenData, pool, false))
     };
 
@@ -209,7 +213,11 @@ const NewSwap = (props) => {
     };
 
     const changeSellAmount = async (amount) => {
-        const finalAmt = (amount * sellData?.balance) / 100
+        let finalAmt = ''
+        if (amount === '100') {finalAmt = sellData?.balance}
+        else {
+            finalAmt = (amount * sellData?.balance) / 100
+        }
         setSellData(await getSwapData(finalAmt, outputTokenData, inputTokenData, pool, true))
     };
 
@@ -263,15 +271,29 @@ const NewSwap = (props) => {
 
     const sell = async () => {
         setStartTx(true)
+        let gasFee = 0
+        const estGasPrice = await getGasPrice()
         let decDiff = 10 ** (18 - pool.decimals)
         let inputAmount = bn(sellData.input).div(decDiff)
         let contract = getRouterContract()
         //console.log(sellData.input, inputAmount, inputAmount.toFixed(0))
-        await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).send({
+        await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).estimateGas({
             from: context.account,
             gasPrice: '',
             gas: '',
             value: pool.address === BNB_ADDR ? inputAmount.toFixed(0) : 0
+        }, function(error, gasAmount) {
+            gasFee = Math.floor(gasAmount * 1.5)
+            gasFee = gasFee * convertFromGwei(estGasPrice)
+        })
+        if (pool.address === BNB_ADDR  && inputAmount >= sellData.balance - convertGweiToWei(gasFee)) {
+            inputAmount = (inputAmount.minus(convertGweiToWei(gasFee))).toFixed(0)
+        }
+        await contract.methods.swap(inputAmount, poolURL, SPARTA_ADDR).send({
+            from: context.account,
+            gasPrice: '',
+            gas: '',
+            value: pool.address === BNB_ADDR ? inputAmount : 0
         })
         setNotifyMessage('Transaction Sent!')
         setNotifyType('success')

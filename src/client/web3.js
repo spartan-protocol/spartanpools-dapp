@@ -56,6 +56,12 @@ export const getBNBBalance = async (acc) => {
     return bal_
 }
 
+export const getGasPrice = async () => {
+    var web3_ = getWeb3()
+    var gas = await web3_.eth.getGasPrice()
+    return gas
+}
+
 export const getSpartaPrice = async () => {
     console.log('start get sparta price')
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')

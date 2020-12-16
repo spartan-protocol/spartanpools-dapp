@@ -6,7 +6,7 @@ import queryString from 'query-string';
 
 import InputPaneJoin from "../components/Sections/InputPaneJoin";
 
-import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits} from '../utils'
+import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits, convertFromGwei, convertGweiToWei} from '../utils'
 import {getLiquidityUnits} from '../math'
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import {manageBodyClass} from "../components/common";
@@ -24,7 +24,7 @@ import {
 import classnames from 'classnames';
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
-    getPoolData, getTokenData, updateSharesData,
+    getPoolData, getTokenData, updateSharesData, getGasPrice,
     getPool, getPoolShares, WBNB_ADDR, updateWalletData,
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
@@ -295,10 +295,24 @@ const AddLiquidity = (props) => {
 
     const addLiquidity = async () => {
         setStartTx(true)
+        let gasFee = 0
+        const estGasPrice = await getGasPrice()
         let decDiff = 10 ** (18 - pool.decimals)
         let tokenAmnt = bn(liquidityData.tokenAmount).div(decDiff)
         let contract = getRouterContract()
-        console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, formatBN(tokenAmnt, 0))
+        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, formatBN(tokenAmnt, 0))
+        await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).estimateGas({
+            from: context.account,
+            gasPrice: '',
+            gas: '',
+            value: pool.address === BNB_ADDR ? tokenAmnt : '0'
+        }, function(error, gasAmount) {
+            gasFee = Math.floor(gasAmount * 1.55)
+            gasFee = gasFee * convertFromGwei(estGasPrice)
+        })
+        if (pool.address === BNB_ADDR && tokenAmnt >= userData.tokenBalance - convertGweiToWei(gasFee)) {
+            tokenAmnt = tokenAmnt.minus(convertGweiToWei(gasFee))
+        }
         await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).send({
             from: context.account,
             gasPrice: '',
@@ -728,10 +742,16 @@ const AddAsymmPane = (props) => {
                             </div>
                         }
 
-                        {convertFromWei(props.pool.depth) > 10000 && props.approvalToken && !props.startTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalToken && !props.startTx && (props.liquidityData.tokenAmount / 1) <= (props.userData.balance / 1) &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
                                 ADD TO POOL
                             </div>
+                        }
+
+                        {props.approvalToken && (props.liquidityData.tokenAmount / 1) > (props.userData.balance / 1) &&
+                            <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
+                                <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {props.userData.symbol} in Wallet!
+                            </button>
                         }
 
                         {convertFromWei(props.pool.depth) <= 10000 &&
