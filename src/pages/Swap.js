@@ -8,7 +8,7 @@ import TradePaneBuy from "../components/Sections/TradePaneBuy";
 
 import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
-import {bn, formatBN, convertToWei, formatAllUnits, convertFromWei, convertGweiToWei, convertFromGwei} from '../utils'
+import {bn, formatBN, convertToWei, formatGranularUnits, convertFromWei, convertGweiToWei, convertFromGwei} from '../utils'
 import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} from '../math'
 
 import Notification from '../components/Common/notification'
@@ -361,10 +361,10 @@ const NewSwap = (props) => {
                                                                         </div>
                                                                         <DropdownItem divider/>
                                                                         <DropdownItem href="">
-                                                                            SPARTA : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.balance))}</span>
+                                                                            SPARTA : <span className="float-right">{formatGranularUnits(convertFromWei(buyData?.balance))}</span>
                                                                         </DropdownItem>
                                                                         <DropdownItem href="">
-                                                                            {buyData.outputSymbol} : <span className="float-right">{formatAllUnits(convertFromWei(buyData?.outputBalance))}</span>
+                                                                            {buyData.outputSymbol} : <span className="float-right">{formatGranularUnits(convertFromWei(buyData?.outputBalance))}</span>
                                                                         </DropdownItem>
                                                                         <DropdownItem divider/>
                                                                         <DropdownItem className="text-primary text-center" onClick={toggleRightbar}>

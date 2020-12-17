@@ -61,7 +61,7 @@ export const TradePaneBuy = (props) => {
                     <h6 className='font-weight-light m-0'>{props.t("Input")} <i className="bx bx-info-circle align-middle" id="tooltipBuyInput" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyInput">Estimated input amount</UncontrolledTooltip>
                 </Col>
-                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0">{formatAllUnits(convertFromWei(props.tradeData.input))} {props.tradeData.symbol}*</h6></Col>
+                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0">{formatGranularUnits(convertFromWei(props.tradeData.input))} {props.tradeData.symbol}*</h6></Col>
 
                 <Col xs={4} className='py-1'>
                     <h6 className='font-weight-light m-0'>{props.t("Rate")} <i className="bx bx-info-circle align-middle" id="tooltipBuyRate" role='button'/></h6>
@@ -101,7 +101,7 @@ export const TradePaneBuy = (props) => {
                     <h6 className='m-0'>{props.t("Output")} <i className="bx bx-info-circle align-middle" id="tooltipBuyOutput" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyOutput">Estimated final output from this swap.</UncontrolledTooltip>
                 </Col>
-                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatAllUnits(convertFromWei(props.tradeData.output))} {props.tradeData.outputSymbol}*</h5></Col>
+                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatGranularUnits(convertFromWei(props.tradeData.output))} {props.tradeData.outputSymbol}*</h5></Col>
 
                 <Col xs={12} className='py-1'><hr className='m-0'/></Col>
 
