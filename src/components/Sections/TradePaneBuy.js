@@ -67,7 +67,7 @@ export const TradePaneBuy = (props) => {
                     <h6 className='font-weight-light m-0'>{props.t("Rate")} <i className="bx bx-info-circle align-middle" id="tooltipBuyRate" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipBuyRate">Estimated output rate (after fees and slippage)</UncontrolledTooltip>
                 </Col>
-                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0"> <i className="bx bx-plus-circle align-middle" id="outputToggler" role='button'/> {props.tradeData.estRate} SPARTA*</h6></Col>
+                <Col xs={8} className='py-1'><h6 className="text-right font-weight-light m-0"> <i className="bx bx-plus-circle align-middle" id="outputToggler" role='button'/> {formatGranularUnits(props.tradeData.estRate)} SPARTA*</h6></Col>
 
                 <Col xs={6}>
                     <UncontrolledCollapse toggler="#outputToggler" className='py-1'>
