@@ -171,9 +171,9 @@ const NewSwap = (props) => {
             outputSymbol: outputTokenData?.symbol,
             outputBalance: outputTokenData?.balance,
             slip: slip,
-            fee: formatBN(fee),
+            fee: formatBN(fee, 0),
             actualSlip: actualSlip,
-            estRate: formatBN(estRate),
+            estRate: estRate,
         };
         //console.log(swapData)
         return swapData
