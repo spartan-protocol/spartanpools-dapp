@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {Link} from 'react-router-dom'
+import {Context} from '../context'
 
 //import {Menu} from 'antd'
 // PlusCircleOutlined, MinusCircleOutlined, Tooltip
@@ -196,7 +197,20 @@ export const PercentButtonRow = (props) => {
 }
 
 export const PercentSlider = (props) => {
+    const context = useContext(Context)
     var slider = document.getElementById("percentSlider-" + props.name)
+
+    useEffect(() => {
+        clearInputs()
+        // eslint-disable-next-line
+    }, [context.clearInputs])
+
+    const clearInputs = () => {
+        if (context.clearInputs === true) {
+            clearManualInput()
+            clearSlider()
+        }
+    }
     
     const change = () => {
         if (slider) {props.changeAmount(slider.value)}
@@ -205,6 +219,11 @@ export const PercentSlider = (props) => {
     const clearManualInput = () => {
         const inputEl = document.getElementById('manualInput-' + props.name)
         if (inputEl) {inputEl.value = ''}
+    }
+
+    const clearSlider = () => {
+        if (slider) {slider.value = 0}
+        //console.log(slider.value)
     }
 
     const incrSlider = () => {

@@ -16,6 +16,15 @@ import { withRouter } from "react-router-dom";
 
 export const InputPaneJoin = (props) => {
 
+    var slider = document.getElementById("percentSlider-" + props.name)
+    let symbol = props.paneData?.symbol
+    if (props.name === 'remove') {symbol = 'LP Tokens'}
+
+    const clearSlider = () => {
+        if (slider) {slider.value = 0}
+        //console.log(slider.value)
+    }
+
     return (
         <div>
             <FormGroup>
@@ -25,10 +34,17 @@ export const InputPaneJoin = (props) => {
                             <InputGroupAddon addonType="prepend">
                                 <Label className="input-group-text">{props.t("Input")}</Label>
                             </InputGroupAddon>
-                            <Input type="text" className="form-control" onChange={props.onInputChange}
-                                   bssize={'large'} id={"manualInput-" + props.name}
-                                   placeholder={'Manually input ' + props.paneData?.symbol + ' here'}
-                                // defaultValue={convertFromWei(props.paneData?.input)}
+                            <Input 
+                                type="text"
+                                className="form-control"
+                                id={"manualInput-" + props.name}
+                                bssize={'large'}
+                                placeholder={'Manually input ' + symbol + ' here'}
+                                onChange={(e)=>{
+                                    props.onInputChange(e)
+                                    clearSlider()
+                                }}
+                                //   defaultValue=''
                                 //   allowClear={true}
                                 // addonAfter={<TokenDropDown default={props.paneData?.address}
                                 //   changeToken={props.changeToken}

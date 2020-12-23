@@ -39,7 +39,10 @@ const AddLiquidity = (props) => {
     const [notifyType, setNotifyType] = useState("dark");
 
     const toggleTab = tab => {
-        if (activeTab !== tab) setActiveTab(tab);
+        if (activeTab !== tab) {
+            clearAmounts()
+            setActiveTab(tab)
+        }
     };
 
     const context = useContext(Context)
@@ -117,12 +120,7 @@ const AddLiquidity = (props) => {
             }
             setUserData(_userData)
             //console.log(baseData?.balance, tokenData?.balance)
-    
-            let liquidityData = await getPairedAmount(baseData?.balance, tokenData?.balance, tempPool)
-            setLiquidityData(liquidityData)
-            const estLiquidityUnits = await getLiquidityUnits(liquidityData, tempPool)
-            setLiquidityUnits(estLiquidityUnits)
-    
+
             data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(tempPool.address)])
             setApprovalBase(data[0])
             setApprovalToken(data[1])
@@ -131,6 +129,17 @@ const AddLiquidity = (props) => {
             await pause(2000)
             setGetDataCount(getDataCount + 1)
         }
+    }
+
+    const clearAmounts = async () => {
+        context.setContext({'clearInputs': true})
+        setLiquidityData({
+            'baseAmount': '0',
+            'tokenAmount': '0',
+        })
+        setLiquidityUnits('0')
+        await pause(1)
+        context.setContext({'clearInputs': false})
     }
 
     const checkApproval = async (address) => {
@@ -243,6 +252,24 @@ const AddLiquidity = (props) => {
         return liquidityData
     }
 
+    const onWithdrawChange = async (e) => {
+        const input = e.target.value
+        setWithdrawAmount(input)
+        let decDiff = 10 ** (18 - pool.decimals)
+        let poolShare = await getPoolShares(context.account, pool.address)
+        let tokenAmnt = +poolShare.tokenAmount * decDiff
+        const percent = convertToWei(input) / +poolShare.units
+        let baseAmount = +poolShare.baseAmount * percent
+        let tokenAmntFinal = +tokenAmnt * percent
+        let finalLPUnits = +poolShare.units * percent
+        let withdrawData = {
+            'baseAmount': baseAmount > +poolShare.baseAmount ? 0 : baseAmount,
+            'tokenAmount': tokenAmntFinal > +tokenAmnt ? 0 : tokenAmntFinal,
+            'lpAmount': finalLPUnits > +poolShare.baseAmount ? 0 : finalLPUnits,
+        }
+        setWithdrawData(withdrawData)
+    }
+
     const changeWithdrawAmount = async (amount) => {
         setWithdrawAmount(amount)
         let decDiff = 10 ** (18 - pool.decimals)
@@ -291,6 +318,8 @@ const AddLiquidity = (props) => {
             context.setContext({'walletData': walletData})
             context.setContext({'walletDataLoading': false})
         }
+
+        clearAmounts()
     }
 
     const addLiquidity = async () => {
@@ -496,6 +525,7 @@ const AddLiquidity = (props) => {
                                                             <RemoveLiquidityPane
                                                                 pool={pool}
                                                                 userData={userData}
+                                                                onWithdrawChange={onWithdrawChange}
                                                                 changeWithdrawAmount={changeWithdrawAmount}
                                                                 approvalToken={approvalToken}
                                                                 unlock={unlockToken}
@@ -872,7 +902,12 @@ const RemoveLiquidityPane = (props) => {
 
     return (
         <>
-            <InputPaneJoin changeAmount={props.changeWithdrawAmount} name={props.name} paneData={props.userData} />
+            <InputPaneJoin 
+                changeAmount={props.changeWithdrawAmount}
+                name={props.name}
+                paneData={props.userData}
+                onInputChange={props.onWithdrawChange}
+            />
 
             <Row className='align-items-center'>
                 <Col xs={5} className='py-1'>
@@ -895,9 +930,14 @@ const RemoveLiquidityPane = (props) => {
             </Row>
 
             <div className="text-center">
-                {props.approvalToken &&
+                {(props.withdrawData.lpAmount / 1) <= (availAmnt / 1) && (props.withdrawData.lpAmount / 1) > 0 &&
                     <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.removeLiquidity}>
                         <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Withdraw From Pool {props.pool.symbol}
+                    </button>
+                }
+                {(props.withdrawData.lpAmount / 1) > (availAmnt / 1) &&
+                    <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
+                        <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough LP Tokens in Wallet!
                     </button>
                 }
             </div>
