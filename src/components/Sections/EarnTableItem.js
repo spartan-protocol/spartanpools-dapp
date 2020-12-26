@@ -30,8 +30,8 @@ export const EarnTableItem = (props) => {
     const deposit = async (record) => {
         console.log(record)
         let contract = getDaoContract()
+        console.log('Deposit of', record.units)
         await contract.methods.deposit(record.address, record.units).send({ from: context.account })
-        //console.log(tx.transactionHash)
         await refreshData(record.symbAddr)
     }
 

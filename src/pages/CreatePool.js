@@ -279,7 +279,7 @@ const CreatePool = (props) => {
 
     const createPool = async () => {
         const poolContract = getRouterContract()
-        //console.log(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
+        console.log('Creating pool', formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected)
         await poolContract.methods.createPool(formatBN(stake1Data.input, 0), formatBN(stake2Data.input, 0), addressSelected).send({
             from: context.account,
             gasPrice: '',
