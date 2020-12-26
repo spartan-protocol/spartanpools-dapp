@@ -1,6 +1,8 @@
 import Web3 from 'web3'
 import axios from 'axios'
 
+import {bn} from '../utils'
+
 import ERC20 from '../artifacts/ERC20.json'
 import SPARTA from '../artifacts/Base.json'
 import ROUTER from '../artifacts/Router.json'
@@ -328,12 +330,13 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
         var balance = data[0]
         var details = data[1]
         let decDiff = 10 ** (18 - details.decimals)
+        balance = bn(balance).times(decDiff).toFixed(0)
         //if (balance > 0) {
             walletData.push({
                 'symbol': details.symbol,
                 'name': details.name,
                 'decimals': details.decimals,
-                'balance': balance * decDiff,
+                'balance': balance,
                 'address': addr
             })
         //}
