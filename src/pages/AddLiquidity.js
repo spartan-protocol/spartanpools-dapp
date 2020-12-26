@@ -329,7 +329,7 @@ const AddLiquidity = (props) => {
         let decDiff = 10 ** (18 - pool.decimals)
         let tokenAmnt = bn(liquidityData.tokenAmount).div(decDiff)
         let contract = getRouterContract()
-        //console.log(liquidityData.baseAmount, liquidityData.tokenAmount, decDiff, formatBN(tokenAmnt, 0))
+        console.log('Estimating gas', liquidityData.baseAmount, formatBN(tokenAmnt, 0))
         await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).estimateGas({
             from: context.account,
             gasPrice: '',
@@ -343,6 +343,7 @@ const AddLiquidity = (props) => {
         if (pool.address === BNB_ADDR && tokenAmnt >= userData.tokenBalance - convertGweiToWei(gasFee)) {
             tokenAmnt = tokenAmnt.minus(convertGweiToWei(gasFee))
         }
+        console.log('Adding Liq', liquidityData.baseAmount, formatBN(tokenAmnt, 0))
         await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).send({
             from: context.account,
             gasPrice: '',
@@ -358,6 +359,7 @@ const AddLiquidity = (props) => {
 
     const removeLiquidity = async () => {
         let contract = getRouterContract()
+        console.log('Removing Liq', withdrawAmount * 100)
         const tx = await contract.methods.removeLiquidity(withdrawAmount * 100, pool.address).send({
             from: context.account,
             gasPrice: '',

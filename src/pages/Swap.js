@@ -256,7 +256,7 @@ const NewSwap = (props) => {
     const buy = async () => {
         setStartTx(true)
         let contract = getRouterContract()
-        //console.log(buyData.input)
+        console.log('Buy txn', buyData.input)
         await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
             from: context.account,
             gasPrice: '',
@@ -276,7 +276,7 @@ const NewSwap = (props) => {
         let decDiff = 10 ** (18 - pool.decimals)
         let inputAmount = bn(sellData.input).div(decDiff)
         let contract = getRouterContract()
-        //console.log(sellData.input, inputAmount, inputAmount.toFixed(0))
+        console.log('Estimating Gas', inputAmount.toFixed(0))
         await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).estimateGas({
             from: context.account,
             gasPrice: '',
@@ -290,7 +290,7 @@ const NewSwap = (props) => {
         if (pool.address === BNB_ADDR  && inputAmount >= sellData.balance - convertGweiToWei(gasFee)) {
             inputAmount = (inputAmount.minus(convertGweiToWei(gasFee)))
         }
-        //console.log(inputAmount.toFixed(0))
+        console.log('Sell txn', inputAmount.toFixed(0))
         await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).send({
             from: context.account,
             gasPrice: '',

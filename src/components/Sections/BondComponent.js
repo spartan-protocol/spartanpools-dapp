@@ -293,6 +293,7 @@ const BondComponent = (props) => {
         if (userData.address === BNB_ADDR && inputAmount >= userData.balance - convertGweiToWei(gasFee)) {
             inputAmount = (inputAmount - convertGweiToWei(gasFee)).toFixed(0)
         }
+        console.log('deposit of', inputAmount)
         await contract.methods.deposit(userData.address, inputAmount).send({
             from: context.account,
             gasPrice: '',
