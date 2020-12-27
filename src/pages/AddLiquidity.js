@@ -6,7 +6,7 @@ import queryString from 'query-string';
 
 import InputPaneJoin from "../components/Sections/InputPaneJoin";
 
-import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits, convertFromGwei, convertGweiToWei} from '../utils'
+import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits} from '../utils'
 import {getLiquidityUnits} from '../math'
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import {manageBodyClass} from "../components/common";
@@ -25,7 +25,7 @@ import classnames from 'classnames';
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
     getPoolData, getTokenData, updateSharesData, getGasPrice,
-    getPool, getPoolShares, WBNB_ADDR, updateWalletData,
+    getPool, getPoolShares, WBNB_ADDR, updateWalletData, getBNBBalance,
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
 import PoolPaneSide from "../components/Sections/PoolPaneSide"
@@ -318,43 +318,60 @@ const AddLiquidity = (props) => {
             context.setContext({'walletData': walletData})
             context.setContext({'walletDataLoading': false})
         }
-
         clearAmounts()
     }
 
     const addLiquidity = async () => {
         setStartTx(true)
         let gasFee = 0
+        let gasLimit = 0
         const estGasPrice = await getGasPrice()
         let decDiff = 10 ** (18 - pool.decimals)
         let tokenAmnt = bn(liquidityData.tokenAmount).div(decDiff)
         let contract = getRouterContract()
-        console.log('Estimating gas', liquidityData.baseAmount, formatBN(tokenAmnt, 0))
-        await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).estimateGas({
+        console.log('Estimating gas', liquidityData.baseAmount, formatBN(tokenAmnt, 0), estGasPrice)
+        await contract.methods.addLiquidity(liquidityData.baseAmount, '1', pool.address).estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: '',
-            value: pool.address === BNB_ADDR ? tokenAmnt : '0'
+            gasPrice: estGasPrice,
+            value: pool.address === BNB_ADDR ? '1' : '0'
         }, function(error, gasAmount) {
-            if (error) {console.log(error)}
-            gasFee = Math.floor(gasAmount * 1.55)
-            gasFee = gasFee * convertFromGwei(estGasPrice)
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setStartTx(false)
+                setEndTx(true)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        if (pool.address === BNB_ADDR && tokenAmnt >= userData.tokenBalance - convertGweiToWei(gasFee)) {
-            tokenAmnt = tokenAmnt.minus(convertGweiToWei(gasFee))
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        var gasRemainder = bn(gasBalance).minus(bn(gasFee))
+        if (gasRemainder < 0) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setStartTx(false)
+            setEndTx(true)
         }
-        console.log('Adding Liq', liquidityData.baseAmount, formatBN(tokenAmnt, 0))
-        await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).send({
-            from: context.account,
-            gasPrice: '',
-            gas: '',
-            value: pool.address === BNB_ADDR ? tokenAmnt : '0'
-        })
-        setNotifyMessage('Transaction Sent!')
-        setNotifyType('success')
-        setStartTx(false)
-        setEndTx(true)
-        updatePool()
+        if (enoughBNB === true) {
+            if (pool.address === BNB_ADDR && tokenAmnt >= bn(userData.tokenBalance).minus(gasFee)) {
+                tokenAmnt = tokenAmnt.minus(gasFee)
+            }
+            console.log('Adding Liq', liquidityData.baseAmount, formatBN(tokenAmnt, 0), estGasPrice, gasLimit, gasFee)
+            await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+                value: pool.address === BNB_ADDR ? tokenAmnt : '0'
+            })
+            setNotifyMessage('Transaction Sent!')
+            setNotifyType('success')
+            setStartTx(false)
+            setEndTx(true)
+            updatePool()
+        }
     }
 
     const removeLiquidity = async () => {

@@ -289,21 +289,21 @@ export const getWalletData = async (address) => {
     walletData.push({
         'symbol': 'SPARTA',
         'name': 'Sparta',
-        'decimals': 18,
+        'decimals': '18',
         'balance': await getTokenContract(SPARTA_ADDR).methods.balanceOf(address).call(),
         'address': SPARTA_ADDR
     })
     walletData.push({
         'symbol': 'BNB',
         'name': 'BNB',
-        'decimals': 18,
+        'decimals': '18',
         'balance': await getBNBBalance(address),
         'address': BNB_ADDR
     })
     walletData.push({
         'symbol': 'WBNB',
         'name': 'Wrapped BNB',
-        'decimals': 18,
+        'decimals': '18',
         'balance': await getTokenContract(WBNB_ADDR).methods.balanceOf(address).call(),
         'address': WBNB_ADDR
     })
