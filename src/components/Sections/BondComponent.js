@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
 import queryString from 'query-string';
 import {
-    getBondv2Contract,getBondv3Contract, BNB_ADDR, WBNB_ADDR,BONDv3_ADDR, getClaimableLPBondv2,getClaimableLPBondv3, getUtilsContract, updateSharesData,
+    getBondv2Contract,getBondv3Contract, BNB_ADDR, WBNB_ADDR,BONDv3_ADDR, getClaimableLPBondv2,getClaimableLPBondv3, getUtilsContract, updateSharesData, getBNBBalance,
     getTokenContract, getBondedv2MemberDetails,getBondedv3MemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation, getGasPrice,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
-import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince, convertGweiToWei, convertFromGwei } from '../../utils'
+import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
 
 import {
     Row, Col, InputGroup, InputGroupAddon, Label, UncontrolledTooltip,
@@ -33,6 +33,7 @@ const BondComponent = (props) => {
     const [notifyType, setNotifyType] = useState("dark")
     const [loadingBondedLP, setloadingBondedLP] = useState(false)
     const [approvalToken, setApprovalToken] = useState(false)
+    const [loadingApproval, setLoadingApproval] = useState(false)
     const [spartaAllocation, setSpartaAllocation] = useState("")
     const [spartaEstimatedAllocation, setSpartaEstimatedAllocation] = useState("")
     const [poolTokenDepth, setPoolTokenDepth] = useState('')
@@ -114,20 +115,120 @@ const BondComponent = (props) => {
 
     const claimOldLP = async () => {
         setloadingBondedLP(true)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         let contractBondv2 = getBondv2Contract()
         let address = userData.address
-        await contractBondv2.methods.claim(address).send({ from: context.account })
-        await refreshData()
-        setloadingBondedLP(false)
+        console.log('Estimating gas', estGasPrice)
+        await contractBondv2.methods.claim(address).estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setloadingBondedLP(false)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setloadingBondedLP(false)
+        }
+        else if (enoughBNB === true) {
+            console.log('Claiming Old LP', estGasPrice, gasLimit, gasFee)
+            await contractBondv2.methods.claim(address).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                    setloadingBondedLP(false)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('V2 Bond - LP Token-Claim Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('V2 Bond - LP Tokens Claimed!')
+                setNotifyType('success')
+                await refreshData()
+                setloadingBondedLP(false)
+            }
+        }
     }
 
     const claimNewLP = async () => {
         setloadingBondedLP(true)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         let contractBondv3 = getBondv3Contract()
         let address = userData.address
-        await contractBondv3.methods.claimAndLock(address).send({ from: context.account })
-        await refreshData()
-        setloadingBondedLP(false)
+        console.log('Estimating gas', estGasPrice)
+        await contractBondv3.methods.claimAndLock(address).estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setloadingBondedLP(false)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setloadingBondedLP(false)
+        }
+        else if (enoughBNB === true) {
+            console.log('Claiming Old LP', estGasPrice, gasLimit, gasFee)
+            await contractBondv3.methods.claimAndLock(address).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                    setloadingBondedLP(false)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Bond - LP Token-Claim Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Bond - LP Tokens Claimed!')
+                setNotifyType('success')
+                await refreshData()
+                setloadingBondedLP(false)
+            }
+        }
     }
 
     const refreshData = async () => {
@@ -218,17 +319,70 @@ const BondComponent = (props) => {
     }
 
     const unlock = async (address) => {
+        setLoadingApproval(true)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(BONDv3_ADDR, supply).send({
+        await contract.methods.approve(BONDv3_ADDR, supply).estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: ''
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setLoadingApproval(false)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        setNotifyMessage('Approved')
-        setNotifyType('success')
-        setApprovalToken(true)
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setLoadingApproval(false)
+        }
+        if (enoughBNB === true) {
+            console.log('Approving token', estGasPrice, gasLimit, gasFee)
+            await contract.methods.approve(BONDv3_ADDR, supply).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function (error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Token Approval Cancelled')
+                    setNotifyType('warning')
+                    setLoadingApproval(false)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Token Approval Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Token Approved!')
+                setNotifyType('success')
+                setLoadingApproval(false)
+                setApprovalToken(true)
+                if (context.walletDataLoading !== true) {
+                    // Refresh BNB balance
+                    context.setContext({'walletDataLoading': true})
+                    let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+                    context.setContext({'walletData': walletData})
+                    context.setContext({'walletDataLoading': false})
+                }
+            }
+        }
     }
+
     const [estLiqTokens, setEstLiqTokens] = useState('0')
 
     const getEstLiqTokens = async () => {
@@ -275,36 +429,81 @@ const BondComponent = (props) => {
 
     const depositAsset = async () => {
         setStartTx(true)
+        setEndTx(false)
         let gasFee = 0
+        let gasLimit = 0
+        let validInput = true
+        let contTxn = false
         const estGasPrice = await getGasPrice()
         let inputAmount = userData.input
         let contract = getBondv3Contract()
-        //console.log(userData.address, userData.input, inputAmount)
-        await contract.methods.deposit(userData.address, inputAmount).estimateGas({
+        console.log('Estimating gas', inputAmount, estGasPrice)
+        await contract.methods.deposit(userData.address, '1').estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: '',
-            value: userData.address === BNB_ADDR ? inputAmount : 0
+            gasPrice: estGasPrice,
+            value: userData.address === BNB_ADDR ? '1' : '0'
         }, function(error, gasAmount) {
-            if (error) {console.log(error)}
-            gasFee = Math.floor(gasAmount * 1.5)
-            gasFee = gasFee * convertFromGwei(estGasPrice)
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setStartTx(false)
+                setEndTx(true)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        if (userData.address === BNB_ADDR && inputAmount >= userData.balance - convertGweiToWei(gasFee)) {
-            inputAmount = (inputAmount - convertGweiToWei(gasFee)).toFixed(0)
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setStartTx(false)
+            setEndTx(true)
         }
-        console.log('deposit of', inputAmount)
-        await contract.methods.deposit(userData.address, inputAmount).send({
-            from: context.account,
-            gasPrice: '',
-            gas: '',
-            value: userData.address === BNB_ADDR ? inputAmount : 0
-        })
-        setNotifyMessage('Transaction Sent!')
-        setNotifyType('success')
-        setStartTx(false)
-        setEndTx(true)
-        await refreshData()
+        else if (enoughBNB === true) {
+            if (userData.address === BNB_ADDR && bn(userData.balance).minus(gasFee).comparedTo(bn(inputAmount)) === -1 ) {
+                inputAmount = bn(inputAmount).minus(gasFee).toFixed(0)
+                if (bn(inputAmount).comparedTo(0) === -1) {
+                    validInput = false
+                    setNotifyMessage('Gas larger than BNB input amount')
+                    setNotifyType('warning')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+            }
+            if (validInput === true) {
+                console.log('Bonding Asset', inputAmount, estGasPrice, gasLimit, gasFee)
+                await contract.methods.deposit(userData.address, inputAmount).send({
+                    from: context.account,
+                    gasPrice: estGasPrice,
+                    gas: gasLimit,
+                    value: userData.address === BNB_ADDR ? inputAmount : '0'
+                }, function(error, transactionHash) {
+                    if (error) {
+                        console.log(error)
+                        setNotifyMessage('Transaction cancelled')
+                        setNotifyType('warning')
+                        setStartTx(false)
+                        setEndTx(true)
+                    }
+                    else {
+                        console.log('txn:', transactionHash)
+                        setNotifyMessage('Asset-Bond Pending...')
+                        setNotifyType('success')
+                        contTxn = true
+                    }
+                })
+                if (contTxn === true) {
+                    setNotifyMessage('Assets Bonded!')
+                    setNotifyType('success')
+                    setStartTx(false)
+                    setEndTx(true)
+                    await refreshData()
+                }
+            }
+        }
     }
 
     const chartData = {
@@ -454,35 +653,7 @@ const BondComponent = (props) => {
                                         <br />
                                         <Row>
                                             <Col xs={12}>
-                                                {!approvalToken &&
-                                                    <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={unlockToken}>
-                                                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Approve {userData.symbol}
-                                                    </button>
-                                                }
-                                            </Col>
-                                            <Col xs={12}>
-                                                {approvalToken && (userData.input / 1) > (userData.balance / 1) &&
-                                                    <div className='text-center'>
-                                                        <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
-                                                            <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {userData.symbol} in Wallet!
-                                                        </button>
-                                                    </div>
-                                                }
-                                            </Col>
-                                            <Col xs={12}>
-                                                {approvalToken && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) > (poolTokenDepth / 5) &&
-                                                    <div className='text-center'>
-                                                        <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
-                                                            <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Bond Too High!
-                                                        </button>
-                                                        <h6 className='mt-2'>Please reduce your bond input.</h6>
-                                                        <h6>Max bond amount is ~10% of the pools total depth.</h6>
-                                                        <h6>This is to protect you against slippage and prevent manipulation.</h6>
-                                                    </div>
-                                                }
-                                            </Col>
-                                            <Col xs={12}>
-                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) && hoursSince(memberBondv3.lastBlockTime) > 3 && memberBondv3.isMember &&
+                                                {approvalToken && hoursSince(memberBondv3.lastBlockTime) > 3 && memberBondv3.isMember &&
                                                     <div className='text-center'>
                                                         <button type="button" className="btn btn-primary btn-lg waves-effect waves-light" onClick={toggleClaim}>
                                                             <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens First!
@@ -496,19 +667,47 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                             <Col xs={12}>
-                                                {approvalToken && startTx && !endTx &&
+                                                {!approvalToken &&
+                                                    <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={unlockToken}>
+                                                        <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Approve {userData.symbol}
+                                                        {loadingApproval &&
+                                                            <i className="bx bx-spin bx-loader ml-1" />
+                                                        }
+                                                    </button>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
+                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) === -1 &&
+                                                    <div className='text-center'>
+                                                        <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
+                                                            <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {userData.symbol} in Wallet!
+                                                        </button>
+                                                    </div>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
+                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) >= 0 && (bn(poolTokenDepth).div(5)).comparedTo(bn(userData.input)) === -1 &&
+                                                    <div className='text-center'>
+                                                        <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
+                                                            <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Bond Too High!
+                                                        </button>
+                                                        <h6 className='mt-2'>Please reduce your bond input.</h6>
+                                                        <h6>Max bond amount is ~10% of the pools total depth.</h6>
+                                                        <h6>This is to protect you against slippage and prevent manipulation.</h6>
+                                                    </div>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
+                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) >= 0 && (bn(poolTokenDepth).div(5)).comparedTo(bn(userData.input)) >= 0 &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
                                                         getEstLiqTokens();
                                                         toggleLock();
                                                     }}>
-                                                        <i className="bx bx-spin bx-loader" /> Bond
+                                                        Bond
+                                                        {startTx && !endTx &&
+                                                            <i className="bx bx-spin bx-loader ml-1" />
+                                                        }
                                                     </div>
-                                                }
-                                                {approvalToken && !startTx && (userData.input / 1) <= (userData.balance / 1) && (userData.input / 1) <= (poolTokenDepth / 5) &&
-                                                    <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
-                                                        getEstLiqTokens();
-                                                        toggleLock();
-                                                    }}>Bond</div>
                                                 }
                                             </Col>
                                         </Row>
