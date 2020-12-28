@@ -298,33 +298,87 @@ const AddLiquidity = (props) => {
     }
 
     const unlock = async (address) => {
+        setStartTx(true)
+        setEndTx(false)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(ROUTER_ADDR, supply).send({
+        console.log('Estimating gas', estGasPrice, supply)
+        await contract.methods.approve(ROUTER_ADDR, supply).estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: ''
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setStartTx(false)
+                setEndTx(true)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        setNotifyMessage('Approved')
-        setNotifyType('success')
-        let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
-        setApprovalBase(data[0])
-        setApprovalToken(data[1])
-
-        if (context.walletDataLoading !== true) {
-            // Refresh BNB balance
-            context.setContext({'walletDataLoading': true})
-            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        var gasRemainder = bn(gasBalance).minus(bn(gasFee))
+        if (gasRemainder < 0) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setStartTx(false)
+            setEndTx(true)
         }
-        clearAmounts()
+        if (enoughBNB === true) {
+            console.log('Approving token', estGasPrice, gasLimit, gasFee)
+            await contract.methods.approve(ROUTER_ADDR, supply).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function (error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Token Approval Cancelled')
+                    setNotifyType('warning')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Token Approval Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Token Approved!')
+                setNotifyType('success')
+                setStartTx(false)
+                setEndTx(true)
+                let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+                setApprovalBase(data[0])
+                setApprovalToken(data[1])
+                if (context.walletDataLoading !== true) {
+                    // Refresh BNB balance
+                    context.setContext({'walletDataLoading': true})
+                    let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+                    context.setContext({'walletData': walletData})
+                    context.setContext({'walletDataLoading': false})
+                }
+                clearAmounts()
+            }
+        }
     }
 
     const addLiquidity = async () => {
         setStartTx(true)
+        setEndTx(false)
         let gasFee = 0
         let gasLimit = 0
+        let validInput = true
+        let contTxn = false
         const estGasPrice = await getGasPrice()
         let decDiff = 10 ** (18 - pool.decimals)
         let tokenAmnt = bn(liquidityData.tokenAmount).div(decDiff)
@@ -355,38 +409,111 @@ const AddLiquidity = (props) => {
             setStartTx(false)
             setEndTx(true)
         }
-        if (enoughBNB === true) {
+        else if (enoughBNB === true) {
             if (pool.address === BNB_ADDR && tokenAmnt >= bn(userData.tokenBalance).minus(gasFee)) {
                 tokenAmnt = tokenAmnt.minus(gasFee)
+                if (tokenAmnt < 0) {
+                    validInput = false
+                    setNotifyMessage('Gas larger than BNB input amount')
+                    setNotifyType('warning')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
             }
-            console.log('Adding Liq', liquidityData.baseAmount, formatBN(tokenAmnt, 0), estGasPrice, gasLimit, gasFee)
-            await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).send({
-                from: context.account,
-                gasPrice: estGasPrice,
-                gas: gasLimit,
-                value: pool.address === BNB_ADDR ? tokenAmnt : '0'
-            })
-            setNotifyMessage('Transaction Sent!')
-            setNotifyType('success')
-            setStartTx(false)
-            setEndTx(true)
-            updatePool()
+            if (validInput === true) {
+                console.log('Adding Liq', liquidityData.baseAmount, formatBN(tokenAmnt, 0), estGasPrice, gasLimit, gasFee)
+                await contract.methods.addLiquidity(liquidityData.baseAmount, formatBN(tokenAmnt, 0), pool.address).send({
+                    from: context.account,
+                    gasPrice: estGasPrice,
+                    gas: gasLimit,
+                    value: pool.address === BNB_ADDR ? tokenAmnt : '0'
+                }, function(error, transactionHash) {
+                    if (error) {
+                        console.log(error)
+                        setNotifyMessage('Transaction cancelled')
+                        setNotifyType('warning')
+                        setStartTx(false)
+                        setEndTx(true)
+                    }
+                    else {
+                        console.log('txn:', transactionHash)
+                        setNotifyMessage('Liquidity-Add Pending...')
+                        setNotifyType('success')
+                        contTxn = true
+                    }
+                })
+                if (contTxn === true) {
+                    setNotifyMessage('Liquidity Added!')
+                    setNotifyType('success')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+            }
         }
+        updatePool()
     }
 
     const removeLiquidity = async () => {
+        setStartTx(true)
+        setEndTx(false)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         let contract = getRouterContract()
-        console.log('Removing Liq', withdrawAmount * 100)
-        const tx = await contract.methods.removeLiquidity(withdrawAmount * 100, pool.address).send({
+        console.log('Estimating gas', withdrawAmount, estGasPrice)
+        await contract.methods.removeLiquidity(withdrawAmount * 100, pool.address).estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: ''
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setStartTx(false)
+                setEndTx(true)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        console.log(tx.transactionHash)
-        setNotifyMessage('Transaction Sent!')
-        setNotifyType('success')
-        setStartTx(false)
-        setEndTx(true)
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        var gasRemainder = bn(gasBalance).minus(bn(gasFee))
+        if (gasRemainder < 0) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setStartTx(false)
+            setEndTx(true)
+        }
+        if (enoughBNB === true) {
+            console.log('Removing Liq', withdrawAmount * 100, estGasPrice, gasLimit, gasFee)
+            await contract.methods.removeLiquidity(withdrawAmount * 100, pool.address).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Liquidity-Removal Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Liquidity-Removal Complete!')
+                setNotifyType('success')
+                setStartTx(false)
+                setEndTx(true)
+            }
+        }
         updatePool()
     }
 
@@ -581,7 +708,6 @@ const AddLiquidity = (props) => {
 };
 
 const AddSymmPane = (props) => {
-
     const [showModal, setShowModal] = useState(false);
     const toggle = () => setShowModal(!showModal);
     const remainder = convertFromWei(props.userData.balance - props.liquidityData.tokenAmnt)
@@ -643,6 +769,9 @@ const AddSymmPane = (props) => {
                     <Col xs={12}>
                         {!props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader"/>
+                                }
                                 <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve {props.pool.symbol}
                             </button>
                         }
@@ -651,18 +780,21 @@ const AddSymmPane = (props) => {
                         <br/>
                         {!props.approvalBase &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockSparta}>
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader"/>
+                                }
                                 <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve SPARTA
                             </button>
                         }
                     </Col>
                     <Col xs={12}>
-                        {props.approvalBase && props.approvalToken && props.startTx && !props.endTx &&
+                        {props.approvalBase && props.approvalToken &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
-                                <i className="bx bx-spin bx-loader"/> ADD TO POOL
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader"/>
+                                }
+                                ADD TO POOL
                             </div>
-                        }
-                        {props.approvalBase && props.approvalToken && !props.startTx &&
-                            <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>ADD TO POOL</div>
                         }
                     </Col>
                 </Row>
@@ -720,13 +852,9 @@ const AddSymmPane = (props) => {
 export default withRouter(withNamespaces()(AddLiquidity));
 
 const AddAsymmPane = (props) => {
-
     const [showModal, setShowModal] = useState(false);
-
     const toggle = () => setShowModal(!showModal);
-
     const remainder = convertFromWei(props.userData.balance - props.userData.input)
-
     const checkEnoughForGas = () => {
         if (props.userData.symbol === 'BNB') { // if input Symbol is BNB
             if (remainder < 0.05) {   //if (wallet BNB balance) minus (transaction BNB amount) < 0.05
@@ -781,23 +909,21 @@ const AddAsymmPane = (props) => {
                         <br/>
                         {convertFromWei(props.pool.depth) > 10000 && !props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader"/>
+                                }
                                 <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve {props.pool.symbol}
                             </button>
                         }
                     </Col>
                     <Col xs={12}>
-                        {convertFromWei(props.pool.depth) > 10000 && props.approvalToken && props.startTx && !props.endTx &&
+                        {convertFromWei(props.pool.depth) > 10000 && props.approvalToken &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
-                                <i className="bx bx-spin bx-loader"/> ADD TO POOL
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader"/>
+                                } ADD TO POOL
                             </div>
                         }
-
-                        {convertFromWei(props.pool.depth) > 10000 && props.approvalToken && !props.startTx && (props.liquidityData.tokenAmount / 1) <= (props.userData.balance / 1) &&
-                            <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
-                                ADD TO POOL
-                            </div>
-                        }
-
                         {props.approvalToken && (props.liquidityData.tokenAmount / 1) > (props.userData.balance / 1) &&
                             <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
                                 <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {props.userData.symbol} in Wallet!
@@ -951,6 +1077,9 @@ const RemoveLiquidityPane = (props) => {
             <div className="text-center">
                 {(props.withdrawData.lpAmount / 1) <= (availAmnt / 1) && (props.withdrawData.lpAmount / 1) > 0 &&
                     <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.removeLiquidity}>
+                        {props.startTx && !props.endTx &&
+                            <i className="bx bx-spin bx-loader"/>
+                        }
                         <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Withdraw From Pool {props.pool.symbol}
                     </button>
                 }
