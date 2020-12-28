@@ -323,8 +323,7 @@ const AddLiquidity = (props) => {
         })
         let enoughBNB = true
         var gasBalance = await getBNBBalance(context.account)
-        var gasRemainder = bn(gasBalance).minus(bn(gasFee))
-        if (gasRemainder < 0) {
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
             enoughBNB = false
             setNotifyMessage('You do not have enough BNB for gas fee!')
             setNotifyType('warning')
@@ -401,8 +400,7 @@ const AddLiquidity = (props) => {
         })
         let enoughBNB = true
         var gasBalance = await getBNBBalance(context.account)
-        var gasRemainder = bn(gasBalance).minus(bn(gasFee))
-        if (gasRemainder < 0) {
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
             enoughBNB = false
             setNotifyMessage('You do not have enough BNB for gas fee!')
             setNotifyType('warning')
@@ -410,7 +408,7 @@ const AddLiquidity = (props) => {
             setEndTx(true)
         }
         else if (enoughBNB === true) {
-            if (pool.address === BNB_ADDR && tokenAmnt >= bn(userData.tokenBalance).minus(gasFee)) {
+            if (pool.address === BNB_ADDR && bn(userData.tokenBalance).minus(gasFee).comparedTo(bn(tokenAmnt)) === -1) {
                 tokenAmnt = tokenAmnt.minus(gasFee)
                 if (tokenAmnt < 0) {
                     validInput = false
@@ -478,8 +476,7 @@ const AddLiquidity = (props) => {
         })
         let enoughBNB = true
         var gasBalance = await getBNBBalance(context.account)
-        var gasRemainder = bn(gasBalance).minus(bn(gasFee))
-        if (gasRemainder < 0) {
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
             enoughBNB = false
             setNotifyMessage('You do not have enough BNB for gas fee!')
             setNotifyType('warning')
