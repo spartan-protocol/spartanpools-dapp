@@ -100,6 +100,7 @@ const AddressConn = (props) => {
             context.setContext({'sharesData': await getNextSharesData(account, tokenArray, sharesData)})
             context.setContext({'sharesDataLoading': false})
             context.setContext({'sharesDataComplete': lastPage})
+            //console.log(sharesData)
         }
     }
 

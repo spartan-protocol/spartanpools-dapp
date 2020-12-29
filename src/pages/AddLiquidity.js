@@ -62,6 +62,18 @@ const AddLiquidity = (props) => {
         'fees': 0
     })
 
+    const [poolShare, setPoolShare] = useState({
+        'address': 'XXX',
+        'baseAmount': 0,
+        'locked': 0,
+        'name': 'XXX',
+        'poolAddress': 'XXX',
+        'share': 0,
+        'symbol': 'XXX',
+        'tokenAmount': 0,
+        'units': 0,
+    })
+
     const [userData, setUserData] = useState({
         'baseBalance': 0,
         'tokenBalance': 0,
@@ -94,17 +106,18 @@ const AddLiquidity = (props) => {
 
     const [getDataCount, setGetDataCount] = useState(0)
     useEffect(() => {
-        if (context.poolsData && context.walletData) {
+        if (context.poolsData && context.walletData && context.sharesData) {
             getData()
         }
         // eslint-disable-next-line
-    }, [context.poolsData, context.walletData, getDataCount])
+    }, [context.poolsData, context.walletData, context.sharesData, getDataCount])
 
     const getData = async () => {
         let params = queryString.parse(props.location.search)
         var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
         var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-        if (existsInPoolsData === true && existsInWalletData === true) {
+        var existsInSharesData = await context.sharesData.some(e => (e.address === params.pool))
+        if (existsInPoolsData === true && existsInWalletData === true && existsInSharesData === true) {
             const tempPool = await getPoolData(params.pool, context.poolsData)
             setPool(tempPool)
             let data = await Promise.all([getTokenData(SPARTA_ADDR, context.walletData), getTokenData(tempPool.address, context.walletData)])
@@ -120,6 +133,8 @@ const AddLiquidity = (props) => {
             }
             setUserData(_userData)
             //console.log(baseData?.balance, tokenData?.balance)
+            let tempSharesData = context.sharesData.find(e => (e.address === params.pool))
+            setPoolShare(tempSharesData)
 
             data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(tempPool.address)])
             setApprovalBase(data[0])
@@ -254,39 +269,42 @@ const AddLiquidity = (props) => {
 
     const onWithdrawChange = async (e) => {
         const input = e.target.value
-        setWithdrawAmount(input)
+        var temp = ((bn(convertToWei(input)).div(bn(poolShare.units))).times(100)).toFixed(2)
+        console.log(temp)
+        setWithdrawAmount(temp)
         let decDiff = 10 ** (18 - pool.decimals)
-        let poolShare = await getPoolShares(context.account, pool.address)
-        let tokenAmnt = +poolShare.tokenAmount * decDiff
+        let tokenAmnt = bn(poolShare.tokenAmount).times(decDiff)
         const percent = convertToWei(input) / +poolShare.units
-        let baseAmount = +poolShare.baseAmount * percent
+        let baseAmount = bn(poolShare.baseAmount).times(percent)
         let tokenAmntFinal = +tokenAmnt * percent
         let finalLPUnits = +poolShare.units * percent
         let withdrawData = {
-            'baseAmount': baseAmount > +poolShare.baseAmount ? 0 : baseAmount,
+            'baseAmount': baseAmount > +poolShare.baseAmount ? 0 : +baseAmount,
             'tokenAmount': tokenAmntFinal > +tokenAmnt ? 0 : tokenAmntFinal,
             'lpAmount': finalLPUnits > +poolShare.baseAmount ? 0 : finalLPUnits,
         }
+        console.log(+baseAmount, tokenAmntFinal, finalLPUnits)
         setWithdrawData(withdrawData)
     }
 
     const changeWithdrawAmount = async (amount) => {
+        console.log(amount)
         setWithdrawAmount(amount)
         let decDiff = 10 ** (18 - pool.decimals)
-        let poolShare = await getPoolShares(context.account, pool.address)
-        let tokenAmnt = +poolShare.tokenAmount * decDiff
+        let tokenAmnt = bn(poolShare.tokenAmount).times(decDiff).toFixed(0)
         let withdrawData = {
             'baseAmount': (+poolShare.baseAmount * amount) / 100,
             'tokenAmount': (+tokenAmnt * amount) / 100,
             'lpAmount': (+poolShare.units * amount) / 100,
         }
+        console.log(withdrawData)
         setWithdrawData(withdrawData)
     }
 
     const getEstShare = () => {
         const newUnits = (bn(estLiquidityUnits)).plus(bn(pool.units))
-        const share = ((bn(estLiquidityUnits)).div(newUnits)).toFixed(2)
-        return (share * 100).toFixed(2)
+        const share = ((bn(estLiquidityUnits)).div(newUnits)).toFixed(18)
+        return (share * 100).toFixed(4)
     }
 
     const unlockSparta = async () => {
@@ -410,7 +428,7 @@ const AddLiquidity = (props) => {
         else if (enoughBNB === true) {
             if (pool.address === BNB_ADDR && bn(userData.tokenBalance).minus(gasFee).comparedTo(bn(tokenAmnt)) === -1) {
                 tokenAmnt = tokenAmnt.minus(gasFee)
-                if (tokenAmnt < 0) {
+                if (bn(tokenAmnt).comparedTo(0) === -1) {
                     validInput = false
                     setNotifyMessage('Gas larger than BNB input amount')
                     setNotifyType('warning')
@@ -766,10 +784,10 @@ const AddSymmPane = (props) => {
                     <Col xs={12}>
                         {!props.approvalToken &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockToken}>
-                                {props.startTx && !props.endTx &&
-                                    <i className="bx bx-spin bx-loader"/>
-                                }
                                 <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve {props.pool.symbol}
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader ml-1"/>
+                                }
                             </button>
                         }
                     </Col>
@@ -777,20 +795,20 @@ const AddSymmPane = (props) => {
                         <br/>
                         {!props.approvalBase &&
                             <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.unlockSparta}>
-                                {props.startTx && !props.endTx &&
-                                    <i className="bx bx-spin bx-loader"/>
-                                }
                                 <i className="bx bx-log-in-circle font-size-20 align-middle mr-2"/> Approve SPARTA
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader ml-1"/>
+                                }
                             </button>
                         }
                     </Col>
                     <Col xs={12}>
                         {props.approvalBase && props.approvalToken &&
                             <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={checkEnoughForGas}>
-                                {props.startTx && !props.endTx &&
-                                    <i className="bx bx-spin bx-loader"/>
-                                }
                                 ADD TO POOL
+                                {props.startTx && !props.endTx &&
+                                    <i className="bx bx-spin bx-loader ml-1"/>
+                                }
                             </div>
                         }
                     </Col>
@@ -835,7 +853,7 @@ const AddSymmPane = (props) => {
                                 toggle();
                                 props.addLiquidity();
                             }}>
-                                Continue (Might Fail!)
+                                Continue
                             </Button>
                         </>
                     }
@@ -921,7 +939,7 @@ const AddAsymmPane = (props) => {
                                 } ADD TO POOL
                             </div>
                         }
-                        {props.approvalToken && (props.liquidityData.tokenAmount / 1) > (props.userData.balance / 1) &&
+                        {props.approvalToken && bn(props.liquidityData.tokenAmount).comparedTo(props.userData.balance) === 1 &&
                             <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
                                 <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {props.userData.symbol} in Wallet!
                             </button>
@@ -986,7 +1004,7 @@ const AddAsymmPane = (props) => {
                                 toggle();
                                 props.addLiquidity();
                             }}>
-                                Continue (Might Fail!)
+                                Continue
                             </Button>
                         </>
                     }
@@ -1032,9 +1050,9 @@ const RemoveLiquidityPane = (props) => {
             let units = props.pool.units
             let sparta = props.pool.baseAmount
             let tokens = props.pool.tokenAmount
-            let share = lockedAmount / units
-            setBase(bn(sparta) * bn(share))
-            setToken(bn(tokens) * bn(share))
+            let share = (bn(lockedAmount).div(bn(units))).toFixed(18)
+            setBase((bn(sparta).times(bn(share))).toFixed(0))
+            setToken((bn(tokens).times(bn(share))).toFixed(0))
         }
         else {
             await pause(2000)
@@ -1072,7 +1090,7 @@ const RemoveLiquidityPane = (props) => {
             </Row>
 
             <div className="text-center">
-                {(props.withdrawData.lpAmount / 1) <= (availAmnt / 1) && (props.withdrawData.lpAmount / 1) > 0 &&
+                {bn(props.withdrawData.lpAmount).comparedTo(bn(availAmnt)) <= 0 && bn(props.withdrawData.lpAmount).comparedTo(0) === 1 &&
                     <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={props.removeLiquidity}>
                         {props.startTx && !props.endTx &&
                             <i className="bx bx-spin bx-loader"/>
@@ -1080,7 +1098,7 @@ const RemoveLiquidityPane = (props) => {
                         <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Withdraw From Pool {props.pool.symbol}
                     </button>
                 }
-                {(props.withdrawData.lpAmount / 1) > (availAmnt / 1) &&
+                {bn(props.withdrawData.lpAmount).comparedTo(bn(availAmnt)) === 1 &&
                     <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
                         <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough LP Tokens in Wallet!
                     </button>
