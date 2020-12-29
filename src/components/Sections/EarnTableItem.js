@@ -1,13 +1,13 @@
 import React, {useContext, useState} from "react";
 import {Context} from "../../context";
 import {TokenIcon} from '../Common/TokenIcon'
-import {convertFromWei, formatAllUnits} from "../../utils";
+import {convertFromWei, formatAllUnits, bn} from "../../utils";
 import {
     Progress, Button,
     Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap'
 
-import {getDaoContract, updateSharesData, updateWalletData, BNB_ADDR} from '../../client/web3'
+import {getDaoContract, updateSharesData, updateWalletData, BNB_ADDR, getGasPrice, getBNBBalance} from '../../client/web3'
 import Notification from '../../components/Common/notification'
 
 import {withNamespaces} from "react-i18next";
@@ -28,18 +28,108 @@ export const EarnTableItem = (props) => {
     //const availPC = units.dividedBy(total).times(100).toFixed(0)
 
     const deposit = async (record) => {
-        console.log(record)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         let contract = getDaoContract()
-        console.log('Deposit of', record.units)
-        await contract.methods.deposit(record.address, record.units).send({ from: context.account })
+        console.log('Estimating gas', '1', estGasPrice)
+        await contract.methods.deposit(record.address, '1').estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+        }
+        else if (enoughBNB === true) {
+            console.log('Locking', record.units, estGasPrice, gasLimit, gasFee)
+            await contract.methods.deposit(record.address, record.units).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Lock Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Lock Complete!')
+                setNotifyType('success')
+            }
+        }
         await refreshData(record.symbAddr)
     }
 
     const withdraw = async (record) => {
-        console.log(record)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         let contract = getDaoContract()
-        await contract.methods.withdraw(record.address).send({ from: context.account })
-        //console.log(tx.transactionHash)
+        console.log('Estimating gas', estGasPrice)
+        await contract.methods.withdraw(record.address).estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+        }
+        else if (enoughBNB === true) {
+            console.log('UnLocking', estGasPrice, gasLimit, gasFee)
+            await contract.methods.withdraw(record.address).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('UnLock Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('UnLock Complete!')
+                setNotifyType('success')
+            }
+        }
         await refreshData(record.symbAddr)
     }
 

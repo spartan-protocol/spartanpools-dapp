@@ -143,7 +143,7 @@ export const getTokenDetails = async (address, tokenArray) => {
         let utilsContract = getUtilsContract()
         let token = tokenArray[i] === WBNB_ADDR ? BNB_ADDR : tokenArray[i]
         let assetDetails = await utilsContract.methods.getTokenDetailsWithMember(token, address).call()
-        if(+assetDetails.balance > 0) {
+        if(bn(assetDetails.balance).comparedTo(0) === 1) {
             assetDetailsArray.push(assetDetails)
         }
     }

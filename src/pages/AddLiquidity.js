@@ -25,7 +25,7 @@ import classnames from 'classnames';
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
     getPoolData, getTokenData, updateSharesData, getGasPrice,
-    getPool, getPoolShares, WBNB_ADDR, updateWalletData, getBNBBalance,
+    getPool, WBNB_ADDR, updateWalletData, getBNBBalance,
 } from '../client/web3'
 import {withNamespaces} from "react-i18next";
 import PoolPaneSide from "../components/Sections/PoolPaneSide"
@@ -116,7 +116,10 @@ const AddLiquidity = (props) => {
         let params = queryString.parse(props.location.search)
         var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
         var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-        var existsInSharesData = await context.sharesData.some(e => (e.address === params.pool))
+        let sharesPool = ''
+        if (params.pool === BNB_ADDR) {sharesPool = WBNB_ADDR}
+        else {sharesPool = params.pool}
+        var existsInSharesData = await context.sharesData.some(e => (e.address === sharesPool))
         if (existsInPoolsData === true && existsInWalletData === true && existsInSharesData === true) {
             const tempPool = await getPoolData(params.pool, context.poolsData)
             setPool(tempPool)
@@ -133,7 +136,7 @@ const AddLiquidity = (props) => {
             }
             setUserData(_userData)
             //console.log(baseData?.balance, tokenData?.balance)
-            let tempSharesData = context.sharesData.find(e => (e.address === params.pool))
+            let tempSharesData = context.sharesData.find(e => (e.address === sharesPool))
             setPoolShare(tempSharesData)
 
             data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(tempPool.address)])
@@ -252,7 +255,7 @@ const AddLiquidity = (props) => {
             tokenAmount: "",
         }
 
-        if (baseAmount > baseBalance) {
+        if (bn(baseAmount).comparedTo(bn(baseBalance)) === 1) {
             //console.log({baseBalance})
             liquidityData.tokenAmount = (baseBalance / price)  // 5 / 10 -> 0.5
             liquidityData.baseAmount = formatBN(bn(baseBalance), 0) // 5
@@ -270,7 +273,6 @@ const AddLiquidity = (props) => {
     const onWithdrawChange = async (e) => {
         const input = e.target.value
         var temp = ((bn(convertToWei(input)).div(bn(poolShare.units))).times(100)).toFixed(2)
-        console.log(temp)
         setWithdrawAmount(temp)
         let decDiff = 10 ** (18 - pool.decimals)
         let tokenAmnt = bn(poolShare.tokenAmount).times(decDiff)
@@ -279,16 +281,14 @@ const AddLiquidity = (props) => {
         let tokenAmntFinal = +tokenAmnt * percent
         let finalLPUnits = +poolShare.units * percent
         let withdrawData = {
-            'baseAmount': baseAmount > +poolShare.baseAmount ? 0 : +baseAmount,
-            'tokenAmount': tokenAmntFinal > +tokenAmnt ? 0 : tokenAmntFinal,
-            'lpAmount': finalLPUnits > +poolShare.baseAmount ? 0 : finalLPUnits,
+            'baseAmount': bn(baseAmount).comparedTo(bn(poolShare.baseAmount)) === 1 ? 0 : +baseAmount,
+            'tokenAmount': bn(tokenAmntFinal).comparedTo(bn(tokenAmnt)) === 1 ? 0 : tokenAmntFinal,
+            'lpAmount': bn(finalLPUnits).comparedTo(bn(poolShare.baseAmount)) === 1 ? 0 : finalLPUnits,
         }
-        console.log(+baseAmount, tokenAmntFinal, finalLPUnits)
         setWithdrawData(withdrawData)
     }
 
     const changeWithdrawAmount = async (amount) => {
-        console.log(amount)
         setWithdrawAmount(amount)
         let decDiff = 10 ** (18 - pool.decimals)
         let tokenAmnt = bn(poolShare.tokenAmount).times(decDiff).toFixed(0)
@@ -297,7 +297,6 @@ const AddLiquidity = (props) => {
             'tokenAmount': (+tokenAmnt * amount) / 100,
             'lpAmount': (+poolShare.units * amount) / 100,
         }
-        console.log(withdrawData)
         setWithdrawData(withdrawData)
     }
 
