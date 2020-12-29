@@ -7,7 +7,7 @@ import {
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
-import { bn,one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
+import {bn, one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
 
 import {
     Row, Col, InputGroup, InputGroupAddon, Label, UncontrolledTooltip,

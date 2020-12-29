@@ -8,7 +8,7 @@ import TradePaneBuy from "../components/Sections/TradePaneBuy";
 
 import PoolPaneSide from '../components/Sections/PoolPaneSide';
 
-import {bn, formatBN, convertToWei, formatGranularUnits, convertFromWei, convertGweiToWei, convertFromGwei} from '../utils'
+import {bn, formatBN, convertToWei, formatGranularUnits, convertFromWei} from '../utils'
 import {getSwapFee, getSwapOutput, getSwapSlip, getActualSwapSlip, getEstRate} from '../math'
 
 import Notification from '../components/Common/notification'
@@ -16,7 +16,7 @@ import Notification from '../components/Common/notification'
 import {
     BNB_ADDR, SPARTA_ADDR, ROUTER_ADDR, getRouterContract, getTokenContract,
     getPoolData, getTokenData, getGasPrice,
-    getPool, WBNB_ADDR, updateWalletData,
+    getPool, WBNB_ADDR, updateWalletData, getBNBBalance,
 } from '../client/web3'
 
 import {
@@ -46,7 +46,7 @@ const NewSwap = (props) => {
     const [pool, setPool] = useState({
         'symbol': 'XXX',
         'name': 'XXX',
-        'decimals': 18,
+        'decimals': '18',
         'address': 'XXX',
         'price': 0,
         'volume': 0,
@@ -129,8 +129,8 @@ const NewSwap = (props) => {
             setInputTokenData(inputTokenData)
             setOutputTokenData(outputTokenData)
 
-            const buyInitInput = (inputTokenData?.balance * 1) / 100
-            const sellInitInput = (outputTokenData?.balance * 1) / 100
+            const buyInitInput = bn(inputTokenData.balance).div(100).toFixed(0)
+            const sellInitInput = bn(outputTokenData.balance).div(100).toFixed(0)
 
             data = await Promise.all([getSwapData(buyInitInput, inputTokenData, outputTokenData, pool, false), getSwapData(sellInitInput, outputTokenData, inputTokenData, pool, true)])
             const tempBuyData = data[0]
@@ -203,8 +203,9 @@ const NewSwap = (props) => {
         let finalAmt = ''
         if (amount === '100') {finalAmt = buyData?.balance}
         else {
-            finalAmt = (amount * buyData?.balance) / 100
+            finalAmt = bn(buyData.balance).times(amount).div(100).toFixed(0)
         }
+        //console.log(finalAmt)
         setBuyData(await getSwapData(finalAmt, inputTokenData, outputTokenData, pool, false))
     };
 
@@ -216,8 +217,9 @@ const NewSwap = (props) => {
         let finalAmt = ''
         if (amount === '100') {finalAmt = sellData?.balance}
         else {
-            finalAmt = (amount * sellData?.balance) / 100
+            finalAmt = bn(sellData.balance).times(amount).div(100).toFixed(0)
         }
+        //console.log(finalAmt)
         setSellData(await getSwapData(finalAmt, outputTokenData, inputTokenData, pool, true))
     };
 
@@ -230,77 +232,218 @@ const NewSwap = (props) => {
     };
 
     const unlock = async (address) => {
+        setStartTx(true)
+        setEndTx(false)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         const contract = getTokenContract(address)
         const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(ROUTER_ADDR, supply).send({
+        console.log('Estimating gas', estGasPrice, supply)
+        await contract.methods.approve(ROUTER_ADDR, supply).estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: ''
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setStartTx(false)
+                setEndTx(true)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        setNotifyMessage('Approved!')
-        setNotifyType('success')
-        
-        let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
-        setApprovalS(data[0])
-        setApproval(data[1])
-
-        if (context.walletDataLoading !== true) {
-            // Refresh BNB balance
-            context.setContext({'walletDataLoading': true})
-            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setStartTx(false)
+            setEndTx(true)
+        }
+        if (enoughBNB === true) {
+            console.log('Approving token', estGasPrice, gasLimit, gasFee)
+            await contract.methods.approve(ROUTER_ADDR, supply).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function (error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Token Approval Cancelled')
+                    setNotifyType('warning')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Token Approval Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Token Approved!')
+                setNotifyType('success')
+                setStartTx(false)
+                setEndTx(true)
+                let data = await Promise.all([checkApproval(SPARTA_ADDR), checkApproval(pool.address)])
+                setApprovalS(data[0])
+                setApproval(data[1])
+                if (context.walletDataLoading !== true) {
+                    // Refresh BNB balance
+                    context.setContext({'walletDataLoading': true})
+                    let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+                    context.setContext({'walletData': walletData})
+                    context.setContext({'walletDataLoading': false})
+                }
+            }
         }
     };
 
     const buy = async () => {
         setStartTx(true)
+        setEndTx(false)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         let contract = getRouterContract()
-        console.log('Buy txn', buyData.input)
-        await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
+        console.log('Estimating gas', buyData.input, estGasPrice)
+        await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: ''
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setStartTx(false)
+                setEndTx(true)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        setNotifyMessage('Transaction Sent!')
-        setNotifyType('success')
-        setStartTx(false)
-        setEndTx(true)
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setStartTx(false)
+            setEndTx(true)
+        }
+        else if (enoughBNB === true) {
+            console.log('Swapping', buyData.input, estGasPrice, gasLimit, gasFee)
+            await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Swap Cancelled')
+                    setNotifyType('warning')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Swap Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Swap Complete!')
+                setNotifyType('success')
+                setStartTx(false)
+                setEndTx(true)
+            }
+        }
         updatePool()
     };
 
     const sell = async () => {
         setStartTx(true)
+        setEndTx(false)
         let gasFee = 0
+        let gasLimit = 0
+        let validInput = true
+        let contTxn = false
         const estGasPrice = await getGasPrice()
         let decDiff = 10 ** (18 - pool.decimals)
         let inputAmount = bn(sellData.input).div(decDiff)
         let contract = getRouterContract()
-        console.log('Estimating Gas', inputAmount.toFixed(0))
-        await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).estimateGas({
+        console.log('Estimating Gas', inputAmount.toFixed(0), estGasPrice)
+        await contract.methods.swap('1', poolURL, SPARTA_ADDR).estimateGas({
             from: context.account,
-            gasPrice: '',
-            gas: '',
-            value: pool.address === BNB_ADDR ? inputAmount.toFixed(0) : 0
+            gasPrice: estGasPrice,
+            value: pool.address === BNB_ADDR ? '1' : '0'
         }, function(error, gasAmount) {
-            if (error) {console.log(error)}
-            gasFee = Math.floor(gasAmount * 1.6)
-            gasFee = gasFee * convertFromGwei(estGasPrice)
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setStartTx(false)
+                setEndTx(true)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
         })
-        if (pool.address === BNB_ADDR  && inputAmount >= sellData.balance - convertGweiToWei(gasFee)) {
-            inputAmount = (inputAmount.minus(convertGweiToWei(gasFee)))
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setStartTx(false)
+            setEndTx(true)
         }
-        console.log('Sell txn', inputAmount.toFixed(0))
-        await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).send({
-            from: context.account,
-            gasPrice: '',
-            gas: '',
-            value: pool.address === BNB_ADDR ? inputAmount.toFixed(0) : 0
-        })
-        setNotifyMessage('Transaction Sent!')
-        setNotifyType('success')
-        setStartTx(false)
-        setEndTx(true)
+        else if (enoughBNB === true) {
+            if (pool.address === BNB_ADDR && bn(sellData.balance).minus(gasFee).comparedTo(bn(inputAmount)) === -1) {
+                inputAmount = inputAmount.minus(gasFee)
+                if (bn(inputAmount).comparedTo(0) === -1) {
+                    validInput = false
+                    setNotifyMessage('Gas larger than BNB input amount')
+                    setNotifyType('warning')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+            }
+            if (validInput === true) {
+                console.log('Swapping', inputAmount.toFixed(0), estGasPrice, gasLimit, gasFee)
+                await contract.methods.swap(inputAmount.toFixed(0), poolURL, SPARTA_ADDR).send({
+                    from: context.account,
+                    gasPrice: estGasPrice,
+                    gas: gasLimit,
+                    value: pool.address === BNB_ADDR ? inputAmount.toFixed(0) : '0'
+                }, function(error, transactionHash) {
+                    if (error) {
+                        console.log(error)
+                        setNotifyMessage('Transaction cancelled')
+                        setNotifyType('warning')
+                        setStartTx(false)
+                        setEndTx(true)
+                    }
+                    else {
+                        console.log('txn:', transactionHash)
+                        setNotifyMessage('Swap Pending...')
+                        setNotifyType('success')
+                        contTxn = true
+                    }
+                })
+                if (contTxn === true) {
+                    setNotifyMessage('Swap Complete!')
+                    setNotifyType('success')
+                    setStartTx(false)
+                    setEndTx(true)
+                }
+            }
+        }
         updatePool()
     };
 
