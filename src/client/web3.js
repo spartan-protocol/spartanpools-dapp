@@ -236,17 +236,18 @@ export const getPool = async (address) => {
         'name': tokenDetails.name,
         'decimals': tokenDetails.decimals,
         'address': token,
-        'price': +poolDataRaw.baseAmount / (+poolDataRaw.tokenAmount * decDiff),
-        'volume': +poolDataRaw.volume,
-        'baseAmount': +poolDataRaw.baseAmount,
-        'tokenAmount': (+poolDataRaw.tokenAmount * decDiff),
-        'depth': 2 * +poolDataRaw.baseAmount,
-        'txCount': +poolDataRaw.txCount,
-        'apy': +apy,
-        'units': +poolDataRaw.poolUnits,
-        'fees': +poolDataRaw.fees,
+        'price': (bn(poolDataRaw.baseAmount).div(bn(poolDataRaw.tokenAmount).times(decDiff))).toFixed(18),
+        'volume': bn(poolDataRaw.volume).toFixed(0),
+        'baseAmount': bn(poolDataRaw.baseAmount).toFixed(0),
+        'tokenAmount': (bn(poolDataRaw.tokenAmount).times(decDiff)).toFixed(0),
+        'depth': bn(poolDataRaw.baseAmount).times(2).toFixed(0),
+        'txCount': bn(poolDataRaw.txCount).toFixed(0),
+        'apy': bn(apy).toFixed(0),
+        'units': bn(poolDataRaw.poolUnits).toFixed(0),
+        'fees': bn(poolDataRaw.fees).toFixed(0),
         'bondListed':bondListed
     }
+    //console.log(poolData)
     return poolData
 }
 
@@ -365,7 +366,7 @@ export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
             part2.push({
                 'symbol': 'BNB',
                 'name': 'BNB',
-                'decimals': 18,
+                'decimals': '18',
                 'balance': await getBNBBalance(account),
                 'address': BNB_ADDR
             })
@@ -375,11 +376,12 @@ export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
             var balance = data[0]
             var details = data[1]
             let decDiff = 10 ** (18 - details.decimals)
+            balance = bn(balance).times(decDiff).toFixed(0)
             part2.push({
                 'symbol': details.symbol,
                 'name': details.name,
                 'decimals': details.decimals,
-                'balance': balance * decDiff,
+                'balance': balance,
                 'address': tokenAddr
             })
         }
@@ -532,14 +534,14 @@ export const getPoolShares = async (member, token) => {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
         'address': token,
-        'poolAddress':poolAddress,
+        'poolAddress': poolAddress,
         'baseAmount': memberData.baseAmount,
         'tokenAmount': memberData.tokenAmount,
         'locked': locked,
         'units': liquidityUnits,
-        'share': +liquidityUnits / +tokenDetails.totalSupply
+        'share': bn(liquidityUnits).div(bn(tokenDetails.totalSupply)).toFixed(0)
     }
-    //console.log({share})
+    //console.log(share)
     return share
 }
 
