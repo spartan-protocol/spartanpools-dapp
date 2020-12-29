@@ -3,12 +3,12 @@ import {Context} from "../../context"
 
 import {getRewards, getDaoContract, 
     updateWalletData, BNB_ADDR, SPARTA_ADDR,
-    getMemberDetail, getTotalWeight,
+    getMemberDetail, getTotalWeight, getGasPrice, getBNBBalance,
 } from "../../client/web3"
 
 import Notification from '../../components/Common/notification'
 
-import {convertFromWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince} from '../../utils'
+import {convertFromWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince, bn} from '../../utils'
 
 import {Row, Col, Table, Card, CardTitle, CardSubtitle, CardBody, Spinner} from "reactstrap"
 import {withNamespaces} from 'react-i18next'
@@ -50,11 +50,60 @@ const EarnTable = (props) => {
 
     const harvest = async () => {
         setLoadingHarvest(true)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
         let contract = getDaoContract()
-        let tx = await contract.methods.harvest().send({ from: context.account })
-        console.log(tx.transactionHash)
+        console.log('Estimating gas', estGasPrice)
+        await contract.methods.harvest().estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setLoadingHarvest(false)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setLoadingHarvest(false)
+        }
+        else if (enoughBNB === true) {
+            console.log('Harvesting SPARTA', estGasPrice, gasLimit, gasFee)
+            await contract.methods.harvest().send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                    setLoadingHarvest(false)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Harvest Pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Harvested SPARTA!')
+                setNotifyType('success')
+                setLoadingHarvest(false)
+            }
+        }
         await refreshData()
-        setLoadingHarvest(false)
     }
 
     const refreshData = async () => {

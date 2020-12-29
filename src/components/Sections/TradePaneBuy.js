@@ -2,7 +2,7 @@ import React, {useState} from "react";
 
 import InputPaneSwap from "./InputPaneSwap";
 
-import {convertFromWei, formatAllUnits, formatGranularUnits} from "../../utils";
+import {bn, convertFromWei, formatAllUnits, formatGranularUnits} from "../../utils";
 
 import {
     Button, UncontrolledCollapse,
@@ -108,7 +108,7 @@ export const TradePaneBuy = (props) => {
                 <Col xs={12}><p className='text-right'>Estimated*</p></Col>
             </Row>
 
-            {props.tradeData.balance <= 0 && props.tradeData.symbol !== 'XXX' &&
+            {bn(props.tradeData.balance).comparedTo(0) <= 0 && props.tradeData.symbol !== 'XXX' &&
                 <Col xs={12} className='py-1'><h6 className='text-center'>You have no {props.tradeData.symbol} in your wallet.</h6></Col>
             }
 
@@ -117,20 +117,23 @@ export const TradePaneBuy = (props) => {
             }
 
             <div className="text-center">
-                {!props.approval && (props.tradeData.balance > 0) &&
-                    <Button size="lg" color="success" onClick={props.unlock} className="m-1"> <i className="bx bx-lock-open"/>{props.t("Approve")} {props.tradeData.symbol}</Button>
-                }
-                {props.approval && props.startTx && !props.endTx &&
-                    <Button size="lg" color="success" onClick={checkEnoughForGas} className="m-1">
-                        <i className="bx bx-loader-alt bx-spin mx-1 float-right"/>{`${props.type} ${props.pool.symbol}`}
+                {!props.approval && bn(props.tradeData.balance).comparedTo(0) === 1 &&
+                    <Button size="lg" color="success" onClick={props.unlock} className="m-1">
+                        <i className="bx bx-lock-open"/>{props.t("Approve")} {props.tradeData.symbol}
+                        {props.startTx && !props.endTx &&
+                            <i className="bx bx-spin bx-loader ml-1" />
+                        }
                     </Button>
                 }
-                {props.approval && !props.startTx && (props.tradeData.balance > 0) && (props.tradeData.input / 1) <= (props.tradeData.balance / 1) &&
+                {props.approval && bn(props.tradeData.balance).comparedTo(0) === 1 && bn(props.tradeData.input).comparedTo(bn(props.tradeData.balance)) <= 0 &&
                     <Button size="lg" color="success" onClick={checkEnoughForGas} className="m-1">
                         {`${props.type} ${props.pool.symbol}`}
+                        {props.startTx && !props.endTx &&
+                            <i className="bx bx-spin bx-loader ml-1" />
+                        }
                     </Button>
                 }
-                {props.approval && (props.tradeData.input / 1) > (props.tradeData.balance / 1) &&
+                {props.approval && bn(props.tradeData.input).comparedTo(props.tradeData.balance) === 1 &&
                     <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
                         <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {props.tradeData.symbol} in Wallet!
                     </button>
