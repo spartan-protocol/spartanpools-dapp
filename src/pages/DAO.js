@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import {getSpartaContract, getDaoContract, getProposals, getBondv3Contract} from '../client/web3'
+import { getDaoContract, getProposals } from '../client/web3'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
@@ -16,8 +16,6 @@ import {
 } from "reactstrap";
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
-
-var utils = require('ethers').utils;
 
 const DAO = (props) => {
 
@@ -49,80 +47,103 @@ const DAO = (props) => {
         console.log(proposalArray)
     }
 
-    const [grantAddress, setGrantAddress] = useState(false);
-    const [grantAmount, setGrantAmount] = useState(false);
-    const changeGrantAddress = (e) => {
-        setGrantAddress(e.target.value)
-        console.log(e.target.value)
-    }
-    const changeGrantAmount = (e) => {
-        let wei = utils.parseEther(e.target.value)
-        setGrantAmount(wei.toString())
-    }
-    const proposeGrant = async () => {
+    // TYPES (REMOVE FROMN LIST AS THEY ARE ADDED TO THEIR RELEVANT SECTION):
+    //'DAO' = moveDao();
+    //'ROUTER' = moveRouter();
+    //'UTILS' = moveUtils();
+    //'INCENTIVE' = moveIncentiveAddress();
+    //'CURVE' = changeCurve();
+    //'DURATION' = changeDuration();
+    //'START_EMISSIONS' = startEmissions();
+    //'STOP_EMISSIONS' = stopEmissions();
+    //'COOL_OFF' = changeCooloff();
+    //'ERAS_TO_EARN' = changeEras();
+    //'GRANT' = grantFunds();
+    //'MINT' = _mintBond();
+    //'LIST_BOND' = _listBondAsset();
+    //'DELIST_BOND' = _delistBondAsset();
+    //'ADD_CURATED_POOL' = _addCuratedPool();
+    //'REMOVE_CURATED_POOL' = _removeCuratedPool();
+    //'CHALLENGE_CURATED_POOL' = _challengLowestCuratedPool();
+
+    // REFER HERE: https://github.com/spartan-protocol/spartanswap-contracts/blob/globalUpgrade/contracts/DaoV2.sol
+    // AND UPDATE ALL THE 'AVAILABLE TYPES'
+    // THEN BUILD OUT 4 UI MODULES:
+    //// FOR EACH FUNCTION (WITH A DROPBOWN BOX FOR EACH 'TYPE')
+    // THEN CONNECT: VOTE, CANCEL, FINALIZE EACH TO A BUTTON IN THE TABLE
+
+    // NEXT VERSION oF DAO UI; WE CAN LOOK AT MAKING THESE FUNCTION HAVE BUTTON WITHIN RELEVANT PARTS OF THE DAPP, i.e. 'LIST_BOND' ON THE BOND PAGE
+
+    const proposeAction = async (type) => {
+        // Simple Action Call
+        // function newActionProposal(string memory typeStr)
+        // AVAILABLE 'TYPES' = 
         let contract = getDaoContract()
-        console.log(grantAddress, grantAmount, context.account)
-        await contract.methods.newGrantProposal(grantAddress, grantAmount).send({ from: context.account })
+        console.log(type)
+        await contract.methods.newActionProposal(type).send({ from: context.account })
         getData()
         //console.log(tx.transactionHash)
     }
 
-    const [bondAssetAddress, setBondAssetAddress] = useState(false);
-    const changeBondAssetAddress = (e) => {
-        setBondAssetAddress(e.target.value)
-        console.log(e.target.value)
-    }
-    // AVAILABLE 'TYPES' = LIST, DELIST, COOL_OFF, MINT
-    const proposeBondAsset = async (type) => {
-        let contract = getBondv3Contract()
-        console.log(bondAssetAddress, type, context.account)
-        await contract.methods.newAddressProposal(bondAssetAddress, type).send({ from: context.account })
+    const proposeParam = async (param, type) => {
+        // Action with uint parameter
+        // function newParamProposal(uint param, string memory typeStr)
+        // AVAILABLE 'TYPES' = 
+        let contract = getDaoContract()
+        console.log(param, type)
+        await contract.methods.newParamProposal(param, type).send({ from: context.account })
         getData()
         //console.log(tx.transactionHash)
     }
 
-    const [asset, setAsset] = useState(false);
-    const [claimRate, setClaimRate] = useState(false);
-    const [maxClaim, setMaxClaim] = useState(false);
-    const changeAsset = (e) => {
-        setAsset(e.target.value)
-    }
-    const changeClaimRate = (e) => {
-        let wei = utils.parseEther(e.target.value)
-        setClaimRate(wei.toString())
-    }
-    const changeMaxClaim = (e) => {
-        let wei = utils.parseEther(e.target.value)
-        setMaxClaim(wei.toString())
-    }
-    const listAsset = async () => {
-        let contract = getSpartaContract()
-        console.log(asset, claimRate, maxClaim, context.account)
-        await contract.methods.listAsset(asset, claimRate, maxClaim).send({ from: context.account })
-        //console.log(tx.transactionHash)
-    }
-
-    const [daoAddress, setDAOAddress] = useState(false);
-    const changeDAOAddress = (e) => {
-        setDAOAddress(e.target.value)
-    }
-    const listDAO = async () => {
-        let contract = getSpartaContract()
-        contract.methods.changeDAO(daoAddress).send({ from: context.account })
-        //console.log(tx.transactionHash)
-    }
-
-    const [routerAddress, setRouterAddress] = useState(false);
-    const [utilsAddress, setUtilsAddress] = useState(false);
-    const changeRouterAddress = (e) => {
-        setRouterAddress(e.target.value)
-    }
-    const changeUtilsAddress = (e) => {
-        setUtilsAddress(e.target.value)
-    }
-    const listRouter = async () => {
+    const proposeAddress = async (proposedAddress, type) => {
+        // AVAILABLE 'TYPES' = 
+        // Action with address parameter
+        // function newAddressProposal(address proposedAddress, string memory typeStr)
         let contract = getDaoContract()
-        await contract.methods.setGenesisAddresses(routerAddress, utilsAddress).send({ from: context.account })
+        console.log(proposedAddress, type)
+        await contract.methods.newAddressProposal(proposedAddress, type).send({ from: context.account })
+        getData()
+        //console.log(tx.transactionHash)
+    }
+
+    const proposeGrant = async (recipient, amount) => {
+        // Action with funding
+        // function newGrantProposal(address recipient, uint amount) 
+        let contract = getDaoContract()
+        console.log(recipient, amount)
+        await contract.methods.newGrantProposal(recipient, amount).send({ from: context.account })
+        getData()
+        //console.log(tx.transactionHash)
+    }
+
+    const voteProposal = async (proposalID) => {
+        // Vote for a proposal
+        // function voteProposal(uint proposalID)
+        let contract = getDaoContract()
+        console.log(proposalID)
+        await contract.methods.voteProposal(proposalID).send({ from: context.account })
+        getData()
+        //console.log(tx.transactionHash)
+    }
+
+    const cancelProposal = async (oldProposalID, newProposalID) => {
+        // Cancel a proposal
+        // function cancelProposal(uint oldProposalID, uint newProposalID)
+        let contract = getDaoContract()
+        console.log(oldProposalID, newProposalID)
+        await contract.methods.cancelProposal(oldProposalID, newProposalID).send({ from: context.account })
+        getData()
+        //console.log(tx.transactionHash)
+    }
+
+    const finaliseProposal = async (proposalID) => {
+        // Finalise Proposal and call internal proposal ID function
+        // function finaliseProposal(uint proposalID)
+        let contract = getDaoContract()
+        console.log(proposalID)
+        await contract.methods.finaliseProposal(proposalID).send({ from: context.account })
+        getData()
         //console.log(tx.transactionHash)
     }
 
@@ -130,22 +151,7 @@ const DAO = (props) => {
     const changeIncentiveAddress = (e) => {
         setIncentiveAddress(e.target.value)
     }
-    const changeIncentiveAddr= async () => {
-        let contract = getSpartaContract()
-        await contract.methods.changeIncentiveAddress(incentiveAddress).send({ from: context.account })
-        //console.log(tx.transactionHash)
-    }
 
-    const startEmissions = async () => {
-        let contract = getSpartaContract()
-        await contract.methods.startEmissions().send({ from: context.account })
-        //console.log(tx.transactionHash)
-    }
-    const stopEmissions = async () => {
-        let contract = getSpartaContract()
-        await contract.methods.stopEmissions().send({ from: context.account })
-        //console.log(tx.transactionHash)
-    }
 
     return (
         <React.Fragment>
@@ -163,104 +169,55 @@ const DAO = (props) => {
                                                 <Row>
 
                                                     <Col xs={6}>
-                                                        <h5 className='mt-2'>New Grant</h5>
-                                                        <Input onChange={changeGrantAddress}
-                                                            placeholder={'Enter Recipient Address'}
-                                                            className='my-1'>
-                                                        </Input>
+                                                        <h5 className='mt-2'>Propose Simple Action</h5>
+                                                        {/* DROPDOWN BOX OF TYPES */}
+                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAction('DROPDOWN VALUE - TYPE')}}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                                        </button>
+                                                    </Col>
+
+                                                    <Col xs={6}>
+                                                        <h5 className='mt-2'>Propose Param</h5>
+                                                        {/* 
+                                                        INPUT BOX FOR PARAM VALUE 
+                                                        <Input placeholder={'Enter New Param Value'} className='my-1'></Input>
+                                                        */}
+                                                        {/* DROPDOWN BOX OF TYPES */}
+                                                        <button className="btn btn-primary waves-effect waves-light my-1 mr-1" onClick={()=>{proposeParam('VALUE OF INPUT', 'DROPDOWN VALUE - TYPE')}}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Param
+                                                        </button>
+                                                    </Col>
+
+                                                    <Col xs='12'>
+                                                        <hr/>
+                                                    </Col>
+
+                                                    <Col xs={6}>
+                                                        <h5 className='mt-2'>Propose New Address</h5>
+                                                        {/* 
+                                                        INPUT BOX FOR ADDRESS 
+                                                        <Input placeholder={'Enter New Address'} className='my-1'></Input>
+                                                        */}
+                                                        {/* DROPDOWN BOX OF TYPES */}
+                                                        <button className="btn btn-primary waves-effect waves-light my-1 mr-1" onClick={()=>{proposeAddress('VALUE OF INPUT', 'DROPDOWN VALUE - TYPE')}}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
+                                                        </button>
+                                                    </Col>
+
+                                                    <Col xs={6}>
+                                                        <h5 className='mt-2'>Propose New Grant</h5>
+                                                        <Input placeholder={'Enter Recipient Address'} className='my-1'></Input>
                                                         <InputGroup className='my-1'>
-                                                            <Input onChange={changeGrantAmount}
-                                                                placeholder={'Enter Grant Amount'}
-                                                            ></Input>
+                                                            <Input placeholder={'Enter Grant Amount'}></Input>
                                                             <InputGroupAddon addonType="append" className='d-inline-block'>
                                                                 <InputGroupText>SPARTA</InputGroupText>
                                                             </InputGroupAddon>
                                                         </InputGroup>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={proposeGrant}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> New Grant Proposal
+                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant('VALUE OF ADDR INPUT', 'VALUE OF AMOUNT INPUT')}}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Grant
                                                         </button>
                                                     </Col>
 
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Manage Bond Assets</h5>
-                                                        <Input onChange={changeBondAssetAddress}
-                                                            placeholder={'Enter Asset Address'}
-                                                            className='my-1'>
-                                                        </Input>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1 mr-1" onClick={()=>{proposeBondAsset('LIST')}}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> List Bond Asset
-                                                        </button>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1 ml-1" onClick={()=>{proposeBondAsset('DELIST')}}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> De-List Bond Asset
-                                                        </button>
-                                                    </Col>
-
-                                                    <Col xs={12}>
-                                                        <hr/>
-                                                        <h5 className='text-center'>Functions below ported from old DAO page</h5>
-                                                        <hr/>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>List Asset for Earn</h5>
-                                                        <Input onChange={changeAsset}
-                                                            placeholder={'Enter BEP2E Asset Address'}
-                                                            className='my-1'></Input>
-                                                        <Input onChange={changeMaxClaim}
-                                                            placeholder={'Enter Max Claim'}
-                                                            className='my-1'></Input>
-                                                        <Input onChange={changeClaimRate}
-                                                            placeholder={'Enter Claim Rate'}
-                                                            className='my-1'></Input>
-                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={listAsset}>
-                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> List Asset
-                                                            </button>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Change DAO Address</h5>
-                                                        <Input onChange={changeDAOAddress}
-                                                            placeholder={'Enter BEP2E Asset Address'}
-                                                            className='my-1'></Input>
-                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={listDAO}>
-                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Change DAO
-                                                            </button>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Change Router & Utils Address</h5>
-                                                        <Input onChange={changeRouterAddress}
-                                                            placeholder={'Enter New Router Address'}
-                                                            className='my-1'>
-                                                        </Input>
-                                                        <Input onChange={changeUtilsAddress}
-                                                            placeholder={'Enter New Utils Address'}
-                                                            className='my-1'>
-                                                        </Input>
-                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={listRouter}>
-                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Change Router & Utils
-                                                            </button>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Change Incentive Address</h5>
-                                                        <Input onChange={changeIncentiveAddress}
-                                                            placeholder={'Enter BEP2E Asset Address'}
-                                                            className='my-1'></Input>
-                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={changeIncentiveAddr}>
-                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Change Incentive Address
-                                                            </button>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Manage Emissions</h5>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1 mr-1" onClick={startEmissions}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Start Emissions
-                                                        </button>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1 ml-1" onClick={stopEmissions}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Stop Emissions
-                                                        </button>
-                                                    </Col>
                                                 </Row>
                                             </CardBody>
                                         </Card>
@@ -271,7 +228,7 @@ const DAO = (props) => {
                                 <Col sm={12} className="mr-20">
                                     <Card>
                                         <CardBody>
-                                            {context.sharesData &&
+                                            {context.sharesData && context.proposalArray &&
                                                 <div className="table-responsive">
                                                     <CardTitle><h6>ADD FILTER DROPDOWN HERE | ADD SORT DROPDOWN HERE</h6></CardTitle>
                                                     <Table className="table-centered mb-0">
