@@ -114,6 +114,7 @@ const BondComponent = (props) => {
     }
 
     const claimOldLP = async () => {
+        setNotifyMessage('...')
         setloadingBondedLP(true)
         let gasFee = 0
         let gasLimit = 0
@@ -173,6 +174,7 @@ const BondComponent = (props) => {
     }
 
     const claimNewLP = async () => {
+        setNotifyMessage('...')
         setloadingBondedLP(true)
         let gasFee = 0
         let gasLimit = 0
@@ -319,6 +321,7 @@ const BondComponent = (props) => {
     }
 
     const unlock = async (address) => {
+        setNotifyMessage('...')
         setLoadingApproval(true)
         let gasFee = 0
         let gasLimit = 0
@@ -428,6 +431,7 @@ const BondComponent = (props) => {
     }
 
     const depositAsset = async () => {
+        setNotifyMessage('...')
         setStartTx(true)
         setEndTx(false)
         let gasFee = 0

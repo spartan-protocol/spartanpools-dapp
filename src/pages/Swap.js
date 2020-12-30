@@ -232,6 +232,7 @@ const NewSwap = (props) => {
     };
 
     const unlock = async (address) => {
+        setNotifyMessage('...')
         setStartTx(true)
         setEndTx(false)
         let gasFee = 0
@@ -305,6 +306,7 @@ const NewSwap = (props) => {
     };
 
     const buy = async () => {
+        setNotifyMessage('...')
         setStartTx(true)
         setEndTx(false)
         let gasFee = 0
@@ -368,6 +370,7 @@ const NewSwap = (props) => {
     };
 
     const sell = async () => {
+        setNotifyMessage('...')
         setStartTx(true)
         setEndTx(false)
         let gasFee = 0

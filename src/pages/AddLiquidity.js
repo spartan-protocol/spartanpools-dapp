@@ -315,6 +315,7 @@ const AddLiquidity = (props) => {
     }
 
     const unlock = async (address) => {
+        setNotifyMessage('...')
         setStartTx(true)
         setEndTx(false)
         let gasFee = 0
@@ -389,6 +390,7 @@ const AddLiquidity = (props) => {
     }
 
     const addLiquidity = async () => {
+        setNotifyMessage('...')
         setStartTx(true)
         setEndTx(false)
         let gasFee = 0
@@ -469,6 +471,7 @@ const AddLiquidity = (props) => {
     }
 
     const removeLiquidity = async () => {
+        setNotifyMessage('...')
         setStartTx(true)
         setEndTx(false)
         let gasFee = 0

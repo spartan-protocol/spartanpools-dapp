@@ -49,6 +49,7 @@ const EarnTable = (props) => {
     }
 
     const harvest = async () => {
+        setNotifyMessage('...')
         setLoadingHarvest(true)
         let gasFee = 0
         let gasLimit = 0
