@@ -11,6 +11,7 @@ import {
     Col,
     Card,
     CardBody,
+    UncontrolledTooltip,
 } from "reactstrap"
 
 export const PoolsPaneSide = (props) => {
@@ -123,14 +124,20 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="12">
                                         <div>
-                                            <h3 className="ml-20">{formatAllUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h3>
+                                            <h3 className="d-inline-block">{formatAllUSD(convertFromWei(props.globalData.totalPooled * 2), context.spartanPrice)}</h3>
+                                            <h5 className='d-inline-block ml-2'>USD</h5>
+                                            <i className="bx bx-info-circle ml-1" id="globalDataTotalPooled" role='button'/>
+                                            <UncontrolledTooltip placement="bottom" target="globalDataTotalPooled">
+                                                Total USD value of all assets locked in SpartanPools.<br/>
+                                                (SPARTA * PRICE * 2)<br/>
+                                                {formatAllUnits(convertFromWei(props.globalData.totalPooled))} * {formatAllUnits(context.spartanPrice)} * 2<br/>
+                                            </UncontrolledTooltip>
                                         </div>
                                     </Col>
                                     <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
-                                                <ReactApexChart options={options1} series={series1} type="area"
-                                                                height={40}/>
+                                                <ReactApexChart options={options1} series={series1} type="area" height={40} />
                                             </div>
                                         </div>
                                     </Col>
@@ -147,14 +154,19 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="12">
                                         <div>
-                                            <h3>{formatAllUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)}</h3>
+                                            <h3 className='d-inline-block'>{formatAllUnits(convertFromWei(props.globalData.totalVolume))}</h3>
+                                            <h5 className='d-inline-block ml-2'>SPARTA</h5>
+                                            <i className="bx bx-dollar-circle ml-1" id="globalDataTotalVol" role='button'/>
+                                            <UncontrolledTooltip placement="bottom" target="globalDataTotalVol">
+                                                Total value of all assets swapped in SpartanPools.<br/>
+                                                Currently worth:<br/>~{formatAllUSD(convertFromWei(props.globalData?.totalVolume), context.spartanPrice)} USD
+                                            </UncontrolledTooltip>
                                         </div>
                                     </Col>
                                     <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
-                                                <ReactApexChart options={options2} series={series2} type="area"
-                                                                height={40}/>
+                                                <ReactApexChart options={options2} series={series2} type="area" height={40} />
                                             </div>
                                         </div>
                                     </Col>
@@ -171,14 +183,21 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="12">
                                         <div>
-                                            <h3>{formatAllUnits(+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx)}</h3>
+                                            <h3 className='d-inline-block'>{formatAllUnits(+props.globalData?.addLiquidityTx + +props.globalData?.removeLiquidityTx + +props.globalData?.swapTx)}</h3>
+                                            <h5 className='d-inline-block ml-2'>Transactions</h5>
+                                            <i className="bx bx-info-circle ml-1" id="globalDataTxns" role='button'/>
+                                            <UncontrolledTooltip placement="bottom" target="globalDataTxns">
+                                                Total count of all transactions.<br/>
+                                                Add liq - {formatAllUnits(+props.globalData?.addLiquidityTx)}<br/>
+                                                Remove liq - {formatAllUnits(+props.globalData?.removeLiquidityTx)}<br/>
+                                                Swaps - {formatAllUnits(+props.globalData?.swapTx)}
+                                            </UncontrolledTooltip>
                                         </div>
                                     </Col>
                                     <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
-                                                <ReactApexChart options={options3} series={series3} type="area"
-                                                                height={40}/>
+                                                <ReactApexChart options={options3} series={series3} type="area" height={40} />
                                             </div>
                                         </div>
                                     </Col>
@@ -195,14 +214,19 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="12">
                                         <div>
-                                            <h3>{formatAllUSD(convertFromWei(props.globalData?.totalFees), context.spartanPrice)}</h3>
+                                            <h3 className='d-inline-block'>{formatAllUnits(convertFromWei(props.globalData.totalFees))}</h3>
+                                            <h5 className='d-inline-block ml-2'>SPARTA</h5>
+                                            <i className="bx bx-dollar-circle ml-1" id="globalDataTotalEarnings" role='button'/>
+                                            <UncontrolledTooltip placement="bottom" target="globalDataTotalEarnings">
+                                                Total value of all swap fees absorbed into SpartanPools.<br/>
+                                                Currently worth<br/>~{formatAllUSD(convertFromWei(props.globalData.totalFees), context.spartanPrice)} USD
+                                            </UncontrolledTooltip>
                                         </div>
                                     </Col>
                                     <Col xs="12">
                                         <div>
                                             <div className="apex-charts">
-                                                <ReactApexChart options={options4} series={series4} type="area"
-                                                                height={40}/>
+                                                <ReactApexChart options={options4} series={series4} type="area" height={40} />
                                             </div>
                                         </div>
                                     </Col>
