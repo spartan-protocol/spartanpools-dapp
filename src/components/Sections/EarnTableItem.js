@@ -28,6 +28,7 @@ export const EarnTableItem = (props) => {
     //const availPC = units.dividedBy(total).times(100).toFixed(0)
 
     const deposit = async (record) => {
+        setNotifyMessage('...')
         let gasFee = 0
         let gasLimit = 0
         let contTxn = false
@@ -81,6 +82,7 @@ export const EarnTableItem = (props) => {
     }
 
     const withdraw = async (record) => {
+        setNotifyMessage('...')
         let gasFee = 0
         let gasLimit = 0
         let contTxn = false
