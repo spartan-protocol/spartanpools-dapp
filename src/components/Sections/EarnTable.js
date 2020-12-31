@@ -143,6 +143,9 @@ const EarnTable = (props) => {
                                                 <h5><Spinner type="grow" color="primary" className='m-2' style={{height:'15px', width:'15px'}} />{formatGranularUnits(convertFromWei(reward))} SPARTA</h5>
                                                 <button type="button" className="btn btn-primary waves-effect waves-light" onClick={harvest}>
                                                     <i className="bx bx-log-in-circle font-size-16 align-middle"/> Harvest
+                                                    {loadingHarvest === true &&
+                                                        <i className="bx bx-spin bx-loader ml-1" />
+                                                    }
                                                 </button>
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
