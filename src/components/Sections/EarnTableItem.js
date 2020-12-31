@@ -209,7 +209,23 @@ export const EarnTableItem = (props) => {
                     <Notification type={notifyType} message={notifyMessage}/>
 
                     <Modal isOpen={showLockModal} toggle={()=>toggleLock()}>
-                        <ModalHeader toggle={()=>toggleLock()}>You are locking your tokens!</ModalHeader>
+                        <ModalHeader toggle={()=>toggleLock()}>
+                            {isMember === false &&
+                                <>
+                                    You are locking your tokens!
+                                </>
+                            }
+                            {isMember === true && props.lastHarvest <= 0.1 &&
+                                <>
+                                    You are locking your tokens!
+                                </>
+                            }
+                            {isMember === true && props.lastHarvest > 0.1 &&
+                                <>
+                                    *** YOU MUST HARVEST FIRST ***
+                                </>
+                            }
+                        </ModalHeader>
                         <ModalBody>
                             {isMember === false &&
                                 <>
@@ -221,7 +237,7 @@ export const EarnTableItem = (props) => {
                                     Check in daily to harvest your rewards!<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 2 &&
+                            {isMember === true && props.lastHarvest <= 0.1 &&
                                 <>
                                     Locking your tokens enables them to earn yield.<br/>
                                     Doing so increases your weight in the DAO.<br/>
@@ -231,7 +247,7 @@ export const EarnTableItem = (props) => {
                                     Check in daily to harvest your rewards!<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 2 &&
+                            {isMember === true && props.lastHarvest > 0.1 &&
                                 <>
                                     Before you lock your tokens a harvest must be performed.<br/>
                                     This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -250,7 +266,7 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && props.lastHarvest <= 2 &&
+                                {isMember === true && props.lastHarvest <= 0.1 &&
                                     <Button 
                                         color="primary" 
                                         onClick={() => {
@@ -260,25 +276,35 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && props.lastHarvest > 2 && props.loadingHarvest === false &&
-                                    <Button 
-                                        color="primary" 
-                                        onClick={() => {
-                                            props.harvest()
-                                        }}>
+                                {isMember === true && props.lastHarvest > 0.1 &&
+                                    <Button color="warning" onClick={() => {props.harvest()}}>
                                             Harvest SPARTA!
-                                    </Button>
-                                }
-                                {props.loadingHarvest === true &&
-                                    <Button>
-                                        <i className="bx bx-spin bx-loader"/>
+                                            {props.loadingHarvest === true &&
+                                                <i className="bx bx-spin bx-loader ml-1" />
+                                            }
                                     </Button>
                                 }
                                 <Button color="secondary" onClick={()=>toggleLock()}>Cancel</Button>
                         </ModalFooter>
                     </Modal>
                     <Modal isOpen={showUnlockModal} toggle={()=>toggleUnlock()}>
-                        <ModalHeader toggle={()=>toggleUnlock()}>You are unlocking your tokens!</ModalHeader>
+                        <ModalHeader toggle={()=>toggleUnlock()}>
+                            {isMember === false &&
+                                <>
+                                    You are unlocking your tokens!
+                                </>
+                            }
+                            {isMember === true && props.lastHarvest <= 0.1 &&
+                                <>
+                                    You are unlocking your tokens!
+                                </>
+                            }
+                            {isMember === true && props.lastHarvest > 0.1 &&
+                                <>
+                                    *** YOU MUST HARVEST FIRST ***
+                                </>
+                            }
+                        </ModalHeader>
                         <ModalBody>
                             {isMember === false &&
                                 <>
@@ -288,7 +314,7 @@ export const EarnTableItem = (props) => {
                                     However, you can re-lock them any time.<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 2 &&
+                            {isMember === true && props.lastHarvest <= 0.1 &&
                                 <>
                                     Unlocking your tokens disables them from earning yield.<br/>
                                     Doing so also decreases your weight in the DAO.<br/>
@@ -296,7 +322,7 @@ export const EarnTableItem = (props) => {
                                     However, you can re-lock them any time.<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 2 &&
+                            {isMember === true && props.lastHarvest > 0.1 &&
                                 <>
                                     Before you unlock your tokens, a harvest must be performed.<br/>
                                     This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -316,7 +342,7 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && props.lastHarvest <= 2 &&
+                            {isMember === true && props.lastHarvest <= 0.1 &&
                                 <Button 
                                 color="primary" 
                                 onClick={() => {
@@ -326,18 +352,12 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && props.lastHarvest > 2 && props.loadingHarvest === false &&
-                                <Button 
-                                    color="primary" 
-                                    onClick={() => {
-                                        props.harvest()
-                                    }}>
-                                        Harvest SPARTA!
-                                </Button>
-                            }
-                            {props.loadingHarvest === true &&
-                                <Button>
-                                    <i className="bx bx-spin bx-loader"/>
+                            {isMember === true && props.lastHarvest > 0.1 &&
+                                <Button color="warning" onClick={() => {props.harvest()}}>
+                                    Harvest SPARTA!
+                                    {props.loadingHarvest === true &&
+                                        <i className="bx bx-spin bx-loader ml-1" />
+                                    }
                                 </Button>
                             }
                             <Button color="secondary" onClick={()=>toggleUnlock()}>Cancel</Button>
