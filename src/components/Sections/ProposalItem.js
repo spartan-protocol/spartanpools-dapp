@@ -1,10 +1,12 @@
 import React from "react";
 
+import {convertFromWei, formatAllUnits, getAddressShort} from '../../utils'
+
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
+import { explorerURL } from "../../client/web3";
 
 export const ProposalItem = (props) => {
-
     const getStatus = () => {
         let status = 'Pending'
         if (props.finalised === true) {status = 'Finalised'}
@@ -45,13 +47,24 @@ export const ProposalItem = (props) => {
                 </td>
             </tr>
             <tr>
-                <td colSpan='6'>
-                    {props.type === 'GRANT' &&
-                        <h6>Proposal to Grant {props.list[0]} a {props.list[2]} SPARTA Allocation</h6>
+                <td colSpan='6' className='border-0'>
+                    {props.type === 'START_EMISSIONS' && <h6>Turn on the SPARTA emissions</h6>}
+                    {props.type === 'STOP_EMISSIONS' && <h6>Turn off the SPARTA emissions</h6>}
+                    {props.type === 'MINT' && <h6>Increase BOND+MINT allocation by {formatAllUnits(convertFromWei(props.bondBurnRate))} SPARTA</h6>}
+                    {(props.type === 'DAO' || props.type === 'ROUTER' || props.type === 'UTILS' || props.type === 'INCENTIVE') && 
+                        <h6>Change the {props.type} address to: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>
                     }
-                    {props.type !== 'GRANT' &&
-                        <h6>Proposal to {props.type} {props.list}</h6>
-                    }
+                    {props.type === 'LIST_BOND' && <h6>List BOND asset: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
+                    {props.type === 'DELIST_BOND' && <h6>De-list BOND asset: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
+                    {props.type === 'ADD_CURATED_POOL' && <h6>Add pool to curated list: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
+                    {props.type === 'REMOVE_CURATED_POOL' && <h6>Remove pool from curated list: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
+                    {props.type === 'CHALLENGE_CURATED_POOL' && <h6>Challenge low-depth curated pool: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
+                    {props.type === 'CURVE' && <h6>Change the emissions curve to {formatAllUnits(props.param)}</h6>}
+                    {props.type === 'DURATION' && <h6>Change the era duration to {formatAllUnits((props.param))}</h6>}
+                    {props.type === 'COOL_OFF' && <h6>Change the cool-off period to {formatAllUnits(props.param)}</h6>}
+                    {props.type === 'ERAS_TO_EARN' && <h6>Change the eras-to-earn to {formatAllUnits(props.param)}</h6>}
+                    {props.type === 'GRANT' && <h6>Grant of {props.list[2]} SPARTA to: <a href={explorerURL + 'address/' + props.list[0]} target='blank'>{getAddressShort(props.list[0])}</a></h6>}
+
                 </td>
             </tr>
         </>

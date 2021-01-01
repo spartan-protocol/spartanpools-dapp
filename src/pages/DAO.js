@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { getDaoContract, getProposals } from '../client/web3'
+import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals } from '../client/web3'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
@@ -28,6 +28,7 @@ const DAO = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const [bondBurnRate, setBondBurnRate] = useState('2500000000000000000000000')
     const getData = async () => {
         // (proposalArray) PROPOSALS
         context.setContext({'proposalArrayLoading': true})
@@ -35,7 +36,10 @@ const DAO = (props) => {
         context.setContext({'proposalArray': proposalArray})
         context.setContext({'proposalArrayComplete': true})
         context.setContext({'proposalArrayLoading': false})
-        console.log(proposalArray)
+        // get BOND token burn rate
+        let contract = getSpartaContract()
+        let rate = await contract.methods.getAdjustedClaimRate(BONDv3_ADDR).call({ from: context.account })
+        setBondBurnRate(rate)
     }
 
     // SIMPLE ACTION PROPOSAL
@@ -209,7 +213,7 @@ const DAO = (props) => {
                                                                 <InputGroupText>Select Action</InputGroupText>
                                                             </InputGroupAddon>
                                                             <Input type="select" onChange={event => setActionType(event.target.value)}>
-                                                                {actionTypes.map(t => <option>{t.type}</option>)}
+                                                                {actionTypes.map(t => <option key={t.type}>{t.type}</option>)}
                                                             </Input>
                                                         </InputGroup>
                                                         <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAction()}}>
@@ -221,7 +225,7 @@ const DAO = (props) => {
                                                         <h5 className='mt-2'>Propose Parameter Change</h5>
                                                             <InputGroup>
                                                                 <Input type="select" onChange={event => setParamType(event.target.value)}>
-                                                                    {paramTypes.map(t => <option>{t.type}</option>)}
+                                                                    {paramTypes.map(t => <option key={t.type}>{t.type}</option>)}
                                                                 </Input>
                                                             </InputGroup>
                                                             <InputGroup className='my-1'><Input placeholder={'Enter New Param Value'} onChange={event => setParam(event.target.value)} /></InputGroup>
@@ -238,7 +242,7 @@ const DAO = (props) => {
                                                         <h5 className='mt-2'>Propose New Address</h5>
                                                             <InputGroup>
                                                                 <Input type="select" onChange={event => setAddressType(event.target.value)}>
-                                                                    {addressTypes.map(t => <option>{t.type}</option>)}
+                                                                    {addressTypes.map(t => <option key={t.type}>{t.type}</option>)}
                                                                 </Input>
                                                             </InputGroup>
                                                             <InputGroup className='my-1'><Input placeholder={'Enter New Address'} onChange={event => setPropAddress(event.target.value)} /></InputGroup>
@@ -289,6 +293,7 @@ const DAO = (props) => {
                                                             {context.proposalArray.filter(x => x.type !== '').sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                                                 <ProposalItem 
                                                                     key={c.id}
+                                                                    id={c.id}
                                                                     finalised={c.finalised}
                                                                     finalising={c.finalising}
                                                                     list={c.list}
@@ -300,6 +305,7 @@ const DAO = (props) => {
                                                                     timeStart={c.timeStart}
                                                                     type={c.type}
                                                                     votes={c.votes}
+                                                                    bondBurnRate={bondBurnRate}
                                                                 />
                                                             )}
                                                             <tr>

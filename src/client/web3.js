@@ -32,12 +32,14 @@ export const DAO_ABI = DAO.abi
 export const BONDv2_ABI = Bondv2.abi
 export const BONDv3_ABI = Bondv3.abi
 
+export const explorerURL = net === 'testnet' ? 'https://testnet.bscscan.com/' : 'https://bscscan.com/'
+
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "https://bsc-dataseed.binance.org/")
 }
 
 export const getExplorerURL = () => {
-    return "https://bscscan.com/"
+    return explorerURL
 }
 
 export const getCurrentBlock = async () => {
