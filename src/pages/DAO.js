@@ -59,7 +59,7 @@ const DAO = (props) => {
         let index = actionTypes.findIndex(i => i.type === actionType)
         let typeFormatted = actionTypes[index].formatted
         let contract = getDaoContract()
-        console.log(actionType, typeFormatted)
+        console.log(typeFormatted)
         await contract.methods.newActionProposal(typeFormatted).send({ from: context.account })
         getData()
     }
@@ -90,41 +90,71 @@ const DAO = (props) => {
         let index = paramTypes.findIndex(i => i.type === paramType)
         let typeFormatted = paramTypes[index].formatted
         let contract = getDaoContract()
-        console.log(paramType, typeFormatted)
+        console.log(param, typeFormatted)
         await contract.methods.newParamProposal(param, typeFormatted).send({ from: context.account })
         getData()
     }
 
-    const proposeAddress = async (proposedAddress, type) => {
-        // Action with address parameter
-        // function newAddressProposal(address proposedAddress, string memory typeStr)
-        // AVAILABLE 'TYPES':
-        //'DAO' = moveDao();
-        //'ROUTER' = moveRouter();
-        //'UTILS' = moveUtils();
-        //'INCENTIVE' = moveIncentiveAddress();
-        //'LIST_BOND' = _listBondAsset();
-        //'DELIST_BOND' = _delistBondAsset();
-        //'ADD_CURATED_POOL' = _addCuratedPool();
-        //'REMOVE_CURATED_POOL' = _removeCuratedPool();
-        //'CHALLENGE_CURATED_POOL' = _challengLowestCuratedPool();
+    // CHANGE ADDRESS PROPOSAL
+    // function newAddressProposal(address proposedAddress, string memory typeStr)
+    let addressTypes = [
+        {
+            "type": "Change DAO Address",
+            "formatted": "DAO",
+        },
+        {
+            "type": "Change ROUTER Address",
+            "formatted": "ROUTER",
+        },
+        {
+            "type": "Change UTILS Address",
+            "formatted": "UTILS",
+        },
+        {
+            "type": "Change INCENTIVE Address",
+            "formatted": "INCENTIVE",
+        },
+        {
+            "type": "List a BOND Asset",
+            "formatted": "LIST_BOND",
+        },
+        {
+            "type": "De-list a BOND Asset",
+            "formatted": "DELIST_BOND",
+        },
+        {
+            "type": "Add Curated Pool",
+            "formatted": "ADD_CURATED_POOL",
+        },
+        {
+            "type": "Remove Curated Pool",
+            "formatted": "REMOVE_CURATED_POOL",
+        },
+        {
+            "type": "Challenge Curated Pool",
+            "formatted": "CHALLENGE_CURATED_POOL",
+        },
+    ]
+    const [addressType, setAddressType] = useState(addressTypes[0].type)
+    const [propAddress, setPropAddress] = useState('')
+    const proposeAddress = async () => {
+        let index = addressTypes.findIndex(i => i.type === addressType)
+        let typeFormatted = addressTypes[index].formatted
         let contract = getDaoContract()
-        console.log(proposedAddress, type)
-        await contract.methods.newAddressProposal(proposedAddress, type).send({ from: context.account })
+        console.log(propAddress, typeFormatted)
+        await contract.methods.newAddressProposal(propAddress, typeFormatted).send({ from: context.account })
         getData()
-        //console.log(tx.transactionHash)
     }
 
-    const proposeGrant = async (recipient, amount) => {
-        // Action with funding
-        // function newGrantProposal(address recipient, uint amount) 
-        // AVAILABLE 'TYPES':
-        //'GRANT' = grantFunds();
+    // GRANT PROPOSAL
+    // function newGrantProposal(address recipient, uint amount) 
+    const [grantRecipient, setGrantRecipient] = useState('')
+    const [grantAmount, setGrantAmount] = useState('')
+    const proposeGrant = async () => {
         let contract = getDaoContract()
-        console.log(recipient, amount)
-        await contract.methods.newGrantProposal(recipient, amount).send({ from: context.account })
+        console.log(grantRecipient, grantAmount)
+        await contract.methods.newGrantProposal(grantRecipient, grantAmount).send({ from: context.account })
         getData()
-        //console.log(tx.transactionHash)
     }
 
     const voteProposal = async (proposalID) => {
@@ -178,7 +208,7 @@ const DAO = (props) => {
                                                             <InputGroupAddon addonType="prepend">
                                                                 <InputGroupText>Select Action</InputGroupText>
                                                             </InputGroupAddon>
-                                                            <Input type="select" name="selectAction" id="selectAction" onChange={event => setActionType(event.target.value)}>
+                                                            <Input type="select" onChange={event => setActionType(event.target.value)}>
                                                                 {actionTypes.map(t => <option>{t.type}</option>)}
                                                             </Input>
                                                         </InputGroup>
@@ -189,12 +219,12 @@ const DAO = (props) => {
 
                                                     <Col xs={6}>
                                                         <h5 className='mt-2'>Propose Parameter Change</h5>
-                                                        <InputGroup>
-                                                            <Input placeholder={'Enter New Param Value'} className='my-1' onChange={event => setParam(event.target.value)} />
-                                                            <Input type="select" name="selectParam" id="selectParam" onChange={event => setParamType(event.target.value)}>
-                                                                {paramTypes.map(t => <option>{t.type}</option>)}
-                                                            </Input>
-                                                        </InputGroup>
+                                                            <InputGroup>
+                                                                <Input type="select" onChange={event => setParamType(event.target.value)}>
+                                                                    {paramTypes.map(t => <option>{t.type}</option>)}
+                                                                </Input>
+                                                            </InputGroup>
+                                                            <InputGroup className='my-1'><Input placeholder={'Enter New Param Value'} onChange={event => setParam(event.target.value)} /></InputGroup>
                                                         <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeParam()}}>
                                                             <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Parameter Change
                                                         </button>
@@ -206,26 +236,27 @@ const DAO = (props) => {
 
                                                     <Col xs={6}>
                                                         <h5 className='mt-2'>Propose New Address</h5>
-                                                        {/* 
-                                                        INPUT BOX FOR ADDRESS 
-                                                        <Input placeholder={'Enter New Address'} className='my-1'></Input>
-                                                        */}
-                                                        {/* DROPDOWN BOX OF TYPES */}
-                                                        <button className="btn btn-primary waves-effect waves-light my-1 mr-1" onClick={()=>{proposeAddress('VALUE OF INPUT', 'DROPDOWN VALUE - TYPE')}}>
+                                                            <InputGroup>
+                                                                <Input type="select" onChange={event => setAddressType(event.target.value)}>
+                                                                    {addressTypes.map(t => <option>{t.type}</option>)}
+                                                                </Input>
+                                                            </InputGroup>
+                                                            <InputGroup className='my-1'><Input placeholder={'Enter New Address'} onChange={event => setPropAddress(event.target.value)} /></InputGroup>
+                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
                                                             <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
                                                         </button>
                                                     </Col>
 
                                                     <Col xs={6}>
                                                         <h5 className='mt-2'>Propose New Grant</h5>
-                                                        <Input placeholder={'Enter Recipient Address'} className='my-1'></Input>
+                                                        <Input placeholder={'Enter Recipient Address'} className='my-1' onChange={event => setGrantRecipient(event.target.value)} />
                                                         <InputGroup className='my-1'>
-                                                            <Input placeholder={'Enter Grant Amount'}></Input>
+                                                            <Input placeholder={'Enter Grant Amount'} onChange={event => setGrantAmount(event.target.value)} />
                                                             <InputGroupAddon addonType="append" className='d-inline-block'>
                                                                 <InputGroupText>SPARTA</InputGroupText>
                                                             </InputGroupAddon>
                                                         </InputGroup>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant('VALUE OF ADDR INPUT', 'VALUE OF AMOUNT INPUT')}}>
+                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant()}}>
                                                             <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Grant
                                                         </button>
                                                     </Col>
