@@ -9,7 +9,7 @@ import { getDaoContract, getProposals } from '../client/web3'
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
 import {
-    Container, 
+    Container,
     InputGroup, InputGroupAddon, InputGroupText,
     Card, CardBody, CardTitle,
     Table, Input, Row, Col
@@ -18,15 +18,6 @@ import {
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
 const DAO = (props) => {
-
-    // UI NOTES FOR DAO MANAGEMENT CARD
-    // - ADD 'TABS' FOR TYPE (Action, Param, Address, List, Grant)
-    // - ADD 'DROPDOWNS' FOR FORM SELECTION BASED ON SPECIFIC TYPE OF PROPOSAL
-    // UI NOTES FOR PROPOSALS TABLE
-    // - SHOW TOTAL PROPOSALS COUNT BASED ON FILTERS
-    // - ADD DROPBOWN BOX 'FILTER' FOR: TYPE & STATUS
-    // - ADD DROPDOWN BOX 'SORT' FOR: TYPE, VOTES, PROPOSED DATE, STATUS, WEIGHT
-
     const context = useContext(Context)
 
     useEffect(() => {
@@ -47,59 +38,76 @@ const DAO = (props) => {
         console.log(proposalArray)
     }
 
-    // TYPES (REMOVE FROMN LIST AS THEY ARE ADDED TO THEIR RELEVANT SECTION):
-    //'DAO' = moveDao();
-    //'ROUTER' = moveRouter();
-    //'UTILS' = moveUtils();
-    //'INCENTIVE' = moveIncentiveAddress();
-    //'CURVE' = changeCurve();
-    //'DURATION' = changeDuration();
-    //'START_EMISSIONS' = startEmissions();
-    //'STOP_EMISSIONS' = stopEmissions();
-    //'COOL_OFF' = changeCooloff();
-    //'ERAS_TO_EARN' = changeEras();
-    //'GRANT' = grantFunds();
-    //'MINT' = _mintBond();
-    //'LIST_BOND' = _listBondAsset();
-    //'DELIST_BOND' = _delistBondAsset();
-    //'ADD_CURATED_POOL' = _addCuratedPool();
-    //'REMOVE_CURATED_POOL' = _removeCuratedPool();
-    //'CHALLENGE_CURATED_POOL' = _challengLowestCuratedPool();
-
-    // REFER HERE: https://github.com/spartan-protocol/spartanswap-contracts/blob/globalUpgrade/contracts/DaoV2.sol
-    // AND UPDATE ALL THE 'AVAILABLE TYPES'
-    // THEN BUILD OUT 4 UI MODULES:
-    //// FOR EACH FUNCTION (WITH A DROPBOWN BOX FOR EACH 'TYPE')
-    // THEN CONNECT: VOTE, CANCEL, FINALIZE EACH TO A BUTTON IN THE TABLE
-
-    // NEXT VERSION oF DAO UI; WE CAN LOOK AT MAKING THESE FUNCTION HAVE BUTTON WITHIN RELEVANT PARTS OF THE DAPP, i.e. 'LIST_BOND' ON THE BOND PAGE
-
-    const proposeAction = async (type) => {
-        // Simple Action Call
-        // function newActionProposal(string memory typeStr)
-        // AVAILABLE 'TYPES' = 
+    // SIMPLE ACTION PROPOSAL
+    // function newActionProposal(string memory typeStr)
+    let actionTypes = [
+        {
+            "type": "Start Emissions",
+            "formatted": "START_EMISSIONS",
+        },
+        {
+            "type": "Stop Emissions",
+            "formatted": "STOP_EMISSIONS",
+        },
+        {
+            "type": "Mint 2.5M SPARTA for Bond",
+            "formatted": "MINT",
+        },
+    ]
+    const [actionType, setActionType] = useState(actionTypes[0].type)
+    const proposeAction = async () => {
+        let index = actionTypes.findIndex(i => i.type === actionType)
+        let typeFormatted = actionTypes[index].formatted
         let contract = getDaoContract()
-        console.log(type)
-        await contract.methods.newActionProposal(type).send({ from: context.account })
+        console.log(actionType, typeFormatted)
+        await contract.methods.newActionProposal(typeFormatted).send({ from: context.account })
         getData()
-        //console.log(tx.transactionHash)
     }
 
-    const proposeParam = async (param, type) => {
-        // Action with uint parameter
-        // function newParamProposal(uint param, string memory typeStr)
-        // AVAILABLE 'TYPES' = 
+    // CHANGE PARAMETER PROPOSAL
+    // function newParamProposal(uint param, string memory typeStr)
+    let paramTypes = [
+        {
+            "type": "Change Emissions Curve",
+            "formatted": "CURVE",
+        },
+        {
+            "type": "Change Era Duration",
+            "formatted": "DURATION",
+        },
+        {
+            "type": "Change Cool-Off Period",
+            "formatted": "COOL_OFF",
+        },
+        {
+            "type": "Change Eras to Earn",
+            "formatted": "ERAS_TO_EARN",
+        },
+    ]
+    const [paramType, setParamType] = useState(paramTypes[0].type)
+    const [param, setParam] = useState('')
+    const proposeParam = async () => {
+        let index = paramTypes.findIndex(i => i.type === paramType)
+        let typeFormatted = paramTypes[index].formatted
         let contract = getDaoContract()
-        console.log(param, type)
-        await contract.methods.newParamProposal(param, type).send({ from: context.account })
+        console.log(paramType, typeFormatted)
+        await contract.methods.newParamProposal(param, typeFormatted).send({ from: context.account })
         getData()
-        //console.log(tx.transactionHash)
     }
 
     const proposeAddress = async (proposedAddress, type) => {
-        // AVAILABLE 'TYPES' = 
         // Action with address parameter
         // function newAddressProposal(address proposedAddress, string memory typeStr)
+        // AVAILABLE 'TYPES':
+        //'DAO' = moveDao();
+        //'ROUTER' = moveRouter();
+        //'UTILS' = moveUtils();
+        //'INCENTIVE' = moveIncentiveAddress();
+        //'LIST_BOND' = _listBondAsset();
+        //'DELIST_BOND' = _delistBondAsset();
+        //'ADD_CURATED_POOL' = _addCuratedPool();
+        //'REMOVE_CURATED_POOL' = _removeCuratedPool();
+        //'CHALLENGE_CURATED_POOL' = _challengLowestCuratedPool();
         let contract = getDaoContract()
         console.log(proposedAddress, type)
         await contract.methods.newAddressProposal(proposedAddress, type).send({ from: context.account })
@@ -110,6 +118,8 @@ const DAO = (props) => {
     const proposeGrant = async (recipient, amount) => {
         // Action with funding
         // function newGrantProposal(address recipient, uint amount) 
+        // AVAILABLE 'TYPES':
+        //'GRANT' = grantFunds();
         let contract = getDaoContract()
         console.log(recipient, amount)
         await contract.methods.newGrantProposal(recipient, amount).send({ from: context.account })
@@ -147,12 +157,6 @@ const DAO = (props) => {
         //console.log(tx.transactionHash)
     }
 
-    const [incentiveAddress, setIncentiveAddress] = useState(false);
-    const changeIncentiveAddress = (e) => {
-        setIncentiveAddress(e.target.value)
-    }
-
-
     return (
         <React.Fragment>
             <div className="page-content">
@@ -170,21 +174,29 @@ const DAO = (props) => {
 
                                                     <Col xs={6}>
                                                         <h5 className='mt-2'>Propose Simple Action</h5>
-                                                        {/* DROPDOWN BOX OF TYPES */}
-                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAction('DROPDOWN VALUE - TYPE')}}>
+                                                        <InputGroup>
+                                                            <InputGroupAddon addonType="prepend">
+                                                                <InputGroupText>Select Action</InputGroupText>
+                                                            </InputGroupAddon>
+                                                            <Input type="select" name="selectAction" id="selectAction" onChange={event => setActionType(event.target.value)}>
+                                                                {actionTypes.map(t => <option>{t.type}</option>)}
+                                                            </Input>
+                                                        </InputGroup>
+                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAction()}}>
                                                             <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
                                                         </button>
                                                     </Col>
 
                                                     <Col xs={6}>
-                                                        <h5 className='mt-2'>Propose Param</h5>
-                                                        {/* 
-                                                        INPUT BOX FOR PARAM VALUE 
-                                                        <Input placeholder={'Enter New Param Value'} className='my-1'></Input>
-                                                        */}
-                                                        {/* DROPDOWN BOX OF TYPES */}
-                                                        <button className="btn btn-primary waves-effect waves-light my-1 mr-1" onClick={()=>{proposeParam('VALUE OF INPUT', 'DROPDOWN VALUE - TYPE')}}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Param
+                                                        <h5 className='mt-2'>Propose Parameter Change</h5>
+                                                        <InputGroup>
+                                                            <Input placeholder={'Enter New Param Value'} className='my-1' onChange={event => setParam(event.target.value)} />
+                                                            <Input type="select" name="selectParam" id="selectParam" onChange={event => setParamType(event.target.value)}>
+                                                                {paramTypes.map(t => <option>{t.type}</option>)}
+                                                            </Input>
+                                                        </InputGroup>
+                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeParam()}}>
+                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Parameter Change
                                                         </button>
                                                     </Col>
 

@@ -197,7 +197,7 @@ export const getProposals = async () => {
     console.log('start getproposals')
     let proposalCount = await getProposalCount()
     let proposalsData = []
-    for (let i = 0; i < proposalCount; i++) {
+    for (let i = 0; i < +proposalCount + 1; i++) {
         proposalsData.push(await getProposal(i))
     }
     //console.log(proposalsData)
