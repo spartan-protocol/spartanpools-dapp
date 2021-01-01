@@ -4,7 +4,8 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals } from '../client/web3'
+import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, getBaseAllocation } from '../client/web3'
+import { formatAllUnits, convertFromWei } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
@@ -29,6 +30,8 @@ const DAO = (props) => {
     }, [])
 
     const [bondBurnRate, setBondBurnRate] = useState('2500000000000000000000000')
+    const [emitting, setEmitting] = useState('')
+    const [bondRemaining, setBondRemaining] = useState('')
     const getData = async () => {
         // (proposalArray) PROPOSALS
         context.setContext({'proposalArrayLoading': true})
@@ -38,8 +41,10 @@ const DAO = (props) => {
         context.setContext({'proposalArrayLoading': false})
         // get BOND token burn rate
         let contract = getSpartaContract()
-        let rate = await contract.methods.getAdjustedClaimRate(BONDv3_ADDR).call({ from: context.account })
-        setBondBurnRate(rate)
+        let data = await Promise.all([contract.methods.getAdjustedClaimRate(BONDv3_ADDR), contract.methods.emitting().call(), getBaseAllocation()])
+        setBondBurnRate(data[0])
+        setEmitting(data[1])
+        setBondRemaining(data[2])
     }
 
     // SIMPLE ACTION PROPOSAL
@@ -59,9 +64,12 @@ const DAO = (props) => {
         },
     ]
     const [actionType, setActionType] = useState(actionTypes[0].type)
-    const proposeAction = async () => {
+    const getActionIndex = () => {
         let index = actionTypes.findIndex(i => i.type === actionType)
-        let typeFormatted = actionTypes[index].formatted
+        return actionTypes[index].formatted
+    }
+    const proposeAction = async () => {
+        let typeFormatted = getActionIndex()
         let contract = getDaoContract()
         console.log(typeFormatted)
         await contract.methods.newActionProposal(typeFormatted).send({ from: context.account })
@@ -141,6 +149,13 @@ const DAO = (props) => {
     ]
     const [addressType, setAddressType] = useState(addressTypes[0].type)
     const [propAddress, setPropAddress] = useState('')
+    const [validAddress, setValidAddress] = useState(false)
+
+    const updatePropAddress = async (address) => {
+        setPropAddress(address)
+        setValidAddress(await isAddressValid(address))
+    }
+    
     const proposeAddress = async () => {
         let index = addressTypes.findIndex(i => i.type === addressType)
         let typeFormatted = addressTypes[index].formatted
@@ -204,21 +219,54 @@ const DAO = (props) => {
                                         <Card>
                                             <CardBody>
                                                 <CardTitle><h4>The Spartan DAO can govern the contract.</h4></CardTitle>
-                                                <Row>
-
+                                                <Col xs='12'>
+                                                    <hr/>
+                                                </Col>
+                                                <Row className='text-center'>
                                                     <Col xs={6}>
-                                                        <h5 className='mt-2'>Propose Simple Action</h5>
-                                                        <InputGroup>
-                                                            <InputGroupAddon addonType="prepend">
-                                                                <InputGroupText>Select Action</InputGroupText>
-                                                            </InputGroupAddon>
-                                                            <Input type="select" onChange={event => setActionType(event.target.value)}>
-                                                                {actionTypes.map(t => <option key={t.type}>{t.type}</option>)}
-                                                            </Input>
-                                                        </InputGroup>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAction()}}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
-                                                        </button>
+                                                        <h5 className='my-2'>Propose Simple Action</h5>
+                                                        <Row>
+                                                            <Col xs='12'>
+                                                                <hr/>
+                                                            </Col>
+                                                            <Col xs='6'>
+                                                                <h6 className='font-weight-light'>Emitting SPARTA:</h6>
+                                                                {emitting === true && <h5>Yes<i className='bx bxs-circle bx-sm align-middle text-success bx-flashing ml-1' /></h5>} 
+                                                                {emitting === false && <h5>No<i className='bx bxs-circle bx-sm align-middle text-danger bx-flashing ml-1' /></h5>}
+                                                                {emitting === '' && <h5>Loading<i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' /></h5>}
+                                                            </Col>
+                                                            <Col xs='6'>
+                                                                <h6 className='font-weight-light'>BOND allocation remaining:</h6><h5>{formatAllUnits(convertFromWei(bondRemaining))} SPARTA</h5>
+                                                            </Col>
+                                                            <InputGroup className='my-1'>
+                                                                <InputGroupAddon addonType="prepend">
+                                                                    <InputGroupText>Select Action</InputGroupText>
+                                                                </InputGroupAddon>
+                                                                <Input type="select" onChange={event => setActionType(event.target.value)}>
+                                                                    {actionTypes.map(t => <option key={t.type}>{t.type}</option>)}
+                                                                </Input>
+                                                            </InputGroup>
+                                                            {emitting === true && getActionIndex() === 'START_EMISSIONS' &&
+                                                                <button className="btn btn-danger my-1 mx-auto">
+                                                                    <i className="bx bx-x-circle bx-xs"/> Already Emitting!
+                                                                </button>
+                                                            }
+                                                            {emitting === false && getActionIndex() === 'STOP_EMISSIONS' &&
+                                                                <button className="btn btn-danger my-1 mx-auto">
+                                                                    <i className="bx bx-x-circle bx-xs"/> Emissions Already Stopped!
+                                                                </button>
+                                                            }
+                                                            {emitting === true && getActionIndex() !== 'START_EMISSIONS' &&
+                                                                <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                                    <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                                                </button>  
+                                                            }
+                                                            {emitting === false && getActionIndex() !== 'STOP_EMISSIONS' &&
+                                                                <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                                    <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                                                </button>  
+                                                            }
+                                                        </Row>
                                                     </Col>
 
                                                     <Col xs={6}>
@@ -245,10 +293,22 @@ const DAO = (props) => {
                                                                     {addressTypes.map(t => <option key={t.type}>{t.type}</option>)}
                                                                 </Input>
                                                             </InputGroup>
-                                                            <InputGroup className='my-1'><Input placeholder={'Enter New Address'} onChange={event => setPropAddress(event.target.value)} /></InputGroup>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
-                                                        </button>
+                                                            <InputGroup className='my-1'>
+                                                                <Input placeholder={'Enter New Address'} onChange={(event) => {updatePropAddress(event.target.value)}} />
+                                                                <InputGroupAddon addonType="append">
+                                                                    <InputGroupText>{validAddress === true && <i className='bx bx-check-circle bx-xs text-success' />}{validAddress === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
+                                                                </InputGroupAddon>
+                                                            </InputGroup>
+                                                        {validAddress === true &&
+                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
+                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
+                                                            </button>
+                                                        }
+                                                        {validAddress === false &&
+                                                            <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
+                                                                <i className="bx bx-x-circle bx-xs"/> Address Invalid
+                                                            </button>
+                                                        }
                                                     </Col>
 
                                                     <Col xs={6}>

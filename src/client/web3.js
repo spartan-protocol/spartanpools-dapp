@@ -42,6 +42,11 @@ export const getExplorerURL = () => {
     return explorerURL
 }
 
+export const isAddressValid = async (address) => {
+    var web3 = getWeb3()
+    return await web3.utils.isAddress(address)
+}
+
 export const getCurrentBlock = async () => {
     var web3 = getWeb3()
     var block = await web3.eth.getBlockNumber()
