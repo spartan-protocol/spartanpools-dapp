@@ -5,7 +5,7 @@ import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
 import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, getBaseAllocation } from '../client/web3'
-import { formatAllUnits, convertFromWei } from '../utils'
+import { formatAllUnits, convertFromWei, convertToWei } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
@@ -29,9 +29,19 @@ const DAO = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
+
     const [bondBurnRate, setBondBurnRate] = useState('2500000000000000000000000')
-    const [emitting, setEmitting] = useState('')
-    const [bondRemaining, setBondRemaining] = useState('')
+    const [simpleActionArray, setSimpleActionArray] = useState({
+        emitting: '',
+        bondRemaining: 'XXX',
+    })
+    const [paramArray, setParamArray] = useState({
+        emissionCurve: 'XXX',
+        eraDuration: 'XXX',
+        coolOff: 'XXX',
+        erasToEarn: 'XXX',
+    })
     const getData = async () => {
         // (proposalArray) PROPOSALS
         context.setContext({'proposalArrayLoading': true})
@@ -41,10 +51,23 @@ const DAO = (props) => {
         context.setContext({'proposalArrayLoading': false})
         // get BOND token burn rate
         let contract = getSpartaContract()
-        let data = await Promise.all([contract.methods.getAdjustedClaimRate(BONDv3_ADDR), contract.methods.emitting().call(), getBaseAllocation()])
+        contract = contract.methods
+        let data = await Promise.all([contract.getAdjustedClaimRate(BONDv3_ADDR), contract.emitting().call(), contract.balanceOf(BONDv3_ADDR).call()], contract.emissionCurve().call())
         setBondBurnRate(data[0])
-        setEmitting(data[1])
-        setBondRemaining(data[2])
+        setSimpleActionArray({
+            emitting: data[1],
+            bondRemaining: data[2],
+        })
+        let temp = data[3]
+        contract = getDaoContract()
+        contract = contract.methods
+        data = await Promise.all([contract.secondsPerEra().call(), contract.coolOffPeriod().call(), contract.erasToEarn().call()])
+        setParamArray({
+            emissionCurve: temp,
+            eraDuration: data[0],
+            coolOff: data[1],
+            erasToEarn: data[2],
+        })
     }
 
     // SIMPLE ACTION PROPOSAL
@@ -167,12 +190,19 @@ const DAO = (props) => {
 
     // GRANT PROPOSAL
     // function newGrantProposal(address recipient, uint amount) 
-    const [grantRecipient, setGrantRecipient] = useState('')
     const [grantAmount, setGrantAmount] = useState('')
+    const [grantRecipient, setGrantRecipient] = useState('')
+    const [validRecipient, setValidRecipient] = useState(false)
+
+    const updateGrantRecipient = async (address) => {
+        setGrantRecipient(address)
+        setValidRecipient(await isAddressValid(address))
+    }
+
     const proposeGrant = async () => {
         let contract = getDaoContract()
-        console.log(grantRecipient, grantAmount)
-        await contract.methods.newGrantProposal(grantRecipient, grantAmount).send({ from: context.account })
+        console.log(grantRecipient, convertToWei(grantAmount).toFixed(0))
+        await contract.methods.newGrantProposal(grantRecipient, convertToWei(grantAmount).toFixed(0)).send({ from: context.account })
         getData()
     }
 
@@ -183,7 +213,6 @@ const DAO = (props) => {
         console.log(proposalID)
         await contract.methods.voteProposal(proposalID).send({ from: context.account })
         getData()
-        //console.log(tx.transactionHash)
     }
 
     const cancelProposal = async (oldProposalID, newProposalID) => {
@@ -193,7 +222,6 @@ const DAO = (props) => {
         console.log(oldProposalID, newProposalID)
         await contract.methods.cancelProposal(oldProposalID, newProposalID).send({ from: context.account })
         getData()
-        //console.log(tx.transactionHash)
     }
 
     const finaliseProposal = async (proposalID) => {
@@ -203,7 +231,6 @@ const DAO = (props) => {
         console.log(proposalID)
         await contract.methods.finaliseProposal(proposalID).send({ from: context.account })
         getData()
-        //console.log(tx.transactionHash)
     }
 
     return (
@@ -211,185 +238,239 @@ const DAO = (props) => {
             <div className="page-content">
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("DAO")}/>
-                    <Row>
-                        <Col xs="12">
-                            <Card>
-                                <Row>
-                                    <Col sm={12}>
-                                        <Card>
-                                            <CardBody>
-                                                <CardTitle><h4>The Spartan DAO can govern the contract.</h4></CardTitle>
-                                                <Col xs='12'>
-                                                    <hr/>
-                                                </Col>
-                                                <Row className='text-center'>
-                                                    <Col xs={6}>
-                                                        <h5 className='my-2'>Propose Simple Action</h5>
-                                                        <Row>
-                                                            <Col xs='12'>
-                                                                <hr/>
-                                                            </Col>
-                                                            <Col xs='6'>
-                                                                <h6 className='font-weight-light'>Emitting SPARTA:</h6>
-                                                                {emitting === true && <h5>Yes<i className='bx bxs-circle bx-sm align-middle text-success bx-flashing ml-1' /></h5>} 
-                                                                {emitting === false && <h5>No<i className='bx bxs-circle bx-sm align-middle text-danger bx-flashing ml-1' /></h5>}
-                                                                {emitting === '' && <h5>Loading<i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' /></h5>}
-                                                            </Col>
-                                                            <Col xs='6'>
-                                                                <h6 className='font-weight-light'>BOND allocation remaining:</h6><h5>{formatAllUnits(convertFromWei(bondRemaining))} SPARTA</h5>
-                                                            </Col>
-                                                            <InputGroup className='my-1'>
-                                                                <InputGroupAddon addonType="prepend">
-                                                                    <InputGroupText>Select Action</InputGroupText>
-                                                                </InputGroupAddon>
-                                                                <Input type="select" onChange={event => setActionType(event.target.value)}>
-                                                                    {actionTypes.map(t => <option key={t.type}>{t.type}</option>)}
-                                                                </Input>
-                                                            </InputGroup>
-                                                            {emitting === true && getActionIndex() === 'START_EMISSIONS' &&
-                                                                <button className="btn btn-danger my-1 mx-auto">
-                                                                    <i className="bx bx-x-circle bx-xs"/> Already Emitting!
-                                                                </button>
-                                                            }
-                                                            {emitting === false && getActionIndex() === 'STOP_EMISSIONS' &&
-                                                                <button className="btn btn-danger my-1 mx-auto">
-                                                                    <i className="bx bx-x-circle bx-xs"/> Emissions Already Stopped!
-                                                                </button>
-                                                            }
-                                                            {emitting === true && getActionIndex() !== 'START_EMISSIONS' &&
-                                                                <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
-                                                                    <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
-                                                                </button>  
-                                                            }
-                                                            {emitting === false && getActionIndex() !== 'STOP_EMISSIONS' &&
-                                                                <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
-                                                                    <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
-                                                                </button>  
-                                                            }
-                                                        </Row>
-                                                    </Col>
+                    <Row className='text-center'>
 
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Propose Parameter Change</h5>
-                                                            <InputGroup>
-                                                                <Input type="select" onChange={event => setParamType(event.target.value)}>
-                                                                    {paramTypes.map(t => <option key={t.type}>{t.type}</option>)}
-                                                                </Input>
-                                                            </InputGroup>
-                                                            <InputGroup className='my-1'><Input placeholder={'Enter New Param Value'} onChange={event => setParam(event.target.value)} /></InputGroup>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeParam()}}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Parameter Change
-                                                        </button>
-                                                    </Col>
-
-                                                    <Col xs='12'>
-                                                        <hr/>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Propose New Address</h5>
-                                                            <InputGroup>
-                                                                <Input type="select" onChange={event => setAddressType(event.target.value)}>
-                                                                    {addressTypes.map(t => <option key={t.type}>{t.type}</option>)}
-                                                                </Input>
-                                                            </InputGroup>
-                                                            <InputGroup className='my-1'>
-                                                                <Input placeholder={'Enter New Address'} onChange={(event) => {updatePropAddress(event.target.value)}} />
-                                                                <InputGroupAddon addonType="append">
-                                                                    <InputGroupText>{validAddress === true && <i className='bx bx-check-circle bx-xs text-success' />}{validAddress === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
-                                                                </InputGroupAddon>
-                                                            </InputGroup>
-                                                        {validAddress === true &&
-                                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
-                                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
-                                                            </button>
-                                                        }
-                                                        {validAddress === false &&
-                                                            <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
-                                                                <i className="bx bx-x-circle bx-xs"/> Address Invalid
-                                                            </button>
-                                                        }
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <h5 className='mt-2'>Propose New Grant</h5>
-                                                        <Input placeholder={'Enter Recipient Address'} className='my-1' onChange={event => setGrantRecipient(event.target.value)} />
-                                                        <InputGroup className='my-1'>
-                                                            <Input placeholder={'Enter Grant Amount'} onChange={event => setGrantAmount(event.target.value)} />
-                                                            <InputGroupAddon addonType="append" className='d-inline-block'>
-                                                                <InputGroupText>SPARTA</InputGroupText>
-                                                            </InputGroupAddon>
-                                                        </InputGroup>
-                                                        <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant()}}>
-                                                            <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Grant
-                                                        </button>
-                                                    </Col>
-
-                                                </Row>
-                                            </CardBody>
-                                        </Card>
+                        <Col xs="6" className='d-flex align-items-stretch'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3 mb-0'><h5>Propose Simple Action</h5></CardTitle>
+                                <CardBody>
+                                    <Row>
+                                        <Col xs='12' className='d-flex align-items-stretch'>
+                                            <Card className='border w-100'>
+                                                <CardTitle className='mt-3'>Emitting SPARTA</CardTitle>
+                                                <CardBody>
+                                                    {simpleActionArray.emitting === true && <>Yes<i className='bx bxs-circle bx-sm align-middle text-success bx-flashing ml-1' /></>} 
+                                                    {simpleActionArray.emitting === false && <>No<i className='bx bxs-circle bx-sm align-middle text-danger bx-flashing ml-1' /></>}
+                                                    {simpleActionArray.emitting === '' && loader}
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                        <Col xs='12' className='d-flex align-items-stretch'>
+                                            <Card className='border w-100'>
+                                                <CardTitle className='mt-3'>BOND Allocation</CardTitle>
+                                                <CardBody>
+                                                    {simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader}
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Col xs='12'>
+                                        <InputGroup className='mb-3'>
+                                            <InputGroupAddon addonType="prepend">
+                                                <InputGroupText>Select Action</InputGroupText>
+                                            </InputGroupAddon>
+                                            <Input type="select" onChange={event => setActionType(event.target.value)}>
+                                                {actionTypes.map(t => <option key={t.type}>{t.type}</option>)}
+                                            </Input>
+                                        </InputGroup>
+                                        {simpleActionArray.emitting === true && getActionIndex() === 'START_EMISSIONS' &&
+                                            <button className="btn btn-danger my-1 mx-auto">
+                                                <i className="bx bx-x-circle bx-xs"/> Already Emitting!
+                                            </button>
+                                        }
+                                        {simpleActionArray.emitting === false && getActionIndex() === 'STOP_EMISSIONS' &&
+                                            <button className="btn btn-danger my-1 mx-auto">
+                                                <i className="bx bx-x-circle bx-xs"/> Emissions Already Stopped!
+                                            </button>
+                                        }
+                                        {simpleActionArray.emitting === true && getActionIndex() !== 'START_EMISSIONS' &&
+                                            <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                            </button>  
+                                        }
+                                        {simpleActionArray.emitting === false && getActionIndex() !== 'STOP_EMISSIONS' &&
+                                            <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                            </button>  
+                                        }
                                     </Col>
-                                </Row>
+                                </CardBody>
                             </Card>
-                            <Row>
-                                <Col sm={12} className="mr-20">
-                                    <Card>
-                                        <CardBody>
-                                            {context.sharesData && context.proposalArray &&
-                                                <div className="table-responsive">
-                                                    <CardTitle><h6>ADD FILTER DROPDOWN HERE | ADD SORT DROPDOWN HERE</h6></CardTitle>
-                                                    <Table className="table-centered mb-0">
-                                                        <thead className="center">
-                                                        <tr>
-                                                            <th scope="col">{props.t("Type")}</th>
-                                                            <th scope="col">{props.t("Votes")}</th>
-                                                            <th scope="col">{props.t("Proposed")}</th>
-                                                            <th scope="col">{props.t("Status")}</th>
-                                                            <th scope="col">{props.t("Weight")}</th>
-                                                            <th scope="col">{props.t("Action")}</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {context.proposalArray.filter(x => x.type !== '').sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
-                                                                <ProposalItem 
-                                                                    key={c.id}
-                                                                    id={c.id}
-                                                                    finalised={c.finalised}
-                                                                    finalising={c.finalising}
-                                                                    list={c.list}
-                                                                    majority={c.majority}
-                                                                    minority={c.minority}
-                                                                    param={c.param}
-                                                                    proposedAddress={c.proposedAddress}
-                                                                    quorum={c.quorum}
-                                                                    timeStart={c.timeStart}
-                                                                    type={c.type}
-                                                                    votes={c.votes}
-                                                                    bondBurnRate={bondBurnRate}
-                                                                />
-                                                            )}
-                                                            <tr>
-                                                                <td colSpan="6">
-                                                                    {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
-                                                                        <div className="text-center m-2">All proposals loaded</div>
-                                                                    }
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                </div>
-                                            }
-                                            {context.sharesDataLoading === true &&
-                                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                            }
-                                            {context.sharesDataLoading !== true && !context.walletData &&
-                                                <div className="text-center m-2">Please connect your wallet to proceed</div>
-                                            }
-                                        </CardBody>
-                                    </Card>
-                                </Col>
-                            </Row>
                         </Col>
+
+                        <Col xs="6" className='d-flex align-items-stretch'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3 mb-0'><h5>Propose Parameter Change</h5></CardTitle>
+                                <CardBody>
+                                    <Row>
+                                        <Col xs='6' className='d-flex align-items-stretch'>
+                                            <Card className='border w-100'>
+                                                <CardTitle className='mt-3'>Emmissions Curve</CardTitle>
+                                                <CardBody>
+                                                    {paramArray.emissionCurve !== 'XXX' ? paramArray.emissionCurve : loader}
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                        <Col xs='6' className='d-flex align-items-stretch'>
+                                            <Card className='border w-100'>
+                                                <CardTitle className='mt-3'>Era Duration</CardTitle>
+                                                <CardBody>
+                                                    {paramArray.eraDuration !== 'XXX' ? paramArray.eraDuration : loader}
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                        <Col xs='6' className='d-flex align-items-stretch'>
+                                            <Card className='border w-100'>
+                                                <CardTitle className='mt-3'>Cool-Off Period</CardTitle>
+                                                <CardBody>
+                                                    {paramArray.coolOff !== 'XXX' ? paramArray.coolOff : loader}
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                        <Col xs='6' className='d-flex align-items-stretch'>
+                                            <Card className='border w-100'>
+                                                <CardTitle className='mt-3'>Eras to Earn</CardTitle>
+                                                <CardBody>
+                                                    {paramArray.erasToEarn !== 'XXX' ? paramArray.erasToEarn : loader}
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Col xs='12'>
+                                        <InputGroup>
+                                            <Input type="select" onChange={event => setParamType(event.target.value)}>
+                                                {paramTypes.map(t => <option key={t.type}>{t.type}</option>)}
+                                            </Input>
+                                        </InputGroup>
+                                        <InputGroup className='my-1'><Input placeholder={'Enter New Param Value'} onChange={event => setParam(event.target.value)} /></InputGroup>
+                                    <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeParam()}}>
+                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Parameter Change
+                                    </button>
+                                    </Col>
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        <Col xs="6" className='d-flex align-items-stretch'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3 mb-0'><h5>Propose New Address</h5></CardTitle>
+                                <CardBody>
+                                    <Col xs='12'>
+                                        <InputGroup>
+                                            <Input type="select" onChange={event => setAddressType(event.target.value)}>
+                                                {addressTypes.map(t => <option key={t.type}>{t.type}</option>)}
+                                            </Input>
+                                        </InputGroup>
+                                        <InputGroup className='my-1'>
+                                            <Input placeholder={'Enter New Address'} onChange={(event) => {updatePropAddress(event.target.value)}} />
+                                            <InputGroupAddon addonType="append">
+                                                <InputGroupText>{validAddress === true && <i className='bx bx-check-circle bx-xs text-success' />}{validAddress === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
+                                            </InputGroupAddon>
+                                        </InputGroup>
+                                        {validAddress === true &&
+                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
+                                            </button>
+                                        }
+                                        {validAddress === false &&
+                                            <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
+                                                <i className="bx bx-x-circle bx-xs"/> Enter Valid Address
+                                            </button>
+                                        }
+                                    </Col>
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        <Col xs="6" className='d-flex align-items-stretch'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3 mb-0'><h5>Propose New Grant</h5></CardTitle>
+                                <CardBody>
+                                    <Col xs='12'>
+                                        <InputGroup className='my-1'>
+                                            <Input placeholder={'Enter Recipient Address'} onChange={(event) => {updateGrantRecipient(event.target.value)}} />
+                                            <InputGroupAddon addonType="append">
+                                                <InputGroupText>{validRecipient === true && <i className='bx bx-check-circle bx-xs text-success' />}{validRecipient === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
+                                            </InputGroupAddon>
+                                        </InputGroup>
+                                        <InputGroup className='my-1'>
+                                            <Input placeholder={'Enter Grant Amount'} onChange={event => setGrantAmount(event.target.value)} />
+                                            <InputGroupAddon addonType="append" className='d-inline-block'>
+                                                <InputGroupText>SPARTA</InputGroupText>
+                                            </InputGroupAddon>
+                                        </InputGroup>
+                                        {grantAmount <= 0 &&
+                                            <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
+                                                <i className="bx bx-x-circle bx-xs"/> Enter Valid Amount
+                                            </button>
+                                        }
+                                        {grantAmount > 0 &&
+                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant()}}>
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Grant
+                                            </button>
+                                        }
+                                    </Col>
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        <Col sm={12} className="mr-20">
+                            <Card>
+                                <CardBody>
+                                    {context.sharesData && context.proposalArray &&
+                                        <div className="table-responsive">
+                                            <CardTitle><h6>ADD FILTER DROPDOWN HERE | ADD SORT DROPDOWN HERE</h6></CardTitle>
+                                            <Table className="table-centered mb-0">
+                                                <thead className="center">
+                                                <tr>
+                                                    <th scope="col">{props.t("Type")}</th>
+                                                    <th scope="col">{props.t("Votes")}</th>
+                                                    <th scope="col">{props.t("Proposed")}</th>
+                                                    <th scope="col">{props.t("Status")}</th>
+                                                    <th scope="col">{props.t("Weight")}</th>
+                                                    <th scope="col">{props.t("Action")}</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {context.proposalArray.filter(x => x.type !== '').sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                                        <ProposalItem 
+                                                            key={c.id}
+                                                            id={c.id}
+                                                            finalised={c.finalised}
+                                                            finalising={c.finalising}
+                                                            list={c.list}
+                                                            majority={c.majority}
+                                                            minority={c.minority}
+                                                            param={c.param}
+                                                            proposedAddress={c.proposedAddress}
+                                                            quorum={c.quorum}
+                                                            timeStart={c.timeStart}
+                                                            type={c.type}
+                                                            votes={c.votes}
+                                                            bondBurnRate={bondBurnRate}
+                                                        />
+                                                    )}
+                                                    <tr>
+                                                        <td colSpan="6">
+                                                            {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
+                                                                <div className="text-center m-2">All proposals loaded</div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    }
+                                    {context.sharesDataLoading === true &&
+                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                    }
+                                    {context.sharesDataLoading !== true && !context.walletData &&
+                                        <div className="text-center m-2">Please connect your wallet to proceed</div>
+                                    }
+                                </CardBody>
+                            </Card>
+                        </Col>
+        
                     </Row>
                 </Container>
             </div>
