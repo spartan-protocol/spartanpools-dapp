@@ -215,12 +215,12 @@ export const EarnTableItem = (props) => {
                                     You are locking your tokens!
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 0.1 &&
+                            {isMember === true && props.lastHarvest <= 6 &&
                                 <>
                                     You are locking your tokens!
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 0.1 &&
+                            {isMember === true && props.lastHarvest > 6 &&
                                 <>
                                     *** YOU MUST HARVEST FIRST ***
                                 </>
@@ -237,7 +237,7 @@ export const EarnTableItem = (props) => {
                                     Check in daily to harvest your rewards!<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 0.1 &&
+                            {isMember === true && props.lastHarvest <= 6 &&
                                 <>
                                     Locking your tokens enables them to earn yield.<br/>
                                     Doing so increases your weight in the DAO.<br/>
@@ -247,7 +247,7 @@ export const EarnTableItem = (props) => {
                                     Check in daily to harvest your rewards!<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 0.1 &&
+                            {isMember === true && props.lastHarvest > 6 &&
                                 <>
                                     Before you lock your tokens a harvest must be performed.<br/>
                                     This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -266,7 +266,7 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && props.lastHarvest <= 0.1 &&
+                                {isMember === true && props.lastHarvest <= 6 &&
                                     <Button 
                                         color="primary" 
                                         onClick={() => {
@@ -276,7 +276,7 @@ export const EarnTableItem = (props) => {
                                             Lock Tokens!
                                     </Button>
                                 }
-                                {isMember === true && props.lastHarvest > 0.1 &&
+                                {isMember === true && props.lastHarvest > 6 &&
                                     <Button color="warning" onClick={() => {props.harvest()}}>
                                             Harvest SPARTA!
                                             {props.loadingHarvest === true &&
@@ -294,12 +294,12 @@ export const EarnTableItem = (props) => {
                                     You are unlocking your tokens!
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 0.1 &&
+                            {isMember === true && props.lastHarvest <= 6 &&
                                 <>
                                     You are unlocking your tokens!
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 0.1 &&
+                            {isMember === true && props.lastHarvest > 6 &&
                                 <>
                                     *** YOU MUST HARVEST FIRST ***
                                 </>
@@ -314,7 +314,7 @@ export const EarnTableItem = (props) => {
                                     However, you can re-lock them any time.<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 0.1 &&
+                            {isMember === true && props.lastHarvest <= 6 &&
                                 <>
                                     Unlocking your tokens disables them from earning yield.<br/>
                                     Doing so also decreases your weight in the DAO.<br/>
@@ -322,7 +322,7 @@ export const EarnTableItem = (props) => {
                                     However, you can re-lock them any time.<br/>
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 0.1 &&
+                            {isMember === true && props.lastHarvest > 6 &&
                                 <>
                                     Before you unlock your tokens, a harvest must be performed.<br/>
                                     This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
@@ -342,7 +342,7 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && props.lastHarvest <= 0.1 &&
+                            {isMember === true && props.lastHarvest <= 6 &&
                                 <Button 
                                 color="primary" 
                                 onClick={() => {
@@ -352,7 +352,7 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && props.lastHarvest > 0.1 &&
+                            {isMember === true && props.lastHarvest > 6 &&
                                 <Button color="warning" onClick={() => {props.harvest()}}>
                                     Harvest SPARTA!
                                     {props.loadingHarvest === true &&
