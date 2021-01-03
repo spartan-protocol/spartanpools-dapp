@@ -296,16 +296,27 @@ const DAO = (props) => {
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("DAO")}/>
 
                     <Row className='text-center'>
-                        {/* BOND - INCREASE ALLOCATION */}
                         <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
                             <Card className='w-100'>
-                                <CardTitle className='mt-3'>BOND</CardTitle>
-                                <CardSubtitle>Increase Allocation</CardSubtitle>
+                                <CardTitle className='mt-3'>MANAGE BOND</CardTitle>
+                                <CardSubtitle>Increase Allocation<br/>List/Delist Assets</CardSubtitle>
                                 <CardBody>
                                     {simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader} <br/>
                                 </CardBody>
                                 <CardFooter>
-                                    <button className="btn btn-primary mx-auto" onClick={() => {
+                                    <button className="btn btn-primary mx-1" onClick={() => {
+                                        checkListBondExisting('LIST_BOND')
+                                        toggleLISTBONDModal()
+                                    }}>
+                                        <i className="bx bx-list-plus bx-xs align-middle"/>
+                                    </button>
+
+                                    <button className="btn btn-primary mx-1" onClick={() => {
+                                    }}>
+                                        <i className="bx bx-list-minus bx-xs align-middle"/>
+                                    </button>
+
+                                    <button className="btn btn-primary mx-1" onClick={() => {
                                         checkActionExisting('MINT')
                                         toggleMINTModal()
                                     }}>
@@ -313,6 +324,8 @@ const DAO = (props) => {
                                     </button>
                                 </CardFooter>
                             </Card>
+
+                            {/* BOND - INCREASE ALLOCATION */}
                             <Modal isOpen={showMINTModal} toggle={toggleMINTModal}>
                                 <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
                                 <ModalBody>
@@ -356,24 +369,8 @@ const DAO = (props) => {
                                     </button>
                                 </ModalFooter>
                             </Modal>
-                        </Col>
 
-                        {/* BOND - LIST ASSET */}
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>BOND</CardTitle>
-                                <CardSubtitle>List Asset</CardSubtitle>
-                                <CardBody>
-                                </CardBody>
-                                <CardFooter>
-                                    <button className="btn btn-primary mx-auto" onClick={() => {
-                                        checkListBondExisting('LIST_BOND')
-                                        toggleLISTBONDModal()
-                                    }}>
-                                        <i className="bx bx-list-plus bx-xs align-middle"/>
-                                    </button>
-                                </CardFooter>
-                            </Card>
+                            {/* BOND - LIST ASSET */}
                             <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal}>
                                 <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
                                 <ModalBody>
@@ -432,14 +429,32 @@ const DAO = (props) => {
                             </Modal>
                         </Col>
 
-                        {/* BOND - DELIST ASSET */}
+                        {/* CURATED POOLS */}
                         <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
                             <Card className='w-100'>
-                                <CardTitle className='mt-3'>BOND</CardTitle>
-                                <CardSubtitle>Delist Asset</CardSubtitle>
+                                <CardTitle className='mt-3'>MANAGE CURATED</CardTitle>
+                                <CardSubtitle>List / Delist Pool<br/>Challenge Pool</CardSubtitle>
                                 <CardBody>
-                                    *** DELIST ASSET ***
+                                    X Curated Pools
                                 </CardBody>
+                                <CardFooter>
+                                    <button className="btn btn-primary mx-1" onClick={() => {
+
+                                    }}>
+                                        <i className="bx bx-list-plus bx-xs align-middle"/>
+                                    </button>
+
+                                    <button className="btn btn-primary mx-1" onClick={() => {
+
+                                    }}>
+                                        <i className="bx bx-list-minus bx-xs align-middle"/>
+                                    </button>
+
+                                    <button className="btn btn-primary mx-1" onClick={() => {
+                                    }}>
+                                        <i className="bx bx-medal bx-xs align-middle"/>
+                                    </button>
+                                </CardFooter>
                             </Card>
                         </Col>
 
