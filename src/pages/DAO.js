@@ -4,16 +4,16 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, getBaseAllocation } from '../client/web3'
-import { formatAllUnits, convertFromWei, convertToWei } from '../utils'
+import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, explorerURL, getAssets, getBondv3Contract, BNB_ADDR } from '../client/web3'
+import { formatAllUnits, convertFromWei, convertToWei, bn, getAddressShort } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
 import {
-    Container,
+    Container, Table, Input, Row, Col,
     InputGroup, InputGroupAddon, InputGroupText,
-    Card, CardBody, CardTitle,
-    Table, Input, Row, Col
+    Card, CardBody, CardTitle, CardSubtitle, CardFooter,
+    Modal, ModalHeader, ModalBody, ModalFooter,
 } from "reactstrap";
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
@@ -31,7 +31,8 @@ const DAO = (props) => {
 
     const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
 
-    const [bondBurnRate, setBondBurnRate] = useState('2500000000000000000000000')
+    const [bondBurnRate, setBondBurnRate] = useState('XXX')
+    const [wholeDAOWeight, setWholeDAOWeight] = useState('XXX')
     const [simpleActionArray, setSimpleActionArray] = useState({
         emitting: '',
         bondRemaining: 'XXX',
@@ -49,10 +50,11 @@ const DAO = (props) => {
         context.setContext({'proposalArray': proposalArray})
         context.setContext({'proposalArrayComplete': true})
         context.setContext({'proposalArrayLoading': false})
+        console.log(proposalArray)
         // get BOND token burn rate
         let contract = getSpartaContract()
         contract = contract.methods
-        let data = await Promise.all([contract.getAdjustedClaimRate(BONDv3_ADDR), contract.emitting().call(), contract.balanceOf(BONDv3_ADDR).call()], contract.emissionCurve().call())
+        let data = await Promise.all([contract.getAdjustedClaimRate(BONDv3_ADDR).call(), contract.emitting().call(), contract.balanceOf(BONDv3_ADDR).call(), contract.emissionCurve().call()])
         setBondBurnRate(data[0])
         setSimpleActionArray({
             emitting: data[1],
@@ -61,13 +63,14 @@ const DAO = (props) => {
         let temp = data[3]
         contract = getDaoContract()
         contract = contract.methods
-        data = await Promise.all([contract.secondsPerEra().call(), contract.coolOffPeriod().call(), contract.erasToEarn().call()])
+        data = await Promise.all([contract.secondsPerEra().call(), contract.coolOffPeriod().call(), contract.erasToEarn().call(), contract.totalWeight().call()])
         setParamArray({
             emissionCurve: temp,
             eraDuration: data[0],
             coolOff: data[1],
             erasToEarn: data[2],
         })
+        setWholeDAOWeight(data[3])
     }
 
     // SIMPLE ACTION PROPOSAL
@@ -82,7 +85,7 @@ const DAO = (props) => {
             "formatted": "STOP_EMISSIONS",
         },
         {
-            "type": "Mint 2.5M SPARTA for Bond",
+            "type": "Mint SPARTA for Bond",
             "formatted": "MINT",
         },
     ]
@@ -91,12 +94,23 @@ const DAO = (props) => {
         let index = actionTypes.findIndex(i => i.type === actionType)
         return actionTypes[index].formatted
     }
-    const proposeAction = async () => {
-        let typeFormatted = getActionIndex()
+    const proposeAction = async (directType) => {
+        let typeFormatted = ''
+        if (directType === undefined) {
+            typeFormatted = getActionIndex()
+        }
+        else {typeFormatted = directType}
         let contract = getDaoContract()
         console.log(typeFormatted)
         await contract.methods.newActionProposal(typeFormatted).send({ from: context.account })
-        getData()
+        await getData()
+        checkActionExisting(typeFormatted)
+    }
+    const [actionExisting, setActionExisting] = useState(false)
+    const checkActionExisting = (directType) => {
+        let existing = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        existing = existing.sort((a, b) => +b.votes - +a.votes)
+        setActionExisting(existing)
     }
 
     // CHANGE PARAMETER PROPOSAL
@@ -173,19 +187,54 @@ const DAO = (props) => {
     const [addressType, setAddressType] = useState(addressTypes[0].type)
     const [propAddress, setPropAddress] = useState('')
     const [validAddress, setValidAddress] = useState(false)
-
     const updatePropAddress = async (address) => {
         setPropAddress(address)
         setValidAddress(await isAddressValid(address))
     }
-    
-    const proposeAddress = async () => {
+    const getAddressIndex = () => {
         let index = addressTypes.findIndex(i => i.type === addressType)
-        let typeFormatted = addressTypes[index].formatted
+        return addressTypes[index].formatted
+    }
+    const proposeAddress = async (directType, address) => {
+        if (address === undefined) {address = propAddress}
+        let typeFormatted = ''
+        if (directType === undefined) {
+            typeFormatted = getAddressIndex()
+        }
+        else {typeFormatted = directType}
         let contract = getDaoContract()
-        console.log(propAddress, typeFormatted)
-        await contract.methods.newAddressProposal(propAddress, typeFormatted).send({ from: context.account })
+        console.log(address, typeFormatted)
+        await contract.methods.newAddressProposal(address, typeFormatted).send({ from: context.account })
         getData()
+    }
+    const [addressExisting, setAddressExisting] = useState(false)
+    const checkListBondExisting = async (directType) => {
+        let existing = []
+        let allListed = await getAssets()
+        let contract = getBondv3Contract()
+        let allBond = await contract.methods.allListedAssets().call()
+        let listBondProposals = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        for (let i = 0; i < allListed.length + 1; i++) {
+            let address = allListed[i]
+            let proposal = listBondProposals.filter(i => i.proposedAddress === address)
+            if (allBond.includes(address) === false) {
+                existing.push({
+                    'key': address,
+                    'id': proposal[0] ? proposal[0].id : 'N/A',
+                    'address': address,
+                    'votes': proposal[0] ? proposal[0].votes : '0',
+                    'finalising': proposal[0] ? proposal[0].finalising : false,
+                    'quorum': proposal[0] ? proposal[0].quorum : false,
+                })
+            }
+        }
+        existing = existing.sort((a, b) => +b.votes - +a.votes)
+        setAddressExisting(existing)
+    }
+    const checkDelistBondExisting = (directType) => {
+        let existing = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        existing = existing.sort((a, b) => +b.votes - +a.votes)
+        setAddressExisting(existing)
     }
 
     // GRANT PROPOSAL
@@ -215,6 +264,7 @@ const DAO = (props) => {
         getData()
     }
 
+    {/*
     const cancelProposal = async (oldProposalID, newProposalID) => {
         // Cancel a proposal
         // function cancelProposal(uint oldProposalID, uint newProposalID)
@@ -223,6 +273,7 @@ const DAO = (props) => {
         await contract.methods.cancelProposal(oldProposalID, newProposalID).send({ from: context.account })
         getData()
     }
+    */}
 
     const finaliseProposal = async (proposalID) => {
         // Finalise Proposal and call internal proposal ID function
@@ -233,37 +284,229 @@ const DAO = (props) => {
         getData()
     }
 
+    const [showMINTModal, setShowMINTModal] = useState(false)
+    const toggleMINTModal = () => setShowMINTModal(!showMINTModal)
+    const [showLISTBONDModal, setShowLISTBONDModal] = useState(false)
+    const toggleLISTBONDModal = () => setShowLISTBONDModal(!showLISTBONDModal)
+
     return (
         <React.Fragment>
             <div className="page-content">
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("DAO")}/>
+
+                    <Row className='text-center'>
+                        {/* BOND - INCREASE ALLOCATION */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>BOND</CardTitle>
+                                <CardSubtitle>Increase Allocation</CardSubtitle>
+                                <CardBody>
+                                    {simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader} <br/>
+                                </CardBody>
+                                <CardFooter>
+                                    <button className="btn btn-primary mx-auto" onClick={() => {
+                                        checkActionExisting('MINT')
+                                        toggleMINTModal()
+                                    }}>
+                                        <i className="bx bx-layer-plus bx-xs align-middle"/>
+                                    </button>
+                                </CardFooter>
+                            </Card>
+                            <Modal isOpen={showMINTModal} toggle={toggleMINTModal}>
+                                <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
+                                <ModalBody>
+                                    Voting through this proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
+                                    {actionExisting &&
+                                        <>
+                                            <table className='w-100 text-center mt-2'>
+                                                <thead className='border-bottom'>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Type</th>
+                                                        <th>Votes</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {actionExisting.map(i => 
+                                                        <tr key={i.id}>
+                                                            <td>{i.id}</td>
+                                                            <td>{i.type}</td>
+                                                            <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </>
+                                    }
+                                </ModalBody>
+                                <ModalFooter>
+                                    {actionExisting.length > 0 &&
+                                        <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(actionExisting[0].id)}}>
+                                            <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Vote To Increase 
+                                        </button>
+                                    }
+                                    {actionExisting.length <= 0 &&
+                                        <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
+                                            <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose Increase
+                                        </button>
+                                    }
+                                    <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>
+                                        <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                    </button>
+                                </ModalFooter>
+                            </Modal>
+                        </Col>
+
+                        {/* BOND - LIST ASSET */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>BOND</CardTitle>
+                                <CardSubtitle>List Asset</CardSubtitle>
+                                <CardBody>
+                                </CardBody>
+                                <CardFooter>
+                                    <button className="btn btn-primary mx-auto" onClick={() => {
+                                        checkListBondExisting('LIST_BOND')
+                                        toggleLISTBONDModal()
+                                    }}>
+                                        <i className="bx bx-list-plus bx-xs align-middle"/>
+                                    </button>
+                                </CardFooter>
+                            </Card>
+                            <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal}>
+                                <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
+                                <ModalBody>
+                                    Voting through proposals here will list new assets for BOND+MINT
+                                    {addressExisting &&
+                                        <>
+                                            <table className='w-100 text-center'>
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Address</th>
+                                                        <th>Votes</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {addressExisting.map(i => 
+                                                        <tr key={i.address}>
+                                                            <td>{i.id}</td>
+                                                            <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
+                                                            <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                            <td>
+                                                                {i.id !== 'N/A' && i.quorum !== true &&
+                                                                    <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(i.id)}}>
+                                                                        <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Vote 
+                                                                    </button>
+                                                                }
+                                                                {i.id !== 'N/A' && i.quorum === true &&
+                                                                    <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                        <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Finalise 
+                                                                    </button>
+                                                                }
+                                                                {i.id === 'N/A' &&
+                                                                    <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAddress('LIST_BOND', i.address)}}>
+                                                                        <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose 
+                                                                    </button>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </>
+                                    }
+                                </ModalBody>
+                                <ModalFooter>
+                                    {addressExisting.length <= 0 &&
+                                        <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAddress('LIST_BOND')}}>
+                                            <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose Asset
+                                        </button>
+                                    }
+                                    <button className="btn btn-danger mt-2 mx-auto" onClick={toggleLISTBONDModal}>
+                                        <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                    </button>
+                                </ModalFooter>
+                            </Modal>
+                        </Col>
+
+                        {/* BOND - DELIST ASSET */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>BOND</CardTitle>
+                                <CardSubtitle>Delist Asset</CardSubtitle>
+                                <CardBody>
+                                    *** DELIST ASSET ***
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        {/* EMISSIONS - TURN ON / OFF */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
+                                <CardSubtitle>Turn On / Off</CardSubtitle>
+                                <CardBody>
+                                    {simpleActionArray.emitting === true && <>Yes<i className='bx bxs-circle bx-sm align-middle text-success bx-flashing ml-1' /></>}
+                                    {simpleActionArray.emitting === false && <>No<i className='bx bxs-circle bx-sm align-middle text-danger bx-flashing ml-1' /></>}
+                                    {simpleActionArray.emitting === '' && loader}
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        {/* EMISSIONS - ADJUST CURVE */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
+                                <CardSubtitle>Adjust Curve</CardSubtitle>
+                                <CardBody>
+                                    {paramArray.emissionCurve !== 'XXX' ? paramArray.emissionCurve : loader} (unit?)
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        {/* EMISSIONS - ERA DURATION */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
+                                <CardSubtitle>Era Duration</CardSubtitle>
+                                <CardBody>
+                                    {paramArray.eraDuration !== 'XXX' ? paramArray.eraDuration : loader} (unit?)
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        {/* EMISSIONS - ERAS TO EARN */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
+                                <CardSubtitle>Eras to Earn</CardSubtitle>
+                                <CardBody>
+                                    {paramArray.erasToEarn !== 'XXX' ? paramArray.erasToEarn : loader} eras
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        {/* COOLOFF PERIOD */}
+                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
+                            <Card className='w-100'>
+                                <CardTitle className='mt-3'>Cool-Off Period</CardTitle>
+                                <CardBody>
+                                    {paramArray.coolOff !== 'XXX' ? paramArray.coolOff : loader} (era?)
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                    </Row>
+
                     <Row className='text-center'>
 
-                        <Col xs="6" className='d-flex align-items-stretch'>
+                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
                             <Card className='w-100'>
                                 <CardTitle className='mt-3 mb-0'><h5>Propose Simple Action</h5></CardTitle>
                                 <CardBody>
-                                    <Row>
-                                        <Col xs='12' className='d-flex align-items-stretch'>
-                                            <Card className='border w-100'>
-                                                <CardTitle className='mt-3'>Emitting SPARTA</CardTitle>
-                                                <CardBody>
-                                                    {simpleActionArray.emitting === true && <>Yes<i className='bx bxs-circle bx-sm align-middle text-success bx-flashing ml-1' /></>} 
-                                                    {simpleActionArray.emitting === false && <>No<i className='bx bxs-circle bx-sm align-middle text-danger bx-flashing ml-1' /></>}
-                                                    {simpleActionArray.emitting === '' && loader}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                        <Col xs='12' className='d-flex align-items-stretch'>
-                                            <Card className='border w-100'>
-                                                <CardTitle className='mt-3'>BOND Allocation</CardTitle>
-                                                <CardBody>
-                                                    {simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                    </Row>
                                     <Col xs='12'>
                                         <InputGroup className='mb-3'>
                                             <InputGroupAddon addonType="prepend">
@@ -298,44 +541,10 @@ const DAO = (props) => {
                             </Card>
                         </Col>
 
-                        <Col xs="6" className='d-flex align-items-stretch'>
+                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
                             <Card className='w-100'>
                                 <CardTitle className='mt-3 mb-0'><h5>Propose Parameter Change</h5></CardTitle>
                                 <CardBody>
-                                    <Row>
-                                        <Col xs='6' className='d-flex align-items-stretch'>
-                                            <Card className='border w-100'>
-                                                <CardTitle className='mt-3'>Emmissions Curve</CardTitle>
-                                                <CardBody>
-                                                    {paramArray.emissionCurve !== 'XXX' ? paramArray.emissionCurve : loader}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                        <Col xs='6' className='d-flex align-items-stretch'>
-                                            <Card className='border w-100'>
-                                                <CardTitle className='mt-3'>Era Duration</CardTitle>
-                                                <CardBody>
-                                                    {paramArray.eraDuration !== 'XXX' ? paramArray.eraDuration : loader}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                        <Col xs='6' className='d-flex align-items-stretch'>
-                                            <Card className='border w-100'>
-                                                <CardTitle className='mt-3'>Cool-Off Period</CardTitle>
-                                                <CardBody>
-                                                    {paramArray.coolOff !== 'XXX' ? paramArray.coolOff : loader}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                        <Col xs='6' className='d-flex align-items-stretch'>
-                                            <Card className='border w-100'>
-                                                <CardTitle className='mt-3'>Eras to Earn</CardTitle>
-                                                <CardBody>
-                                                    {paramArray.erasToEarn !== 'XXX' ? paramArray.erasToEarn : loader}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                    </Row>
                                     <Col xs='12'>
                                         <InputGroup>
                                             <Input type="select" onChange={event => setParamType(event.target.value)}>
@@ -351,7 +560,7 @@ const DAO = (props) => {
                             </Card>
                         </Col>
 
-                        <Col xs="6" className='d-flex align-items-stretch'>
+                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
                             <Card className='w-100'>
                                 <CardTitle className='mt-3 mb-0'><h5>Propose New Address</h5></CardTitle>
                                 <CardBody>
@@ -382,7 +591,7 @@ const DAO = (props) => {
                             </Card>
                         </Col>
 
-                        <Col xs="6" className='d-flex align-items-stretch'>
+                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
                             <Card className='w-100'>
                                 <CardTitle className='mt-3 mb-0'><h5>Propose New Grant</h5></CardTitle>
                                 <CardBody>
@@ -448,6 +657,9 @@ const DAO = (props) => {
                                                             type={c.type}
                                                             votes={c.votes}
                                                             bondBurnRate={bondBurnRate}
+                                                            voteFor={voteProposal}
+                                                            wholeDAOWeight={wholeDAOWeight}
+                                                            finaliseProposal={finaliseProposal}
                                                         />
                                                     )}
                                                     <tr>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import {convertFromWei, formatAllUnits, getAddressShort} from '../../utils'
+import {convertFromWei, formatAllUnits, getAddressShort, bn} from '../../utils'
 
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
@@ -22,6 +22,11 @@ export const ProposalItem = (props) => {
         return weight
     }
 
+    const getDate = () => {
+        let date = new Date(props.timeStart * 1000).toLocaleDateString()
+        return date
+    }
+
     return (
         <>
             <tr>
@@ -29,10 +34,10 @@ export const ProposalItem = (props) => {
                     <h5>{props.type}</h5>
                 </td>
                 <td>
-                    <h5>{props.votes}</h5>
+                    <h5>{formatAllUnits(bn(props.votes).div(bn(props.wholeDAOWeight)).times(100))} %</h5>
                 </td>
                 <td>
-                    <h5>{props.timeStart}</h5>
+                    <h5>{getDate()}</h5>
                 </td>
                 <td>
                     <h5>{getStatus()}</h5>
@@ -41,8 +46,11 @@ export const ProposalItem = (props) => {
                     <h5>{getWeight()}</h5>
                 </td>
                 <td>
-                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>console.log('vote button')}>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={() => props.voteFor(props.id)}>
                         <i className="bx bx-lock font-size-16 align-middle"/> Vote
+                    </button>
+                    <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={() => props.finaliseProposal(props.id)}>
+                        <i className="bx bx-lock font-size-16 align-middle"/> Finalise
                     </button>
                 </td>
             </tr>
@@ -64,7 +72,6 @@ export const ProposalItem = (props) => {
                     {props.type === 'COOL_OFF' && <h6>Change the cool-off period to {formatAllUnits(props.param)}</h6>}
                     {props.type === 'ERAS_TO_EARN' && <h6>Change the eras-to-earn to {formatAllUnits(props.param)}</h6>}
                     {props.type === 'GRANT' && <h6>Grant of {props.list[2]} SPARTA to: <a href={explorerURL + 'address/' + props.list[0]} target='blank'>{getAddressShort(props.list[0])}</a></h6>}
-
                 </td>
             </tr>
         </>
