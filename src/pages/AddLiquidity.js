@@ -293,11 +293,12 @@ const AddLiquidity = (props) => {
         let decDiff = 10 ** (18 - pool.decimals)
         let tokenAmnt = bn(poolShare.tokenAmount).times(decDiff).toFixed(0)
         let withdrawData = {
-            'baseAmount': (+poolShare.baseAmount * amount) / 100,
-            'tokenAmount': (+tokenAmnt * amount) / 100,
-            'lpAmount': (+poolShare.units * amount) / 100,
+            'baseAmount': ((bn(poolShare.baseAmount).times(amount)).div(100)).toFixed(0),
+            'tokenAmount': ((bn(tokenAmnt).times(amount)).div(100)).toFixed(0),
+            'lpAmount': ((bn(poolShare.units).times(amount)).div(100)).toFixed(0),
         }
         setWithdrawData(withdrawData)
+        //console.log(withdrawData)
     }
 
     const getEstShare = () => {
