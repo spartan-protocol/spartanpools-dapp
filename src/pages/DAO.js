@@ -216,19 +216,21 @@ const DAO = (props) => {
         let listBondProposals = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
         for (let i = 0; i < allListed.length + 1; i++) {
             let address = allListed[i]
-            let proposal = listBondProposals.filter(i => i.proposedAddress === address)
-            if (allBond.includes(address) === false) {
-                existing.push({
-                    'key': address,
-                    'id': proposal[0] ? proposal[0].id : 'N/A',
-                    'address': address,
-                    'votes': proposal[0] ? proposal[0].votes : '0',
-                    'finalising': proposal[0] ? proposal[0].finalising : false,
-                    'quorum': proposal[0] ? proposal[0].quorum : false,
-                })
+            if (address) {
+                let proposal = listBondProposals.filter(i => i.proposedAddress === address)
+                if (allBond.includes(address) === false) {
+                    existing.push({
+                        'id': proposal[0] ? proposal[0].id : 'N/A',
+                        'address': address,
+                        'votes': proposal[0] ? proposal[0].votes : '0',
+                        'finalising': proposal[0] ? proposal[0].finalising : false,
+                        'quorum': proposal[0] ? proposal[0].quorum : false,
+                    })
+                }
             }
         }
         existing = existing.sort((a, b) => +b.votes - +a.votes)
+        console.log(existing)
         setAddressExisting(existing)
     }
     const checkDelistBondExisting = (directType) => {
