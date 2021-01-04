@@ -20,8 +20,16 @@ const AddressConn = (props) => {
 
     useEffect(() => {
         getTokenArray()
+        getSpartaPriceLoop()
         // eslint-disable-next-line
     }, [])
+
+    const getSpartaPriceLoop = async () => {
+        let data = await getSpartaPrice()
+        context.setContext({'spartanPrice': data})
+        await pause(7500)
+        getSpartaPriceLoop()
+    }
 
     const getTokenArray = async () => {
         // (tokenArray) LISTED TOKENS | USED: RIGHT-BAR + EARN TABLE + POOL TABLE + ADD LIQ + SWAP
@@ -105,11 +113,9 @@ const AddressConn = (props) => {
     }
 
     const loadingGlobal = async (tokenArray) => {
-        // (spartanPrice) SPARTA PRICE | USED: GLOBALLY
         // (poolArray) LISTED POOLS | USED: GLOBALLY
-        let data = await Promise.all([getSpartaPrice(), getListedPools(), loadPoolsData(tokenArray)])
-        context.setContext({'spartanPrice': data[0]})
-        context.setContext({'poolArray': data[1]})
+        let data = await Promise.all([getListedPools(), loadPoolsData(tokenArray)])
+        context.setContext({'poolArray': data[0]})
         //console.log(data[1])
     }
 
