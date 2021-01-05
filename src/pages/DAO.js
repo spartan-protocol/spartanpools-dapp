@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, explorerURL, getAssets, getBondv3Contract, BNB_ADDR } from '../client/web3'
+import { DAO_ADDR, ROUTER_ADDR, UTILS_ADDR, INCENTIVE_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, explorerURL, getAssets, getBondv3Contract, BNB_ADDR } from '../client/web3'
 import { formatAllUnits, convertFromWei, convertToWei, bn, getAddressShort } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
@@ -52,25 +52,28 @@ const DAO = (props) => {
         context.setContext({'proposalArrayLoading': false})
         console.log(proposalArray)
         // get BOND token burn rate
-        let contract = getSpartaContract()
-        contract = contract.methods
-        let data = await Promise.all([contract.getAdjustedClaimRate(BONDv3_ADDR).call(), contract.emitting().call(), contract.balanceOf(BONDv3_ADDR).call(), contract.emissionCurve().call()])
+        let spartaContract = getSpartaContract()
+        spartaContract = spartaContract.methods
+        let daoContract = getDaoContract()
+        daoContract = daoContract.methods
+        let data = await Promise.all([
+            spartaContract.getAdjustedClaimRate(BONDv3_ADDR).call(), spartaContract.emitting().call(), 
+            spartaContract.balanceOf(BONDv3_ADDR).call(), spartaContract.emissionCurve().call(), 
+            daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(), 
+            daoContract.erasToEarn().call(), daoContract.totalWeight().call()
+        ])
         setBondBurnRate(data[0])
         setSimpleActionArray({
             emitting: data[1],
             bondRemaining: data[2],
         })
-        let temp = data[3]
-        contract = getDaoContract()
-        contract = contract.methods
-        data = await Promise.all([contract.secondsPerEra().call(), contract.coolOffPeriod().call(), contract.erasToEarn().call(), contract.totalWeight().call()])
         setParamArray({
-            emissionCurve: temp,
-            eraDuration: data[0],
-            coolOff: data[1],
-            erasToEarn: data[2],
+            emissionCurve: data[3],
+            eraDuration: data[4],
+            coolOff: data[5],
+            erasToEarn: data[6],
         })
-        setWholeDAOWeight(data[3])
+        setWholeDAOWeight(data[7])
     }
 
     // SIMPLE ACTION PROPOSAL
@@ -205,7 +208,9 @@ const DAO = (props) => {
         let contract = getDaoContract()
         console.log(address, typeFormatted)
         await contract.methods.newAddressProposal(address, typeFormatted).send({ from: context.account })
-        getData()
+        await getData()
+        if (typeFormatted === 'LIST_BOND') {checkListBondExisting(typeFormatted)}
+        if (typeFormatted === 'DELIST_BOND') {checkDelistBondExisting(typeFormatted)}
     }
     const [addressExisting, setAddressExisting] = useState(false)
     const checkListBondExisting = async (directType) => {
@@ -233,9 +238,26 @@ const DAO = (props) => {
         console.log(existing)
         setAddressExisting(existing)
     }
-    const checkDelistBondExisting = (directType) => {
-        let existing = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+    const checkDelistBondExisting = async (directType) => {
+        let existing = []
+        let contract = getBondv3Contract()
+        let allBond = await contract.methods.allListedAssets().call()
+        let delistBondProposals = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        for (let i = 0; i < allBond.length + 1; i++) {
+            let address = allBond[i]
+            if (address) {
+                let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
+                existing.push({
+                    'id': proposal[0] ? proposal[0].id : 'N/A',
+                    'address': address,
+                    'votes': proposal[0] ? proposal[0].votes : '0',
+                    'finalising': proposal[0] ? proposal[0].finalising : false,
+                    'quorum': proposal[0] ? proposal[0].quorum : false,
+                })
+            }
+        }
         existing = existing.sort((a, b) => +b.votes - +a.votes)
+        console.log(existing)
         setAddressExisting(existing)
     }
 
@@ -290,6 +312,8 @@ const DAO = (props) => {
     const toggleMINTModal = () => setShowMINTModal(!showMINTModal)
     const [showLISTBONDModal, setShowLISTBONDModal] = useState(false)
     const toggleLISTBONDModal = () => setShowLISTBONDModal(!showLISTBONDModal)
+    const [showDELISTBONDModal, setShowDELISTBONDModal] = useState(false)
+    const toggleDELISTBONDModal = () => setShowDELISTBONDModal(!showDELISTBONDModal)
 
     return (
         <React.Fragment>
@@ -297,410 +321,557 @@ const DAO = (props) => {
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("DAO")}/>
 
-                    <Row className='text-center'>
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>MANAGE BOND</CardTitle>
-                                <CardSubtitle>Increase Allocation<br/>List/Delist Assets</CardSubtitle>
-                                <CardBody>
-                                    {simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader} <br/>
-                                </CardBody>
-                                <CardFooter>
-                                    <button className="btn btn-primary mx-1" onClick={() => {
-                                        checkListBondExisting('LIST_BOND')
-                                        toggleLISTBONDModal()
-                                    }}>
-                                        <i className="bx bx-list-plus bx-xs align-middle"/>
-                                    </button>
+                    {context.proposalArray &&
+                        <>
+                            <Row className='text-center'>
 
-                                    <button className="btn btn-primary mx-1" onClick={() => {
-                                    }}>
-                                        <i className="bx bx-list-minus bx-xs align-middle"/>
-                                    </button>
+                                {/* BOND MANAGEMENT */}
+                                <Col xs='12' md='6' className='d-flex align-items-stretch px-1 px-md-2'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3'>BOND</CardTitle>
+                                        <CardSubtitle>List/Delist Assets<br/>Increase Allocation</CardSubtitle>
+                                        <CardBody>
+                                            <div className='w-100 m-1 p-1 bg-light rounded'>{simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader} </div>
+                                        </CardBody>
+                                        <CardFooter>
+                                            <button className="btn btn-primary m-1" onClick={() => {
+                                                checkListBondExisting('LIST_BOND')
+                                                toggleLISTBONDModal()
+                                            }}>
+                                                <i className="bx bx-list-plus bx-xs align-middle"/> List
+                                            </button>
 
-                                    <button className="btn btn-primary mx-1" onClick={() => {
-                                        checkActionExisting('MINT')
-                                        toggleMINTModal()
-                                    }}>
-                                        <i className="bx bx-layer-plus bx-xs align-middle"/>
-                                    </button>
-                                </CardFooter>
-                            </Card>
+                                            <button className="btn btn-primary m-1" onClick={() => {
+                                                checkDelistBondExisting('DELIST_BOND')
+                                                toggleDELISTBONDModal()
+                                            }}>
+                                                <i className="bx bx-list-minus bx-xs align-middle"/> Delist
+                                            </button>
 
-                            {/* BOND - INCREASE ALLOCATION */}
-                            <Modal isOpen={showMINTModal} toggle={toggleMINTModal}>
-                                <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
-                                <ModalBody>
-                                    Voting through this proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
-                                    {actionExisting &&
-                                        <>
-                                            <table className='w-100 text-center mt-2'>
-                                                <thead className='border-bottom'>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Type</th>
-                                                        <th>Votes</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {actionExisting.map(i => 
-                                                        <tr key={i.id}>
-                                                            <td>{i.id}</td>
-                                                            <td>{i.type}</td>
-                                                            <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                            <button className="btn btn-primary m-1" onClick={() => {
+                                                checkActionExisting('MINT')
+                                                toggleMINTModal()
+                                            }}>
+                                                <i className="bx bx-layer-plus bx-xs align-middle"/> Alloc
+                                            </button>
+                                        </CardFooter>
+                                    </Card>
+
+                                    {/* BOND - LIST ASSET MODAL */}
+                                    <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal}>
+                                        <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
+                                        <ModalBody>
+                                            Voting through proposals here will list new assets for BOND+MINT
+                                            {addressExisting &&
+                                                <>
+                                                    <table className='w-100 text-center'>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>Address</th>
+                                                                <th>Votes</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {addressExisting.map(i => 
+                                                                <tr key={i.address}>
+                                                                    <td>{i.id}</td>
+                                                                    <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
+                                                                    <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                                    <td>
+                                                                        {i.id !== 'N/A' && i.quorum !== true &&
+                                                                            <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(i.id)}}>
+                                                                                <i className="bx bx-like font-size-16 align-middle "/> Vote 
+                                                                            </button>
+                                                                        }
+                                                                        {i.id !== 'N/A' && i.quorum === true &&
+                                                                            <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                                <i className="bx bxs-zap font-size-16 align-middle" /> Finalise 
+                                                                            </button>
+                                                                        }
+                                                                        {i.id === 'N/A' &&
+                                                                            <button className="btn btn-danger mt-2 mx-auto" onClick={()=>{proposeAddress('LIST_BOND', i.address)}}>
+                                                                                <i className="bx bx-pin font-size-16 align-middle"/> Propose 
+                                                                            </button>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                </>
+                                            }
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleLISTBONDModal}>
+                                                <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                            </button>
+                                        </ModalFooter>
+                                    </Modal>
+
+                                    {/* BOND - DE-LIST ASSET MODAL */}
+                                    <Modal isOpen={showDELISTBONDModal} toggle={toggleDELISTBONDModal}>
+                                        <ModalHeader toggle={toggleDELISTBONDModal}>De-list a BOND Asset</ModalHeader>
+                                        <ModalBody>
+                                            Voting through proposals here will de-list assets from BOND+MINT
+                                            {addressExisting &&
+                                                <>
+                                                    <table className='w-100 text-center'>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>Address</th>
+                                                                <th>Votes</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {addressExisting.map(i => 
+                                                                <tr key={i.address}>
+                                                                    <td>{i.id}</td>
+                                                                    <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
+                                                                    <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                                    <td>
+                                                                        {i.id !== 'N/A' && i.quorum !== true &&
+                                                                            <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(i.id)}}>
+                                                                                <i className="bx bx-like font-size-16 align-middle "/> Vote 
+                                                                            </button>
+                                                                        }
+                                                                        {i.id !== 'N/A' && i.quorum === true &&
+                                                                            <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                                <i className="bx bxs-zap font-size-16 align-middle" /> Finalise 
+                                                                            </button>
+                                                                        }
+                                                                        {i.id === 'N/A' &&
+                                                                            <button className="btn btn-danger mt-2 mx-auto" onClick={()=>{proposeAddress('DELIST_BOND', i.address)}}>
+                                                                                <i className="bx bx-pin font-size-16 align-middle"/> Propose 
+                                                                            </button>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                </>
+                                            }
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleDELISTBONDModal}>
+                                                <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                            </button>
+                                        </ModalFooter>
+                                    </Modal>
+
+                                    {/* BOND - INCREASE ALLOCATION MODAL */}
+                                    <Modal isOpen={showMINTModal} toggle={toggleMINTModal}>
+                                        <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
+                                        <ModalBody>
+                                            Voting through this proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
+                                            {actionExisting &&
+                                                <>
+                                                    <table className='w-100 text-center mt-2'>
+                                                        <thead className='border-bottom'>
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>Type</th>
+                                                                <th>Votes</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {actionExisting.map(i => 
+                                                                <tr key={i.id}>
+                                                                    <td>{i.id}</td>
+                                                                    <td>{i.type}</td>
+                                                                    <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                                </tr>
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                </>
+                                            }
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            {actionExisting.length > 0 &&
+                                                <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(actionExisting[0].id)}}>
+                                                    <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Vote To Increase 
+                                                </button>
+                                            }
+                                            {actionExisting.length <= 0 &&
+                                                <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
+                                                    <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose Increase
+                                                </button>
+                                            }
+                                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>
+                                                <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                            </button>
+                                        </ModalFooter>
+                                    </Modal>
+
+                                </Col>
+
+                                {/* CURATED POOLS */}
+                                <Col xs='12' md='6' className='d-flex align-items-stretch px-1 px-md-2'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3'>CURATED</CardTitle>
+                                        <CardSubtitle>List / Delist Pool<br/>Challenge Pool</CardSubtitle>
+                                        <CardBody>
+                                            <div className='w-100 m-1 p-1 bg-light rounded'>## Curated Pools</div>
+                                        </CardBody>
+                                        <CardFooter>
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-list-plus bx-xs align-middle"/>
+                                            </button>
+
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-list-minus bx-xs align-middle"/>
+                                            </button>
+
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+                                            }}>
+                                                <i className="bx bx-medal bx-xs align-middle"/>
+                                            </button>
+                                        </CardFooter>
+                                    </Card>
+                                </Col>
+
+                                {/* MANAGE EMISSIONS */}
+                                <Col xs='12' md='6' className='d-flex align-items-stretch px-1 px-md-2'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3'>EMISSIONS</CardTitle>
+                                        <CardSubtitle>Adjust Emissions</CardSubtitle>
+                                        <CardBody>
+                                            <Row>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light rounded'>
+                                                        Emissions
+                                                        {simpleActionArray.emitting === true && <> On<i className='bx bxs-circle bx-sm align-middle text-success bx-flashing ml-1' /></>}
+                                                        {simpleActionArray.emitting === false && <> Off<i className='bx bxs-circle bx-sm align-middle text-danger bx-flashing ml-1' /></>}
+                                                        {simpleActionArray.emitting === '' && loader}
+                                                    </div>
+                                                </Col>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light align-middle rounded'>
+                                                        Curve: {paramArray.emissionCurve !== 'XXX' ? paramArray.emissionCurve : loader}
+                                                    </div>
+                                                </Col>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light rounded'>
+                                                        Era Duration: {paramArray.eraDuration !== 'XXX' ? paramArray.eraDuration : loader}
+                                                    </div>
+                                                </Col>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light rounded'>
+                                                        Eras to Earn: {paramArray.erasToEarn !== 'XXX' ? paramArray.erasToEarn : loader}
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </CardBody>
+                                        <CardFooter>
+                                            {simpleActionArray.emitting === false && 
+                                                <button className="btn btn-primary mx-1 disabled" onClick={() => {
+
+                                                }}>
+                                                    <i className="bx bx-power-off bx-xs align-middle"/> On
+                                                </button>
+                                            }
+
+                                            {simpleActionArray.emitting === true &&
+                                                <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                                }}>
+                                                    <i className="bx bx-power-off bx-xs align-middle"/> Off
+                                                </button>
+                                            }
+
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-cog bx-xs align-middle"/> Curve
+                                            </button>
+
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-time bx-xs align-middle"/> Era
+                                            </button>
+                                            
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-timer bx-xs align-middle"/> EraToEarn
+                                            </button>
+                                        </CardFooter>
+                                    </Card>
+                                    {/* EMISSIONS - TURN ON / OFF */}
+                                    {/* EMISSIONS - ADJUST CURVE */}
+                                    {/* EMISSIONS - ERA DURATION */}
+                                    {/* EMISSIONS - ERAS TO EARN */}
+                                </Col>
+
+                                {/* MANAGE DAO */}
+                                <Col xs='12' md='6' className='d-flex align-items-stretch px-1 px-md-2'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3'>MANAGE DAO</CardTitle>
+                                        <CardSubtitle>Change Proposal Cool-Off Period</CardSubtitle>
+                                        <CardBody>
+                                            <div className='w-100 m-1 p-1 bg-light rounded'>Cool-Off: {paramArray.coolOff !== 'XXX' ? paramArray.coolOff : loader} era</div>
+                                        </CardBody>
+                                        <CardFooter>
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-time bx-xs align-middle"/> Cool-Off
+                                            </button>
+                                        </CardFooter>
+                                    </Card>
+                                    {/* COOLOFF PERIOD */}
+                                </Col>
+
+                                {/* MANAGE CONTRACT ADDRESSES */}
+                                <Col xs='12' className='d-flex align-items-stretch px-1 px-md-2'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3'>ADDRESSES</CardTitle>
+                                        <CardSubtitle>Change Addresses</CardSubtitle>
+                                        <CardBody>
+                                            <Row>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light rounded'>DAO: <a href={explorerURL + 'address/' + DAO_ADDR + '#readContract'} target='blank'>{getAddressShort(DAO_ADDR)}</a></div>
+                                                </Col>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light rounded'>ROUTER: <a href={explorerURL + 'address/' + ROUTER_ADDR + '#readContract'} target='blank'>{getAddressShort(ROUTER_ADDR)}</a></div>
+                                                </Col>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light rounded'>UTILS: <a href={explorerURL + 'address/' + UTILS_ADDR + '#readContract'} target='blank'>{getAddressShort(UTILS_ADDR)}</a></div>
+                                                </Col>
+                                                <Col xs='6' className='d-flex align-items-stretch'>
+                                                    <div className='w-100 m-1 p-1 bg-light rounded'>INCENTIVE: <a href={explorerURL + 'address/' + INCENTIVE_ADDR + '#readContract'} target='blank'>{getAddressShort(INCENTIVE_ADDR)}</a></div>
+                                                </Col>
+                                            </Row>
+                                        </CardBody>
+                                        <CardFooter>
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-group bx-xs align-middle"/> DAO
+                                            </button>
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-vector bx-xs align-middle"/> ROUTER
+                                            </button>
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-slider-alt bx-xs align-middle"/> UTILS
+                                            </button>
+                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
+
+                                            }}>
+                                                <i className="bx bx-coin-stack bx-xs align-middle"/> INCENTIVE
+                                            </button>
+                                        </CardFooter>
+                                    </Card>
+                                    {/* CHANGE DAO ADDRESS */}
+                                    {/* CHANGE ROUTER ADDRESS */}
+                                    {/* CHANGE UTILS ADDRESS */}
+                                    {/* CHANGE INCENTIVE ADDRESS */}
+                                </Col>
+
+                            </Row>
+
+                            <Row className='text-center'>
+
+                                <Col xs="12" md='6' className='d-flex align-items-stretch'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3 mb-0'><h5>Propose Simple Action</h5></CardTitle>
+                                        <CardBody>
+                                            <Col xs='12'>
+                                                <InputGroup className='mb-3'>
+                                                    <InputGroupAddon addonType="prepend">
+                                                        <InputGroupText>Select Action</InputGroupText>
+                                                    </InputGroupAddon>
+                                                    <Input type="select" onChange={event => setActionType(event.target.value)}>
+                                                        {actionTypes.map(t => <option key={t.type}>{t.type}</option>)}
+                                                    </Input>
+                                                </InputGroup>
+                                                {simpleActionArray.emitting === true && getActionIndex() === 'START_EMISSIONS' &&
+                                                    <button className="btn btn-danger my-1 mx-auto">
+                                                        <i className="bx bx-x-circle bx-xs"/> Already Emitting!
+                                                    </button>
+                                                }
+                                                {simpleActionArray.emitting === false && getActionIndex() === 'STOP_EMISSIONS' &&
+                                                    <button className="btn btn-danger my-1 mx-auto">
+                                                        <i className="bx bx-x-circle bx-xs"/> Emissions Already Stopped!
+                                                    </button>
+                                                }
+                                                {simpleActionArray.emitting === true && getActionIndex() !== 'START_EMISSIONS' &&
+                                                    <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                                    </button>  
+                                                }
+                                                {simpleActionArray.emitting === false && getActionIndex() !== 'STOP_EMISSIONS' &&
+                                                    <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                                    </button>  
+                                                }
+                                            </Col>
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+
+                                <Col xs="12" md='6' className='d-flex align-items-stretch'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3 mb-0'><h5>Propose Parameter Change</h5></CardTitle>
+                                        <CardBody>
+                                            <Col xs='12'>
+                                                <InputGroup>
+                                                    <Input type="select" onChange={event => setParamType(event.target.value)}>
+                                                        {paramTypes.map(t => <option key={t.type}>{t.type}</option>)}
+                                                    </Input>
+                                                </InputGroup>
+                                                <InputGroup className='my-1'><Input placeholder={'Enter New Param Value'} onChange={event => setParam(event.target.value)} /></InputGroup>
+                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeParam()}}>
+                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Parameter Change
+                                            </button>
+                                            </Col>
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+
+                                <Col xs="12" md='6' className='d-flex align-items-stretch'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3 mb-0'><h5>Propose New Address</h5></CardTitle>
+                                        <CardBody>
+                                            <Col xs='12'>
+                                                <InputGroup>
+                                                    <Input type="select" onChange={event => setAddressType(event.target.value)}>
+                                                        {addressTypes.map(t => <option key={t.type}>{t.type}</option>)}
+                                                    </Input>
+                                                </InputGroup>
+                                                <InputGroup className='my-1'>
+                                                    <Input placeholder={'Enter New Address'} onChange={(event) => {updatePropAddress(event.target.value)}} />
+                                                    <InputGroupAddon addonType="append">
+                                                        <InputGroupText>{validAddress === true && <i className='bx bx-check-circle bx-xs text-success' />}{validAddress === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
+                                                    </InputGroupAddon>
+                                                </InputGroup>
+                                                {validAddress === true &&
+                                                    <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
+                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
+                                                    </button>
+                                                }
+                                                {validAddress === false &&
+                                                    <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
+                                                        <i className="bx bx-x-circle bx-xs"/> Enter Valid Address
+                                                    </button>
+                                                }
+                                            </Col>
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+
+                                <Col xs="12" md='6' className='d-flex align-items-stretch'>
+                                    <Card className='w-100'>
+                                        <CardTitle className='pt-3 mb-0'><h5>Propose New Grant</h5></CardTitle>
+                                        <CardBody>
+                                            <Col xs='12'>
+                                                <InputGroup className='my-1'>
+                                                    <Input placeholder={'Enter Recipient Address'} onChange={(event) => {updateGrantRecipient(event.target.value)}} />
+                                                    <InputGroupAddon addonType="append">
+                                                        <InputGroupText>{validRecipient === true && <i className='bx bx-check-circle bx-xs text-success' />}{validRecipient === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
+                                                    </InputGroupAddon>
+                                                </InputGroup>
+                                                <InputGroup className='my-1'>
+                                                    <Input placeholder={'Enter Grant Amount'} onChange={event => setGrantAmount(event.target.value)} />
+                                                    <InputGroupAddon addonType="append" className='d-inline-block'>
+                                                        <InputGroupText>SPARTA</InputGroupText>
+                                                    </InputGroupAddon>
+                                                </InputGroup>
+                                                {grantAmount <= 0 &&
+                                                    <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
+                                                        <i className="bx bx-x-circle bx-xs"/> Enter Valid Amount
+                                                    </button>
+                                                }
+                                                {grantAmount > 0 &&
+                                                    <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant()}}>
+                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Grant
+                                                    </button>
+                                                }
+                                            </Col>
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+
+                                <Col sm={12} className="mr-20">
+                                    <Card>
+                                        <CardBody>
+                                            {context.sharesData && context.proposalArray &&
+                                                <div className="table-responsive">
+                                                    <CardTitle><h6>ADD FILTER DROPDOWN HERE | ADD SORT DROPDOWN HERE</h6></CardTitle>
+                                                    <Table className="table-centered mb-0">
+                                                        <thead className="center">
+                                                        <tr>
+                                                            <th scope="col">{props.t("Type")}</th>
+                                                            <th scope="col">{props.t("Votes")}</th>
+                                                            <th scope="col">{props.t("Proposed")}</th>
+                                                            <th scope="col">{props.t("Status")}</th>
+                                                            <th scope="col">{props.t("Weight")}</th>
+                                                            <th scope="col">{props.t("Action")}</th>
                                                         </tr>
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                        </>
-                                    }
-                                </ModalBody>
-                                <ModalFooter>
-                                    {actionExisting.length > 0 &&
-                                        <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(actionExisting[0].id)}}>
-                                            <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Vote To Increase 
-                                        </button>
-                                    }
-                                    {actionExisting.length <= 0 &&
-                                        <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
-                                            <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose Increase
-                                        </button>
-                                    }
-                                    <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>
-                                        <i className="bx bx-cross font-size-16 align-middle"/> Close 
-                                    </button>
-                                </ModalFooter>
-                            </Modal>
-
-                            {/* BOND - LIST ASSET */}
-                            <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal}>
-                                <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
-                                <ModalBody>
-                                    Voting through proposals here will list new assets for BOND+MINT
-                                    {addressExisting &&
-                                        <>
-                                            <table className='w-100 text-center'>
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Address</th>
-                                                        <th>Votes</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {addressExisting.map(i => 
-                                                        <tr key={i.address}>
-                                                            <td>{i.id}</td>
-                                                            <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
-                                                            <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
-                                                            <td>
-                                                                {i.id !== 'N/A' && i.quorum !== true &&
-                                                                    <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(i.id)}}>
-                                                                        <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Vote 
-                                                                    </button>
-                                                                }
-                                                                {i.id !== 'N/A' && i.quorum === true &&
-                                                                    <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{finaliseProposal(i.id)}}>
-                                                                        <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Finalise 
-                                                                    </button>
-                                                                }
-                                                                {i.id === 'N/A' &&
-                                                                    <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAddress('LIST_BOND', i.address)}}>
-                                                                        <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose 
-                                                                    </button>
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                        </>
-                                    }
-                                </ModalBody>
-                                <ModalFooter>
-                                    {addressExisting.length <= 0 &&
-                                        <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAddress('LIST_BOND')}}>
-                                            <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose Asset
-                                        </button>
-                                    }
-                                    <button className="btn btn-danger mt-2 mx-auto" onClick={toggleLISTBONDModal}>
-                                        <i className="bx bx-cross font-size-16 align-middle"/> Close 
-                                    </button>
-                                </ModalFooter>
-                            </Modal>
-                        </Col>
-
-                        {/* CURATED POOLS */}
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>MANAGE CURATED</CardTitle>
-                                <CardSubtitle>List / Delist Pool<br/>Challenge Pool</CardSubtitle>
-                                <CardBody>
-                                    X Curated Pools
-                                </CardBody>
-                                <CardFooter>
-                                    <button className="btn btn-primary mx-1" onClick={() => {
-
-                                    }}>
-                                        <i className="bx bx-list-plus bx-xs align-middle"/>
-                                    </button>
-
-                                    <button className="btn btn-primary mx-1" onClick={() => {
-
-                                    }}>
-                                        <i className="bx bx-list-minus bx-xs align-middle"/>
-                                    </button>
-
-                                    <button className="btn btn-primary mx-1" onClick={() => {
-                                    }}>
-                                        <i className="bx bx-medal bx-xs align-middle"/>
-                                    </button>
-                                </CardFooter>
-                            </Card>
-                        </Col>
-
-                        {/* EMISSIONS - TURN ON / OFF */}
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
-                                <CardSubtitle>Turn On / Off</CardSubtitle>
-                                <CardBody>
-                                    {simpleActionArray.emitting === true && <>Yes<i className='bx bxs-circle bx-sm align-middle text-success bx-flashing ml-1' /></>}
-                                    {simpleActionArray.emitting === false && <>No<i className='bx bxs-circle bx-sm align-middle text-danger bx-flashing ml-1' /></>}
-                                    {simpleActionArray.emitting === '' && loader}
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        {/* EMISSIONS - ADJUST CURVE */}
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
-                                <CardSubtitle>Adjust Curve</CardSubtitle>
-                                <CardBody>
-                                    {paramArray.emissionCurve !== 'XXX' ? paramArray.emissionCurve : loader} (unit?)
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        {/* EMISSIONS - ERA DURATION */}
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
-                                <CardSubtitle>Era Duration</CardSubtitle>
-                                <CardBody>
-                                    {paramArray.eraDuration !== 'XXX' ? paramArray.eraDuration : loader} (unit?)
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        {/* EMISSIONS - ERAS TO EARN */}
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>EMISSIONS</CardTitle>
-                                <CardSubtitle>Eras to Earn</CardSubtitle>
-                                <CardBody>
-                                    {paramArray.erasToEarn !== 'XXX' ? paramArray.erasToEarn : loader} eras
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        {/* COOLOFF PERIOD */}
-                        <Col xs='6' md='4' className='d-flex align-items-stretch px-1 px-md-2'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3'>Cool-Off Period</CardTitle>
-                                <CardBody>
-                                    {paramArray.coolOff !== 'XXX' ? paramArray.coolOff : loader} (era?)
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                    </Row>
-
-                    <Row className='text-center'>
-
-                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3 mb-0'><h5>Propose Simple Action</h5></CardTitle>
-                                <CardBody>
-                                    <Col xs='12'>
-                                        <InputGroup className='mb-3'>
-                                            <InputGroupAddon addonType="prepend">
-                                                <InputGroupText>Select Action</InputGroupText>
-                                            </InputGroupAddon>
-                                            <Input type="select" onChange={event => setActionType(event.target.value)}>
-                                                {actionTypes.map(t => <option key={t.type}>{t.type}</option>)}
-                                            </Input>
-                                        </InputGroup>
-                                        {simpleActionArray.emitting === true && getActionIndex() === 'START_EMISSIONS' &&
-                                            <button className="btn btn-danger my-1 mx-auto">
-                                                <i className="bx bx-x-circle bx-xs"/> Already Emitting!
-                                            </button>
-                                        }
-                                        {simpleActionArray.emitting === false && getActionIndex() === 'STOP_EMISSIONS' &&
-                                            <button className="btn btn-danger my-1 mx-auto">
-                                                <i className="bx bx-x-circle bx-xs"/> Emissions Already Stopped!
-                                            </button>
-                                        }
-                                        {simpleActionArray.emitting === true && getActionIndex() !== 'START_EMISSIONS' &&
-                                            <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
-                                            </button>  
-                                        }
-                                        {simpleActionArray.emitting === false && getActionIndex() !== 'STOP_EMISSIONS' &&
-                                            <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
-                                            </button>  
-                                        }
-                                    </Col>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3 mb-0'><h5>Propose Parameter Change</h5></CardTitle>
-                                <CardBody>
-                                    <Col xs='12'>
-                                        <InputGroup>
-                                            <Input type="select" onChange={event => setParamType(event.target.value)}>
-                                                {paramTypes.map(t => <option key={t.type}>{t.type}</option>)}
-                                            </Input>
-                                        </InputGroup>
-                                        <InputGroup className='my-1'><Input placeholder={'Enter New Param Value'} onChange={event => setParam(event.target.value)} /></InputGroup>
-                                    <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeParam()}}>
-                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Parameter Change
-                                    </button>
-                                    </Col>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3 mb-0'><h5>Propose New Address</h5></CardTitle>
-                                <CardBody>
-                                    <Col xs='12'>
-                                        <InputGroup>
-                                            <Input type="select" onChange={event => setAddressType(event.target.value)}>
-                                                {addressTypes.map(t => <option key={t.type}>{t.type}</option>)}
-                                            </Input>
-                                        </InputGroup>
-                                        <InputGroup className='my-1'>
-                                            <Input placeholder={'Enter New Address'} onChange={(event) => {updatePropAddress(event.target.value)}} />
-                                            <InputGroupAddon addonType="append">
-                                                <InputGroupText>{validAddress === true && <i className='bx bx-check-circle bx-xs text-success' />}{validAddress === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
-                                            </InputGroupAddon>
-                                        </InputGroup>
-                                        {validAddress === true &&
-                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
-                                            </button>
-                                        }
-                                        {validAddress === false &&
-                                            <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
-                                                <i className="bx bx-x-circle bx-xs"/> Enter Valid Address
-                                            </button>
-                                        }
-                                    </Col>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xs="12" md='6' className='d-flex align-items-stretch'>
-                            <Card className='w-100'>
-                                <CardTitle className='mt-3 mb-0'><h5>Propose New Grant</h5></CardTitle>
-                                <CardBody>
-                                    <Col xs='12'>
-                                        <InputGroup className='my-1'>
-                                            <Input placeholder={'Enter Recipient Address'} onChange={(event) => {updateGrantRecipient(event.target.value)}} />
-                                            <InputGroupAddon addonType="append">
-                                                <InputGroupText>{validRecipient === true && <i className='bx bx-check-circle bx-xs text-success' />}{validRecipient === false && <i className='bx bx-x-circle bx-xs text-danger' />}</InputGroupText>
-                                            </InputGroupAddon>
-                                        </InputGroup>
-                                        <InputGroup className='my-1'>
-                                            <Input placeholder={'Enter Grant Amount'} onChange={event => setGrantAmount(event.target.value)} />
-                                            <InputGroupAddon addonType="append" className='d-inline-block'>
-                                                <InputGroupText>SPARTA</InputGroupText>
-                                            </InputGroupAddon>
-                                        </InputGroup>
-                                        {grantAmount <= 0 &&
-                                            <button className="btn btn-danger my-1" onClick={()=>{proposeAddress()}}>
-                                                <i className="bx bx-x-circle bx-xs"/> Enter Valid Amount
-                                            </button>
-                                        }
-                                        {grantAmount > 0 &&
-                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant()}}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Grant
-                                            </button>
-                                        }
-                                    </Col>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col sm={12} className="mr-20">
-                            <Card>
-                                <CardBody>
-                                    {context.sharesData && context.proposalArray &&
-                                        <div className="table-responsive">
-                                            <CardTitle><h6>ADD FILTER DROPDOWN HERE | ADD SORT DROPDOWN HERE</h6></CardTitle>
-                                            <Table className="table-centered mb-0">
-                                                <thead className="center">
-                                                <tr>
-                                                    <th scope="col">{props.t("Type")}</th>
-                                                    <th scope="col">{props.t("Votes")}</th>
-                                                    <th scope="col">{props.t("Proposed")}</th>
-                                                    <th scope="col">{props.t("Status")}</th>
-                                                    <th scope="col">{props.t("Weight")}</th>
-                                                    <th scope="col">{props.t("Action")}</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {context.proposalArray.filter(x => x.type !== '').sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
-                                                        <ProposalItem 
-                                                            key={c.id}
-                                                            id={c.id}
-                                                            finalised={c.finalised}
-                                                            finalising={c.finalising}
-                                                            list={c.list}
-                                                            majority={c.majority}
-                                                            minority={c.minority}
-                                                            param={c.param}
-                                                            proposedAddress={c.proposedAddress}
-                                                            quorum={c.quorum}
-                                                            timeStart={c.timeStart}
-                                                            type={c.type}
-                                                            votes={c.votes}
-                                                            bondBurnRate={bondBurnRate}
-                                                            voteFor={voteProposal}
-                                                            wholeDAOWeight={wholeDAOWeight}
-                                                            finaliseProposal={finaliseProposal}
-                                                        />
-                                                    )}
-                                                    <tr>
-                                                        <td colSpan="6">
-                                                            {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
-                                                                <div className="text-center m-2">All proposals loaded</div>
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </Table>
-                                        </div>
-                                    }
-                                    {context.sharesDataLoading === true &&
-                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                    }
-                                    {context.sharesDataLoading !== true && !context.walletData &&
-                                        <div className="text-center m-2">Please connect your wallet to proceed</div>
-                                    }
-                                </CardBody>
-                            </Card>
-                        </Col>
-        
-                    </Row>
+                                                        </thead>
+                                                        <tbody>
+                                                            {context.proposalArray.filter(x => x.type !== '').sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                                                <ProposalItem 
+                                                                    key={c.id}
+                                                                    id={c.id}
+                                                                    finalised={c.finalised}
+                                                                    finalising={c.finalising}
+                                                                    list={c.list}
+                                                                    majority={c.majority}
+                                                                    minority={c.minority}
+                                                                    param={c.param}
+                                                                    proposedAddress={c.proposedAddress}
+                                                                    quorum={c.quorum}
+                                                                    timeStart={c.timeStart}
+                                                                    type={c.type}
+                                                                    votes={c.votes}
+                                                                    bondBurnRate={bondBurnRate}
+                                                                    voteFor={voteProposal}
+                                                                    wholeDAOWeight={wholeDAOWeight}
+                                                                    finaliseProposal={finaliseProposal}
+                                                                />
+                                                            )}
+                                                            <tr>
+                                                                <td colSpan="6">
+                                                                    {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
+                                                                        <div className="text-center m-2">All proposals loaded</div>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                </div>
+                                            }
+                                            {context.sharesDataLoading === true &&
+                                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                            }
+                                            {context.sharesDataLoading !== true && !context.walletData &&
+                                                <div className="text-center m-2">Please connect your wallet to proceed</div>
+                                            }
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                
+                            </Row>
+                        </>
+                    }
+                    {!context.proposalArray &&
+                        loader
+                    }
                 </Container>
             </div>
         </React.Fragment>
