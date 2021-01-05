@@ -316,6 +316,9 @@ const DAO = (props) => {
     const [showDELISTBONDModal, setShowDELISTBONDModal] = useState(false)
     const toggleDELISTBONDModal = () => setShowDELISTBONDModal(!showDELISTBONDModal)
 
+    const [showSWITCHEMISSIONSModal, setShowSWITCHEMISSIONSModal] = useState(false)
+    const toggleSWITCHEMISSIONSModal = () => setShowSWITCHEMISSIONSModal(!showSWITCHEMISSIONSModal)
+
     return (
         <React.Fragment>
             <div className="page-content">
@@ -578,16 +581,18 @@ const DAO = (props) => {
                                         </CardBody>
                                         <CardFooter>
                                             {simpleActionArray.emitting === false && 
-                                                <button className="btn btn-primary mx-1 disabled" onClick={() => {
-
+                                                <button className="btn btn-primary mx-1" onClick={() => {
+                                                    checkActionExisting('START_EMISSIONS')
+                                                    toggleSWITCHEMISSIONSModal()
                                                 }}>
                                                     <i className="bx bx-power-off bx-xs align-middle"/> On
                                                 </button>
                                             }
 
                                             {simpleActionArray.emitting === true &&
-                                                <button className="btn btn-primary m-1 disabled" onClick={() => {
-
+                                                <button className="btn btn-primary m-1" onClick={() => {
+                                                    checkActionExisting('STOP_EMISSIONS')
+                                                    toggleSWITCHEMISSIONSModal()
                                                 }}>
                                                     <i className="bx bx-power-off bx-xs align-middle"/> Off
                                                 </button>
@@ -612,7 +617,54 @@ const DAO = (props) => {
                                             </button>
                                         </CardFooter>
                                     </Card>
-                                    {/* EMISSIONS - TURN ON / OFF */}
+
+                                    {/* EMISSIONS - TURN ON / OFF MODAL */}
+                                    <Modal isOpen={showSWITCHEMISSIONSModal} toggle={toggleSWITCHEMISSIONSModal}>
+                                        <ModalHeader toggle={toggleSWITCHEMISSIONSModal}>Switch SPARTA Emissions {simpleActionArray.emitting === true ? 'Off' : 'On'}</ModalHeader>
+                                        <ModalBody>
+                                            Voting through this proposal will switch SPARTA emissions {simpleActionArray.emitting === true ? 'off' : 'on'}
+                                            {actionExisting.length > 0 &&
+                                                <>
+                                                    <Row className='text-center mt-2'>
+                                                        <Col xs='6'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Proposal ID: {actionExisting[0].id}</div>
+                                                        </Col>
+                                                        <Col xs='6'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Votes: {formatAllUnits(bn(actionExisting[0].votes).div(bn(wholeDAOWeight)).times(100))} %</div>
+                                                        </Col>
+                                                        <Col xs='12'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Switch {simpleActionArray.emitting === true ? 'Off' : 'On'} the SPARTA emissions</div>
+                                                        </Col>
+                                                    </Row>
+                                                </>
+                                            }
+                                            {actionExisting.length <= 0 &&
+                                                <>
+                                                    <Row className='text-center mt-2'>
+                                                        <Col xs='12'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>There are no active proposals to toggle SPARTA emissions</div>
+                                                        </Col>
+                                                    </Row>
+                                                </>
+                                            }
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            {actionExisting.length > 0 &&
+                                                <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(actionExisting[0].id)}}>
+                                                    <i className="bx bx-like align-middle"/> Vote for Proposal 
+                                                </button>
+                                            }
+                                            {actionExisting.length <= 0 &&
+                                                <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction(actionExisting[0].type)}}>
+                                                    <i className="bx bx-pin align-middle"/> Propose Turn {simpleActionArray.emitting === true ? 'Off' : 'On'}
+                                                </button>
+                                            }
+                                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleSWITCHEMISSIONSModal}>
+                                                <i className="bx bx-window-close align-middle"/> Close 
+                                            </button>
+                                        </ModalFooter>
+                                    </Modal>
+
                                     {/* EMISSIONS - ADJUST CURVE */}
                                     {/* EMISSIONS - ERA DURATION */}
                                     {/* EMISSIONS - ERAS TO EARN */}
@@ -624,7 +676,7 @@ const DAO = (props) => {
                                         <CardTitle className='pt-3'>MANAGE DAO</CardTitle>
                                         <CardSubtitle>Change Proposal Cool-Off Period</CardSubtitle>
                                         <CardBody>
-                                            <div className='w-100 m-1 p-1 bg-light rounded'>Cool-Off: {paramArray.coolOff !== 'XXX' ? paramArray.coolOff : loader} era</div>
+                                            <div className='w-100 m-1 p-1 bg-light rounded'>Cool-Off: {paramArray.coolOff !== 'XXX' ? formatAllUnits(paramArray.coolOff) : loader} seconds</div>
                                         </CardBody>
                                         <CardFooter>
                                             <button className="btn btn-primary m-1 disabled" onClick={() => {
