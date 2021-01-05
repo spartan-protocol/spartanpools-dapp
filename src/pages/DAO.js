@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { DAO_ADDR, ROUTER_ADDR, UTILS_ADDR, INCENTIVE_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, explorerURL, getAssets, getBondv3Contract, BNB_ADDR } from '../client/web3'
+import { DAO_ADDR, ROUTER_ADDR, UTILS_ADDR, INCENTIVE_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, isAddressValid, explorerURL, getAssets, getBondv3Contract } from '../client/web3'
 import { formatAllUnits, convertFromWei, convertToWei, bn, getAddressShort } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
@@ -288,6 +288,7 @@ const DAO = (props) => {
         getData()
     }
 
+    // eslint-disable-next-line
     {/*
     const cancelProposal = async (oldProposalID, newProposalID) => {
         // Cancel a proposal
@@ -364,8 +365,8 @@ const DAO = (props) => {
                                             Voting through proposals here will list new assets for BOND+MINT
                                             {addressExisting &&
                                                 <>
-                                                    <table className='w-100 text-center'>
-                                                        <thead>
+                                                    <table className='w-100 text-center m-1 mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
+                                                        <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
                                                             <tr>
                                                                 <th>ID</th>
                                                                 <th>Address</th>
@@ -381,23 +382,24 @@ const DAO = (props) => {
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
                                                                         {i.id !== 'N/A' && i.quorum !== true &&
-                                                                            <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(i.id)}}>
-                                                                                <i className="bx bx-like font-size-16 align-middle "/> Vote 
+                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={()=>{voteProposal(i.id)}}>
+                                                                                <i className="bx bx-like align-middle "/> Vote 
                                                                             </button>
                                                                         }
                                                                         {i.id !== 'N/A' && i.quorum === true &&
-                                                                            <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(i.id)}}>
-                                                                                <i className="bx bxs-zap font-size-16 align-middle" /> Finalise 
+                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                                <i className="bx bxs-zap align-middle" /> Finalise 
                                                                             </button>
                                                                         }
                                                                         {i.id === 'N/A' &&
-                                                                            <button className="btn btn-danger mt-2 mx-auto" onClick={()=>{proposeAddress('LIST_BOND', i.address)}}>
-                                                                                <i className="bx bx-pin font-size-16 align-middle"/> Propose 
+                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={()=>{proposeAddress('LIST_BOND', i.address)}}>
+                                                                                <i className="bx bx-pin align-middle"/> Propose 
                                                                             </button>
                                                                         }
                                                                     </td>
                                                                 </tr>
                                                             )}
+                                                            <tr><td colSpan='4'><br/></td></tr>
                                                         </tbody>
                                                     </table>
                                                 </>
@@ -405,7 +407,7 @@ const DAO = (props) => {
                                         </ModalBody>
                                         <ModalFooter>
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleLISTBONDModal}>
-                                                <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                                <i className="bx bx-window-close align-middle"/> Close 
                                             </button>
                                         </ModalFooter>
                                     </Modal>
@@ -417,8 +419,8 @@ const DAO = (props) => {
                                             Voting through proposals here will de-list assets from BOND+MINT
                                             {addressExisting &&
                                                 <>
-                                                    <table className='w-100 text-center'>
-                                                        <thead>
+                                                    <table className='w-100 text-center m-1 mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
+                                                        <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
                                                             <tr>
                                                                 <th>ID</th>
                                                                 <th>Address</th>
@@ -434,23 +436,24 @@ const DAO = (props) => {
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
                                                                         {i.id !== 'N/A' && i.quorum !== true &&
-                                                                            <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(i.id)}}>
-                                                                                <i className="bx bx-like font-size-16 align-middle "/> Vote 
+                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={()=>{voteProposal(i.id)}}>
+                                                                                <i className="bx bx-like align-middle "/> Vote 
                                                                             </button>
                                                                         }
                                                                         {i.id !== 'N/A' && i.quorum === true &&
-                                                                            <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(i.id)}}>
-                                                                                <i className="bx bxs-zap font-size-16 align-middle" /> Finalise 
+                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                                <i className="bx bxs-zap align-middle" /> Finalise 
                                                                             </button>
                                                                         }
                                                                         {i.id === 'N/A' &&
-                                                                            <button className="btn btn-danger mt-2 mx-auto" onClick={()=>{proposeAddress('DELIST_BOND', i.address)}}>
-                                                                                <i className="bx bx-pin font-size-16 align-middle"/> Propose 
+                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={()=>{proposeAddress('DELIST_BOND', i.address)}}>
+                                                                                <i className="bx bx-pin align-middle"/> Propose 
                                                                             </button>
                                                                         }
                                                                     </td>
                                                                 </tr>
                                                             )}
+                                                            <tr><td colSpan='4'><br/></td></tr>
                                                         </tbody>
                                                     </table>
                                                 </>
@@ -458,7 +461,7 @@ const DAO = (props) => {
                                         </ModalBody>
                                         <ModalFooter>
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleDELISTBONDModal}>
-                                                <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                                <i className="bx bx-window-close align-middle"/> Close 
                                             </button>
                                         </ModalFooter>
                                     </Modal>
@@ -468,42 +471,44 @@ const DAO = (props) => {
                                         <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
                                         <ModalBody>
                                             Voting through this proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
-                                            {actionExisting &&
+                                            {actionExisting.length > 0 &&
                                                 <>
-                                                    <table className='w-100 text-center mt-2'>
-                                                        <thead className='border-bottom'>
-                                                            <tr>
-                                                                <th>ID</th>
-                                                                <th>Type</th>
-                                                                <th>Votes</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {actionExisting.map(i => 
-                                                                <tr key={i.id}>
-                                                                    <td>{i.id}</td>
-                                                                    <td>{i.type}</td>
-                                                                    <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
-                                                                </tr>
-                                                            )}
-                                                        </tbody>
-                                                    </table>
+                                                    <Row className='text-center mt-2'>
+                                                        <Col xs='6'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Proposal ID: {actionExisting[0].id}</div>
+                                                        </Col>
+                                                        <Col xs='6'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Votes: {formatAllUnits(bn(actionExisting[0].votes).div(bn(wholeDAOWeight)).times(100))} %</div>
+                                                        </Col>
+                                                        <Col xs='12'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Increase BOND allocation by {formatAllUnits(convertFromWei(bondBurnRate))} SPARTA</div>
+                                                        </Col>
+                                                    </Row>
+                                                </>
+                                            }
+                                            {actionExisting.length <= 0 &&
+                                                <>
+                                                    <Row className='text-center mt-2'>
+                                                        <Col xs='12'>
+                                                            <div className='w-100 m-1 p-1 bg-light rounded'>There are no active proposals to increase BOND allocation</div>
+                                                        </Col>
+                                                    </Row>
                                                 </>
                                             }
                                         </ModalBody>
                                         <ModalFooter>
                                             {actionExisting.length > 0 &&
                                                 <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(actionExisting[0].id)}}>
-                                                    <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Vote To Increase 
+                                                    <i className="bx bx-like align-middle"/> Vote for Proposal 
                                                 </button>
                                             }
                                             {actionExisting.length <= 0 &&
                                                 <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
-                                                    <i className="bx bxs-add-to-queue font-size-16 align-middle"/> Propose Increase
+                                                    <i className="bx bx-pin align-middle"/> Propose Increase
                                                 </button>
                                             }
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>
-                                                <i className="bx bx-cross font-size-16 align-middle"/> Close 
+                                                <i className="bx bx-window-close align-middle"/> Close 
                                             </button>
                                         </ModalFooter>
                                     </Modal>
