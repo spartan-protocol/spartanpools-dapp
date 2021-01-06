@@ -73,21 +73,22 @@ const Header = (props) => {
                       </DropdownToggle>
                       <DropdownMenu className='mt-3'>
                         <DropdownItem disabled><i className='bx bx-coin text-success mr-1' />Total Supply: {formatAllUnits(convertFromWei(totalSupply))}</DropdownItem>
+                        {/*<DropdownItem disabled><i className='bx bx-refresh text-success mr-1' />Circulating: *TBA*</DropdownItem>*/}
                         <DropdownItem disabled><i className='bx bx-coin-stack text-success mr-1' />Supply Cap: 300,000,000</DropdownItem>
                         <DropdownItem disabled><i className='bx bxs-badge-dollar text-success mr-1' />Market Cap: ${formatAllUnits(convertFromWei(bn(totalSupply).times(context.spartanPrice)))} </DropdownItem>
                         <DropdownItem divider />
-                        <DropdownItem header><div className='text-center'><i className='bx bx-edit text-success mr-1' />Contracts</div></DropdownItem>
+                        <DropdownItem disabled><div className='text-center'><i className='bx bx-edit text-success mr-1' />Contracts</div></DropdownItem>
                         <DropdownItem>
-                          <div className='w-50 d-inline-block text-center bg-light mr-1'><a href={'https://bscscan.com/address/' + SPARTA_ADDR + '#readContract'} target='blank' className='text-dark'>SPARTA</a></div>
-                          <div className='w-50 d-inline-block text-center bg-light ml-1'><a href={'https://bscscan.com/address/' + UTILS_ADDR + '#readContract'} target='blank' className='text-dark'>UTILS</a></div>
+                          <a href={'https://bscscan.com/address/' + SPARTA_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>SPARTA</div></a>
+                          <a href={'https://bscscan.com/address/' + UTILS_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>UTILS</div></a>
                         </DropdownItem>
                         <DropdownItem>
-                          <div className='w-50 d-inline-block text-center bg-light mr-1'><a href={'https://bscscan.com/address/' + DAO_ADDR + '#readContract'} target='blank' className='text-dark'>DAO</a></div>
-                          <div className='w-50 d-inline-block text-center bg-light ml-1'><a href={'https://bscscan.com/address/' + ROUTER_ADDR + '#readContract'} target='blank' className='text-dark'>ROUTER</a></div>
+                          <a href={'https://bscscan.com/address/' + DAO_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>DAO</div></a>
+                          <a href={'https://bscscan.com/address/' + ROUTER_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>ROUTER</div></a>
                         </DropdownItem>
                         <DropdownItem>
-                          <div className='w-50 d-inline-block text-center bg-light mr-1'><a href={'https://bscscan.com/address/' + BONDv2_ADDR + '#readContract'} target='blank' className='text-dark'>BONDv2</a></div>
-                          <div className='w-50 d-inline-block text-center bg-light ml-1'><a href={'https://bscscan.com/address/' + BONDv3_ADDR + '#readContract'} target='blank' className='text-dark'>BONDv3</a></div>
+                          <a href={'https://bscscan.com/address/' + BONDv2_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>BONDv2</div></a>
+                          <a href={'https://bscscan.com/address/' + BONDv3_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>BONDv3</div></a>
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown>
