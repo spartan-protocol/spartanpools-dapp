@@ -138,13 +138,27 @@ const DAO = (props) => {
     ]
     const [paramType, setParamType] = useState(paramTypes[0].type)
     const [param, setParam] = useState('')
-    const proposeParam = async () => {
+    const getParamIndex = () => {
         let index = paramTypes.findIndex(i => i.type === paramType)
-        let typeFormatted = paramTypes[index].formatted
+        return paramTypes[index].formatted
+    }
+    const proposeParam = async (directType) => {
+        let typeFormatted = ''
+        if (directType === undefined) {
+            typeFormatted = getParamIndex()
+        }
+        else {typeFormatted = directType}
         let contract = getDaoContract()
         console.log(param, typeFormatted)
         await contract.methods.newParamProposal(param, typeFormatted).send({ from: context.account })
-        getData()
+        await getData()
+        checkParamExisting(typeFormatted)
+    }
+    const [paramExisting, setParamExisting] = useState(false)
+    const checkParamExisting = (directType) => {
+        let existing = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        existing = existing.sort((a, b) => +b.votes - +a.votes)
+        setParamExisting(existing)
     }
 
     // CHANGE ADDRESS PROPOSAL
@@ -318,6 +332,12 @@ const DAO = (props) => {
 
     const [showSWITCHEMISSIONSModal, setShowSWITCHEMISSIONSModal] = useState(false)
     const toggleSWITCHEMISSIONSModal = () => setShowSWITCHEMISSIONSModal(!showSWITCHEMISSIONSModal)
+    const [showADJUSTCURVEModal, setShowADJUSTCURVEModal] = useState(false)
+    const toggleADJUSTCURVEModal = () => setShowADJUSTCURVEModal(!showADJUSTCURVEModal)
+    const [showAdjustEraDurationModal, setShowAdjustEraDurationModal] = useState(false)
+    const toggleAdjustEraDurationModal = () => setShowAdjustEraDurationModal(!showAdjustEraDurationModal)
+    const [showErasToEarnModal, setShowErasToEarnModal] = useState(false)
+    const toggleErasToEarnModal = () => setShowErasToEarnModal(!showErasToEarnModal)
 
     return (
         <React.Fragment>
@@ -362,13 +382,13 @@ const DAO = (props) => {
                                     </Card>
 
                                     {/* BOND - LIST ASSET MODAL */}
-                                    <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal}>
+                                    <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal} className='text-center'>
                                         <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
                                         <ModalBody>
                                             Voting through proposals here will list new assets for BOND+MINT
                                             {addressExisting &&
                                                 <>
-                                                    <table className='w-100 text-center m-1 mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
+                                                    <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
                                                         <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
                                                             <tr>
                                                                 <th>ID</th>
@@ -416,13 +436,13 @@ const DAO = (props) => {
                                     </Modal>
 
                                     {/* BOND - DE-LIST ASSET MODAL */}
-                                    <Modal isOpen={showDELISTBONDModal} toggle={toggleDELISTBONDModal}>
+                                    <Modal isOpen={showDELISTBONDModal} toggle={toggleDELISTBONDModal} className='text-center'>
                                         <ModalHeader toggle={toggleDELISTBONDModal}>De-list a BOND Asset</ModalHeader>
                                         <ModalBody>
                                             Voting through proposals here will de-list assets from BOND+MINT
                                             {addressExisting &&
                                                 <>
-                                                    <table className='w-100 text-center m-1 mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
+                                                    <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
                                                         <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
                                                             <tr>
                                                                 <th>ID</th>
@@ -470,7 +490,7 @@ const DAO = (props) => {
                                     </Modal>
 
                                     {/* BOND - INCREASE ALLOCATION MODAL */}
-                                    <Modal isOpen={showMINTModal} toggle={toggleMINTModal}>
+                                    <Modal isOpen={showMINTModal} toggle={toggleMINTModal} className='text-center'>
                                         <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
                                         <ModalBody>
                                             Voting through this proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
@@ -581,7 +601,7 @@ const DAO = (props) => {
                                         </CardBody>
                                         <CardFooter>
                                             {simpleActionArray.emitting === false && 
-                                                <button className="btn btn-primary mx-1" onClick={() => {
+                                                <button className="btn btn-primary m-1" onClick={() => {
                                                     checkActionExisting('START_EMISSIONS')
                                                     toggleSWITCHEMISSIONSModal()
                                                 }}>
@@ -598,20 +618,26 @@ const DAO = (props) => {
                                                 </button>
                                             }
 
-                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
-
+                                            <button className="btn btn-primary m-1" onClick={() => {
+                                                setParam('')
+                                                checkParamExisting('CURVE')
+                                                toggleADJUSTCURVEModal()
                                             }}>
                                                 <i className="bx bx-cog bx-xs align-middle"/> Curve
                                             </button>
 
-                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
-
+                                            <button className="btn btn-primary m-1" onClick={() => {
+                                                setParam('')
+                                                checkParamExisting('DURATION')
+                                                toggleAdjustEraDurationModal()
                                             }}>
                                                 <i className="bx bx-time bx-xs align-middle"/> Era
                                             </button>
                                             
-                                            <button className="btn btn-primary m-1 disabled" onClick={() => {
-
+                                            <button className="btn btn-primary m-1" onClick={() => {
+                                                setParam('')
+                                                checkParamExisting('ERAS_TO_EARN')
+                                                toggleErasToEarnModal()
                                             }}>
                                                 <i className="bx bx-timer bx-xs align-middle"/> EraToEarn
                                             </button>
@@ -619,7 +645,7 @@ const DAO = (props) => {
                                     </Card>
 
                                     {/* EMISSIONS - TURN ON / OFF MODAL */}
-                                    <Modal isOpen={showSWITCHEMISSIONSModal} toggle={toggleSWITCHEMISSIONSModal}>
+                                    <Modal isOpen={showSWITCHEMISSIONSModal} toggle={toggleSWITCHEMISSIONSModal} className='text-center'>
                                         <ModalHeader toggle={toggleSWITCHEMISSIONSModal}>Switch SPARTA Emissions {simpleActionArray.emitting === true ? 'Off' : 'On'}</ModalHeader>
                                         <ModalBody>
                                             Voting through this proposal will switch SPARTA emissions {simpleActionArray.emitting === true ? 'off' : 'on'}
@@ -665,9 +691,189 @@ const DAO = (props) => {
                                         </ModalFooter>
                                     </Modal>
 
-                                    {/* EMISSIONS - ADJUST CURVE */}
-                                    {/* EMISSIONS - ERA DURATION */}
+                                    {/* EMISSIONS - ADJUST CURVE MODAL */}
+                                    <Modal isOpen={showADJUSTCURVEModal} toggle={toggleADJUSTCURVEModal} className='text-center'>
+                                        <ModalHeader toggle={toggleADJUSTCURVEModal}>Adjust Emissions Curve</ModalHeader>
+                                        <ModalBody>
+                                            Propose a new emissions curve value:
+                                            <InputGroup className='my-3'>
+                                                <Input placeholder={'Enter New Curve Value'} onChange={event => setParam(event.target.value)} />
+                                                <InputGroupAddon addonType="append">
+                                                    {param > 0 &&
+                                                        <button className="btn btn-primary" onClick={()=>{proposeParam('CURVE')}}><i className="bx bx-pin align-middle"/> Propose</button>
+                                                    }
+                                                    {param <= 0 &&
+                                                        <button className="btn btn-danger"><i className="bx bx-left-arrow-alt align-middle"/> Input</button>
+                                                    }
+                                                </InputGroupAddon>
+                                            </InputGroup>
+                                            Or vote for / finalize existing proposals:
+                                            {paramExisting &&
+                                                <>
+                                                    <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
+                                                        <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>New Curve</th>
+                                                                <th>Votes</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {paramExisting.map(i => 
+                                                                <tr key={i.id}>
+                                                                    <td>{i.id}</td>
+                                                                    <td>{i.param}</td>
+                                                                    <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                                    <td>
+                                                                        {i.id !== 'N/A' && i.quorum !== true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={()=>{voteProposal(i.id)}}>
+                                                                                <i className="bx bx-like align-middle "/> Vote 
+                                                                            </button>
+                                                                        }
+                                                                        {i.id !== 'N/A' && i.quorum === true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                                <i className="bx bxs-zap align-middle" /> Finalise 
+                                                                            </button>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            )}
+                                                            <tr><td colSpan='4'><br/></td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </>
+                                            }
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleADJUSTCURVEModal}>
+                                                <i className="bx bx-window-close align-middle"/> Close 
+                                            </button>
+                                        </ModalFooter>
+                                    </Modal>
+
+                                    {/* EMISSIONS - ERA DURATION MODAL */}
+                                    <Modal isOpen={showAdjustEraDurationModal} toggle={toggleAdjustEraDurationModal} className='text-center'>
+                                        <ModalHeader toggle={toggleAdjustEraDurationModal}>Adjust Era Duration</ModalHeader>
+                                        <ModalBody>
+                                            Propose a new era duration:
+                                            <InputGroup className='my-3'>
+                                                <Input placeholder={'Enter New Era Duration Value'} onChange={event => setParam(event.target.value)} />
+                                                <InputGroupAddon addonType="append">
+                                                    {param > 0 &&
+                                                        <button className="btn btn-primary" onClick={()=>{proposeParam('DURATION')}}><i className="bx bx-pin align-middle"/> Propose</button>
+                                                    }
+                                                    {param <= 0 &&
+                                                        <button className="btn btn-danger"><i className="bx bx-left-arrow-alt align-middle"/> Input</button>
+                                                    }
+                                                </InputGroupAddon>
+                                            </InputGroup>
+                                            Or vote for / finalize existing proposals:
+                                            {paramExisting &&
+                                                <>
+                                                    <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
+                                                        <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>New Duration</th>
+                                                                <th>Votes</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {paramExisting.map(i => 
+                                                                <tr key={i.id}>
+                                                                    <td>{i.id}</td>
+                                                                    <td>{i.param}</td>
+                                                                    <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                                    <td>
+                                                                        {i.id !== 'N/A' && i.quorum !== true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={()=>{voteProposal(i.id)}}>
+                                                                                <i className="bx bx-like align-middle "/> Vote 
+                                                                            </button>
+                                                                        }
+                                                                        {i.id !== 'N/A' && i.quorum === true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                                <i className="bx bxs-zap align-middle" /> Finalise 
+                                                                            </button>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            )}
+                                                            <tr><td colSpan='4'><br/></td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </>
+                                            }
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleAdjustEraDurationModal}>
+                                                <i className="bx bx-window-close align-middle"/> Close 
+                                            </button>
+                                        </ModalFooter>
+                                    </Modal>
+
                                     {/* EMISSIONS - ERAS TO EARN */}
+                                    <Modal isOpen={showErasToEarnModal} toggle={toggleErasToEarnModal} className='text-center'>
+                                        <ModalHeader toggle={toggleErasToEarnModal}>Adjust Era To Earn</ModalHeader>
+                                        <ModalBody>
+                                            Propose a new 'eras to earn' value:
+                                            <InputGroup className='my-3'>
+                                                <Input placeholder={'Enter New ErasToEarn Value'} onChange={event => setParam(event.target.value)} />
+                                                <InputGroupAddon addonType="append">
+                                                    {param > 0 &&
+                                                        <button className="btn btn-primary" onClick={()=>{proposeParam('ERAS_TO_EARN')}}><i className="bx bx-pin align-middle"/> Propose</button>
+                                                    }
+                                                    {param <= 0 &&
+                                                        <button className="btn btn-danger"><i className="bx bx-left-arrow-alt align-middle"/> Input</button>
+                                                    }
+                                                </InputGroupAddon>
+                                            </InputGroup>
+                                            Or vote for / finalize existing proposals:
+                                            {paramExisting &&
+                                                <>
+                                                    <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
+                                                        <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>New ErasToEarn</th>
+                                                                <th>Votes</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {paramExisting.map(i => 
+                                                                <tr key={i.id}>
+                                                                    <td>{i.id}</td>
+                                                                    <td>{i.param}</td>
+                                                                    <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
+                                                                    <td>
+                                                                        {i.id !== 'N/A' && i.quorum !== true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={()=>{voteProposal(i.id)}}>
+                                                                                <i className="bx bx-like align-middle "/> Vote 
+                                                                            </button>
+                                                                        }
+                                                                        {i.id !== 'N/A' && i.quorum === true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                                <i className="bx bxs-zap align-middle" /> Finalise 
+                                                                            </button>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            )}
+                                                            <tr><td colSpan='4'><br/></td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </>
+                                            }
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleErasToEarnModal}>
+                                                <i className="bx bx-window-close align-middle"/> Close 
+                                            </button>
+                                        </ModalFooter>
+                                    </Modal>
+
                                 </Col>
 
                                 {/* MANAGE DAO */}
@@ -767,13 +973,13 @@ const DAO = (props) => {
                                                     </button>
                                                 }
                                                 {simpleActionArray.emitting === true && getActionIndex() !== 'START_EMISSIONS' &&
-                                                    <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
-                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                                    <button className="btn btn-primary my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                        <i className="bx bx-log-in-circle align-middle"/> Propose Simple Action
                                                     </button>  
                                                 }
                                                 {simpleActionArray.emitting === false && getActionIndex() !== 'STOP_EMISSIONS' &&
-                                                    <button className="btn btn-primary waves-effect waves-light my-1 mx-auto" onClick={()=>{proposeAction()}}>
-                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Simple Action
+                                                    <button className="btn btn-primary my-1 mx-auto" onClick={()=>{proposeAction()}}>
+                                                        <i className="bx bx-log-in-circle align-middle"/> Propose Simple Action
                                                     </button>  
                                                 }
                                             </Col>
@@ -792,8 +998,8 @@ const DAO = (props) => {
                                                     </Input>
                                                 </InputGroup>
                                                 <InputGroup className='my-1'><Input placeholder={'Enter New Param Value'} onChange={event => setParam(event.target.value)} /></InputGroup>
-                                            <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeParam()}}>
-                                                <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose Parameter Change
+                                            <button className="btn btn-primary my-1" onClick={()=>{proposeParam()}}>
+                                                <i className="bx bx-log-in-circle align-middle"/> Propose Parameter Change
                                             </button>
                                             </Col>
                                         </CardBody>
@@ -817,8 +1023,8 @@ const DAO = (props) => {
                                                     </InputGroupAddon>
                                                 </InputGroup>
                                                 {validAddress === true &&
-                                                    <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeAddress()}}>
-                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Address
+                                                    <button className="btn btn-primary my-1" onClick={()=>{proposeAddress()}}>
+                                                        <i className="bx bx-log-in-circle align-middle"/> Propose New Address
                                                     </button>
                                                 }
                                                 {validAddress === false &&
@@ -854,8 +1060,8 @@ const DAO = (props) => {
                                                     </button>
                                                 }
                                                 {grantAmount > 0 &&
-                                                    <button className="btn btn-primary waves-effect waves-light my-1" onClick={()=>{proposeGrant()}}>
-                                                        <i className="bx bx-log-in-circle font-size-16 align-middle"/> Propose New Grant
+                                                    <button className="btn btn-primary my-1" onClick={()=>{proposeGrant()}}>
+                                                        <i className="bx bx-log-in-circle align-middle"/> Propose New Grant
                                                     </button>
                                                 }
                                             </Col>
@@ -881,7 +1087,7 @@ const DAO = (props) => {
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {context.proposalArray.filter(x => x.type !== '').sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                                            {context.proposalArray.filter(x => x.votes > 0).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                                                 <ProposalItem 
                                                                     key={c.id}
                                                                     id={c.id}
