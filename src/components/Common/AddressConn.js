@@ -160,7 +160,7 @@ const AddressConn = (props) => {
             {context.walletDataLoading === true &&
                 <>
                     <div className="btn ml-1" onClick={toggleRightbar}>
-                        <i className="bx bx-xs bx-border-circle bx-wallet bg-light text-warning float-left" />
+                        <i className="bx bx-xs bx-border-circle bx-wallet bg-light text-secondary float-left" />
                     </div>
                     <div className="btn mr-1" onClick={getTokenArray}>
                         <i className="bx bx-xs bx-border-circle bx-spin bx-loader bg-light text-green float-right" />
@@ -170,10 +170,10 @@ const AddressConn = (props) => {
             {context.walletData && context.walletDataLoading !== true &&
                 <>
                     <div className="btn ml-1" onClick={toggleRightbar}>
-                        <i className="bx bx-xs bx-border-circle bx-wallet bg-light text-warning float-left d-inline-block" />
+                        <i className="bx bx-xs bx-border-circle bx-wallet bg-light text-secondary float-left d-inline-block" />
                     </div>
                     <div className="btn mr-1" onClick={getTokenArray}>
-                        <i className="bx bx-xs bx-border-circle bx-refresh bg-light text-warning float-right" />
+                        <i className="bx bx-xs bx-border-circle bx-refresh bg-light text-secondary float-right" />
                     </div>
                 </>
             }
