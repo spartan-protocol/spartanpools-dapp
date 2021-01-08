@@ -522,12 +522,12 @@ const BondComponent = (props) => {
             {
                 data: [(0),(convertFromWei(estLiqTokens)*100/100).toFixed(2)],
                 backgroundColor: [
-                    "#556ee6",
-                    "#34c38f"
+                    "#626262",
+                    "#a80005"
                 ],
                 hoverBackgroundColor: [
-                    "#556ee6",
-                    "#34c38f"
+                    "#626262",
+                    "rgba(168,0,5,0.6)"
                 ],
                 borderColor: "#2a3042",
                 borderWidth: '1',

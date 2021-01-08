@@ -27,7 +27,7 @@ export const PoolsPaneSide = (props) => {
         const options1 = {
             chart: {sparkline: {enabled: !0}},
             stroke: {curve: "smooth", width: 2},
-            colors: ["#f1b44c"],
+            colors: ["#bfbfbf"],
             fill: {
                 type: "gradient",
                 gradient: {
@@ -49,7 +49,7 @@ export const PoolsPaneSide = (props) => {
         const options2 = {
             chart: {sparkline: {enabled: !0}},
             stroke: {curve: "smooth", width: 2},
-            colors: ["#3452e1"],
+            colors: ["#bfbfbf"],
             fill: {
                 type: "gradient",
                 gradient: {
@@ -99,7 +99,7 @@ export const PoolsPaneSide = (props) => {
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4">
-                                    <i className={"bx bx-coin h1 text-warning align-middle mb-0 mr-3"}/>{props.t("Total Pooled")}
+                                    <i className={"bx bx-coin h1 text-primary align-middle mb-0 mr-3"}/>{props.t("Total Pooled")}
                                 </h5>
                                 <Row>
                                     <Col xs="12">
@@ -159,7 +159,7 @@ export const PoolsPaneSide = (props) => {
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
-                                    className={"bx bx-trending-up h1 text-success align-middle mb-0 mr-3"}/>{props.t("Total Earnings")}
+                                    className={"bx bx-trending-up h1 text-primary align-middle mb-0 mr-3"}/>{props.t("Total Earnings")}
                                 </h5>
                                 <Row>
                                     <Col xs="12">

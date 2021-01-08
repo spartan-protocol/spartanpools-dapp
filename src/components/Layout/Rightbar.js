@@ -244,15 +244,15 @@ const donutData = {
     {
       data: [convertFromWei(units).toFixed(2), convertFromWei(locked).toFixed(2)],
       backgroundColor: [
-        "#34c38f",
+        "#a80005",
         "#556ee6"
       ],
       hoverBackgroundColor: [
-        "#34c38f",
+        "#a80005",
         "#556ee6"
       ],
       borderWidth:1,
-      borderColor:'#222736',
+      borderColor:'#121212',
       hoverBorderColor: "#fff"
     }
   ]

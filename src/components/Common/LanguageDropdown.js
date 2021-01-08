@@ -69,7 +69,7 @@ const LanguageDropdown = (props) => {
           className="btn header-item waves-effect mx-0"
           tag="button"
         >
-          <i className="bx bx-xs bx-border-circle bx-world bg-success text-light float-left" />
+          <i className="bx bx-xs bx-border-circle bx-world bg-light text-secondary float-left" />
         </DropdownToggle>
         <DropdownMenu className="language-switch" right>
           <DropdownItem tag="a" href="#" onClick={() => changeLanguageAction('eng')} className={`notify-item ${lng === 'English' ? 'active' : 'none'}`}>

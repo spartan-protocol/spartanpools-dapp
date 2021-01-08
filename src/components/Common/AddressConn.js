@@ -150,30 +150,30 @@ const AddressConn = (props) => {
             {!context.walletData && context.walletDataLoading !== true &&
                 <>
                     <div className="btn ml-1" onClick={()=>connectWallet(props)}>
-                        <i className="bx bx-xs bx-border-circle bx-tada-hover bx-wallet bg-danger text-light float-left" />
+                        <i className="bx bx-xs bx-border-circle bx-tada-hover bx-wallet bg-light text-warning float-left" />
                     </div>
                     <div className="btn mr-1" onClick={()=>connectWallet(props)}>
-                        <i className="bx bx-xs bx-border-circle bx-tada-hover bx-refresh bg-light text-danger float-right" />
+                        <i className="bx bx-xs bx-border-circle bx-tada-hover bx-refresh bg-light text-warning float-right" />
                     </div>
                 </>
             }
             {context.walletDataLoading === true &&
                 <>
                     <div className="btn ml-1" onClick={toggleRightbar}>
-                        <i className="bx bx-xs bx-border-circle bx-wallet bg-warning text-light float-left" />
+                        <i className="bx bx-xs bx-border-circle bx-wallet bg-light text-warning float-left" />
                     </div>
                     <div className="btn mr-1" onClick={getTokenArray}>
-                        <i className="bx bx-xs bx-border-circle bx-spin bx-loader bg-light text-warning float-right" />
+                        <i className="bx bx-xs bx-border-circle bx-spin bx-loader bg-light text-green float-right" />
                     </div>
                 </>
             }
             {context.walletData && context.walletDataLoading !== true &&
                 <>
                     <div className="btn ml-1" onClick={toggleRightbar}>
-                        <i className="bx bx-xs bx-border-circle bx-wallet bg-success text-light float-left d-inline-block" />
+                        <i className="bx bx-xs bx-border-circle bx-wallet bg-light text-warning float-left d-inline-block" />
                     </div>
                     <div className="btn mr-1" onClick={getTokenArray}>
-                        <i className="bx bx-xs bx-border-circle bx-refresh bg-light text-success float-right" />
+                        <i className="bx bx-xs bx-border-circle bx-refresh bg-light text-warning float-right" />
                     </div>
                 </>
             }
