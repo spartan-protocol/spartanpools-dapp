@@ -230,6 +230,7 @@ export const getProposal = async (pid) => {
         'param': proposalDetails.param,
         'proposedAddress': proposalDetails.proposedAddress,
         'list': proposalDetails.list,
+        'grant': proposalDetails.grant,
         'majority': majority,
         'quorum': quorum,
         'minority': minority,
