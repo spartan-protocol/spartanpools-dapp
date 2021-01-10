@@ -1590,64 +1590,42 @@ const DAOProposals = (props) => {
                                 </Col>
                                 */}
 
-                                <Col sm={12} className="mr-20">
-                                    <Card>
-                                        <CardBody>
-                                            {context.sharesData && context.proposalArray &&
-                                                <div className="table-responsive">
-                                                    <CardTitle><h6>ADD FILTER DROPDOWN HERE | ADD SORT DROPDOWN HERE</h6></CardTitle>
-                                                    <Table className="table-centered mb-0">
-                                                        <thead className="center">
-                                                        <tr>
-                                                            <th scope="col">{props.t("Type")}</th>
-                                                            <th scope="col">{props.t("Votes")}</th>
-                                                            <th scope="col">{props.t("Proposed")}</th>
-                                                            <th scope="col">{props.t("Status")}</th>
-                                                            <th scope="col">{props.t("Weight")}</th>
-                                                            <th scope="col">{props.t("Action")}</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {context.proposalArray.filter(x => x.votes > 0).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
-                                                                <ProposalItem 
-                                                                    key={c.id}
-                                                                    id={c.id}
-                                                                    finalised={c.finalised}
-                                                                    finalising={c.finalising}
-                                                                    list={c.list}
-                                                                    majority={c.majority}
-                                                                    minority={c.minority}
-                                                                    param={c.param}
-                                                                    proposedAddress={c.proposedAddress}
-                                                                    quorum={c.quorum}
-                                                                    timeStart={c.timeStart}
-                                                                    type={c.type}
-                                                                    votes={c.votes}
-                                                                    bondBurnRate={bondBurnRate}
-                                                                    voteFor={voteProposal}
-                                                                    wholeDAOWeight={wholeDAOWeight}
-                                                                    finaliseProposal={finaliseProposal}
-                                                                />
-                                                            )}
-                                                            <tr>
-                                                                <td colSpan="6">
-                                                                    {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
-                                                                        <div className="text-center m-2">All proposals loaded</div>
-                                                                    }
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                </div>
-                                            }
-                                            {context.sharesDataLoading === true &&
-                                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                            }
-                                            {context.sharesDataLoading !== true && !context.walletData &&
-                                                <div className="text-center m-2">Please connect your wallet to proceed</div>
-                                            }
-                                        </CardBody>
-                                    </Card>
+                                <Col xs='12' className='mb-2'><h3>PENDING PROPOSALS</h3></Col>
+
+                                {context.proposalArray.filter(x => x.votes > 0).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                    <ProposalItem 
+                                        key={c.id}
+                                        id={c.id}
+                                        finalised={c.finalised}
+                                        finalising={c.finalising}
+                                        list={c.list}
+                                        majority={c.majority}
+                                        minority={c.minority}
+                                        param={c.param}
+                                        proposedAddress={c.proposedAddress}
+                                        quorum={c.quorum}
+                                        timeStart={c.timeStart}
+                                        type={c.type}
+                                        votes={c.votes}
+                                        bondBurnRate={bondBurnRate}
+                                        voteFor={voteProposal}
+                                        wholeDAOWeight={wholeDAOWeight}
+                                        finaliseProposal={finaliseProposal}
+                                    />
+                                )}
+
+                                <Col xs='12' className='mb-2'>
+                                    {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
+                                        <div className="text-center m-2">All proposals loaded</div>
+                                    }
+
+                                    {context.sharesDataLoading === true &&
+                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                    }
+
+                                    {context.sharesDataLoading !== true && !context.walletData &&
+                                        <div className="text-center m-2">Please connect your wallet to proceed</div>
+                                    }
                                 </Col>
                 
                             </Row>
