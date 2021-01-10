@@ -33,10 +33,13 @@ const Navbar = (props) => {
                                 <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2 align-middle"/>{props.t('Pools')}</Link>
                             </li>
                             <li className="nav-item dropdown">
-                                <Link to="/earn" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-money mr-2 align-middle"/>{props.t('Earn')}</Link>
-                            </li>
-                            <li className="nav-item dropdown">
-                                <Link to="/dao" className="nav-link dropdown-toggle arrow-none" ><i className="bx bx-group mr-2 align-middle"/>{props.t('DAO')}</Link>
+                                <Link to="#" className="nav-link dropdown-toggle arrow-none" >
+                                    <i className="bx bx-group mr-2 align-middle"/>{props.t('DAO')}<div className="arrow-down ml-1 align-middle"></div>
+                                </Link>
+                                <div className={classname("dropdown-menu")}>
+                                    <Link to="/dao/lock" className="dropdown-item"><i className='mr-1 bx bx-lock' />{props.t('Lock+Earn')}</Link>
+                                    <Link to="/dao/proposals" className="dropdown-item"><i className='mr-1 bx bx-pin' />{props.t('Propose')}</Link>
+                                </div>
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" to="#">

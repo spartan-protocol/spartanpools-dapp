@@ -6,7 +6,7 @@ import {withNamespaces} from "react-i18next";
 
 import {Container, Row, Col} from "reactstrap";
 
-const Earn = (props) => {
+const DAOLock = (props) => {
 
     return (
         <React.Fragment>
@@ -25,4 +25,4 @@ const Earn = (props) => {
 
 }
 
-export default withRouter(withNamespaces()(Earn));
+export default withRouter(withNamespaces()(DAOLock));

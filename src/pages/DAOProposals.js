@@ -17,7 +17,7 @@ import {
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
-const DAO = (props) => {
+const DAOProposals = (props) => {
     const context = useContext(Context)
 
     useEffect(() => {
@@ -1663,4 +1663,4 @@ const DAO = (props) => {
 
 }
 
-export default withRouter(withNamespaces()(DAO));
+export default withRouter(withNamespaces()(DAOProposals));
