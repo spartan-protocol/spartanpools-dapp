@@ -4,13 +4,13 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, explorerURL, getAssets, getBondv3Contract } from '../client/web3'
+import { BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, explorerURL, getAssets, getBondv3Contract } from '../client/web3'
 import { formatAllUnits, convertFromWei, bn, getAddressShort } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
 
 import {
-    Container, Table, Row, Col,
+    Container, Row, Col,
     Card, CardBody, CardTitle, CardSubtitle, CardFooter,
     Modal, ModalHeader, ModalBody, ModalFooter,
 } from "reactstrap";
@@ -245,6 +245,7 @@ const DAOProposals = (props) => {
     //}
     const checkListBondExisting = async (directType) => {
         let existing = []
+        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', BONDv2_ADDR, BONDv3_ADDR]
         let allListed = await getAssets()
         let contract = getBondv3Contract()
         let allBond = await contract.methods.allListedAssets().call()
@@ -253,14 +254,16 @@ const DAOProposals = (props) => {
             let address = allListed[i]
             if (address) {
                 let proposal = listBondProposals.filter(i => i.proposedAddress === address)
-                if (allBond.includes(address) === false) {
-                    existing.push({
-                        'id': proposal[0] ? proposal[0].id : 'N/A',
-                        'address': address,
-                        'votes': proposal[0] ? proposal[0].votes : '0',
-                        'finalising': proposal[0] ? proposal[0].finalising : false,
-                        'quorum': proposal[0] ? proposal[0].quorum : false,
-                    })
+                if (allBond.includes(address) === false && blacklist.includes(address) === false) {
+                    if (existing.some(i => i.address === address) === false) {
+                        existing.push({
+                            'id': proposal[0] ? proposal[0].id : '-',
+                            'address': address,
+                            'votes': proposal[0] ? proposal[0].votes : '0',
+                            'finalising': proposal[0] ? proposal[0].finalising : false,
+                            'quorum': proposal[0] ? proposal[0].quorum : false,
+                        })
+                    }
                 }
             }
         }
@@ -278,7 +281,7 @@ const DAOProposals = (props) => {
             if (address) {
                 let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
                 existing.push({
-                    'id': proposal[0] ? proposal[0].id : 'N/A',
+                    'id': proposal[0] ? proposal[0].id : '-',
                     'address': address,
                     'votes': proposal[0] ? proposal[0].votes : '0',
                     'finalising': proposal[0] ? proposal[0].finalising : false,
@@ -1592,7 +1595,7 @@ const DAOProposals = (props) => {
 
                                 <Col xs='12' className='mb-2'><h3>PENDING PROPOSALS</h3></Col>
 
-                                {context.proposalArray.filter(x => x.votes > 0).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                {context.proposalArray.filter(x => x.votes > 0).filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                     <ProposalItem 
                                         key={c.id}
                                         id={c.id}
