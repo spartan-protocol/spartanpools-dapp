@@ -22,9 +22,6 @@ const DAOProposals = (props) => {
 
     useEffect(() => {
         getData()
-        return function cleanup() {
-            getData()
-        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
