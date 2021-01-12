@@ -37,6 +37,7 @@ const BondComponent = (props) => {
     const [spartaAllocation, setSpartaAllocation] = useState("")
     const [spartaEstimatedAllocation, setSpartaEstimatedAllocation] = useState("")
     const [poolTokenDepth, setPoolTokenDepth] = useState('')
+    const [enoughSpartaAlloc, setEnoughSpartaAlloc] = useState('')
 
     const [userData, setUserData] = useState({
         'address': SPARTA_ADDR,
@@ -111,6 +112,8 @@ const BondComponent = (props) => {
         setClaimableLPBondv3(bondedLPBondv3)
         setBondv2Member(bondv2MemberDetails)
         setBondv3Member(bondv3MemberDetails)
+        if (bn(allocation).comparedTo(bn(convertToWei(10))) === -1) {setEnoughSpartaAlloc(false)}
+        else {setEnoughSpartaAlloc(true)}
     }
 
     const claimOldLP = async () => {
@@ -604,9 +607,13 @@ const BondComponent = (props) => {
                                         <li>The equivalent purchasing power in SPARTA is minted with both assets added symmetrically to the {userData.symbol}:SPARTA liquidity pool.</li>
                                         <li>LP tokens will be issued as usual and vested to you over a 12 month period.</li>
                                     </CardSubtitle>
-                                    
+
                                     <Col sm="10" md="6">
-                                    <p><strong>{formatAllUnits(convertFromWei(spartaAllocation))}</strong>  Remaining Sparta Allocation.</p>
+                                    
+                                    <p>
+                                        <strong>{enoughSpartaAlloc === false ? 'No' : formatAllUnits(convertFromWei(spartaAllocation))}</strong> Remaining Sparta Allocation.<br/>
+                                        {enoughSpartaAlloc === false && 'Visit DAO proposals to mint more SPARTA allocations for Bond+Mint'}
+                                    </p>
                                         <div><Progress color="info" value={(9998862.4 - convertFromWei(spartaAllocation))*100/9998862.4} /></div>
                                         <br/>
                                             <div className="mb-3">
@@ -657,7 +664,7 @@ const BondComponent = (props) => {
                                         <br />
                                         <Row>
                                             <Col xs={12}>
-                                                {approvalToken && hoursSince(memberBondv3.lastBlockTime) > 3 && memberBondv3.isMember &&
+                                                {approvalToken && hoursSince(memberBondv3.lastBlockTime) > 3 && memberBondv3.isMember && enoughSpartaAlloc === true &&
                                                     <div className='text-center'>
                                                         <button type="button" className="btn btn-primary btn-lg waves-effect waves-light" onClick={toggleClaim}>
                                                             <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens First!
@@ -671,7 +678,7 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                             <Col xs={12}>
-                                                {!approvalToken &&
+                                                {!approvalToken && enoughSpartaAlloc === true &&
                                                     <button color="success" type="button" className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={unlockToken}>
                                                         <i className="bx bx-log-in-circle font-size-20 align-middle mr-2" /> Approve {userData.symbol}
                                                         {loadingApproval &&
@@ -681,7 +688,7 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                             <Col xs={12}>
-                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) === -1 &&
+                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) === -1 && enoughSpartaAlloc === true && enoughSpartaAlloc === true &&
                                                     <div className='text-center'>
                                                         <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
                                                             <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Not Enough {userData.symbol} in Wallet!
@@ -690,7 +697,7 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                             <Col xs={12}>
-                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) >= 0 && (bn(poolTokenDepth).div(5)).comparedTo(bn(userData.input)) === -1 &&
+                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) >= 0 && (bn(poolTokenDepth).div(5)).comparedTo(bn(userData.input)) === -1 && enoughSpartaAlloc === true &&
                                                     <div className='text-center'>
                                                         <button className="btn btn-danger btn-lg btn-block waves-effect waves-light">
                                                             <i className="bx bx-error-circle font-size-20 align-middle mr-2" /> Bond Too High!
@@ -702,7 +709,7 @@ const BondComponent = (props) => {
                                                 }
                                             </Col>
                                             <Col xs={12}>
-                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) >= 0 && (bn(poolTokenDepth).div(5)).comparedTo(bn(userData.input)) >= 0 &&
+                                                {approvalToken && bn(userData.balance).comparedTo(bn(userData.input)) >= 0 && (bn(poolTokenDepth).div(5)).comparedTo(bn(userData.input)) >= 0 && enoughSpartaAlloc === true &&
                                                     <div className="btn btn-success btn-lg btn-block waves-effect waves-light" onClick={() => {
                                                         getEstLiqTokens();
                                                         toggleLock();
@@ -711,6 +718,13 @@ const BondComponent = (props) => {
                                                         {startTx && !endTx &&
                                                             <i className="bx bx-spin bx-loader ml-1" />
                                                         }
+                                                    </div>
+                                                }
+                                            </Col>
+                                            <Col xs={12}>
+                                                {enoughSpartaAlloc === false &&
+                                                    <div className="btn btn-danger btn-lg btn-block">
+                                                        No Allocation Remaining
                                                     </div>
                                                 }
                                             </Col>
