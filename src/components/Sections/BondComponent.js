@@ -259,9 +259,9 @@ const BondComponent = (props) => {
     }
 
     const toggleClaim = () => {
-        if(convertFromWei(claimableLPBondv2) > 0 && !memberBondv3.isMember){
+        if(bn(claimableLPBondv2).comparedTo(0) === 1 && !memberBondv3.isMember){
             claimOldLP();
-        }else if(convertFromWei(claimableLPBondv2) > 0){
+        }else if(bn(claimableLPBondv2).comparedTo(0) === 1){
             toggleNewClaim();
             setShowClaimModal(!showClaimModal)
         }else {
@@ -771,18 +771,18 @@ const BondComponent = (props) => {
                                             <Button color="secondary" onClick={toggleLock}>Cancel</Button>
                                         </ModalFooter>
                                     </Modal>
-                                    {convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2)) > 0 && 
+                                    {(bn(claimableLPBondv3).plus(bn(claimableLPBondv2))).comparedTo(0) === 1 && 
                                     <Modal isOpen={showClaimModal} toggle={toggleClaim}>
                                         <ModalHeader toggle={toggleClaim}>Claim Locked LP Tokens </ModalHeader>
                                         
                                         <ModalBody>
-                                        {convertFromWei(claimableLPBondv3) > 0 && 
+                                        {bn(claimableLPBondv3).comparedTo(0) === 1 && 
                                         <div>
                                         <h6>For your convenience, LP Tokens will be locked into the DAO to earn more SPARTA for you</h6> 
                                         </div>
                                         }
                                         
-                                            {convertFromWei(claimableLPBondv2) > 0 && 
+                                            {bn(claimableLPBondv2).comparedTo(0) === 1 && 
                                             <div>
                                                 <h6>Early Bonder Found!</h6>
                                                 <li><strong>Alert!</strong> You will need to confirm two transactions!</li>
@@ -795,7 +795,7 @@ const BondComponent = (props) => {
                                         <ModalFooter>
                                             {showClaimNewModal && 
                                             <Button color="primary" onClick={() => {
-                                                if(convertFromWei(claimableLPBondv3) > 0){
+                                                if(bn(claimableLPBondv3).comparedTo(0) === 1){
                                                     toggleNewClaim()
                                                 }else{
                                                     toggleClaim()
