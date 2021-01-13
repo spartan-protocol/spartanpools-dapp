@@ -277,10 +277,13 @@ export const getNetworkData = async (poolsData) => {
 // get global pools data stats (txns, APY etc)
 export const getGlobalData = async ()  => {
     console.log('start getGlobalData')
-    var contract = getUtilsContract()
-    let globalData = await contract.methods.getGlobalDetails().call()
-    //console.log({globalData})
-    return globalData
+    var contract = getRouterContract()
+    contract = contract.methods
+    let data = await contract.totalPooled().call()
+    //await contract.totalVolume().call()
+    //await contract.totalFees().call()
+    //console.log(data)
+    return data
 }
 
 // Get Wallet Data (Inital load; just SPARTA & BNB)
