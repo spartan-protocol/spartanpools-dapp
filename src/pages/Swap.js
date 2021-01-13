@@ -315,6 +315,7 @@ const NewSwap = (props) => {
         const estGasPrice = await getGasPrice()
         let contract = getRouterContract()
         console.log('Estimating gas', buyData.input, estGasPrice)
+        console.log(buyData.input, SPARTA_ADDR, poolURL)
         await contract.methods.swap(buyData.input, SPARTA_ADDR, poolURL).estimateGas({
             from: context.account,
             gasPrice: estGasPrice,
