@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, explorerURL, getAssets, getBondv3Contract, getBondProposals } from '../client/web3'
+import { BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, explorerURL, getAssets, getBondv3Contract, getBondProposals, SPARTA_ADDR } from '../client/web3'
 import { formatAllUnits, convertFromWei, bn, getAddressShort } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
@@ -33,6 +33,9 @@ const DAOProposals = (props) => {
         emitting: '',
         bondRemaining: 'XXX',
     })
+    const [proposalArray, setProposalArray] = useState('')
+    const [proposalArrayLoading, setProposalArrayLoading] = useState('')
+    const [proposalArrayComplete, setProposalArrayComplete] = useState(false)
     //const [paramArray, setParamArray] = useState({
     //    emissionCurve: 'XXX',
     //    eraDuration: 'XXX',
@@ -40,22 +43,16 @@ const DAOProposals = (props) => {
     //    erasToEarn: 'XXX',
     //})
     const getData = async () => {
-        // (proposalArray) PROPOSALS
-        context.setContext({'proposalArrayLoading': true})
-        let proposalArray = await getBondProposals()
-        context.setContext({'proposalArray': proposalArray})
-        context.setContext({'proposalArrayComplete': true})
-        context.setContext({'proposalArrayLoading': false})
-        console.log(proposalArray)
+        setProposalArray(await getProposalArray())
         // get current param values from contracts
         let spartaContract = getSpartaContract()
         spartaContract = spartaContract.methods
         let daoContract = getDaoContract()
         daoContract = daoContract.methods
         let data = await Promise.all([
-            spartaContract.getAdjustedClaimRate(BONDv3_ADDR).call(), spartaContract.emitting().call(), 
-            spartaContract.balanceOf(BONDv3_ADDR).call(), spartaContract.emissionCurve().call(), 
-            daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(), 
+            spartaContract.getAdjustedClaimRate(BONDv3_ADDR).call(), spartaContract.emitting().call(),
+            spartaContract.balanceOf(BONDv3_ADDR).call(), spartaContract.emissionCurve().call(),
+            daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(),
             daoContract.erasToEarn().call(), daoContract.totalWeight().call()
         ])
         setBondBurnRate(data[0])
@@ -70,6 +67,17 @@ const DAOProposals = (props) => {
         //    erasToEarn: data[6],
         //})
         setWholeDAOWeight(data[7])
+    }
+
+    const getProposalArray = async () => {
+        // (proposalArray) PROPOSALS
+        setProposalArrayComplete(false)
+        setProposalArrayLoading(true)
+        let data = await getBondProposals()
+        setProposalArrayLoading(false)
+        setProposalArrayComplete(true)
+        console.log(data)
+        return data
     }
 
     // SIMPLE ACTION PROPOSAL
@@ -110,7 +118,7 @@ const DAOProposals = (props) => {
     }
     const [actionExisting, setActionExisting] = useState(false)
     const checkActionExisting = (directType) => {
-        let existing = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        let existing = proposalArray.filter(i => i.type === directType && i.finalised === false)
         existing = existing.sort((a, b) => +b.votes - +a.votes)
         setActionExisting(existing)
     }
@@ -230,8 +238,8 @@ const DAOProposals = (props) => {
         console.log(address, typeFormatted)
         await contract.methods.newAddressProposal(address, typeFormatted).send({ from: context.account })
         await getData()
-        if (typeFormatted === 'LIST_BOND') {checkListBondExisting(typeFormatted)}
-        if (typeFormatted === 'DELIST_BOND') {checkDelistBondExisting(typeFormatted)}
+        if (typeFormatted === 'LIST') {checkListBondExisting(typeFormatted)}
+        if (typeFormatted === 'DELIST') {checkDelistBondExisting(typeFormatted)}
     }
     //const [addressExisting, setAddressExisting] = useState(false)
     const [bondAddressExisting, setBondAddressExisting] = useState(false)
@@ -242,11 +250,13 @@ const DAOProposals = (props) => {
     //}
     const checkListBondExisting = async (directType) => {
         let existing = []
-        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', BONDv2_ADDR, BONDv3_ADDR]
-        let allListed = await getAssets()
         let contract = getBondv3Contract()
-        let allBond = await contract.methods.allListedAssets().call()
-        let listBondProposals = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', BONDv2_ADDR, BONDv3_ADDR, SPARTA_ADDR]
+        let data = await Promise.all([await getAssets(), contract.methods.allListedAssets().call(), getProposalArray()])
+        let allListed = data[0]
+        let allBond = data[1]
+        let propArray = data[2]
+        let listBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
         for (let i = 0; i < allListed.length + 1; i++) {
             let address = allListed[i]
             if (address) {
@@ -258,7 +268,7 @@ const DAOProposals = (props) => {
                             'address': address,
                             'votes': proposal[0] ? proposal[0].votes : '0',
                             'finalising': proposal[0] ? proposal[0].finalising : false,
-                            'quorum': proposal[0] ? proposal[0].quorum : false,
+                            'majority': proposal[0] ? proposal[0].majority : false,
                         })
                     }
                 }
@@ -271,8 +281,10 @@ const DAOProposals = (props) => {
     const checkDelistBondExisting = async (directType) => {
         let existing = []
         let contract = getBondv3Contract()
-        let allBond = await contract.methods.allListedAssets().call()
-        let delistBondProposals = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
+        let data = await Promise.all([contract.methods.allListedAssets().call(), getProposalArray()])
+        let allBond = data[0]
+        let propArray = data[1]
+        let delistBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
         for (let i = 0; i < allBond.length + 1; i++) {
             let address = allBond[i]
             if (address) {
@@ -282,7 +294,7 @@ const DAOProposals = (props) => {
                     'address': address,
                     'votes': proposal[0] ? proposal[0].votes : '0',
                     'finalising': proposal[0] ? proposal[0].finalising : false,
-                    'quorum': proposal[0] ? proposal[0].quorum : false,
+                    'majority': proposal[0] ? proposal[0].majority : false,
                 })
             }
         }
@@ -380,7 +392,7 @@ const DAOProposals = (props) => {
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("DAO")}/>
 
-                    {context.proposalArray &&
+                    {proposalArray &&
                         <>
                             <Row className='text-center'>
 
@@ -394,14 +406,14 @@ const DAOProposals = (props) => {
                                         </CardBody>
                                         <CardFooter>
                                             <button className="btn btn-primary m-1" onClick={() => {
-                                                checkListBondExisting('LIST_BOND')
+                                                checkListBondExisting('LIST')
                                                 toggleLISTBONDModal()
                                             }}>
                                                 <i className="bx bx-list-plus bx-xs align-middle"/> List
                                             </button>
 
                                             <button className="btn btn-primary m-1" onClick={() => {
-                                                checkDelistBondExisting('DELIST_BOND')
+                                                checkDelistBondExisting('DELIST')
                                                 toggleDELISTBONDModal()
                                             }}>
                                                 <i className="bx bx-list-minus bx-xs align-middle"/> Delist
@@ -439,18 +451,26 @@ const DAOProposals = (props) => {
                                                                     <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
-                                                                        {i.id !== 'N/A' && i.quorum !== true &&
-                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={()=>{voteProposal(i.id)}}>
+                                                                        {i.id !== '-' && i.majority !== true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={async () => {
+                                                                                await voteProposal(i.id)
+                                                                                checkListBondExisting('LIST')
+                                                                            }}>
                                                                                 <i className="bx bx-like align-middle "/> Vote 
                                                                             </button>
                                                                         }
-                                                                        {i.id !== 'N/A' && i.quorum === true &&
-                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                        {i.id !== '-' && i.majority === true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={async () => {
+                                                                                await finaliseProposal(i.id)
+                                                                                checkListBondExisting('LIST')
+                                                                            }}>
                                                                                 <i className="bx bxs-zap align-middle" /> Finalise 
                                                                             </button>
                                                                         }
-                                                                        {i.id === 'N/A' &&
-                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={()=>{proposeAddress('LIST_BOND', i.address)}}>
+                                                                        {i.id === '-' &&
+                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={async () => {
+                                                                                await proposeAddress('LIST', i.address)
+                                                                            }}>
                                                                                 <i className="bx bx-pin align-middle"/> Propose 
                                                                             </button>
                                                                         }
@@ -493,18 +513,26 @@ const DAOProposals = (props) => {
                                                                     <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
-                                                                        {i.id !== 'N/A' && i.quorum !== true &&
-                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={()=>{voteProposal(i.id)}}>
+                                                                        {i.id !== '-' && i.majority !== true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-primary mt-2 mx-auto p-1" onClick={async () => {
+                                                                                await voteProposal(i.id)
+                                                                                checkDelistBondExisting('DELIST')
+                                                                            }}>
                                                                                 <i className="bx bx-like align-middle "/> Vote 
                                                                             </button>
                                                                         }
-                                                                        {i.id !== 'N/A' && i.quorum === true &&
-                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={()=>{finaliseProposal(i.id)}}>
+                                                                        {i.id !== '-' && i.majority === true &&
+                                                                            <button style={{width:'100px'}} className="btn btn-success mt-2 mx-auto p-1" onClick={async () => {
+                                                                                await finaliseProposal(i.id)
+                                                                                checkDelistBondExisting('DELIST')
+                                                                            }}>
                                                                                 <i className="bx bxs-zap align-middle" /> Finalise 
                                                                             </button>
                                                                         }
-                                                                        {i.id === 'N/A' &&
-                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={()=>{proposeAddress('DELIST_BOND', i.address)}}>
+                                                                        {i.id === '-' &&
+                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={()=>{
+                                                                                proposeAddress('DELIST', i.address)
+                                                                            }}>
                                                                                 <i className="bx bx-pin align-middle"/> Propose 
                                                                             </button>
                                                                         }
@@ -560,9 +588,11 @@ const DAOProposals = (props) => {
                                                     <i className="bx bx-like align-middle"/> Vote for Proposal 
                                                 </button>
                                             }
+                                            {actionExisting.length <= 0 &&
                                                 <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
                                                     <i className="bx bx-pin align-middle"/> Propose Increase
                                                 </button>
+                                            }
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>
                                                 <i className="bx bx-window-close align-middle"/> Close 
                                             </button>
@@ -1590,7 +1620,7 @@ const DAOProposals = (props) => {
 
                                 <Col xs='12' className='mb-2'><h3>PENDING PROPOSALS</h3></Col>
 
-                                {context.proposalArray.filter(x => x.votes > 0).filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                {proposalArray.filter(x => x.votes > 0).filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                     <ProposalItem 
                                         key={c.id}
                                         id={c.id}
@@ -1613,7 +1643,7 @@ const DAOProposals = (props) => {
                                 )}
 
                                 <Col xs='12' className='mb-2'>
-                                    {context.proposalArrayLoading !== true && context.proposalArrayComplete === true &&
+                                    {proposalArrayLoading !== true && proposalArrayComplete === true &&
                                         <div className="text-center m-2">All proposals loaded</div>
                                     }
 
@@ -1629,7 +1659,7 @@ const DAOProposals = (props) => {
                             </Row>
                         </>
                     }
-                    {!context.proposalArray &&
+                    {!proposalArray &&
                         loader
                     }
                 </Container>

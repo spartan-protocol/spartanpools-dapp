@@ -219,7 +219,7 @@ export const getBondProposal = async (pid) => {
     let data = await Promise.all([
         contract.mapPID_type(pid).call(), contract.mapPID_votes(pid).call(), contract.mapPID_timeStart(pid).call(), 
         contract.mapPID_finalising(pid).call(), contract.mapPID_finalised(pid).call(), contract.mapPID_address(pid).call(),
-        contract.hasMajority(pid).call(), contract.hasMinority(pid).call(), contract.hasQuorum(pid).call()
+        contract.hasMajority(pid).call(), contract.hasMinority(pid).call(), //contract.hasQuorum(pid).call() //(Quorum doesnt work???)
     ])
     let proposalData = {
         'id': pid,
@@ -230,8 +230,8 @@ export const getBondProposal = async (pid) => {
         'finalised': data[4],
         'proposedAddress': data[5],
         'majority': data[6],
-        'quorum': data[7],
-        'minority': data[8],
+        'minority': data[7],
+        //'quorum': data[8],  //(Quorum doesnt work???)
     }
     return proposalData
 }
