@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, explorerURL, getAssets, getBondv3Contract } from '../client/web3'
+import { BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, getProposals, explorerURL, getAssets, getBondv3Contract, getBondProposals } from '../client/web3'
 import { formatAllUnits, convertFromWei, bn, getAddressShort } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
@@ -42,7 +42,7 @@ const DAOProposals = (props) => {
     const getData = async () => {
         // (proposalArray) PROPOSALS
         context.setContext({'proposalArrayLoading': true})
-        let proposalArray = await getProposals()
+        let proposalArray = await getBondProposals()
         context.setContext({'proposalArray': proposalArray})
         context.setContext({'proposalArrayComplete': true})
         context.setContext({'proposalArrayLoading': false})
@@ -102,7 +102,7 @@ const DAOProposals = (props) => {
         //    typeFormatted = getActionIndex()
         }
         else {typeFormatted = directType}
-        let contract = getDaoContract()
+        let contract = getBondv3Contract()
         console.log(typeFormatted)
         await contract.methods.newActionProposal(typeFormatted).send({ from: context.account })
         await getData()
@@ -226,7 +226,7 @@ const DAOProposals = (props) => {
         //    typeFormatted = getAddressIndex()
         }
         else {typeFormatted = directType}
-        let contract = getDaoContract()
+        let contract = getBondv3Contract()
         console.log(address, typeFormatted)
         await contract.methods.newAddressProposal(address, typeFormatted).send({ from: context.account })
         await getData()
@@ -318,7 +318,7 @@ const DAOProposals = (props) => {
     const voteProposal = async (proposalID) => {
         // Vote for a proposal
         // function voteProposal(uint proposalID)
-        let contract = getDaoContract()
+        let contract = getBondv3Contract()
         console.log(proposalID)
         await contract.methods.voteProposal(proposalID).send({ from: context.account })
         getData()
@@ -337,7 +337,7 @@ const DAOProposals = (props) => {
     const finaliseProposal = async (proposalID) => {
         // Finalise Proposal and call internal proposal ID function
         // function finaliseProposal(uint proposalID)
-        let contract = getDaoContract()
+        let contract = getBondv3Contract()
         console.log(proposalID)
         await contract.methods.finaliseProposal(proposalID).send({ from: context.account })
         getData()
@@ -560,11 +560,9 @@ const DAOProposals = (props) => {
                                                     <i className="bx bx-like align-middle"/> Vote for Proposal 
                                                 </button>
                                             }
-                                            {actionExisting.length <= 0 &&
                                                 <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
                                                     <i className="bx bx-pin align-middle"/> Propose Increase
                                                 </button>
-                                            }
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>
                                                 <i className="bx bx-window-close align-middle"/> Close 
                                             </button>

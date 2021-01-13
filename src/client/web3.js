@@ -12,7 +12,7 @@ import DAO from '../artifacts/Dao.json'
 import Bondv2 from '../artifacts/BondV2.json'
 import Bondv3 from '../artifacts/BondV3.json'
 
-const net = '';
+const net = 'testnet';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
 export const WBNB_ADDR = net === 'testnet' ? '0x27c6487C9B115c184Bb04A1Cf549b670a22D2870' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
@@ -191,6 +191,51 @@ export const getListedPools = async () => {
     return poolArray
 }
 
+// Get BOND Proposals Count
+export const getBondProposalCount = async () => {
+    console.log('start getproposalcount')
+    var contract = getBondv3Contract()
+    let proposalCount = await contract.methods.proposalCount().call()
+    //console.log(proposalCount)
+    return proposalCount
+}
+
+// Get BOND Proposal Array
+export const getBondProposals = async () => {
+    console.log('start getproposals')
+    let proposalCount = await getBondProposalCount()
+    let proposalsData = []
+    for (let i = 0; i < +proposalCount + 1; i++) {
+        proposalsData.push(await getBondProposal(i))
+    }
+    //console.log(proposalsData)
+    return proposalsData
+}
+
+// Get Each BOND Proposal
+export const getBondProposal = async (pid) => {
+    var contract = getBondv3Contract()
+    contract = contract.methods
+    let data = await Promise.all([
+        contract.mapPID_type(pid).call(), contract.mapPID_votes(pid).call(), contract.mapPID_timeStart(pid).call(), 
+        contract.mapPID_finalising(pid).call(), contract.mapPID_finalised(pid).call(), contract.mapPID_address(pid).call(),
+        contract.hasMajority(pid).call(), contract.hasMinority(pid).call(), contract.hasQuorum(pid).call()
+    ])
+    let proposalData = {
+        'id': pid,
+        'type': data[0],
+        'votes': data[1],
+        'timeStart': data[2],
+        'finalising': data[3],
+        'finalised': data[4],
+        'proposedAddress': data[5],
+        'majority': data[6],
+        'quorum': data[7],
+        'minority': data[8],
+    }
+    return proposalData
+}
+
 // Get Proposals Count
 export const getProposalCount = async () => {
     console.log('start getproposalcount')
@@ -220,7 +265,7 @@ export const getProposal = async (pid) => {
     let majority = data[1]
     let minority = data[2]
     let quorum = data[3]
-    let poolData = {
+    let proposalData = {
         'id': proposalDetails.id,
         'type': proposalDetails.proposalType,
         'votes': proposalDetails.votes,
@@ -235,7 +280,7 @@ export const getProposal = async (pid) => {
         'quorum': quorum,
         'minority': minority,
     }
-    return poolData
+    return proposalData
 }
 
 // Get Pools Table Data (initial load)
