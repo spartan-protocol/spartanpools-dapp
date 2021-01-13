@@ -69,7 +69,7 @@ const Header = (props) => {
                   {context.spartanPrice &&
                     <UncontrolledDropdown className='d-none d-sm-inline mr-3 h-100'>
                       <DropdownToggle className='bg-light border-0' caret>
-                        <img src='./logo192.png' alt="" height='28px' /><h5 className='d-inline block ml-2 align-middle'>${formatGranularUnits(context.spartanPrice)}</h5>
+                        <img src='/logo192.png' alt="" height='28px' /><h5 className='d-inline block ml-2 align-middle'>${formatGranularUnits(context.spartanPrice)}</h5>
                       </DropdownToggle>
                       <DropdownMenu className='mt-3'>
                         <DropdownItem disabled><i className='bx bx-coin text-success mr-1' />Total Supply: {formatAllUnits(convertFromWei(totalSupply))}</DropdownItem>

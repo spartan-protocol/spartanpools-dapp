@@ -19,7 +19,7 @@ export const WBNB_ADDR = net === 'testnet' ? '0x27c6487C9B115c184Bb04A1Cf549b670
 export const SPARTA_ADDR = net === 'testnet' ? '0xb58a43D2D9809ff4393193de536F242fefb03613' : '0xE4Ae305ebE1AbE663f261Bc00534067C80ad677C'
 export const UTILS_ADDR = net === 'testnet' ? '0x0a30aF25e652354832Ec5695981F2ce8b594e8B3' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
 export const DAO_ADDR = net === 'testnet' ? '0x1b83a813045165c81d84b9f5d6916067b57FF9C0' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
-export const ROUTER_ADDR = net === 'testnet' ? '0x111589F4cE6f10E72038F1E4a19F7f19bF31Ee35' : '0xDbe936901aeed4718608D0574cbAAb01828AE016'
+export const ROUTER_ADDR = net === 'testnet' ? '0x111589F4cE6f10E72038F1E4a19F7f19bF31Ee35' : '0x9dB88952380c0E35B95e7047E5114971dFf20D07'
 export const BONDv2_ADDR = net === 'testnet' ? '0x7e44b5461A50adB15329895b80866275192a54f6' : '0xE6844821B03828Fd4067167Bc258FA1EEFD1cCdf'
 export const BONDv3_ADDR = net === 'testnet' ? '0xa11D0a9F919EDc6D72aF8F90D56735cAd0EBE836' : '0xf2EbA4b92fAFD47a6403d24a567b38C07D7A5b43'
 
@@ -277,10 +277,13 @@ export const getNetworkData = async (poolsData) => {
 // get global pools data stats (txns, APY etc)
 export const getGlobalData = async ()  => {
     console.log('start getGlobalData')
-    var contract = getUtilsContract()
-    let globalData = await contract.methods.getGlobalDetails().call()
-    //console.log({globalData})
-    return globalData
+    var contract = getRouterContract()
+    contract = contract.methods
+    let data = await contract.totalPooled().call()
+    //await contract.totalVolume().call()
+    //await contract.totalFees().call()
+    //console.log(data)
+    return data
 }
 
 // Get Wallet Data (Inital load; just SPARTA & BNB)
