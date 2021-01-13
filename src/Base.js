@@ -37,6 +37,8 @@ const Base = () => {
         //setNotifyType(type)
     }
 
+    const tempDisable = true
+
     return (
         <>
         <Router>
@@ -54,21 +56,30 @@ const Base = () => {
             */}
             <div className="wrapper">
                 <ScrollToTop />
-                <Switch>
-                    <Route path="/" exact component={Pools}/>
-                    <Route path="/pools"><Pools/></Route>
-                    {/* <Route path="/share" exact component={Shares}/>*/}
-                    <Route path="/pool/stake" exact component={AddLiquidity}/>
-                    <Route path="/pool/swap" exact component={Swap}/>
-                    <Route path="/pool/create" exact component={CreatePool}/>
-                    <Route path="/earn"><Earn/></Route>
-                    <Route path="/bond"><Bond/></Route>
-                    <Route path="/dao" exact component={Dao} />
+                {tempDisable === false &&
+                    <Switch>
+                        <Route path="/" exact component={Pools}/>
+                        <Route path="/pools"><Pools/></Route>
+                        {/* <Route path="/share" exact component={Shares}/>*/}
+                        <Route path="/pool/stake" exact component={AddLiquidity}/>
+                        <Route path="/pool/swap" exact component={Swap}/>
+                        <Route path="/pool/create" exact component={CreatePool}/>
+                        <Route path="/earn"><Earn/></Route>
+                        <Route path="/bond"><Bond/></Route>
+                        <Route path="/dao" exact component={Dao} />
 
-                    {/*Help*/}
-                    <Route path="/start" exact component={PagesStarter}/>
-                    <Route path="/faq" exact component={PagesFaqs}/>
-                </Switch>
+                        {/*Help*/}
+                        <Route path="/start" exact component={PagesStarter}/>
+                        <Route path="/faq" exact component={PagesFaqs}/>
+                    </Switch>
+                }
+                {tempDisable === true &&
+                <>
+                    <div className='mt-5'>...</div>
+                    <div className='mt-5'>...</div>
+                    <h3 className='mt-5 text-center'>DApp temporarily disabled for smart contract upgrades</h3>
+                </>
+                }
             </div>
         </Router>
         </>
