@@ -95,7 +95,7 @@ export const PoolsPaneSide = (props) => {
                 </Row>
                 */}
                 <Row>
-                    <Col xs="12" md="6" lg="6" xl="3">
+                    <Col xs="12" md="6" lg="6">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4">
@@ -125,7 +125,7 @@ export const PoolsPaneSide = (props) => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col xs="12" md="6" lg="6" xl="3">
+                    <Col xs="12" md="6" lg="6">
                         <Card>
                             <CardBody>
                                 <h5 className="text-muted mb-4"><i
