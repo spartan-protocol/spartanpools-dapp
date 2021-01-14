@@ -18,7 +18,7 @@ import { Row, Col, Container, UncontrolledDropdown, DropdownToggle, DropdownMenu
 import AddressConn from '../Common/AddressConn';
 import ThemeSwitch from "../Common/ThemeSwitch";
 import { convertFromWei, formatAllUnits, formatGranularUnits, bn } from "../../utils";
-import { getSpartaContract, SPARTA_ADDR, UTILS_ADDR, DAO_ADDR, ROUTER_ADDR, BONDv2_ADDR, BONDv3_ADDR, getBondv3Contract, getRouterContract, getDaoContract, getTokenContract } from "../../client/web3";
+import { getSpartaContract, SPARTA_ADDR, UTILS_ADDR, DAO_ADDR, ROUTER_ADDR, BONDv2_ADDR, BONDv3_ADDR, getTokenContract } from "../../client/web3";
 
 const Header = (props) => {
 
