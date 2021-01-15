@@ -7,7 +7,8 @@ import {withNamespaces} from "react-i18next";
 import {
     BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, explorerURL, 
     getBondv3Contract, getBondProposals, SPARTA_ADDR, getPoolsData, 
-    checkArrayComplete, getNextPoolsData, getListedTokens, BNB_ADDR, WBNB_ADDR
+    checkArrayComplete, getNextPoolsData, getListedTokens, BNB_ADDR, WBNB_ADDR,
+    updateWalletData, getTokenContract,
 } from '../client/web3'
 
 import { formatAllUnits, convertFromWei, bn, getAddressShort } from '../utils'
@@ -26,9 +27,11 @@ const DAOProposals = (props) => {
     const context = useContext(Context)
 
     useEffect(() => {
-        getData()
+        if (context.account && context.account > 0) {
+            getData()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [context.account])
 
     const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
 
@@ -42,6 +45,7 @@ const DAOProposals = (props) => {
     const [proposalArray, setProposalArray] = useState('')
     const [proposalArrayLoading, setProposalArrayLoading] = useState('')
     const [proposalArrayComplete, setProposalArrayComplete] = useState(false)
+    const [spartaApproved, setSpartaApproved] = useState(false)
     //const [paramArray, setParamArray] = useState({
     //    emissionCurve: 'XXX',
     //    eraDuration: 'XXX',
@@ -76,6 +80,7 @@ const DAOProposals = (props) => {
         //})
         setWholeDAOWeight(data[7])
         setBondBalance(data[8])
+        setSpartaApproved(await checkApproval(SPARTA_ADDR))
     }
 
     const refreshPoolsData = async () => {
@@ -401,6 +406,40 @@ const DAOProposals = (props) => {
         refreshPoolsData()
     }
 
+    const approve = async () => {
+        const contract = getSpartaContract()
+        const supply = await contract.methods.totalSupply().call()
+        console.log('Approving SPARTA', BONDv3_ADDR, supply)
+        await contract.methods.approve(BONDv3_ADDR, supply).send({
+            from: context.account,
+            gasPrice: '',
+            gas: ''
+        })
+    
+        let data = await checkApproval(SPARTA_ADDR)
+        setSpartaApproved(data)
+
+        if (context.walletDataLoading !== true) {
+            // Refresh BNB balance
+            context.setContext({'walletDataLoading': true})
+            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+            context.setContext({'walletData': walletData})
+            context.setContext({'walletDataLoading': false})
+        }
+    }
+
+    const checkApproval = async (address) => {
+        const contract = getTokenContract(address)
+        console.log(context.account)
+        const approval = await contract.methods.allowance(context.account, BONDv3_ADDR).call()
+        console.log(approval)
+        if (+approval > 0) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     const [showFeeModal, setShowFeeModal] = useState(false)
     const toggleFeeModal = () => setShowFeeModal(!showFeeModal)
     const [proposalAction, setProposalAction] = useState('')
@@ -456,16 +495,21 @@ const DAOProposals = (props) => {
                             All proposal fees are sent to the DAO address which allows for more 'grant' & 'harvest' funds!
                         </ModalBody>
                         <ModalFooter>
-                            <button className="btn btn-success mt-2 mx-auto" onClick={runFeeModal}>
-                                <i className="bx bx-layer-plus align-middle"/> Continue 
-                            </button>
+                            {spartaApproved !== true &&
+                                <button className="btn btn-warning mt-2 mx-auto" onClick={approve}>
+                                    <i className="bx bx-send align-middle"/> Approve SPARTA 
+                                </button>
+                            }
+                            {spartaApproved === true &&
+                                <button className="btn btn-success mt-2 mx-auto" onClick={runFeeModal}>
+                                    <i className="bx bx-layer-plus align-middle"/> Continue 
+                                </button>
+                            }
                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleFeeModal}>
                                 <i className="bx bx-window-close align-middle"/> Close 
                             </button>
                         </ModalFooter>
                     </Modal>
-
-
 
                     {proposalArray &&
                         <>
