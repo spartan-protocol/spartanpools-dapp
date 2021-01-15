@@ -291,21 +291,24 @@ const DAOProposals = (props) => {
         setAddrListLoading(true)
         let existing = []
         let contract = getBondv3Contract()
-        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', BONDv2_ADDR, BONDv3_ADDR, SPARTA_ADDR, WBNB_ADDR, BNB_ADDR]
+        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', '0xE49b84771470A87F4D9544685ea0F0517933B2B4', BONDv2_ADDR, BONDv3_ADDR, SPARTA_ADDR, WBNB_ADDR, BNB_ADDR]
         let data = await Promise.all([getListedTokens(), getProposalArray()])
         let allListed = data[0]
         let propArray = data[1]
         let bondListed = ''
+        let symbol = ''
         let listBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
         for (let i = 0; i < allListed.length + 1; i++) {
             let address = allListed[i]
             if (address) {
                 if (blacklist.includes(address) === false) {
                     bondListed = await contract.methods.isListed(address).call()
+                    symbol = context.poolsData.filter(i => i.address === address)
                     if (bondListed === false) {
                         let proposal = listBondProposals.filter(i => i.proposedAddress === address)
                         if (existing.some(i => i.address === address) === false) {
                             existing.push({
+                                'symbol': symbol[0] ? symbol[0].symbol : '-',
                                 'id': proposal[0] ? proposal[0].id : '-',
                                 'address': address,
                                 'votes': proposal[0] ? proposal[0].votes : '0',
@@ -326,24 +329,30 @@ const DAOProposals = (props) => {
         setAddrListLoading(true)
         let existing = []
         let contract = getBondv3Contract()
+        let blacklist = [WBNB_ADDR, BNB_ADDR]
         let data = await Promise.all([contract.methods.allListedAssets().call(), getProposalArray()])
         let allBond = data[0]
         let propArray = data[1]
         let bondListed = ''
+        let symbol = ''
         let delistBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
         for (let i = 0; i < allBond.length + 1; i++) {
             let address = allBond[i]
             if (address) {
-                bondListed = await contract.methods.isListed(address).call()
-                if (bondListed === true) {
-                    let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
-                    existing.push({
-                        'id': proposal[0] ? proposal[0].id : '-',
-                        'address': address,
-                        'votes': proposal[0] ? proposal[0].votes : '0',
-                        'finalising': proposal[0] ? proposal[0].finalising : false,
-                        'majority': proposal[0] ? proposal[0].majority : false,
-                    })
+                if (blacklist.includes(address) === false) {
+                    bondListed = await contract.methods.isListed(address).call()
+                    symbol = context.poolsData.filter(i => i.address === address)
+                    if (bondListed === true) {
+                        let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
+                        existing.push({
+                            'symbol': symbol[0] ? symbol[0].symbol : '-',
+                            'id': proposal[0] ? proposal[0].id : '-',
+                            'address': address,
+                            'votes': proposal[0] ? proposal[0].votes : '0',
+                            'finalising': proposal[0] ? proposal[0].finalising : false,
+                            'majority': proposal[0] ? proposal[0].majority : false,
+                        })
+                    }
                 }
             }
         }
@@ -522,19 +531,27 @@ const DAOProposals = (props) => {
                                             <div className='w-100 m-1 p-1 bg-light rounded'>{simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader} </div>
                                         </CardBody>
                                         <CardFooter>
-                                            <button className="btn btn-primary m-1" onClick={() => {
-                                                checkListBondExisting('LIST')
-                                                toggleLISTBONDModal()
-                                            }}>
-                                                <i className="bx bx-list-plus bx-xs align-middle"/> List
-                                            </button>
+                                            {context.poolsDataComplete === true &&
+                                                <button className="btn btn-primary m-1" onClick={() => {
+                                                    checkListBondExisting('LIST')
+                                                    toggleLISTBONDModal()
+                                                }}>
+                                                    <i className="bx bx-list-plus bx-xs align-middle"/> List
+                                                </button>
+                                            }
 
-                                            <button className="btn btn-primary m-1" onClick={() => {
-                                                checkDelistBondExisting('DELIST')
-                                                toggleDELISTBONDModal()
-                                            }}>
-                                                <i className="bx bx-list-minus bx-xs align-middle"/> Delist
-                                            </button>
+                                            {context.poolsDataComplete === true &&
+                                                <button className="btn btn-primary m-1" onClick={() => {
+                                                    checkDelistBondExisting('DELIST')
+                                                    toggleDELISTBONDModal()
+                                                }}>
+                                                    <i className="bx bx-list-minus bx-xs align-middle"/> Delist
+                                                </button>
+                                            }
+
+                                            {context.poolsDataComplete !== true &&
+                                                loader
+                                            }
 
                                             <button className="btn btn-primary m-1" onClick={() => {
                                                 checkActionExisting('MINT')
@@ -552,12 +569,13 @@ const DAOProposals = (props) => {
                                             List new assets for BOND+MINT<br/>
                                             All new proposals will charge a 100 SPARTA fee!<br/>
                                             The fee will go to the DAO address for 'harvest' & 'grants' 
-                                            {bondAddressExisting && addrListLoading === false &&
+                                            {addrListLoading === false && bondAddressExisting && addrListLoading === false &&
                                                 <>
                                                     <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
                                                         <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
                                                             <tr>
                                                                 <th>ID</th>
+                                                                <th>Symbol</th>
                                                                 <th>Address</th>
                                                                 <th>Votes</th>
                                                                 <th>Action</th>
@@ -567,6 +585,7 @@ const DAOProposals = (props) => {
                                                             {bondAddressExisting.map(i => 
                                                                 <tr key={i.address}>
                                                                     <td>{i.id}</td>
+                                                                    <td>{i.symbol}</td>
                                                                     <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
@@ -628,6 +647,7 @@ const DAOProposals = (props) => {
                                                         <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
                                                             <tr>
                                                                 <th>ID</th>
+                                                                <th>Symbol</th>
                                                                 <th>Address</th>
                                                                 <th>Votes</th>
                                                                 <th>Action</th>
@@ -637,6 +657,7 @@ const DAOProposals = (props) => {
                                                             {bondAddressExisting.map(i => 
                                                                 <tr key={i.address}>
                                                                     <td>{i.id}</td>
+                                                                    <td>{i.symbol}</td>
                                                                     <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
@@ -1778,7 +1799,7 @@ const DAOProposals = (props) => {
 
                                 <Col xs='12' className='mb-2'><h3>PENDING PROPOSALS</h3></Col>
 
-                                {proposalArray.filter(x => x.votes > 0).filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                {proposalArray.filter(x => x.type !== '').filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                     <ProposalItem 
                                         key={c.id}
                                         id={c.id}
