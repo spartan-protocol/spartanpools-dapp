@@ -580,7 +580,7 @@ const DAOProposals = (props) => {
                                                             <tr>
                                                                 <th>ID</th>
                                                                 <th>Symbol</th>
-                                                                <th className='d-none d-sm-block'>Address</th>
+                                                                <th className='d-none d-sm-table-cell'>Address</th>
                                                                 <th>Votes</th>
                                                                 <th>Action</th>
                                                             </tr>
@@ -590,7 +590,7 @@ const DAOProposals = (props) => {
                                                                 <tr key={i.address}>
                                                                     <td>{i.id}</td>
                                                                     <td>{i.symbol}</td>
-                                                                    <td className='d-none d-sm-block'><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
+                                                                    <td className='d-none d-sm-table-cell'><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
                                                                         {i.id !== '-' && i.majority !== true &&
@@ -652,7 +652,7 @@ const DAOProposals = (props) => {
                                                             <tr>
                                                                 <th>ID</th>
                                                                 <th>Symbol</th>
-                                                                <th className='d-none d-sm-block'>Address</th>
+                                                                <th className='d-none d-sm-table-cell'>Address</th>
                                                                 <th>Votes</th>
                                                                 <th>Action</th>
                                                             </tr>
@@ -662,7 +662,7 @@ const DAOProposals = (props) => {
                                                                 <tr key={i.address}>
                                                                     <td>{i.id}</td>
                                                                     <td>{i.symbol}</td>
-                                                                    <td className='d-none d-sm-block'><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
+                                                                    <td className='d-none d-sm-table-cell'><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
                                                                         {i.id !== '-' && i.majority !== true &&
