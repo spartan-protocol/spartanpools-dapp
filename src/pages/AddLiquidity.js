@@ -620,7 +620,7 @@ const AddLiquidity = (props) => {
                                             {pool.address !== 'XXX' &&
                                                 <div className="crypto-buy-sell-nav">
                                                     <br />
-                                                    <Nav tabs className="nav-tabs-custom" role="tablist">
+                                                    <Nav  className="nav-tabs-custom" role="tablist">
                                                         <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggleTab('1');}}>
                                                                 <i className="bx bxs-chevrons-up bx-sm"/>

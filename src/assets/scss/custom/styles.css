@@ -2,4 +2,14 @@ html[data-theme='light'] .nav-tabs .nav-link.active, html[data-theme='light'] .n
     color: #495057;
     background-color: #ffffff;
     border-color: #ced4da #ced4da #2a3042;
-} 
+}
+
+.wrapper {
+    margin-right: auto; /* 1 */
+    margin-left:  auto; /* 1 */
+
+    max-width: 1500px; /* 2 */
+
+    padding-right: 10px; /* 3 */
+    padding-left:  10px; /* 3 */
+}

@@ -53,7 +53,7 @@ export const InputPaneSwap = (props) => {
 
                         </InputGroup>
                     </Col>
-                    <i className='bx bx-sort bx-md rounded-circle p-1' style={{backgroundColor:'#34c38f',color:'#FFF',zIndex:'5',position:'absolute',top:'50%',left:'50%',transform:'translate(-50%, -50%) rotate(90deg)'}} onClick={props.toggleTab} role='button' />
+                    <i className='bx bx-sort bx-md rounded-circle p-1' style={{backgroundColor:'#a80005',color:'#FFF',zIndex:'5',position:'absolute',top:'50%',left:'50%',transform:'translate(-50%, -50%) rotate(90deg)'}} onClick={props.toggleTab} role='button' />
                     <Col sm="6" className='px-1'>
                         <InputGroup className="mb-1">
                             <Input readOnly="readonly" type="text" className="form-control text-right" placeholder={formatGranularUnits(convertFromWei(props.paneData?.output))}/>
