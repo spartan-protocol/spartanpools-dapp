@@ -401,6 +401,17 @@ const DAOProposals = (props) => {
         refreshPoolsData()
     }
 
+    const [showFeeModal, setShowFeeModal] = useState(false)
+    const toggleFeeModal = () => setShowFeeModal(!showFeeModal)
+    const [proposalAction, setProposalAction] = useState('')
+    const [proposalAddress, setProposalAddress] = useState('')
+
+    const runFeeModal = () => {
+        if (proposalAction === 'MINT') {proposeAction('MINT')}
+        else if (proposalAction === 'LIST') {proposeAddress('LIST', proposalAddress)}
+        else if (proposalAction === 'DELIST') {proposeAddress('DELIST', proposalAddress)}
+    }
+
     const [showMINTModal, setShowMINTModal] = useState(false)
     const toggleMINTModal = () => setShowMINTModal(!showMINTModal)
     const [showLISTBONDModal, setShowLISTBONDModal] = useState(false)
@@ -437,6 +448,24 @@ const DAOProposals = (props) => {
             <div className="page-content">
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("DAO")}/>
+
+                    <Modal isOpen={showFeeModal} toggle={toggleFeeModal} className='text-center'>
+                        <ModalHeader toggle={toggleFeeModal}>100 SPARTA Fee for new proposals!</ModalHeader>
+                        <ModalBody>
+                            There will be a 100 SPARTA fee for this proposal.<br/>
+                            All proposal fees are sent to the DAO address which allows for more 'grant' & 'harvest' funds!
+                        </ModalBody>
+                        <ModalFooter>
+                            <button className="btn btn-success mt-2 mx-auto" onClick={runFeeModal}>
+                                <i className="bx bx-layer-plus align-middle"/> Continue 
+                            </button>
+                            <button className="btn btn-danger mt-2 mx-auto" onClick={toggleFeeModal}>
+                                <i className="bx bx-window-close align-middle"/> Close 
+                            </button>
+                        </ModalFooter>
+                    </Modal>
+
+
 
                     {proposalArray &&
                         <>
@@ -478,7 +507,9 @@ const DAOProposals = (props) => {
                                     <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal} className='text-center'>
                                         <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
                                         <ModalBody>
-                                            Voting through proposals here will list new assets for BOND+MINT
+                                            List new assets for BOND+MINT<br/>
+                                            All new proposals will charge a 100 SPARTA fee!<br/>
+                                            The fee will go to the DAO address for 'harvest' & 'grants' 
                                             {bondAddressExisting && addrListLoading === false &&
                                                 <>
                                                     <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
@@ -514,8 +545,10 @@ const DAOProposals = (props) => {
                                                                             </button>
                                                                         }
                                                                         {i.id === '-' &&
-                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={async () => {
-                                                                                await proposeAddress('LIST', i.address)
+                                                                            <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={() => {
+                                                                                toggleFeeModal()
+                                                                                setProposalAction('LIST')
+                                                                                setProposalAddress(i.address)
                                                                             }}>
                                                                                 <i className="bx bx-pin align-middle"/> Propose 
                                                                             </button>
@@ -544,7 +577,9 @@ const DAOProposals = (props) => {
                                     <Modal isOpen={showDELISTBONDModal} toggle={toggleDELISTBONDModal} className='text-center'>
                                         <ModalHeader toggle={toggleDELISTBONDModal}>De-list a BOND Asset</ModalHeader>
                                         <ModalBody>
-                                            Voting through proposals here will de-list assets from BOND+MINT
+                                            Delist assets from BOND+MINT<br/>
+                                            All new proposals will charge a 100 SPARTA fee!<br/>
+                                            The fee will go to the DAO address for 'harvest' & 'grants' 
                                             {bondAddressExisting && addrListLoading === false &&
                                                 <>
                                                     <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
@@ -581,7 +616,9 @@ const DAOProposals = (props) => {
                                                                         }
                                                                         {i.id === '-' &&
                                                                             <button style={{width:'100px'}} className="btn btn-danger mt-2 mx-auto p-1" onClick={()=>{
-                                                                                proposeAddress('DELIST', i.address)
+                                                                                toggleFeeModal()
+                                                                                setProposalAction('DELIST')
+                                                                                setProposalAddress(i.address)
                                                                             }}>
                                                                                 <i className="bx bx-pin align-middle"/> Propose 
                                                                             </button>
@@ -611,7 +648,9 @@ const DAOProposals = (props) => {
                                         <ModalBody>
                                             {bondBalance <= 0 &&
                                                 <>
-                                                    This proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
+                                                    Increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}<br/>
+                                                    All new proposals will charge a 100 SPARTA fee!<br/>
+                                                    The fee will go to the DAO address for 'harvest' & 'grants' 
                                                     {actionExisting.length > 0 &&
                                                         <>
                                                             <Row className='text-center mt-2'>
@@ -652,7 +691,11 @@ const DAOProposals = (props) => {
                                                 </button>
                                             }
                                             {actionExisting.length <= 0 && bondBalance <= 0 &&
-                                                <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
+                                                <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{
+                                                    toggleFeeModal()
+                                                    setProposalAction('MINT')
+                                                    setProposalAddress('')
+                                                }}>
                                                     <i className="bx bx-pin align-middle"/> Propose
                                                 </button>
                                             }
