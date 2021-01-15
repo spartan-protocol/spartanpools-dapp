@@ -81,11 +81,13 @@ export const ProposalItem = (props) => {
                             <i className="bx bx-like bx-xs align-middle"/> Vote
                         </button>
 
-                        <button className="btn btn-primary m-1" onClick={() => {
-                            props.finaliseProposal(props.id)
-                        }}>
-                            <i className="bx bxs-zap bx-xs align-middle"/> Finalise
-                        </button>
+                        {props.majority === true &&
+                            <button className="btn btn-primary m-1" onClick={() => {
+                                props.finaliseProposal(props.id)
+                            }}>
+                                <i className="bx bxs-zap bx-xs align-middle"/> Finalise
+                            </button>
+                        }
                     </CardFooter>
                 </Card>
             </Col>
