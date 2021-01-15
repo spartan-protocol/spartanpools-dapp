@@ -449,13 +449,17 @@ const DAOProposals = (props) => {
 
     const [showFeeModal, setShowFeeModal] = useState(false)
     const toggleFeeModal = () => setShowFeeModal(!showFeeModal)
+    const [feeModalLoading, setFeeModalLoading] = useState(false)
     const [proposalAction, setProposalAction] = useState('')
     const [proposalAddress, setProposalAddress] = useState('')
 
-    const runFeeModal = () => {
-        if (proposalAction === 'MINT') {proposeAction('MINT')}
-        else if (proposalAction === 'LIST') {proposeAddress('LIST', proposalAddress)}
-        else if (proposalAction === 'DELIST') {proposeAddress('DELIST', proposalAddress)}
+    const runFeeModal = async () => {
+        setFeeModalLoading(true)
+        if (proposalAction === 'MINT') {await proposeAction('MINT')}
+        else if (proposalAction === 'LIST') {await proposeAddress('LIST', proposalAddress)}
+        else if (proposalAction === 'DELIST') {await proposeAddress('DELIST', proposalAddress)}
+        setFeeModalLoading(false)
+        setShowFeeModal(false)
     }
 
     const [showMINTModal, setShowMINTModal] = useState(false)
@@ -509,7 +513,7 @@ const DAOProposals = (props) => {
                             }
                             {spartaApproved === true &&
                                 <button className="btn btn-success mt-2 mx-auto" onClick={runFeeModal}>
-                                    <i className="bx bx-layer-plus align-middle"/> Continue 
+                                    <i className="bx bx-layer-plus align-middle"/> Continue {feeModalLoading === true && loader}
                                 </button>
                             }
                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleFeeModal}>
@@ -576,7 +580,7 @@ const DAOProposals = (props) => {
                                                             <tr>
                                                                 <th>ID</th>
                                                                 <th>Symbol</th>
-                                                                <th>Address</th>
+                                                                <th className='d-none d-sm-block'>Address</th>
                                                                 <th>Votes</th>
                                                                 <th>Action</th>
                                                             </tr>
@@ -586,7 +590,7 @@ const DAOProposals = (props) => {
                                                                 <tr key={i.address}>
                                                                     <td>{i.id}</td>
                                                                     <td>{i.symbol}</td>
-                                                                    <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
+                                                                    <td className='d-none d-sm-block'><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
                                                                         {i.id !== '-' && i.majority !== true &&
@@ -648,7 +652,7 @@ const DAOProposals = (props) => {
                                                             <tr>
                                                                 <th>ID</th>
                                                                 <th>Symbol</th>
-                                                                <th>Address</th>
+                                                                <th className='d-none d-sm-block'>Address</th>
                                                                 <th>Votes</th>
                                                                 <th>Action</th>
                                                             </tr>
@@ -658,7 +662,7 @@ const DAOProposals = (props) => {
                                                                 <tr key={i.address}>
                                                                     <td>{i.id}</td>
                                                                     <td>{i.symbol}</td>
-                                                                    <td><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
+                                                                    <td className='d-none d-sm-block'><a href={explorerURL + 'address/' + i.address} target='blank'>{getAddressShort(i.address)}</a></td>
                                                                     <td>{formatAllUnits(bn(i.votes).div(bn(wholeDAOWeight)).times(100))} %</td>
                                                                     <td>
                                                                         {i.id !== '-' && i.majority !== true &&
@@ -762,7 +766,7 @@ const DAOProposals = (props) => {
                                                     <i className="bx bx-pin align-middle"/> Propose
                                                 </button>
                                             }
-                                            {actionExisting.length > 0 && actionExisting[0].finalised === false && bondBalance <= 0 &&
+                                            {actionExisting.length > 0 && actionExisting[0].finalised === false && bondBalance <= 0 && actionExisting[0].majority === true &&
                                                 <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(actionExisting[0].id)}}>
                                                     <i className="bx bxs-zap bx-xs align-middle"/> Finalise
                                                 </button>
