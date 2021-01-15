@@ -4,7 +4,12 @@ import { Context } from '../context'
 import { withRouter } from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import { BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, explorerURL, getAssets, getBondv3Contract, getBondProposals, SPARTA_ADDR } from '../client/web3'
+import {
+    BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, explorerURL, 
+    getBondv3Contract, getBondProposals, SPARTA_ADDR, getPoolsData, 
+    checkArrayComplete, getNextPoolsData, getListedTokens, BNB_ADDR, WBNB_ADDR
+} from '../client/web3'
+
 import { formatAllUnits, convertFromWei, bn, getAddressShort } from '../utils'
 
 import { ProposalItem } from '../components/Sections/ProposalItem'
@@ -28,6 +33,7 @@ const DAOProposals = (props) => {
     const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
 
     const [bondBurnRate, setBondBurnRate] = useState('XXX')
+    const [bondBalance, setBondBalance] = useState('0')
     const [wholeDAOWeight, setWholeDAOWeight] = useState('XXX')
     const [simpleActionArray, setSimpleActionArray] = useState({
         emitting: '',
@@ -49,11 +55,13 @@ const DAOProposals = (props) => {
         spartaContract = spartaContract.methods
         let daoContract = getDaoContract()
         daoContract = daoContract.methods
+        let bondContract = getBondv3Contract()
+        bondContract= bondContract.methods
         let data = await Promise.all([
             spartaContract.getAdjustedClaimRate(BONDv3_ADDR).call(), spartaContract.emitting().call(),
             spartaContract.balanceOf(BONDv3_ADDR).call(), spartaContract.emissionCurve().call(),
             daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(),
-            daoContract.erasToEarn().call(), daoContract.totalWeight().call()
+            daoContract.erasToEarn().call(), daoContract.totalWeight().call(), bondContract.balanceOf(BONDv3_ADDR).call()
         ])
         setBondBurnRate(data[0])
         setSimpleActionArray({
@@ -67,6 +75,25 @@ const DAOProposals = (props) => {
         //    erasToEarn: data[6],
         //})
         setWholeDAOWeight(data[7])
+        setBondBalance(data[8])
+    }
+
+    const refreshPoolsData = async () => {
+        // (poolsData) POOLS DATA | USED: POOLS TABLE + ADD LIQ + CREATE POOL + SWAP
+        if (context.poolsDataLoading !== true) {
+            context.setContext({'poolsDataLoading': true})
+            const getPools = await getPoolsData(context.tokenArray)
+            context.setContext({'poolsData': getPools})
+            context.setContext({'poolsDataLoading': false})
+            //console.log(getPools)
+            var lastPage = await checkArrayComplete(context.tokenArray, getPools)
+            if (context.poolsDataLoading !== true) {
+                context.setContext({'poolsDataLoading': true})
+                context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, getPools)})
+                context.setContext({'poolsDataLoading': false})
+                context.setContext({'poolsDataComplete': lastPage})
+            }
+        }
     }
 
     const getProposalArray = async () => {
@@ -121,6 +148,12 @@ const DAOProposals = (props) => {
         let existing = proposalArray.filter(i => i.type === directType && i.finalised === false)
         existing = existing.sort((a, b) => +b.votes - +a.votes)
         setActionExisting(existing)
+    }
+
+    const burnBond = async () => {
+        let contract = getBondv3Contract()
+        await contract.methods.burnBond().send({from: context.account})
+        getData()
     }
 
     // CHANGE PARAMETER PROPOSAL
@@ -225,6 +258,7 @@ const DAOProposals = (props) => {
     //    let index = addressTypes.findIndex(i => i.type === addressType)
     //    return addressTypes[index].formatted
     //}
+    const [addrListLoading, setAddrListLoading] = useState(false)
     const proposeAddress = async (directType, address) => {
         if (address === undefined) {
         //    address = propAddress
@@ -249,27 +283,31 @@ const DAOProposals = (props) => {
     //    setAddressExisting(existing)
     //}
     const checkListBondExisting = async (directType) => {
+        setAddrListLoading(true)
         let existing = []
         let contract = getBondv3Contract()
-        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', BONDv2_ADDR, BONDv3_ADDR, SPARTA_ADDR]
-        let data = await Promise.all([await getAssets(), contract.methods.allListedAssets().call(), getProposalArray()])
+        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', BONDv2_ADDR, BONDv3_ADDR, SPARTA_ADDR, WBNB_ADDR, BNB_ADDR]
+        let data = await Promise.all([getListedTokens(), getProposalArray()])
         let allListed = data[0]
-        let allBond = data[1]
-        let propArray = data[2]
+        let propArray = data[1]
+        let bondListed = ''
         let listBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
         for (let i = 0; i < allListed.length + 1; i++) {
             let address = allListed[i]
             if (address) {
-                let proposal = listBondProposals.filter(i => i.proposedAddress === address)
-                if (allBond.includes(address) === false && blacklist.includes(address) === false) {
-                    if (existing.some(i => i.address === address) === false) {
-                        existing.push({
-                            'id': proposal[0] ? proposal[0].id : '-',
-                            'address': address,
-                            'votes': proposal[0] ? proposal[0].votes : '0',
-                            'finalising': proposal[0] ? proposal[0].finalising : false,
-                            'majority': proposal[0] ? proposal[0].majority : false,
-                        })
+                if (blacklist.includes(address) === false) {
+                    bondListed = await contract.methods.isListed(address).call()
+                    if (bondListed === false) {
+                        let proposal = listBondProposals.filter(i => i.proposedAddress === address)
+                        if (existing.some(i => i.address === address) === false) {
+                            existing.push({
+                                'id': proposal[0] ? proposal[0].id : '-',
+                                'address': address,
+                                'votes': proposal[0] ? proposal[0].votes : '0',
+                                'finalising': proposal[0] ? proposal[0].finalising : false,
+                                'majority': proposal[0] ? proposal[0].majority : false,
+                            })
+                        }
                     }
                 }
             }
@@ -277,30 +315,37 @@ const DAOProposals = (props) => {
         existing = existing.sort((a, b) => +b.votes - +a.votes)
         console.log(existing)
         setBondAddressExisting(existing)
+        setAddrListLoading(false)
     }
     const checkDelistBondExisting = async (directType) => {
+        setAddrListLoading(true)
         let existing = []
         let contract = getBondv3Contract()
         let data = await Promise.all([contract.methods.allListedAssets().call(), getProposalArray()])
         let allBond = data[0]
         let propArray = data[1]
+        let bondListed = ''
         let delistBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
         for (let i = 0; i < allBond.length + 1; i++) {
             let address = allBond[i]
             if (address) {
-                let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
-                existing.push({
-                    'id': proposal[0] ? proposal[0].id : '-',
-                    'address': address,
-                    'votes': proposal[0] ? proposal[0].votes : '0',
-                    'finalising': proposal[0] ? proposal[0].finalising : false,
-                    'majority': proposal[0] ? proposal[0].majority : false,
-                })
+                bondListed = await contract.methods.isListed(address).call()
+                if (bondListed === true) {
+                    let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
+                    existing.push({
+                        'id': proposal[0] ? proposal[0].id : '-',
+                        'address': address,
+                        'votes': proposal[0] ? proposal[0].votes : '0',
+                        'finalising': proposal[0] ? proposal[0].finalising : false,
+                        'majority': proposal[0] ? proposal[0].majority : false,
+                    })
+                }
             }
         }
         existing = existing.sort((a, b) => +b.votes - +a.votes)
         console.log(existing)
         setBondAddressExisting(existing)
+        setAddrListLoading(false)
     }
 
     // GRANT PROPOSAL
@@ -331,7 +376,7 @@ const DAOProposals = (props) => {
         // Vote for a proposal
         // function voteProposal(uint proposalID)
         let contract = getBondv3Contract()
-        console.log(proposalID)
+        console.log('vote for', proposalID)
         await contract.methods.voteProposal(proposalID).send({ from: context.account })
         getData()
     }
@@ -350,9 +395,10 @@ const DAOProposals = (props) => {
         // Finalise Proposal and call internal proposal ID function
         // function finaliseProposal(uint proposalID)
         let contract = getBondv3Contract()
-        console.log(proposalID)
+        console.log('finalise proposal', proposalID)
         await contract.methods.finaliseProposal(proposalID).send({ from: context.account })
         getData()
+        refreshPoolsData()
     }
 
     const [showMINTModal, setShowMINTModal] = useState(false)
@@ -423,7 +469,7 @@ const DAOProposals = (props) => {
                                                 checkActionExisting('MINT')
                                                 toggleMINTModal()
                                             }}>
-                                                <i className="bx bx-layer-plus bx-xs align-middle"/> Alloc
+                                                <i className="bx bx-layer-plus bx-xs align-middle"/> Alloc+
                                             </button>
                                         </CardFooter>
                                     </Card>
@@ -433,7 +479,7 @@ const DAOProposals = (props) => {
                                         <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
                                         <ModalBody>
                                             Voting through proposals here will list new assets for BOND+MINT
-                                            {bondAddressExisting &&
+                                            {bondAddressExisting && addrListLoading === false &&
                                                 <>
                                                     <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
                                                         <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
@@ -477,10 +523,14 @@ const DAOProposals = (props) => {
                                                                     </td>
                                                                 </tr>
                                                             )}
+                                                            
                                                             <tr><td colSpan='4'><br/></td></tr>
                                                         </tbody>
                                                     </table>
                                                 </>
+                                            }
+                                            {addrListLoading === true &&
+                                                <div xs='12' className='m-1'>{loader}</div>
                                             }
                                         </ModalBody>
                                         <ModalFooter>
@@ -495,7 +545,7 @@ const DAOProposals = (props) => {
                                         <ModalHeader toggle={toggleDELISTBONDModal}>De-list a BOND Asset</ModalHeader>
                                         <ModalBody>
                                             Voting through proposals here will de-list assets from BOND+MINT
-                                            {bondAddressExisting &&
+                                            {bondAddressExisting && addrListLoading === false &&
                                                 <>
                                                     <table className='w-100 text-center mt-3 bg-light p-2' style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}} >
                                                         <thead style={{borderStyle:'solid', borderWidth:'1px', borderColor:'rgba(163,173,203,0.15)'}}>
@@ -544,6 +594,9 @@ const DAOProposals = (props) => {
                                                     </table>
                                                 </>
                                             }
+                                            {addrListLoading === true &&
+                                                <div xs='12' className='m-1'>{loader}</div>
+                                            }
                                         </ModalBody>
                                         <ModalFooter>
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleDELISTBONDModal}>
@@ -556,41 +609,61 @@ const DAOProposals = (props) => {
                                     <Modal isOpen={showMINTModal} toggle={toggleMINTModal} className='text-center'>
                                         <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
                                         <ModalBody>
-                                            Voting through this proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
-                                            {actionExisting.length > 0 &&
+                                            {bondBalance <= 0 &&
                                                 <>
-                                                    <Row className='text-center mt-2'>
-                                                        <Col xs='6'>
-                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Proposal ID: {actionExisting[0].id}</div>
-                                                        </Col>
-                                                        <Col xs='6'>
-                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Votes: {formatAllUnits(bn(actionExisting[0].votes).div(bn(wholeDAOWeight)).times(100))} %</div>
-                                                        </Col>
-                                                        <Col xs='12'>
-                                                            <div className='w-100 m-1 p-1 bg-light rounded'>Increase BOND allocation by {formatAllUnits(convertFromWei(bondBurnRate))} SPARTA</div>
-                                                        </Col>
-                                                    </Row>
+                                                    This proposal will increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}
+                                                    {actionExisting.length > 0 &&
+                                                        <>
+                                                            <Row className='text-center mt-2'>
+                                                                <Col xs='6'>
+                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>Proposal ID: {actionExisting[0].id}</div>
+                                                                </Col>
+                                                                <Col xs='6'>
+                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>Votes: {formatAllUnits(bn(actionExisting[0].votes).div(bn(wholeDAOWeight)).times(100))} %</div>
+                                                                </Col>
+                                                                <Col xs='12'>
+                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>Increase BOND allocation by {formatAllUnits(convertFromWei(bondBurnRate))} SPARTA</div>
+                                                                </Col>
+                                                            </Row>
+                                                        </>
+                                                    }
+                                                    {actionExisting.length <= 0 &&
+                                                        <>
+                                                            <Row className='text-center mt-2'>
+                                                                <Col xs='12'>
+                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>There are no active proposals to increase BOND allocation</div>
+                                                                </Col>
+                                                            </Row>
+                                                        </>
+                                                    }
                                                 </>
                                             }
-                                            {actionExisting.length <= 0 &&
+                                            {bondBalance > 0 &&
                                                 <>
-                                                    <Row className='text-center mt-2'>
-                                                        <Col xs='12'>
-                                                            <div className='w-100 m-1 p-1 bg-light rounded'>There are no active proposals to increase BOND allocation</div>
-                                                        </Col>
-                                                    </Row>
+                                                    There is a BOND token available to be burnt!<br/>
+                                                    Click below button to finalise the process and increase the SPARTA available in BOND+Mint by {formatAllUnits(convertFromWei(bondBurnRate))}
                                                 </>
                                             }
                                         </ModalBody>
                                         <ModalFooter>
-                                            {actionExisting.length > 0 &&
+                                            {actionExisting.length > 0 && bondBalance <= 0 &&
                                                 <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{voteProposal(actionExisting[0].id)}}>
-                                                    <i className="bx bx-like align-middle"/> Vote for Proposal 
+                                                    <i className="bx bx-like align-middle"/> Vote 
                                                 </button>
                                             }
-                                            {actionExisting.length <= 0 &&
+                                            {actionExisting.length <= 0 && bondBalance <= 0 &&
                                                 <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{proposeAction('MINT')}}>
-                                                    <i className="bx bx-pin align-middle"/> Propose Increase
+                                                    <i className="bx bx-pin align-middle"/> Propose
+                                                </button>
+                                            }
+                                            {actionExisting.length > 0 && actionExisting[0].finalised === false && bondBalance <= 0 &&
+                                                <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(actionExisting[0].id)}}>
+                                                    <i className="bx bxs-zap bx-xs align-middle"/> Finalise
+                                                </button>
+                                            }
+                                            {bondBalance > 0 &&
+                                                <button className="btn btn-success mt-2 mx-auto" onClick={()=>{burnBond()}}>
+                                                    <i className="bx bxs-zap align-middle"/> Increase BOND Allocation!
                                                 </button>
                                             }
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>

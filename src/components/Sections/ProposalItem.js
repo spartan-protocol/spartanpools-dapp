@@ -43,8 +43,8 @@ export const ProposalItem = (props) => {
                         {(props.type === 'DAO' || props.type === 'ROUTER' || props.type === 'UTILS' || props.type === 'INCENTIVE') && 
                             <h6>Change the {props.type} address to: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>
                         }
-                        {props.type === 'LIST_BOND' && <h6>List BOND asset: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
-                        {props.type === 'DELIST_BOND' && <h6>De-list BOND asset: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
+                        {props.type === 'LIST' && <h6>List BOND asset: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
+                        {props.type === 'DELIST' && <h6>De-list BOND asset: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
                         {props.type === 'ADD_CURATED_POOL' && <h6>Add pool to curated list: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
                         {props.type === 'REMOVE_CURATED_POOL' && <h6>Remove pool from curated list: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}
                         {props.type === 'CHALLENGE_CURATED_POOL' && <h6>Challenge low-depth curated pool: <a href={explorerURL + 'address/' + props.proposedAddress} target='blank'>{getAddressShort(props.proposedAddress)}</a></h6>}

@@ -12,7 +12,7 @@ import DAO from '../artifacts/Dao.json'
 import Bondv2 from '../artifacts/BondV2.json'
 import Bondv3 from '../artifacts/BondV3.json'
 
-const net = 'testnet';
+const net = '';
 
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
 export const WBNB_ADDR = net === 'testnet' ? '0x27c6487C9B115c184Bb04A1Cf549b670a22D2870' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
