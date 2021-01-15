@@ -27,7 +27,11 @@ export const ProposalItem = (props) => {
     }
 
     const getDate = () => {
-        let date = new Date(props.timeStart * 1000).toLocaleDateString()
+        let date = ''
+        if (props.timeStart === '') {
+            date = new Date(props.timeStart * 1000).toLocaleDateString()
+        }
+        else date = '-'
         return date
     }
 
