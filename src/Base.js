@@ -9,9 +9,9 @@ import Pools from './pages/Pools.js'
 import AddLiquidity from './pages/AddLiquidity'
 import Swap from './pages/Swap'
 import CreatePool from './pages/CreatePool'
-import Earn from './pages/Earn'
+import DAOLock from './pages/DAOLock'
 import Bond from './pages/Bond'
-import Dao from './pages/DAO'
+import DAOProposals from './pages/DAOProposals'
 
 import PagesStarter from "./pages/Utility/pages-starter";
 import PagesFaqs from "./pages/Utility/pages-faqs";
@@ -64,9 +64,9 @@ const Base = () => {
                         <Route path="/pool/stake" exact component={AddLiquidity}/>
                         <Route path="/pool/swap" exact component={Swap}/>
                         <Route path="/pool/create" exact component={CreatePool}/>
-                        <Route path="/earn"><Earn/></Route>
+                        <Route path="/dao/lock"><DAOLock/></Route>
+                        <Route path="/dao/proposals"><DAOProposals/></Route>
                         <Route path="/bond"><Bond/></Route>
-                        <Route path="/dao" exact component={Dao} />
 
                         {/*Help*/}
                         <Route path="/start" exact component={PagesStarter}/>

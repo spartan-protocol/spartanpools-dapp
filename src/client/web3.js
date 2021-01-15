@@ -22,6 +22,7 @@ export const DAO_ADDR = net === 'testnet' ? '0x1b83a813045165c81d84b9f5d6916067b
 export const ROUTER_ADDR = net === 'testnet' ? '0x111589F4cE6f10E72038F1E4a19F7f19bF31Ee35' : '0x9dB88952380c0E35B95e7047E5114971dFf20D07'
 export const BONDv2_ADDR = net === 'testnet' ? '0x7e44b5461A50adB15329895b80866275192a54f6' : '0xE6844821B03828Fd4067167Bc258FA1EEFD1cCdf'
 export const BONDv3_ADDR = net === 'testnet' ? '0xa11D0a9F919EDc6D72aF8F90D56735cAd0EBE836' : '0xf2EbA4b92fAFD47a6403d24a567b38C07D7A5b43'
+export const INCENTIVE_ADDR = net === 'testnet' ? '0xc241d694d51db9e934b147130cfefe8385813b86' : '0xdbe936901aeed4718608d0574cbaab01828ae016'
 
 export const SPARTA_ABI = SPARTA.abi
 export const ROUTER_ABI = ROUTER.abi
@@ -32,12 +33,19 @@ export const DAO_ABI = DAO.abi
 export const BONDv2_ABI = Bondv2.abi
 export const BONDv3_ABI = Bondv3.abi
 
+export const explorerURL = net === 'testnet' ? 'https://testnet.bscscan.com/' : 'https://bscscan.com/'
+
 export const getWeb3 = () => {
     return new Web3(Web3.givenProvider || "https://bsc-dataseed.binance.org/")
 }
 
 export const getExplorerURL = () => {
-    return "https://bscscan.com/"
+    return explorerURL
+}
+
+export const isAddressValid = async (address) => {
+    var web3 = getWeb3()
+    return await web3.utils.isAddress(address)
 }
 
 export const getCurrentBlock = async () => {
@@ -175,12 +183,104 @@ export const getAlltokens = async () => {
     return sortedTokens;
 }
 
-export const getListedPools= async () => {
+export const getListedPools = async () => {
     console.log('start getlistedpools')
     var contract = getUtilsContract()
     let poolArray = await contract.methods.allPools().call()
     //console.log(poolArray)
     return poolArray
+}
+
+// Get BOND Proposals Count
+export const getBondProposalCount = async () => {
+    console.log('start getproposalcount')
+    var contract = getBondv3Contract()
+    let proposalCount = await contract.methods.proposalCount().call()
+    //console.log(proposalCount)
+    return proposalCount
+}
+
+// Get BOND Proposal Array
+export const getBondProposals = async () => {
+    console.log('start getproposals')
+    let proposalCount = await getBondProposalCount()
+    let proposalsData = []
+    for (let i = 0; i < +proposalCount + 1; i++) {
+        proposalsData.push(await getBondProposal(i))
+    }
+    //console.log(proposalsData)
+    return proposalsData
+}
+
+// Get Each BOND Proposal
+export const getBondProposal = async (pid) => {
+    var contract = getBondv3Contract()
+    contract = contract.methods
+    let data = await Promise.all([
+        contract.mapPID_type(pid).call(), contract.mapPID_votes(pid).call(), contract.mapPID_timeStart(pid).call(), 
+        contract.mapPID_finalising(pid).call(), contract.mapPID_finalised(pid).call(), contract.mapPID_address(pid).call(),
+        contract.hasMajority(pid).call(), contract.hasMinority(pid).call(), //contract.hasQuorum(pid).call() //(Quorum doesnt work???)
+    ])
+    let proposalData = {
+        'id': pid,
+        'type': data[0],
+        'votes': data[1],
+        'timeStart': data[2],
+        'finalising': data[3],
+        'finalised': data[4],
+        'proposedAddress': data[5],
+        'majority': data[6],
+        'minority': data[7],
+        //'quorum': data[8],  //(Quorum doesnt work???)
+    }
+    return proposalData
+}
+
+// Get Proposals Count
+export const getProposalCount = async () => {
+    console.log('start getproposalcount')
+    var contract = getDaoContract()
+    let proposalCount = await contract.methods.proposalCount().call()
+    //console.log(proposalCount)
+    return proposalCount
+}
+
+// Get Proposal Array
+export const getProposals = async () => {
+    console.log('start getproposals')
+    let proposalCount = await getProposalCount()
+    let proposalsData = []
+    for (let i = 0; i < +proposalCount + 1; i++) {
+        proposalsData.push(await getProposal(i))
+    }
+    //console.log(proposalsData)
+    return proposalsData
+}
+
+// Get Each Proposal
+export const getProposal = async (pid) => {
+    var contract = getDaoContract()
+    let data = await Promise.all([contract.methods.getProposalDetails(pid).call(), contract.methods.hasMajority(pid).call(), contract.methods.hasMinority(pid).call(), contract.methods.hasQuorum(pid).call()])
+    let proposalDetails = data[0]
+    let majority = data[1]
+    let minority = data[2]
+    let quorum = data[3]
+    let proposalData = {
+        'id': proposalDetails.id,
+        'type': proposalDetails.proposalType,
+        'votes': proposalDetails.votes,
+        'timeStart': proposalDetails.timeStart,
+        'finalising': proposalDetails.finalising,
+        'finalised': proposalDetails.finalised,
+        'param': proposalDetails.param,
+        'proposedAddress': proposalDetails.proposedAddress,
+        'list': proposalDetails.list,
+        'grant': proposalDetails.grant,
+        'majority': majority,
+        'quorum': quorum,
+        'minority': minority,
+    }
+    return proposalData
 }
 
 // Get Pools Table Data (initial load)
