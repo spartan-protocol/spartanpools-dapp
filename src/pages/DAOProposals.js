@@ -430,9 +430,7 @@ const DAOProposals = (props) => {
 
     const checkApproval = async (address) => {
         const contract = getTokenContract(address)
-        console.log(context.account)
         const approval = await contract.methods.allowance(context.account, BONDv3_ADDR).call()
-        console.log(approval)
         if (+approval > 0) {
             return true
         } else {
