@@ -59,6 +59,9 @@ const MobileNavbar = (props) => {
                                     <a className="dropdown-item" target="_blank" href="https://twitter.com/SpartanProtocol" rel="noopener noreferrer" onClick={()=>closeDropdowns()}>
                                         <span>Twitter</span>
                                     </a>
+                                    <a className="dropdown-item" target="_blank" href="https://t.me/SpartanProtocolOrg" rel="noopener noreferrer" onClick={()=>closeDropdowns()}>
+                                        <span>Telegram</span>
+                                    </a>
                                 </div>
                             </li>
                         </ul>
