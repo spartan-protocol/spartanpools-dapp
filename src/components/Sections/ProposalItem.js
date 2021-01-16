@@ -1,19 +1,46 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Context} from "../../context";
 
-import {convertFromWei, formatAllUnits, getAddressShort, bn} from '../../utils'
+import {convertFromWei, formatAllUnits, getAddressShort, bn, formatGranularUnits} from '../../utils'
 
 import {
-    Card, CardBody, CardTitle, CardSubtitle, CardFooter, Col, Row
+    Card, CardBody, CardTitle, CardSubtitle, CardFooter, Col, Row, Progress
 } from "reactstrap";
 
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import { explorerURL } from "../../client/web3";
+import { explorerURL, getBondv3Contract, getDaoContract } from "../../client/web3";
 
 export const ProposalItem = (props) => {
 
-    const context = useContext(Context);
+    const context = useContext(Context)
+
+    useEffect(() => {
+        if (context.account && context.account > 0) {
+            getData()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [context.account])
+
+    const [weightData, setWeightData] = useState('')
+    const getData = async () => {
+        let bondContract = getBondv3Contract()
+        let daoContract = getDaoContract()
+        let data = await Promise.all([
+            bondContract.methods.mapPIDMember_votes(props.id, context.account).call(), bondContract.methods.totalWeight().call(),
+            daoContract.methods.mapMember_weight(context.account).call(), daoContract.methods.totalWeight().call()
+        ])
+        let output = {
+            'memberVote': data[0],
+            'bondWeight': data[1],
+            'memberVotePC': bn(data[0]).div(bn(data[1])),
+            'memberWeight': data[2],
+            'daoWeight': data[3],
+            'memberWeightPC': bn(data[2]).div(bn(data[3])),
+
+        }
+        setWeightData(output)
+    }
 
     const getStatus = () => {
         let status = 'Pending'
@@ -86,13 +113,24 @@ export const ProposalItem = (props) => {
                                 <div className='w-100 m-1 p-1 bg-light rounded'>Weight:<br/>{getWeight()}</div>
                             </Col>
                         </Row>
+                        <Progress multi className='mx-3 mt-3'>
+                            <Progress bar color="danger" value={+(bn(weightData.memberVotePC).div(bn(weightData.memberWeightPC))).times(100)}></Progress>
+                            <Progress bar color="warning" value={100 - +(bn(weightData.memberVotePC).div(bn(weightData.memberWeightPC))).times(100)}></Progress>
+                        </Progress>
+                        <div className='mt-2'>Your weight: {formatGranularUnits(bn(weightData.memberVotePC).times(100))}% of {formatGranularUnits(bn(weightData.memberWeightPC).times(100))}%</div>
                     </CardBody>
                     <CardFooter>
-                        <button className="btn btn-primary m-1" onClick={() => {
-                            props.voteFor(props.id)
-                        }}>
-                            <i className="bx bx-like bx-xs align-middle"/> Vote
-                        </button>
+                        {bn(weightData.memberVotePC).comparedTo(bn(weightData.memberWeightPC)) === -1 &&
+                            <button className="btn btn-primary m-1" onClick={() => {props.voteFor(props.id)}}>
+                                <i className="bx bx-like bx-xs align-middle"/> Vote
+                            </button>
+                        }
+
+                        {(bn(weightData.memberVotePC).comparedTo(bn(weightData.memberWeightPC)) === 0 || bn(weightData.memberVotePC).comparedTo(bn(weightData.memberWeightPC)) === 1) &&
+                            <button className="btn btn-info m-1 disabled">
+                                <i className="bx bx-like bx-xs align-middle"/> Maxed!
+                            </button>
+                        }
 
                         {props.majority === true &&
                             <button className="btn btn-primary m-1" onClick={() => {
