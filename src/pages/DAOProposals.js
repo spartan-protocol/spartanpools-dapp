@@ -1801,7 +1801,7 @@ const DAOProposals = (props) => {
                                 </Col>
                                 */}
 
-                                <Col xs='12' className='mb-2'><h3>PENDING PROPOSALS</h3></Col>
+                                <Col xs='12' className='mb-2'><h3>Pending Proposals</h3></Col>
 
                                 {proposalArray.filter(x => x.type !== '').filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                     <ProposalItem 
