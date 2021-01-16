@@ -127,16 +127,16 @@ const Header = (props) => {
                         <DropdownItem divider />
                         <DropdownItem disabled><div className='text-center'><i className='bx bx-edit text-success mr-1' />Contracts</div></DropdownItem>
                         <DropdownItem>
-                          <a href={'https://bscscan.com/address/' + SPARTA_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>SPARTA</div></a>
-                          <a href={'https://bscscan.com/address/' + UTILS_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>UTILS</div></a>
+                          <a href={'https://bscscan.com/address/' + SPARTA_ADDR + '#readContract'} target='_blank' rel="noopener noreferrer" className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>SPARTA</div></a>
+                          <a href={'https://bscscan.com/address/' + UTILS_ADDR + '#readContract'} target='_blank' rel="noopener noreferrer" className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>UTILS</div></a>
                         </DropdownItem>
                         <DropdownItem>
-                          <a href={'https://bscscan.com/address/' + DAO_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>DAO</div></a>
-                          <a href={'https://bscscan.com/address/' + ROUTER_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>ROUTER</div></a>
+                          <a href={'https://bscscan.com/address/' + DAO_ADDR + '#readContract'} target='_blank' rel="noopener noreferrer" className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>DAO</div></a>
+                          <a href={'https://bscscan.com/address/' + ROUTER_ADDR + '#readContract'} target='_blank' rel="noopener noreferrer" className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>ROUTER</div></a>
                         </DropdownItem>
                         <DropdownItem>
-                          <a href={'https://bscscan.com/address/' + BONDv2_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>BONDv2</div></a>
-                          <a href={'https://bscscan.com/address/' + BONDv3_ADDR + '#readContract'} target='blank' className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>BONDv3</div></a>
+                          <a href={'https://bscscan.com/address/' + BONDv2_ADDR + '#readContract'} target='_blank' rel="noopener noreferrer" className='text-light'><div className='w-50 d-inline-block text-center bg-secondary mr-1 rounded'>BONDv2</div></a>
+                          <a href={'https://bscscan.com/address/' + BONDv3_ADDR + '#readContract'} target='_blank' rel="noopener noreferrer" className='text-light'><div className='w-50 d-inline-block text-center bg-secondary rounded'>BONDv3</div></a>
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown>

@@ -56,6 +56,9 @@ const Navbar = (props) => {
                                     <a className="dropdown-item" target="_blank" href="https://twitter.com/SpartanProtocol" rel="noopener noreferrer">
                                         <span>Twitter</span>
                                     </a>
+                                    <a className="dropdown-item" target="_blank" href="https://t.me/SpartanProtocolOrg" rel="noopener noreferrer">
+                                        <span>Telegram</span>
+                                    </a>
                                 </div>
                             </li>
                         </ul>
