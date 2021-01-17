@@ -58,12 +58,30 @@ export const ProposalItem = (props) => {
     }
 
     const getDate = () => {
+        let interval = ''
         let date = ''
-        if (props.timeStart === '') {
-            date = new Date(props.timeStart * 1000).toLocaleDateString()
+        let now = new Date().getTime() / 1000
+        if (+props.timeStart !== 0) {
+            interval = ' seconds'
+            date = +props.timeStart + +props.coolOff
+            if (+now < date) {
+                date = date - +now
+                if (date > 360) {
+                    date = (date / 60).toFixed(0)
+                    interval = ' minutes'
+                }
+                if (date > 360) {
+                    date = (date / 60).toFixed(0)
+                    interval = ' hours'
+                }
+            }
+            else {
+                date = 'Now'
+                interval = ''
+            }
         }
         else date = '-'
-        return date
+        return [date, interval]
     }
 
     const getSymbol = () => {
@@ -79,7 +97,7 @@ export const ProposalItem = (props) => {
         <>
             <Col xs='12' md='6' className='d-flex align-items-stretch px-1 px-md-2'>
                 <Card className='w-100'>
-                    <CardTitle className='pt-3 mb-3'>{props.type} {(props.type === 'LIST' || props.type === 'DELIST') && 'BOND: ' + getSymbol()} [ID: {props.id}]</CardTitle>
+                    <CardTitle className='pt-3 mb-3'>{props.type} {(props.type === 'LIST' || props.type === 'DELIST') && 'BOND ASSET: ' + getSymbol()} [ID: {props.id}]</CardTitle>
                     <CardSubtitle className='m-2'>
                         {props.type === 'START_EMISSIONS' && <h6>Turn on the SPARTA emissions</h6>}
                         {props.type === 'STOP_EMISSIONS' && <h6>Turn off the SPARTA emissions</h6>}
@@ -104,7 +122,7 @@ export const ProposalItem = (props) => {
                                 <div className='w-100 m-1 p-1 bg-light rounded'>Votes:<br/>{formatAllUnits(bn(props.votes).div(bn(props.wholeDAOWeight)).times(100))} %</div>
                             </Col>
                             <Col xs='6' className='d-flex align-items-stretch'>
-                                <div className='w-100 m-1 p-1 bg-light rounded'>Finalisation:<br/>{getDate()}</div>
+                                <div className='w-100 m-1 p-1 bg-light rounded'>Finalise In:<br/>{getDate()}</div>
                             </Col>
                             <Col xs='6' className='d-flex align-items-stretch'>
                                 <div className='w-100 m-1 p-1 bg-light rounded'>Status:<br/>{getStatus()}</div>
@@ -132,7 +150,7 @@ export const ProposalItem = (props) => {
                             </button>
                         }
 
-                        {props.majority === true &&
+                        {props.majority === true && getDate()[0] === 'Now' &&
                             <button className="btn btn-primary m-1" onClick={() => {
                                 props.finaliseProposal(props.id)
                             }}>
