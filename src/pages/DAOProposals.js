@@ -38,6 +38,7 @@ const DAOProposals = (props) => {
     const [bondBurnRate, setBondBurnRate] = useState('XXX')
     const [bondBalance, setBondBalance] = useState('0')
     const [wholeDAOWeight, setWholeDAOWeight] = useState('XXX')
+    const [coolOff, setCoolOff] = useState('')
     const [simpleActionArray, setSimpleActionArray] = useState({
         emitting: '',
         bondRemaining: 'XXX',
@@ -63,9 +64,9 @@ const DAOProposals = (props) => {
         bondContract= bondContract.methods
         let data = await Promise.all([
             spartaContract.getAdjustedClaimRate(BONDv3_ADDR).call(), spartaContract.emitting().call(),
-            spartaContract.balanceOf(BONDv3_ADDR).call(), spartaContract.emissionCurve().call(),
-            daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(),
-            daoContract.erasToEarn().call(), daoContract.totalWeight().call(), bondContract.balanceOf(BONDv3_ADDR).call()
+            spartaContract.balanceOf(BONDv3_ADDR).call(), 
+            //spartaContract.emissionCurve().call(), daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(), daoContract.erasToEarn().call(), 
+            daoContract.totalWeight().call(), bondContract.balanceOf(BONDv3_ADDR).call(), bondContract.coolOffPeriod().call()
         ])
         setBondBurnRate(data[0])
         setSimpleActionArray({
@@ -78,8 +79,9 @@ const DAOProposals = (props) => {
         //    coolOff: data[5],
         //    erasToEarn: data[6],
         //})
-        setWholeDAOWeight(data[7])
-        setBondBalance(data[8])
+        setWholeDAOWeight(data[3])
+        setBondBalance(data[4])
+        setCoolOff(data[5])
         setSpartaApproved(await checkApproval(SPARTA_ADDR))
     }
 
@@ -110,6 +112,48 @@ const DAOProposals = (props) => {
         setProposalArrayComplete(true)
         console.log(data)
         return data
+    }
+
+    const getStatus = (item) => {
+        let status = 'Pending'
+        if (item.finalised === true) {status = 'Finalised'}
+        else if (item.finalising === true) {status = 'Finalising'}
+        return status
+    }
+
+    const getWeight = (item) => {
+        let weight = 'Needs more support'
+        if (item.majority === true) {weight = 'Majority support'}
+        else if (item.quorum === true) {weight = 'Quorum support'}
+        else if (item.minority === true) {weight = 'Minorty support'}
+        return weight
+    }
+
+    const getDate = (item) => {
+        let interval = ''
+        let date = ''
+        let now = new Date().getTime() / 1000
+        if (+item.timeStart !== 0) {
+            interval = ' seconds'
+            date = +item.timeStart + +coolOff
+            if (+now < date) {
+                date = date - +now
+                if (date > 360) {
+                    date = (date / 60).toFixed(0)
+                    interval = ' minutes'
+                }
+                if (date > 360) {
+                    date = (date / 60).toFixed(0)
+                    interval = ' hours'
+                }
+            }
+            else {
+                date = 'Now'
+                interval = ''
+            }
+        }
+        else date = '-'
+        return [date, interval]
     }
 
     // SIMPLE ACTION PROPOSAL
@@ -717,15 +761,25 @@ const DAOProposals = (props) => {
                                                 <>
                                                     Increase the SPARTA available through BOND+MINT by {bondBurnRate === 'XXX' ? loader : formatAllUnits(convertFromWei(bondBurnRate))}<br/>
                                                     All new proposals will charge a 100 SPARTA fee!<br/>
-                                                    The fee will go to the DAO address for 'harvest' & 'grants' 
+                                                    The fee will go to the DAO address for 'harvest' & 'grants'<br/>
+                                                    There is NO fee for voting (except gas)
                                                     {actionExisting.length > 0 &&
                                                         <>
                                                             <Row className='text-center mt-2'>
-                                                                <Col xs='6'>
-                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>Proposal ID: {actionExisting[0].id}</div>
+                                                                <Col xs='12'>
+                                                                    <h5>Existing Proposal [ID {actionExisting[0].id}]:</h5>
                                                                 </Col>
                                                                 <Col xs='6'>
                                                                     <div className='w-100 m-1 p-1 bg-light rounded'>Votes: {formatAllUnits(bn(actionExisting[0].votes).div(bn(wholeDAOWeight)).times(100))} %</div>
+                                                                </Col>
+                                                                <Col xs='6'>
+                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>Finalise In: {getDate(actionExisting[0])}</div>
+                                                                </Col>
+                                                                <Col xs='6'>
+                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>Status: {getStatus(actionExisting[0])}</div>
+                                                                </Col>
+                                                                <Col xs='6'>
+                                                                    <div className='w-100 m-1 p-1 bg-light rounded'>Weight: {getWeight(actionExisting[0])}</div>
                                                                 </Col>
                                                                 <Col xs='12'>
                                                                     <div className='w-100 m-1 p-1 bg-light rounded'>Increase BOND allocation by {formatAllUnits(convertFromWei(bondBurnRate))} SPARTA</div>
@@ -766,7 +820,7 @@ const DAOProposals = (props) => {
                                                     <i className="bx bx-pin align-middle"/> Propose
                                                 </button>
                                             }
-                                            {actionExisting.length > 0 && actionExisting[0].finalised === false && bondBalance <= 0 && actionExisting[0].majority === true &&
+                                            {actionExisting.length > 0 && actionExisting[0].finalised === false && bondBalance <= 0 && actionExisting[0].majority === true && getDate(actionExisting[0])[0] === 'Now' &&
                                                 <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(actionExisting[0].id)}}>
                                                     <i className="bx bxs-zap bx-xs align-middle"/> Finalise
                                                 </button>
@@ -1822,6 +1876,7 @@ const DAOProposals = (props) => {
                                         voteFor={voteProposal}
                                         wholeDAOWeight={wholeDAOWeight}
                                         finaliseProposal={finaliseProposal}
+                                        coolOff={coolOff}
                                     />
                                 )}
 
