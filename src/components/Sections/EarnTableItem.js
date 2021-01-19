@@ -277,7 +277,7 @@ export const EarnTableItem = (props) => {
                                     </Button>
                                 }
                                 {isMember === true && props.lastHarvest > 6 &&
-                                    <Button color="warning" onClick={() => {props.harvest()}}>
+                                    <Button color="primary" onClick={() => {props.harvest()}}>
                                             Harvest SPARTA!
                                             {props.loadingHarvest === true &&
                                                 <i className="bx bx-spin bx-loader ml-1" />
@@ -353,7 +353,7 @@ export const EarnTableItem = (props) => {
                                 </Button>
                             }
                             {isMember === true && props.lastHarvest > 6 &&
-                                <Button color="warning" onClick={() => {props.harvest()}}>
+                                <Button color="primary" onClick={() => {props.harvest()}}>
                                     Harvest SPARTA!
                                     {props.loadingHarvest === true &&
                                         <i className="bx bx-spin bx-loader ml-1" />
