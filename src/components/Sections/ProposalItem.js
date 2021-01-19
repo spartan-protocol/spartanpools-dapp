@@ -61,6 +61,7 @@ export const ProposalItem = (props) => {
         let interval = ''
         let date = ''
         let now = new Date().getTime() / 1000
+        now = now.toFixed(0)
         if (+props.timeStart !== 0) {
             interval = ' seconds'
             date = +props.timeStart + +props.coolOff

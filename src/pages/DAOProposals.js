@@ -133,6 +133,7 @@ const DAOProposals = (props) => {
         let interval = ''
         let date = ''
         let now = new Date().getTime() / 1000
+        now = now.toFixed(0)
         if (+item.timeStart !== 0) {
             interval = ' seconds'
             date = +item.timeStart + +coolOff
@@ -574,7 +575,14 @@ const DAOProposals = (props) => {
                                 <Col xs='12' className='d-flex align-items-stretch px-1 px-md-2'>
                                     <Card className='w-100'>
                                         <CardTitle className='pt-3'>BOND</CardTitle>
-                                        <CardSubtitle>List Asssets<br/>Delist Assets<br/>Increase Allocation</CardSubtitle>
+                                        <CardSubtitle>
+                                            List Asssets<br/>Delist Assets<br/>Increase Allocation<br/>
+                                            {bondBalance > 0 &&
+                                                <button className="btn btn-success mt-2 mx-auto" onClick={()=>{burnBond()}}>
+                                                    <i className="bx bxs-zap align-middle"/> Increase BOND Allocation!
+                                                </button>
+                                            }
+                                        </CardSubtitle>
                                         <CardBody>
                                             <div className='w-100 m-1 p-1 bg-light rounded'>{simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader} </div>
                                         </CardBody>
@@ -823,11 +831,6 @@ const DAOProposals = (props) => {
                                             {actionExisting.length > 0 && actionExisting[0].finalised === false && bondBalance <= 0 && actionExisting[0].majority === true && getDate(actionExisting[0])[0] === 'Now' &&
                                                 <button className="btn btn-success mt-2 mx-auto" onClick={()=>{finaliseProposal(actionExisting[0].id)}}>
                                                     <i className="bx bxs-zap bx-xs align-middle"/> Finalise
-                                                </button>
-                                            }
-                                            {bondBalance > 0 &&
-                                                <button className="btn btn-success mt-2 mx-auto" onClick={()=>{burnBond()}}>
-                                                    <i className="bx bxs-zap align-middle"/> Increase BOND Allocation!
                                                 </button>
                                             }
                                             <button className="btn btn-danger mt-2 mx-auto" onClick={toggleMINTModal}>

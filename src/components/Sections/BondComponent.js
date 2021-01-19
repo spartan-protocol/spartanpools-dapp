@@ -614,7 +614,7 @@ const BondComponent = (props) => {
                                         <strong>{enoughSpartaAlloc === false ? 'No' : formatAllUnits(convertFromWei(spartaAllocation))}</strong> Remaining Sparta Allocation.<br/>
                                         {enoughSpartaAlloc === false && 'Visit DAO proposals to mint more SPARTA allocations for Bond+Mint'}
                                     </p>
-                                        <div><Progress color="info" value={(9998862.4 - convertFromWei(spartaAllocation))*100/9998862.4} /></div>
+                                        <div><Progress color="info" value={(2500000 - convertFromWei(spartaAllocation))*100/2500000} /></div>
                                         <br/>
                                             <div className="mb-3">
                                                 <label className="card-radio-label mb-2">
