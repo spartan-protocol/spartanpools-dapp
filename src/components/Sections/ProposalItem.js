@@ -163,6 +163,6 @@ export const ProposalItem = (props) => {
             </Col>
         </>
 )
-};
+}
 
 export default withRouter(withNamespaces()(ProposalItem));
