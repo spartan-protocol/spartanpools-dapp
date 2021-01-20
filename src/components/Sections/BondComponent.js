@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react"
-import { Context } from "../../context"
+import React, {useContext, useEffect, useState} from "react"
+import {Context} from "../../context"
 import queryString from 'query-string';
 import {
     getBondv2Contract,getBondv3Contract, BNB_ADDR, WBNB_ADDR,BONDv3_ADDR, getClaimableLPBondv2,getClaimableLPBondv3, getUtilsContract, updateSharesData, getBNBBalance,
@@ -15,11 +15,11 @@ import {
     Spinner, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, Progress
 } from "reactstrap"
 
-import { withNamespaces } from 'react-i18next'
-import { TokenIcon } from "../Common/TokenIcon";
-import { PercentSlider } from "../common";
-import { withRouter } from "react-router-dom"
-import { Doughnut } from 'react-chartjs-2';
+import {withNamespaces} from 'react-i18next'
+import {TokenIcon} from "../Common/TokenIcon";
+import {PercentSlider} from "../common";
+import {withRouter, Link} from "react-router-dom"
+import {Doughnut} from 'react-chartjs-2';
 
 const BondComponent = (props) => {
 
@@ -612,10 +612,15 @@ const BondComponent = (props) => {
                                     
                                     <p>
                                         <strong>{enoughSpartaAlloc === false ? 'No' : formatAllUnits(convertFromWei(spartaAllocation))}</strong> Remaining Sparta Allocation.<br/>
-                                        {enoughSpartaAlloc === false && 'Visit DAO proposals to mint more SPARTA allocations for Bond+Mint'}
                                     </p>
                                         <div><Progress color="info" value={(2500000 - convertFromWei(spartaAllocation))*100/2500000} /></div>
                                         <br/>
+                                        {enoughSpartaAlloc === false &&
+                                            <div className='mb-3'>
+                                                Visit BonDAO to mint more SPARTA for Bond+Mint:
+                                                <Link to="/dao/proposals"><div className="btn btn-success align-middle ml-2"><i className="bx bx-pin align-middle mr-1" /> Proposals</div></Link>
+                                            </div>
+                                        }
                                             <div className="mb-3">
                                                 <label className="card-radio-label mb-2">
                                                     <input type="radio" name="currency" className="card-radio-input" />
