@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react'
-import { Context } from '../context'
+import React, {useState, useContext, useEffect} from 'react'
+import {Context} from '../context'
 
-import { withRouter } from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
 import {
@@ -11,9 +11,9 @@ import {
     updateWalletData, getTokenContract,
 } from '../client/web3'
 
-import { formatAllUnits, convertFromWei, bn, getAddressShort } from '../utils'
+import {formatAllUnits, convertFromWei, bn, getAddressShort, convertToWei} from '../utils'
 
-import { ProposalItem } from '../components/Sections/ProposalItem'
+import {ProposalItem} from '../components/Sections/ProposalItem'
 
 import {
     Container, Row, Col,
@@ -37,6 +37,7 @@ const DAOProposals = (props) => {
 
     const [bondBurnRate, setBondBurnRate] = useState('XXX')
     const [bondBalance, setBondBalance] = useState('0')
+    const [enoughSpartaAlloc, setEnoughSpartaAlloc] = useState('')
     const [wholeDAOWeight, setWholeDAOWeight] = useState('XXX')
     const [coolOff, setCoolOff] = useState('')
     const [simpleActionArray, setSimpleActionArray] = useState({
@@ -83,6 +84,8 @@ const DAOProposals = (props) => {
         setBondBalance(data[4])
         setCoolOff(data[5])
         setSpartaApproved(await checkApproval(SPARTA_ADDR))
+        if (bn(data[2]).comparedTo(bn(convertToWei(10))) === -1) {setEnoughSpartaAlloc(false)}
+        else {setEnoughSpartaAlloc(true)}
     }
 
     const refreshPoolsData = async () => {
@@ -584,7 +587,10 @@ const DAOProposals = (props) => {
                                             }
                                         </CardSubtitle>
                                         <CardBody>
-                                            <div className='w-100 m-1 p-1 bg-light rounded'>{simpleActionArray.bondRemaining !== 'XXX' ? formatAllUnits(convertFromWei(simpleActionArray.bondRemaining)) + ' SPARTA Remaining' : loader} </div>
+                                            <div className='w-100 m-1 p-1 bg-light rounded'>
+                                                <strong>{enoughSpartaAlloc === false ? 'No' : formatAllUnits(convertFromWei(simpleActionArray.bondRemaining))}</strong> Remaining Sparta Allocation
+                                                {simpleActionArray.bondRemaining === 'XXX' ? loader : ''}
+                                            </div>
                                         </CardBody>
                                         <CardFooter>
                                             {context.poolsDataComplete === true &&
@@ -800,6 +806,10 @@ const DAOProposals = (props) => {
                                                             <Row className='text-center mt-2'>
                                                                 <Col xs='12'>
                                                                     <div className='w-100 m-1 p-1 bg-light rounded'>There are no active proposals to increase BOND allocation</div>
+                                                                    {enoughSpartaAlloc === true ? 
+                                                                        <div className='w-100 m-1 p-1 bg-light rounded'>However, there is still a SPARTA allocation remaining in BOND. We cannot make a new 'alloc+' proposal until the remainder is claimed!</div>
+                                                                        : ''
+                                                                    }
                                                                 </Col>
                                                             </Row>
                                                         </>
@@ -819,7 +829,7 @@ const DAOProposals = (props) => {
                                                     <i className="bx bx-like align-middle"/> Vote 
                                                 </button>
                                             }
-                                            {actionExisting.length <= 0 && bondBalance <= 0 &&
+                                            {actionExisting.length <= 0 && bondBalance <= 0 && enoughSpartaAlloc === false &&
                                                 <button className="btn btn-primary mt-2 mx-auto" onClick={()=>{
                                                     toggleFeeModal()
                                                     setProposalAction('MINT')
