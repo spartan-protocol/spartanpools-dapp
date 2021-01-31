@@ -128,7 +128,7 @@ const DAOProposals = (props) => {
         let weight = 'Needs more support'
         if (item.majority === true) {weight = 'Majority support'}
         else if (item.quorum === true) {weight = 'Quorum support'}
-        else if (item.minority === true) {weight = 'Minorty support'}
+        else if (item.minority === true) {weight = 'Minority support'}
         return weight
     }
 
