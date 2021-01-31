@@ -53,7 +53,7 @@ export const ProposalItem = (props) => {
         let weight = 'Needs more support'
         if (props.majority === true) {weight = 'Majority support'}
         else if (props.quorum === true) {weight = 'Quorum support'}
-        else if (props.minority === true) {weight = 'Minorty support'}
+        else if (props.minority === true) {weight = 'Minority support'}
         return weight
     }
 
