@@ -25,7 +25,7 @@ const Positions = (props) => {
     const apiUrl = 'https://blockchain-data.p.rapidapi.com/'
     const header = {
         'content-type': 'application/json',
-        'x-rapidapi-key': '', // create secret key
+        'x-rapidapi-key': process.env.REACT_APP_BITQUERY, // create secret key
         'x-rapidapi-host': 'blockchain-data.p.rapidapi.com'
     }
 
