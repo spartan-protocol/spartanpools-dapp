@@ -6,15 +6,14 @@ import {withNamespaces} from "react-i18next";
 
 import {bn} from '../utils'
 import {
-    getPoolsContract, getRouterContract, getSpartaContract, 
-    getTokenContract, getWeb3, ROUTERv1_ADDR, ROUTER_ADDR, 
+    ROUTERv1_ADDR, ROUTER_ADDR, 
     BNB_ADDR, WBNB_ADDR, BONDv1_ADDR, BONDv2_ADDR, 
     BONDv3_ADDR, getBondedv2MemberDetails, getBondedv3MemberDetails
 } from '../client/web3'
 
 import Web3 from 'web3'
 
-import {Container, Row, Col, Card, CardHeader, CardBody} from "reactstrap";
+import {Container, Row} from "reactstrap";
 import PositionComponent from "../components/Sections/PositionComponent"
 
 import axios from "axios";
