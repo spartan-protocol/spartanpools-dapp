@@ -4,6 +4,7 @@ import {withNamespaces} from "react-i18next";
 
 import {Row, Col, Card, CardHeader, CardBody} from "reactstrap";
 import {convertFromWei, formatAllUnits, bn, convertToWei} from '../../utils';
+import {TokenIcon} from '../Common/TokenIcon'
 
 const PositionComponent = (props) => {
     useEffect(() => {
@@ -90,23 +91,90 @@ const PositionComponent = (props) => {
                 <Card>
                     <CardHeader>
                         <Row>
-                            <Col xs='6'>{props.poolSymbol} Position</Col>
-                            <Col xs='6'><div className='text-right'>TEST</div></Col>
+                            <Col xs='4 px-1 text-center my-auto'>
+                                <h5>SPARTA</h5>
+                            </Col>
+                            <Col xs='4 px-1 text-center'>
+                                <img src={"./logo192.png"} alt='SPARTA' style={{height:'40px', marginRight:'-15px'}} />
+                                <TokenIcon address={props.address} />
+                            </Col>
+                            <Col xs='4 px-1 text-center my-auto'>
+                                <h5>{symbol}</h5>
+                            </Col>
                         </Row>
                     </CardHeader>
                     <CardBody>
-                        SPARTA Gainz: {formatAllUnits(convertFromWei(bn(props.userSparta).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}<br />
-                        Token Gainz: {formatAllUnits(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}<br />
-                        Total SPARTA Adds: {formatAllUnits(spartaAdds)}<br />
-                        Total {symbol} Adds: {formatAllUnits(tokenAdds)}<br />
-                        Total SPARTA Removes: {formatAllUnits(spartaRemoves)}<br />
-                        Total {symbol} Removes: {formatAllUnits(tokenRemoves)}<br />
-                        Total Bond Adds of {symbol}: {formatAllUnits(tokenBondAdds)}<br />
-                        Total % Of Pool: {formatAllUnits(props.userPC)}<br />
-                        Total SPARTA (exc BOND): {formatAllUnits(convertFromWei(props.userSparta))}<br />
-                        Total {symbol} (exc BOND): {formatAllUnits(convertFromWei(props.userToken))}<br />
-                        Total SPARTA locked in BOND: {formatAllUnits(convertFromWei(props.userBondSparta))}<br />
-                        Total {symbol} locked in BOND: {formatAllUnits(convertFromWei(props.userBondToken))}<br />
+                        <Row>
+                            <Col xs='6 text-right'>
+                                SPARTA Adds
+                                <h5>{formatAllUnits(spartaAdds)}</h5>
+                            </Col>
+                            <Col xs='6'>
+                                {symbol} Adds
+                                <h5>{formatAllUnits(tokenAdds)}</h5>
+                            </Col>
+                            <Col xs='6 text-right'>
+                                SPARTA Bonds
+                                <h5>0.00</h5>
+                            </Col>
+                            <Col xs='6'>
+                                {symbol} Bonds
+                                <h5>{formatAllUnits(tokenBondAdds)}</h5>
+                            </Col>
+                            <Col xs='6 text-right'>
+                                SPARTA<br/>Removals
+                                <h5>{formatAllUnits(spartaRemoves)}</h5>
+                            </Col>
+                            <Col xs='6'>
+                                {symbol}<br/>Removals
+                                <h5>{formatAllUnits(tokenRemoves)}</h5>
+                            </Col>
+                            <Col xs='6 text-right'>
+                                Redeemable SPARTA<br/>exc. locked in Bond
+                                <h5>{formatAllUnits(convertFromWei(props.userSparta))}</h5>
+                            </Col>
+                            <Col xs='6'>
+                                Redeemable {symbol}<br/>exc. locked in Bond
+                                <h5>{formatAllUnits(convertFromWei(props.userToken))}</h5>
+                            </Col>
+                            {convertFromWei((bn(props.userBondSparta).plus(bn(props.userBondToken))).comparedTo(0)) > 0  &&
+                                <>
+                                    <Col xs='6 text-right'>
+                                        SPARTA Gains<br/>
+                                        exc. Locked in BOND
+                                        <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
+                                    </Col>
+                                    <Col xs='6'>
+                                        {symbol} Gains<br/>
+                                        exc. Locked in BOND
+                                        <h5>{formatAllUnits(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}</h5>
+                                    </Col>
+                                    <Col xs='6 text-right'>
+                                        SPARTA value<br/>
+                                        Locked in BOND
+                                        <h5>{formatAllUnits(convertFromWei(props.userBondSparta))}</h5>
+                                    </Col>
+                                    <Col xs='6'>
+                                        {symbol} value<br/>
+                                        Locked in BOND
+                                        <h5>{formatAllUnits(convertFromWei(props.userBondToken))}</h5>
+                                    </Col>
+                                </>
+                            }
+                            <Col xs='6 text-right'>
+                                SPARTA Gains<br/>
+                                inc. Locked in BOND
+                                <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
+                            </Col>
+                            <Col xs='6'>
+                                {symbol} Gains<br/>
+                                inc. Locked in BOND
+                                <h5>{formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}</h5>
+                            </Col>
+                            <Col xs='12 text-center'>
+                                Your pool ownership: {formatAllUnits(props.userPC * 100)} %
+                            </Col>
+                        </Row>
                     </CardBody>
                 </Card>
             </Col>

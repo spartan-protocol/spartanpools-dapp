@@ -29,12 +29,14 @@ const Positions = (props) => {
         'x-rapidapi-host': 'blockchain-data.p.rapidapi.com'
     }
 
+    let allTsfsOut = ''
     let tsfsOut = ''
     let tsfsIn = ''
     let removeLiq = ''
     let addLiq = ''
     const [userPositions, setUserPositions] = useState([])
     const [loading, setLoading] = useState(true)
+    const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
 
     useEffect(() => {
         if (context.sharesDataComplete && header['x-rapidapi-key'] !== '') {
@@ -105,8 +107,8 @@ const Positions = (props) => {
             }
         }
         await axios.request(options).then(function (response) {
-            tsfsOut = response.data.data.ethereum.transfers
-            console.log(tsfsOut);
+            allTsfsOut = response.data.data.ethereum.transfers
+            console.log(allTsfsOut);
         }).catch(function (error) {
             console.error(error);
         })
@@ -241,7 +243,7 @@ const Positions = (props) => {
         })
         // Get all relevant add-liquidity transfers
         addLiq = addLiq.map(x => x.transaction.hash)
-        tsfsOut = tsfsOut.filter(x => addLiq.includes(x.transaction.hash))
+        tsfsOut = allTsfsOut.filter(x => addLiq.includes(x.transaction.hash))
         console.log(tsfsOut)
     }
 
@@ -307,7 +309,7 @@ const Positions = (props) => {
     const bondTsfsByPool = (pool) => {
         // ALL BOND ADD LIQ TXNS BY POOL
         let tempArray = []
-        tempArray = tsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv1_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv2_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv3_ADDR))
+        tempArray = allTsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv1_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv2_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv3_ADDR))
         let dataOut = []
         for (let i = 0; i < tempArray.length - 1; i++) {
             let addr1 = tempArray[i].currency.address
@@ -347,6 +349,11 @@ const Positions = (props) => {
                                 bondAdds={x.bondAdds}
                             />
                         )}
+                        {loading &&
+                            <>
+                            {loader}
+                            </>
+                        }
                     </Row>
                 </Container>
             </div>
