@@ -42,6 +42,9 @@ const Navbar = (props) => {
                                 </div>
                             </li>
                             <li className="nav-item dropdown">
+                                <Link to="/positions" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2 align-middle"/>Positions</Link>
+                            </li>
+                            <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" to="#">
                                     <i className="bx bx-info-circle mr-2 align-middle"/>{props.t('Info')}<div className="arrow-down ml-1 align-middle"></div>
                                 </Link>
