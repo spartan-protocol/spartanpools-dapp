@@ -15,6 +15,8 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
+        env:
+          REACT_APP_BITQUERY: ${{ secrets.REACT_APP_BITQUERY }}
       - name: Archive Production Artifact
         uses: actions/upload-artifact@master
         with:
@@ -38,4 +40,3 @@ jobs:
           args: deploy --only hosting --project pools-spartan
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          REACT_APP_BITQUERY: ${{ secrets.REACT_APP_BITQUERY }}
