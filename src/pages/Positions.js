@@ -326,7 +326,7 @@ const Positions = (props) => {
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Positions")}/>
                     <Row>
-                        {userPositions.map(x => 
+                        {userPositions.sort((a, b) => (parseFloat(bn(a.userBondPC).plus(bn(a.userPC))) > parseFloat(bn(b.userBondPC).plus(bn(b.userPC)))) ? -1 : 1).map(x => 
                             <PositionComponent 
                                 key={x.address}
                                 address={x.address}
