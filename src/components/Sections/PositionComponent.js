@@ -172,7 +172,12 @@ const PositionComponent = (props) => {
                                 <h5>{formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}</h5>
                             </Col>
                             <Col xs='12 text-center'>
-                                Your pool ownership: {formatAllUnits(props.userPC * 100)} %
+                            {convertFromWei((bn(props.userBondSparta).plus(bn(props.userBondToken))).comparedTo(0)) > 0  &&
+                                <>
+                                    Pool ownership inc. Bond-locked: <h5>{formatAllUnits((bn(props.userPC).plus(bn(props.userBondPC))) * 100)} %</h5>
+                                </>
+                            }
+                                Current redeemable ownership: <h5>{formatAllUnits(props.userPC * 100)} %</h5>
                             </Col>
                         </Row>
                     </CardBody>
