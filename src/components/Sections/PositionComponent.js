@@ -19,6 +19,7 @@ import {
 import {convertFromWei, formatAllUnits, bn, convertToWei} from '../../utils';
 import {TokenIcon} from '../Common/TokenIcon'
 import ApexRadial from "../../pages/AllCharts/apex/ApexRadial";
+import ReactApexChart from "react-apexcharts";
 
 
 const PositionComponent = (props) => {
@@ -38,10 +39,44 @@ const PositionComponent = (props) => {
     const [tokenBondAdds, setTokenBondAdds] = useState(0)
 
 
-    const toggleMenu = () => {
-        this.setState(prevState => ({
-            isMenu: !prevState.isMenu,
-        }))
+    let options = {
+        plotOptions: {
+            radialBar: {
+                startAngle: -135,
+                endAngle: 135,
+                dataLabels: {
+                    name: {
+                        fontSize: "13px",
+                        color: void 0,
+                        offsetY: 60,
+                    },
+                    value: {
+                        offsetY: 22,
+                        fontSize: "16px",
+                        color: void 0,
+                        formatter: function (e) {
+                            return e + "%"
+                        },
+                    },
+                },
+            },
+        },
+        colors: ["#a80005"],
+        fill: {
+            type: "fill",
+            gradient: {
+                shade: "dark",
+                shadeIntensity: 0.15,
+                inverseColors: !1,
+                opacityFrom: 1,
+                opacityTo: 1,
+                stops: [0, 1, 1, 1],
+            },
+        },
+        stroke: {
+            dashArray: 0,
+        },
+        labels: [""],
     }
 
 
@@ -268,7 +303,12 @@ const PositionComponent = (props) => {
                             </Row>
                         </div>
                         <div className="mt-4 mt-sm-0">
-                            <ApexRadial/>
+                            <ReactApexChart
+                                options={options}
+                                series={formatAllUnits(props.userPC * 100)}
+                                type="radialBar"
+                                height="180"
+                            />
                             <div className="text-center">
                                 <p>Current redeemable ownership: {formatAllUnits(props.userPC * 100)} %</p>
                             </div>
