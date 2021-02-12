@@ -128,7 +128,7 @@ const PoolPaneSide = (props) => {
                                                 <p className="mb-0">APY</p>
                                             </td>
                                             <td className='text-center'>
-                                                <h5 className="mb-0">{formatAllUnits(props.pool.apy / 100)} %</h5>
+                                                <h5 className="mb-0">{formatAllUnits( ( props.pool.apy - 10000) / 100)} %</h5>
                                                 <h6 className='mb-0 font-weight-light d-inline-block'>Confidence</h6>
                                                 <div id={props.pool.symbol + 'APY'} role='button' className={confidence + ' d-inline-block ml-1'} />
                                                     <UncontrolledTooltip placement="bottom" target={props.pool.symbol + 'APY'}>
