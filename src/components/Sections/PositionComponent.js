@@ -258,7 +258,7 @@ const PositionComponent = (props) => {
                                 <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2">{symbol} Gains<br/>
-                                            inc. Locked in BONDD</p>
+                                            inc. Locked in BOND</p>
                                         <h5>
                                             {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))
                                             :
