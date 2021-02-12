@@ -24,7 +24,8 @@ const PoolTable = (props) => {
                                     <div className="table-responsive">
                                         <CardTitle><h4>Pools</h4></CardTitle>
                                         <CardSubtitle className="mb-3">
-                                            The liquidity pools are facilitated by an automated-market-maker (AMM) algorithm with liquidity-sensitive fees.
+                                            The liquidity pools are facilitated by an automated-market-maker (AMM) algorithm with liquidity-sensitive fees.<br />
+                                            The following pools are 'curated' which means they receive bonus dividends: BNB, USDT, BTCB, BUSD & ETH
                                         </CardSubtitle>
                                         <Table className="table-centered mb-0">
 
@@ -34,6 +35,11 @@ const PoolTable = (props) => {
                                                     <h5 className='d-inline-block mb-0'>{props.t("Price")}</h5>
                                                     <i className="bx bx-info-circle ml-1 align-middle body" id='priceHeader' role='button'/>
                                                     <UncontrolledTooltip placement="bottom" target="priceHeader">Price of asset vs SPARTA in the pool</UncontrolledTooltip>
+                                                </th>
+                                                <th className="d-none d-lg-table-cell" scope="col">
+                                                    <h5 className='d-inline-block mb-0'>{props.t("APY")}</h5>
+                                                    <i className="bx bx-info-circle ml-1 align-middle body" id='apyHeader' role='button'/>
+                                                    <UncontrolledTooltip placement="bottom" target="apyHeader">APY of pool based on complete history<br />Past performance is NOT a guarantee of future performance!</UncontrolledTooltip>
                                                 </th>
                                                 <th className="d-none d-lg-table-cell" scope="col">
                                                     <h5 className='d-inline-block mb-0'>{props.t("Depth")}</h5>
@@ -52,9 +58,9 @@ const PoolTable = (props) => {
                                                         Total count of add, remove & swap transactions.<br/>
                                                     </UncontrolledTooltip>
                                                 </th>
-                                                <th className="d-none d-lg-table-cell" scope="col">
+                                                {/* <th className="d-none d-lg-table-cell" scope="col">
                                                     <h5 className='d-inline-block mb-0'>{props.t("Revenue")}</h5>
-                                                </th>
+                                                </th> */}
                                                 {context.web3Wallet &&
                                                     <>
                                                         <th className="d-none d-lg-table-cell" scope="col">
@@ -79,6 +85,7 @@ const PoolTable = (props) => {
                                                 txCount={c.txCount}
                                                 fees={c.fees}
                                                 listed={c.bondListed}
+                                                apy={c.apy}
                                                 />
                                             )}
                                             </tbody>

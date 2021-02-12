@@ -84,3 +84,36 @@ a:hover {
 .rangeslider__fill{
     background-color: $primary !important;
 }
+
+.trafficYellow {
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+    background-color: #fbff00;
+    vertical-align: middle;
+    border-color: #000000;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.trafficOrange {
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+    background-color: #ff7600;
+    vertical-align: middle;
+    border-color: #000000;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.trafficRed {
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+    background-color: #ff0000;
+    vertical-align: middle;
+    border-color: #000000;
+    border-width: 1px;
+    border-style: solid;
+}

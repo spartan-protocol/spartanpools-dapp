@@ -1,16 +1,22 @@
 import React, {useContext} from "react";
-import {convertFromWei, formatAllUnits, formatAllUSD} from "../../utils";
+import {convertFromWei, formatAllUnits, formatAllUSD, bn} from "../../utils";
 import {SPARTA_ADDR} from "../../client/web3";
 
 import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
 
 import {TokenIconPane} from '../Common/TokenIconPane'
-import {Card, CardBody, Row, Col} from "reactstrap";
+import {Card, CardBody, Row, Col, UncontrolledTooltip} from "reactstrap";
 import { Context } from "../../context";
 
 const PoolPaneSide = (props) => {
     const context = useContext(Context)
+    let apyConfidence = (props.pool.apy / 30000) - 1
+    let depthConfidence = bn('400000000000000000000000').div(bn(props.pool.depth))
+    let confidence = bn(apyConfidence).plus(bn(depthConfidence)).toFixed()
+    if (confidence < 1) {confidence = 'trafficYellow'}
+    else if (confidence < 10) {confidence = 'trafficOrange'}
+    else {confidence = 'trafficRed'}
 
     return (
         <Card>
@@ -110,6 +116,27 @@ const PoolPaneSide = (props) => {
                                             <td className='text-center'>
                                                 <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.tokenAmount, props.pool.decimals))} {props.pool.symbol}</h5>
                                                 <h5 className="mb-0">{formatAllUnits(convertFromWei(props.pool.baseAmount))} SPARTA</h5>
+                                            </td>
+                                            {/*
+                                            <td>
+                                                <Progress value="12" color="secondary" className="bg-transparent" size="sm"/>
+                                            </td>
+                                            */}
+                                        </tr>
+                                        <tr>
+                                            <td className='text-center'>
+                                                <p className="mb-0">APY</p>
+                                            </td>
+                                            <td className='text-center'>
+                                                <h5 className="mb-0">{formatAllUnits(props.pool.apy / 100)} %</h5>
+                                                <h6 className='mb-0 font-weight-light d-inline-block'>Confidence</h6>
+                                                <div id={props.pool.symbol + 'APY'} role='button' className={confidence + ' d-inline-block ml-1'} />
+                                                    <UncontrolledTooltip placement="bottom" target={props.pool.symbol + 'APY'}>
+                                                        {confidence === 'trafficRed' && 'Very Low Confidence!'}
+                                                        {confidence === 'trafficOrange' && 'Low Confidence!'}
+                                                        {confidence === 'trafficYellow' && 'Moderate Confidence!'}
+                                                        <br />Past performance is NOT a guarantee of future performance!
+                                                    </UncontrolledTooltip>
                                             </td>
                                             {/*
                                             <td>
