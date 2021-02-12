@@ -8,7 +8,7 @@ import {
     Card,
     CardHeader,
     CardBody,
-    Button
+    // Button
 } from "reactstrap";
 import {convertFromWei, formatAllUnits, bn, convertToWei} from '../../utils';
 import {TokenIcon} from '../Common/TokenIcon'
@@ -52,7 +52,7 @@ const PositionComponent = (props) => {
                 },
             },
         },
-        colors: ["#a80005"],
+        colors: ["#a80005", "#f0b90b"],
         fill: {
             type: "fill",
             gradient: {
@@ -67,7 +67,7 @@ const PositionComponent = (props) => {
         stroke: {
             dashArray: 0,
         },
-        labels: [""],
+        labels: ["Redeemable Pool Ownership", "Pool Ownership inc. Bond-locked"],
     }
 
     const getData = async () => {
@@ -157,54 +157,54 @@ const PositionComponent = (props) => {
                     <CardBody>
                         <div>
                             <Row>
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div>
                                         <p className="text-muted mb-2">SPARTA Adds</p>
                                         <h5>{formatAllUnits(spartaAdds)}</h5>
                                     </div>
                                 </Col>
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div className="text-right">
-                                        <p className="text-muted mb-2">{symbol}Adds</p>
+                                        <p className="text-muted mb-2">{symbol} Adds</p>
                                         <h5>{formatAllUnits(tokenAdds)}</h5>
                                     </div>
                                 </Col>
 
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div>
                                         <p className="text-muted mb-2">SPARTA Bonds
                                         </p>
                                         <h5>0.00</h5>
                                     </div>
                                 </Col>
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2"> {symbol} Bonds</p>
                                         <h5>{formatAllUnits(tokenBondAdds)}</h5>
                                     </div>
                                 </Col>
 
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div>
                                         <p className="text-muted mb-2">SPARTA
                                             Removals</p>
                                         <h5>{formatAllUnits(spartaRemoves)}</h5>
                                     </div>
                                 </Col>
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2">{symbol} Removals</p>
                                         <h5>{formatAllUnits(tokenRemoves)}</h5>
                                     </div>
                                 </Col>
 
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div>
                                         <p className="text-muted mb-2"> Redeemable SPARTA<br/>exc. locked in Bond</p>
                                         <h5>{formatAllUnits(convertFromWei(props.userSparta))}</h5>
                                     </div>
                                 </Col>
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2"> Redeemable {symbol}<br/>exc. locked in Bond</p>
                                         <h5>{formatAllUnits(convertFromWei(props.userToken))}</h5>
@@ -213,14 +213,14 @@ const PositionComponent = (props) => {
 
                                 {convertFromWei((bn(props.userBondSparta).plus(bn(props.userBondToken))).comparedTo(0)) > 0 &&
                                     <>
-                                        <Col sm="6">
+                                        <Col xs="6">
                                             <div>
                                                 <p className="text-muted mb-2"> SPARTA Gains<br/>
                                                     exc. Locked in BOND</p>
                                                 <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
                                             </div>
                                         </Col>
-                                        <Col sm="6">
+                                        <Col xs="6">
                                             <div className="text-right">
                                                 <p className="text-muted mb-2">{symbol} Gains<br/>
                                                     exc. Locked in BOND</p>
@@ -228,14 +228,14 @@ const PositionComponent = (props) => {
                                             </div>
                                         </Col>
 
-                                        <Col sm="6">
+                                        <Col xs="6">
                                             <div>
                                                 <p className="text-muted mb-2">SPARTA value<br/>
                                                     Locked in BOND</p>
                                                 <h5>{formatAllUnits(convertFromWei(props.userBondSparta))}</h5>
                                             </div>
                                         </Col>
-                                        <Col sm="6">
+                                        <Col xs="6">
                                             <div className="text-right">
                                                 <p className="text-muted mb-2">{symbol} value<br/>
                                                     Locked in BOND</p>
@@ -245,31 +245,22 @@ const PositionComponent = (props) => {
 
                                     </>
                                 }
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div>
                                         <p className="text-muted mb-2"> SPARTA Gains<br/>
                                             inc. Locked in BOND</p>
                                         <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
                                     </div>
                                 </Col>
-                                <Col sm="6">
+                                <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2">{symbol} Gains<br/>
                                             inc. Locked in BONDD</p>
                                         <h5>{formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}</h5>
                                     </div>
                                 </Col>
-                                <Col xs='12 text-center'>
-                                        {convertFromWei((bn(props.userBondSparta).plus(bn(props.userBondToken))).comparedTo(0)) > 0 &&
-                                        <>
-                                            Pool ownership inc.
-                                            Bond-locked: <h5>{formatAllUnits((bn(props.userPC).plus(bn(props.userBondPC))) * 100)} %</h5>
-                                        </>
-                                        }
-                                    Current redeemable ownership: <h5>{formatAllUnits(props.userPC * 100)} %</h5>
-                                </Col>
                             
-                                <Col sm="12">
+                                {/* <Col xs="12">
                                     <br/>
                                     <br/>
                                     <div className="text-center">
@@ -277,8 +268,8 @@ const PositionComponent = (props) => {
                                         <h5>
                                             + 215.53 SPARTA{" "}
                                             <span className="badge badge-success ml-1 align-bottom">
-                                    + 48.5 %
-                                </span>
+                                                + 48.5 %
+                                            </span>
                                         </h5>
                                         <br/>
                                         <Button color="primary">
@@ -288,20 +279,26 @@ const PositionComponent = (props) => {
                                             Redeem {symbol}
                                         </Button>
                                     </div>
-                                </Col>
+                                </Col> */}
                             </Row>
                         </div>
                         <div className="mt-4 mt-sm-0">
                             <ReactApexChart
                                 options={options}
-                                series={[formatAllUnits(props.userPC * 100)]}
+                                series={[formatAllUnits(props.userPC * 100), formatAllUnits((bn(props.userPC).plus(bn(props.userBondPC))) * 100)]}
                                 type="radialBar"
                                 height="180"
                             />
-                            <div className="text-center">
-                                <p>Current redeemable ownership: {formatAllUnits(props.userPC * 100)} %</p>
-                            </div>
                         </div>
+                        <Col xs='12 text-center'>
+                            {convertFromWei((bn(props.userBondSparta).plus(bn(props.userBondToken))).comparedTo(0)) > 0 &&
+                                <>
+                                    Pool ownership inc.
+                                    Bond-locked: <h5>{formatAllUnits((bn(props.userPC).plus(bn(props.userBondPC))) * 100)} %</h5>
+                                </>
+                            }
+                            Current redeemable ownership: <h5>{formatAllUnits(props.userPC * 100)} %</h5>
+                        </Col>
                     </CardBody>
                 </Card>
             </Col>
