@@ -14,7 +14,7 @@ import {
 
 import Web3 from 'web3'
 
-import {Container, Row, Col, TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
+import {Container, Row, TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
 import PositionComponent from "../components/Sections/PositionComponent"
 
 import axios from "axios";

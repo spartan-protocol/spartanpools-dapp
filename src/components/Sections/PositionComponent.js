@@ -10,7 +10,7 @@ import {
     CardBody,
     // Button
 } from "reactstrap";
-import {convertFromWei, formatAllUnits, bn, convertToWei} from '../../utils';
+import {convertFromWei, formatUnitsLong, formatAllUnits, bn, convertToWei} from '../../utils';
 import {TokenIcon} from '../Common/TokenIcon'
 import ReactApexChart from "react-apexcharts";
 
@@ -166,7 +166,7 @@ const PositionComponent = (props) => {
                                 <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2">{symbol} Adds</p>
-                                        <h5>{formatAllUnits(tokenAdds)}</h5>
+                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(tokenAdds) : formatAllUnits(tokenAdds)}</h5>
                                     </div>
                                 </Col>
 
@@ -179,7 +179,7 @@ const PositionComponent = (props) => {
                                 <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2"> {symbol} Bonds</p>
-                                        <h5>{formatAllUnits(tokenBondAdds)}</h5>
+                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(tokenBondAdds) : formatAllUnits(tokenBondAdds)}</h5>
                                     </div>
                                 </Col>
 
@@ -193,7 +193,7 @@ const PositionComponent = (props) => {
                                 <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2">{symbol} Removals</p>
-                                        <h5>{formatAllUnits(tokenRemoves)}</h5>
+                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(tokenRemoves) : formatAllUnits(tokenRemoves)}</h5>
                                     </div>
                                 </Col>
 
@@ -206,7 +206,7 @@ const PositionComponent = (props) => {
                                 <Col xs="6">
                                     <div className="text-right">
                                         <p className="text-muted mb-2"> Redeemable {symbol}<br/>exc. locked in Bond</p>
-                                        <h5>{formatAllUnits(convertFromWei(props.userToken))}</h5>
+                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(props.userToken)) : formatAllUnits(convertFromWei(props.userToken))}</h5>
                                     </div>
                                 </Col>
 
@@ -223,7 +223,11 @@ const PositionComponent = (props) => {
                                             <div className="text-right">
                                                 <p className="text-muted mb-2">{symbol} Gains<br/>
                                                     exc. Locked in BOND</p>
-                                                <h5>{formatAllUnits(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}</h5>
+                                                <h5>
+                                                    {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))))) 
+                                                    : 
+                                                    formatAllUnits(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}
+                                                </h5>
                                             </div>
                                         </Col>
 
@@ -238,7 +242,7 @@ const PositionComponent = (props) => {
                                             <div className="text-right">
                                                 <p className="text-muted mb-2">{symbol} value<br/>
                                                     Locked in BOND</p>
-                                                <h5>{formatAllUnits(convertFromWei(props.userBondToken))}</h5>
+                                                <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(props.userBondToken)) : formatAllUnits(convertFromWei(props.userBondToken))}</h5>
                                             </div>
                                         </Col>
 
@@ -255,7 +259,11 @@ const PositionComponent = (props) => {
                                     <div className="text-right">
                                         <p className="text-muted mb-2">{symbol} Gains<br/>
                                             inc. Locked in BONDD</p>
-                                        <h5>{formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}</h5>
+                                        <h5>
+                                            {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))
+                                            :
+                                            formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}
+                                        </h5>
                                     </div>
                                 </Col>
                             
