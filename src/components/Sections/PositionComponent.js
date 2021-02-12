@@ -8,19 +8,11 @@ import {
     Card,
     CardHeader,
     CardBody,
-    CardTitle,
-    Media,
-    Container,
-    DropdownMenu,
-    DropdownItem,
-    DropdownToggle,
-    Dropdown, Button
+    Button
 } from "reactstrap";
 import {convertFromWei, formatAllUnits, bn, convertToWei} from '../../utils';
 import {TokenIcon} from '../Common/TokenIcon'
-import ApexRadial from "../../pages/AllCharts/apex/ApexRadial";
 import ReactApexChart from "react-apexcharts";
-
 
 const PositionComponent = (props) => {
     useEffect(() => {
@@ -37,7 +29,6 @@ const PositionComponent = (props) => {
     const [spartaRemoves, setSpartaRemoves] = useState(0)
     const [tokenRemoves, setTokenRemoves] = useState(0)
     const [tokenBondAdds, setTokenBondAdds] = useState(0)
-
 
     let options = {
         plotOptions: {
@@ -78,7 +69,6 @@ const PositionComponent = (props) => {
         },
         labels: [""],
     }
-
 
     const getData = async () => {
         // GET TOKEN SYMBOL
@@ -145,7 +135,6 @@ const PositionComponent = (props) => {
         setTokenBondAdds(tempArray)
         tempArray = []
     }
-
 
     return (
         <>

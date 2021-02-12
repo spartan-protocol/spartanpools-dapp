@@ -13,12 +13,10 @@ import {
 
 import Web3 from 'web3'
 
-import {Card, CardBody, Container, Row} from "reactstrap";
+import {Container, Row} from "reactstrap";
 import PositionComponent from "../components/Sections/PositionComponent"
 
 import axios from "axios";
-import CardTitle from "reactstrap/es/CardTitle";
-import Col from "antd/es/grid/col";
 
 const Positions = (props) => {
     const context = useContext(Context)
