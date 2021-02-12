@@ -172,8 +172,7 @@ const PositionComponent = (props) => {
 
                                 <Col xs="6">
                                     <div>
-                                        <p className="text-muted mb-2">SPARTA Bonds
-                                        </p>
+                                        <p className="text-muted text-cross mb-2"><del>SPARTA Minted</del></p>
                                         <h5>0.00</h5>
                                     </div>
                                 </Col>
