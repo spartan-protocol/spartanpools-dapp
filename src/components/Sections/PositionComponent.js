@@ -138,7 +138,7 @@ const PositionComponent = (props) => {
 
     return (
         <>
-            <Col xs="6" md='3' key={props.key}>
+            <Col xs='12' md='6' lg='4' key={props.key}>
                 <Card>
                     <CardHeader>
                         <Row>
