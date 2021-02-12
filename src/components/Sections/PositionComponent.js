@@ -272,7 +272,7 @@ const PositionComponent = (props) => {
                                 <Col sm="12">
                                     <br/>
                                     <br/>
-                                    <div class="text-center">
+                                    <div className="text-center">
                                         <p className="text-muted mb-2">Since adds</p>
                                         <h5>
                                             + 215.53 SPARTA{" "}
