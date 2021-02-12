@@ -35,7 +35,7 @@ const Positions = (props) => {
     let addLiq = ''
     const [userPositions, setUserPositions] = useState([])
     const [loading, setLoading] = useState(true)
-    const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
+    const loader = <div className='m-auto'><i className='bx bx-loader bx-sm align-middle text-warning bx-spin mx-1' />Please wait ~30 seconds for data to compile!</div>
 
     useEffect(() => {
         if (context.sharesDataComplete && header['x-rapidapi-key'] !== '') {
@@ -318,7 +318,6 @@ const Positions = (props) => {
         }
         return dataOut
     }
-
 
     return (
         <React.Fragment>
