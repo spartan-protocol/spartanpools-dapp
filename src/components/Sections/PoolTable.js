@@ -24,7 +24,8 @@ const PoolTable = (props) => {
                                     <div className="table-responsive">
                                         <CardTitle><h4>Pools</h4></CardTitle>
                                         <CardSubtitle className="mb-3">
-                                            The liquidity pools are facilitated by an automated-market-maker (AMM) algorithm with liquidity-sensitive fees.
+                                            The liquidity pools are facilitated by an automated-market-maker (AMM) algorithm with liquidity-sensitive fees.<br />
+                                            The following pools are 'curated' which means they receive bonus dividends: BNB, USDT, BTCB, BUSD & ETH
                                         </CardSubtitle>
                                         <Table className="table-centered mb-0">
 
