@@ -3,6 +3,7 @@ import {Context} from '../context'
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import {withRouter} from "react-router-dom";
 import {withNamespaces} from "react-i18next";
+import classnames from 'classnames';
 
 import {bn} from '../utils'
 import {
@@ -13,7 +14,7 @@ import {
 
 import Web3 from 'web3'
 
-import {Container, Row} from "reactstrap";
+import {Container, Row, TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
 import PositionComponent from "../components/Sections/PositionComponent"
 
 import axios from "axios";
@@ -35,7 +36,7 @@ const Positions = (props) => {
     let addLiq = ''
     const [userPositions, setUserPositions] = useState([])
     const [loading, setLoading] = useState(true)
-    const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
+    const loader = <div className='m-auto'><i className='bx bx-loader bx-sm align-middle text-warning bx-spin mx-1' />Please wait ~30 seconds for data to compile!</div>
 
     useEffect(() => {
         if (context.sharesDataComplete && header['x-rapidapi-key'] !== '') {
@@ -319,41 +320,93 @@ const Positions = (props) => {
         return dataOut
     }
 
+    const [activeTab, setActiveTab] = useState('1');
+    const toggle = (tab) => {
+        if(activeTab !== tab) setActiveTab(tab);
+    }
 
     return (
         <React.Fragment>
             <div className="page-content">
-                <Container fluid>
+                <Container fluid className='px-0'>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Positions")}/>
-                    <Row>
-                        {userPositions.sort((a, b) => (parseFloat(bn(a.userBondPC).plus(bn(a.userPC))) > parseFloat(bn(b.userBondPC).plus(bn(b.userPC)))) ? -1 : 1).map(x => 
-                            <PositionComponent 
-                                key={x.address}
-                                address={x.address}
-                                poolSymbol={x.poolSymbol}
-                                userLocked={x.userLocked}
-                                userHeld={x.userHeld}
-                                userBonded={x.userBonded}
-                                userBondPC={x.userBondPC}
-                                userBondSparta={x.userBondSparta}
-                                userBondToken={x.userBondToken}
-                                userPC={x.userPC}
-                                userSparta={x.userSparta}
-                                userToken={x.userToken}
-                                totalSparta={x.totalSparta}
-                                totalToken={x.totalToken}
-                                totalSupply={x.totalSupply}
-                                removes={x.removes}
-                                adds={x.adds}
-                                bondAdds={x.bondAdds}
-                            />
-                        )}
-                        {loading &&
-                            <>
-                            {loader}
-                            </>
-                        }
-                    </Row>
+                    <Nav tabs>
+                        <NavItem>
+                            <NavLink
+                                className={classnames({ active: activeTab === '1' })}
+                                onClick={() => { toggle('1'); }}
+                            >
+                                Open Positions
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={classnames({ active: activeTab === '2' })}
+                                onClick={() => { toggle('2'); }}
+                            >
+                                Closed Positions
+                            </NavLink>
+                        </NavItem>
+                    </Nav>
+                    <TabContent activeTab={activeTab}>
+                        <TabPane tabId="1">
+                            <Row>
+                                {userPositions.filter((x) => (parseFloat(bn(x.userBondPC).plus(bn(x.userPC))) > 0)).sort((a, b) => (parseFloat(bn(a.userBondPC).plus(bn(a.userPC))) > parseFloat(bn(b.userBondPC).plus(bn(b.userPC)))) ? -1 : 1).map(x => 
+                                    <PositionComponent 
+                                        key={x.address}
+                                        address={x.address}
+                                        poolSymbol={x.poolSymbol}
+                                        userLocked={x.userLocked}
+                                        userHeld={x.userHeld}
+                                        userBonded={x.userBonded}
+                                        userBondPC={x.userBondPC}
+                                        userBondSparta={x.userBondSparta}
+                                        userBondToken={x.userBondToken}
+                                        userPC={x.userPC}
+                                        userSparta={x.userSparta}
+                                        userToken={x.userToken}
+                                        totalSparta={x.totalSparta}
+                                        totalToken={x.totalToken}
+                                        totalSupply={x.totalSupply}
+                                        removes={x.removes}
+                                        adds={x.adds}
+                                        bondAdds={x.bondAdds}
+                                    />
+                                )}
+                            </Row>
+                        </TabPane>
+                        <TabPane tabId="2">
+                            <Row>
+                                {userPositions.filter((x) => ((parseFloat(bn(x.userBondPC).plus(bn(x.userPC))) <= 0) && ((x.adds.length + x.removes.length + x.bondAdds.length) > 0))).map(x => 
+                                    <PositionComponent 
+                                        key={x.address}
+                                        address={x.address}
+                                        poolSymbol={x.poolSymbol}
+                                        userLocked={x.userLocked}
+                                        userHeld={x.userHeld}
+                                        userBonded={x.userBonded}
+                                        userBondPC={x.userBondPC}
+                                        userBondSparta={x.userBondSparta}
+                                        userBondToken={x.userBondToken}
+                                        userPC={x.userPC}
+                                        userSparta={x.userSparta}
+                                        userToken={x.userToken}
+                                        totalSparta={x.totalSparta}
+                                        totalToken={x.totalToken}
+                                        totalSupply={x.totalSupply}
+                                        removes={x.removes}
+                                        adds={x.adds}
+                                        bondAdds={x.bondAdds}
+                                    />
+                                )}
+                            </Row>
+                        </TabPane>
+                    </TabContent>
+                    {loading &&
+                        <>
+                        {loader}
+                        </>
+                    }
                 </Container>
             </div>
         </React.Fragment>

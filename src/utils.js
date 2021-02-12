@@ -87,6 +87,13 @@ export const daysSince = (date) => {
     return interval + ' ' + intervalType;
 }
 
+export const formatUnitsLong = (input) => {
+    var units = (bn(input).toString())
+    if (input < 1000) {units = (bn(input).toFixed(6).toString())}
+    else {units = (bn(input).toFixed(3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}
+    return `${units}`
+}
+
 export const formatAllUnits = (input) => {
     var units = (bn(input).toString())
     if (input <= 0) {units = (bn(input).toFixed(2).toString())}
