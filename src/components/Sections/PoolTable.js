@@ -36,6 +36,11 @@ const PoolTable = (props) => {
                                                     <UncontrolledTooltip placement="bottom" target="priceHeader">Price of asset vs SPARTA in the pool</UncontrolledTooltip>
                                                 </th>
                                                 <th className="d-none d-lg-table-cell" scope="col">
+                                                    <h5 className='d-inline-block mb-0'>{props.t("APY")}</h5>
+                                                    <i className="bx bx-info-circle ml-1 align-middle body" id='apyHeader' role='button'/>
+                                                    <UncontrolledTooltip placement="bottom" target="apyHeader">APY of pool based on complete history<br />Past performance is NOT a guarantee of future performance!</UncontrolledTooltip>
+                                                </th>
+                                                <th className="d-none d-lg-table-cell" scope="col">
                                                     <h5 className='d-inline-block mb-0'>{props.t("Depth")}</h5>
                                                     <i className="bx bx-info-circle ml-1 align-middle" id='depthHeader' role='button'/>
                                                     <UncontrolledTooltip placement="bottom" target="depthHeader">Total USD value of assets in the pool.<br/> (SPARTA held in pool * 2 * PRICE)</UncontrolledTooltip>
@@ -52,9 +57,9 @@ const PoolTable = (props) => {
                                                         Total count of add, remove & swap transactions.<br/>
                                                     </UncontrolledTooltip>
                                                 </th>
-                                                <th className="d-none d-lg-table-cell" scope="col">
+                                                {/* <th className="d-none d-lg-table-cell" scope="col">
                                                     <h5 className='d-inline-block mb-0'>{props.t("Revenue")}</h5>
-                                                </th>
+                                                </th> */}
                                                 {context.web3Wallet &&
                                                     <>
                                                         <th className="d-none d-lg-table-cell" scope="col">
@@ -79,6 +84,7 @@ const PoolTable = (props) => {
                                                 txCount={c.txCount}
                                                 fees={c.fees}
                                                 listed={c.bondListed}
+                                                apy={c.apy}
                                                 />
                                             )}
                                             </tbody>
