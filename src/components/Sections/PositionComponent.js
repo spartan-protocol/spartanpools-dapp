@@ -305,7 +305,7 @@ const PositionComponent = (props) => {
                         <div className="mt-4 mt-sm-0">
                             <ReactApexChart
                                 options={options}
-                                series={formatAllUnits(props.userPC * 100)}
+                                series={[formatAllUnits(props.userPC * 100)]}
                                 type="radialBar"
                                 height="180"
                             />
