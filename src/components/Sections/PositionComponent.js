@@ -1,5 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react'
-import {Context} from '../../context'
+import React, {useEffect, useState} from 'react'
 import {withRouter} from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
@@ -9,16 +8,15 @@ import {
     Card,
     CardHeader,
     CardBody,
-    // Button
+    UncontrolledCollapse,
+    Button
 } from "reactstrap";
-import {convertFromWei, formatUnitsLong, formatAllUnits, bn, convertToWei} from '../../utils';
-import { getPriceByID } from '../../client/web3'
-import {TokenIcon} from '../Common/TokenIcon'
+import { convertFromWei, formatUnitsLong, formatAllUnits, bn, convertToWei } from '../../utils';
+import { getPriceByID, getSpartaPrice } from '../../client/web3'
+import { TokenIcon } from '../Common/TokenIcon'
 import ReactApexChart from "react-apexcharts";
 
 const PositionComponent = (props) => {
-    const context = useContext(Context)
-
     useEffect(() => {
         getData()
         
@@ -35,6 +33,7 @@ const PositionComponent = (props) => {
     const [tokenRemoves, setTokenRemoves] = useState(0)
     const [tokenBondAdds, setTokenBondAdds] = useState(0)
     const [tokenPrice, setTokenPrice] = useState(0)
+    const [spartaPrice, setSpartaPrice] = useState(0)
 
     let options = {
         plotOptions: {
@@ -107,6 +106,9 @@ const PositionComponent = (props) => {
         let tknPrice = await getPriceByID(tokenIDReady)
         setTokenPrice(tknPrice)
         console.log(tknPrice)
+        let tempPrice = await getSpartaPrice()
+        setSpartaPrice(tempPrice)
+        console.log(tempPrice)
         // Get sum of all token adds
         let tempArray = []
         let tempAdd = []
@@ -187,131 +189,129 @@ const PositionComponent = (props) => {
                     <CardBody>
                         <div>
                             <Row>
-                                <Col xs="12">
-                                    <div>
-                                        <p className="text-muted mb-2">USD Gainz inc Bond!</p>
-                                        <h5>
-                                            {
-                                                (convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))) * context.spartaPrice).toFixed(2)
-                                                +
-                                                (convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))).toFixed(2) * tokenPrice).toFixed(2)
-                                            }   
-                                        </h5>
-                                        <h5>{context.spartaPrice}</h5>
-                                    </div>
-                                </Col>
-
-                                <Col xs="6">
-                                    <div>
-                                        <p className="text-muted mb-2">SPARTA Adds</p>
-                                        <h5>{formatAllUnits(spartaAdds)}</h5>
-                                    </div>
-                                </Col>
-                                <Col xs="6">
-                                    <div className="text-right">
-                                        <p className="text-muted mb-2">{symbol} Adds</p>
-                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(tokenAdds) : formatAllUnits(tokenAdds)}</h5>
-                                    </div>
-                                </Col>
-
-                                <Col xs="6">
-                                    <div>
-                                        <p className="text-muted text-cross mb-2"><del>SPARTA Minted</del></p>
-                                        <h5>0.00</h5>
-                                    </div>
-                                </Col>
-                                <Col xs="6">
-                                    <div className="text-right">
-                                        <p className="text-muted mb-2"> {symbol} Bonds</p>
-                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(tokenBondAdds) : formatAllUnits(tokenBondAdds)}</h5>
-                                    </div>
-                                </Col>
-
-                                <Col xs="6">
-                                    <div>
-                                        <p className="text-muted mb-2">SPARTA
-                                            Removals</p>
-                                        <h5>{formatAllUnits(spartaRemoves)}</h5>
-                                    </div>
-                                </Col>
-                                <Col xs="6">
-                                    <div className="text-right">
-                                        <p className="text-muted mb-2">{symbol} Removals</p>
-                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(tokenRemoves) : formatAllUnits(tokenRemoves)}</h5>
-                                    </div>
-                                </Col>
-
-                                <Col xs="6">
-                                    <div>
-                                        <p className="text-muted mb-2"> Redeemable SPARTA<br/>exc. locked in Bond</p>
-                                        <h5>{formatAllUnits(convertFromWei(props.userSparta))}</h5>
-                                    </div>
-                                </Col>
-                                <Col xs="6">
-                                    <div className="text-right">
-                                        <p className="text-muted mb-2"> Redeemable {symbol}<br/>exc. locked in Bond</p>
-                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(props.userToken)) : formatAllUnits(convertFromWei(props.userToken))}</h5>
-                                    </div>
-                                </Col>
-
-                                {convertFromWei((bn(props.userBondSparta).plus(bn(props.userBondToken))).comparedTo(0)) > 0 &&
-                                    <>
+                                {/* TOTAL LP HOLDINGS POSITION SECTION */}
+                                <Col xs='12'><h5 className="text-center">Your LP Token Value (inc Bond)</h5></Col>
+                                <UncontrolledCollapse toggler="#toggler">
+                                    <Row>
+                                        <Col xs='12' className='text-center'><p className="text-muted mb-2">Bond-Locked LP Tokens Value</p></Col>
                                         <Col xs="6">
-                                            <div>
-                                                <p className="text-muted mb-2">SPARTA value<br/>
-                                                    Locked in BOND</p>
+                                            <div className="text-center">
                                                 <h5>{formatAllUnits(convertFromWei(props.userBondSparta))}</h5>
+                                                <p className="text-muted mb-2">+</p>
                                             </div>
                                         </Col>
                                         <Col xs="6">
-                                            <div className="text-right">
-                                                <p className="text-muted mb-2">{symbol} value<br/>
-                                                    Locked in BOND</p>
+                                            <div className="text-center">
                                                 <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(props.userBondToken)) : formatAllUnits(convertFromWei(props.userBondToken))}</h5>
+                                                <p className="text-muted mb-2">+</p>
                                             </div>
                                         </Col>
 
+                                        <Col xs='12' className='text-center'><p className="text-muted mb-2">Held LP Tokens Value</p></Col>
                                         <Col xs="6">
-                                            <div>
-                                                <p className="text-muted mb-2"> SPARTA Gains<br/>
-                                                    exc. Locked in BOND</p>
-                                                <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
+                                            <div className="text-center">
+                                                <h5>{formatAllUnits(convertFromWei(props.userSparta))}</h5>
+                                                <p className="text-muted mb-2">=</p>
                                             </div>
                                         </Col>
                                         <Col xs="6">
-                                            <div className="text-right">
-                                                <p className="text-muted mb-2">{symbol} Gains<br/>
-                                                    exc. Locked in BOND</p>
-                                                <h5>
-                                                    {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds))))) 
-                                                    : 
-                                                    formatAllUnits(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds)))))}
-                                                </h5>
+                                            <div className="text-center"> 
+                                                <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(props.userToken)) : formatAllUnits(convertFromWei(props.userToken))}</h5>
+                                                <p className="text-muted mb-2">=</p>
                                             </div>
                                         </Col>
-
-                                    </>
-                                }
+                                    </Row>
+                                </UncontrolledCollapse>
                                 <Col xs="6">
-                                    <div className='border rounded p-2 text-center'>
-                                        <p className="text-muted mb-2"> SPARTA Gains<br/>
-                                            inc. Locked in BOND</p>
-                                        <h5><mark>{formatAllUnits(convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</mark></h5>
+                                    <div className="text-center border rounded p-2">
+                                        <h5>{formatAllUnits(convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta))))}</h5>
+                                        <p className="text-muted mb-2">SPARTA</p>
                                     </div>
                                 </Col>
                                 <Col xs="6">
                                     <div className="text-center border rounded p-2">
-                                        <p className="text-muted mb-2">{symbol} Gains<br/>
-                                            inc. Locked in BOND</p>
-                                        <h5>
-                                            <mark>
-                                                {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds)))))
-                                                :
-                                                formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds)))))}
-                                            </mark>
-                                        </h5>
+                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)))) : formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken))))}</h5>
+                                        <p className="text-muted mb-2">{symbol}</p>
                                     </div>
                                 </Col>
+
+                                <Col xs='12' className="text-center"><h2>-</h2></Col>
+
+                                {/* NET ADD REMOVE + BOND LIQ POSITION SECTION */}
+                                <Col xs='12'><h5 className="text-center">NET Adds (inc Bond) & Removes</h5></Col>
+                                <UncontrolledCollapse toggler="#toggler">
+                                    <Row>
+                                        <Col xs='12' className='text-center'><p className="text-muted mb-2">Add Liquidity to Bond+Mint (Total)</p></Col>
+                                        <Col xs="6">
+                                            <div className="text-center">
+                                                <h5>0.00</h5>
+                                                <p className="text-muted mb-0">+</p>
+                                            </div>
+                                        </Col>
+                                        <Col xs="6">
+                                            <div className="text-center"> 
+                                                <h5>{symbol === 'BTCB' ? formatUnitsLong(tokenBondAdds) : formatAllUnits(tokenBondAdds)}</h5>
+                                                <p className="text-muted mb-0">+</p>
+                                            </div>
+                                        </Col>
+
+                                        <Col xs='12' className='text-center'><p className="text-muted mb-2">Add / Remove Liquidity (NET)</p></Col>
+                                        <Col xs="6">
+                                            <div className="text-center">
+                                                <h5>{formatAllUnits(bn(spartaAdds).minus(bn(spartaRemoves)))}</h5>
+                                                <p className="text-muted mb-0">=</p>
+                                            </div>
+                                        </Col>
+                                        <Col xs="6">
+                                            <div className="text-center">
+                                                <h5>{symbol === 'BTCB' ? formatUnitsLong(bn(tokenAdds).minus(bn(tokenRemoves))) : formatAllUnits(bn(tokenAdds).minus(bn(tokenRemoves)))}</h5>
+                                                <p className="text-muted mb-0">=</p>
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                </UncontrolledCollapse>
+                                <Col xs="6">
+                                    <div className="text-center border rounded p-2">
+                                        <h5>{formatAllUnits(bn(spartaAdds).minus(bn(spartaRemoves)))}</h5>
+                                        <p className="text-muted mb-0">SPARTA</p>
+                                    </div>
+                                </Col>
+                                <Col xs="6">
+                                    <div className="text-center border rounded p-2">
+                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds))) : formatAllUnits(bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds)))}</h5>
+                                        <p className="text-muted mb-0">{symbol}</p>
+                                    </div>
+                                </Col>
+
+                                <Col xs='12' className="text-center"><h2>=</h2></Col>
+                                
+                                {/* GAINS SECTION */}
+                                <Col xs="6">
+                                    <div className="text-center border rounded p-2">
+                                        <h5>{formatAllUnits(convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta)).minus(convertToWei((bn(spartaAdds).minus(bn(spartaRemoves)))))))}</h5>
+                                        <p className="text-muted mb-0">SPARTA Gains</p>
+                                    </div>
+                                </Col>
+                                <Col xs="6">
+                                    <div className="text-center border rounded p-2">
+                                        <h5>{formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds)))))))}</h5>
+                                        <p className="text-muted mb-0">{symbol} Gains</p>
+                                    </div>
+                                </Col>
+                                <Col xs="12" className='mt-2'>
+                                    <div className="text-center border rounded p-2">
+                                        <h4>
+                                            {'$' + formatAllUnits(((convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta)).minus(convertToWei((bn(spartaAdds).minus(bn(spartaRemoves))))))).toFixed(2) * spartaPrice)
+                                            + 
+                                            ((convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds))))))).toFixed(2) * tokenPrice))}
+                                        </h4>
+                                        <p className="text-muted mb-0">Gains (Current USD Value)</p>
+                                    </div>
+                                </Col>
+
+                                <Button color="primary" id="toggler" className='mx-auto mt-2' style={{ marginBottom: '1rem' }}>
+                                    + More Details
+                                </Button>
                             
                                 {/* <Col xs="12">
                                     <br/>
