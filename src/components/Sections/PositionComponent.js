@@ -193,13 +193,13 @@ const PositionComponent = (props) => {
                                         <Col xs="6">
                                             <div className="text-center">
                                                 <h5>{formatAllUnits(convertFromWei(props.userBondSparta))}</h5>
-                                                <p className="text-muted mb-2">+</p>
+                                                <p className="text-muted mb-0">+</p>
                                             </div>
                                         </Col>
                                         <Col xs="6">
                                             <div className="text-center">
                                                 <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(props.userBondToken)) : formatAllUnits(convertFromWei(props.userBondToken))}</h5>
-                                                <p className="text-muted mb-2">+</p>
+                                                <p className="text-muted mb-0">+</p>
                                             </div>
                                         </Col>
 
@@ -207,13 +207,13 @@ const PositionComponent = (props) => {
                                         <Col xs="6">
                                             <div className="text-center">
                                                 <h5>{formatAllUnits(convertFromWei(props.userSparta))}</h5>
-                                                <p className="text-muted mb-2">=</p>
+                                                <p className="text-muted mb-0">=</p>
                                             </div>
                                         </Col>
                                         <Col xs="6">
                                             <div className="text-center"> 
                                                 <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(props.userToken)) : formatAllUnits(convertFromWei(props.userToken))}</h5>
-                                                <p className="text-muted mb-2">=</p>
+                                                <p className="text-muted mb-0">=</p>
                                             </div>
                                         </Col>
                                     </Row>
@@ -221,13 +221,13 @@ const PositionComponent = (props) => {
                                 <Col xs="6">
                                     <div className="text-center border rounded p-2">
                                         <h5>{formatAllUnits(convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta))))}</h5>
-                                        <p className="text-muted mb-2">SPARTA</p>
+                                        <p className="text-muted mb-0">SPARTA</p>
                                     </div>
                                 </Col>
                                 <Col xs="6">
                                     <div className="text-center border rounded p-2">
                                         <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)))) : formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken))))}</h5>
-                                        <p className="text-muted mb-2">{symbol}</p>
+                                        <p className="text-muted mb-0">{symbol}</p>
                                     </div>
                                 </Col>
 
