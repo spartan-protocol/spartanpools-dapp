@@ -34,6 +34,7 @@ const PositionComponent = (props) => {
     const [spartaRemoves, setSpartaRemoves] = useState(0)
     const [tokenRemoves, setTokenRemoves] = useState(0)
     const [tokenBondAdds, setTokenBondAdds] = useState(0)
+    const [tokenPrice, setTokenPrice] = useState(0)
 
     let options = {
         plotOptions: {
@@ -84,7 +85,7 @@ const PositionComponent = (props) => {
         setSymbol(temp)
         // get TOKEN PRICE
         let tokenIDArray = {
-            'BNB': {'tokenID': 'bnb-coin'}, // THIS ID IS WRONG! check list at: https://www.coingecko.com/en/api#explore-api
+            'BNB': {'tokenID': 'binancecoin'},
             'USDT': {'tokenID': 'tether'},
             'BTCB': {'tokenID': 'bitcoin-bep2'},
             'BUSD': {'tokenID': 'binance-usd'},
@@ -103,8 +104,9 @@ const PositionComponent = (props) => {
         console.log(tokenIDArray)
         let tokenIDReady = tokenIDArray[temp].tokenID
         console.log(tokenIDReady)
-        let tokenPrice = await getPriceByID(tokenIDReady)
-        console.log(tokenPrice)
+        let tknPrice = await getPriceByID(tokenIDReady)
+        setTokenPrice(tknPrice)
+        console.log(tknPrice)
         // Get sum of all token adds
         let tempArray = []
         let tempAdd = []
@@ -188,10 +190,14 @@ const PositionComponent = (props) => {
                                 <Col xs="12">
                                     <div>
                                         <p className="text-muted mb-2">USD Gainz inc Bond!</p>
-                                        <h5>(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves))))</h5>
+                                        <h5>
+                                            {
+                                                (convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))) * context.spartaPrice).toFixed(2)
+                                                +
+                                                (convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))).toFixed(2) * tokenPrice).toFixed(2)
+                                            }   
+                                        </h5>
                                         <h5>{context.spartaPrice}</h5>
-                                        {/* {(convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))) * context.spartaPrice)}
-                                        {(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))) * tokenPrice)} */}
                                     </div>
                                 </Col>
 
