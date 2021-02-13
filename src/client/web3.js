@@ -86,6 +86,13 @@ export const getSpartaPrice = async () => {
     return resp.data["spartan-protocol-token"].usd
 }
 
+export const getPriceByID = async (ID) => {
+    // get ID by going to the tokens' page on CoinGecko and the id is the last part of the URL i.e. 'spartan-protocol-token' they don't support contract addr on BSC yet
+    let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=' + ID + '&vs_currencies=usd')
+    //console.log(resp.data["spartan-protocol-token"].usd)
+    return resp.data[ID].usd
+}
+
 export const getTokenContract = (address) => {
     var web3 = getWeb3()
     return new web3.eth.Contract(ERC20_ABI, address)

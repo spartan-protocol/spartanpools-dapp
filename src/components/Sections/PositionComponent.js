@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
+import {Context} from '../../context'
 import {withRouter} from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
@@ -11,12 +12,16 @@ import {
     // Button
 } from "reactstrap";
 import {convertFromWei, formatUnitsLong, formatAllUnits, bn, convertToWei} from '../../utils';
+import { getPriceByID } from '../../client/web3'
 import {TokenIcon} from '../Common/TokenIcon'
 import ReactApexChart from "react-apexcharts";
 
 const PositionComponent = (props) => {
+    const context = useContext(Context)
+
     useEffect(() => {
         getData()
+        
         // return function cleanup() {
         //     setLoading(false)
         // }
@@ -77,6 +82,29 @@ const PositionComponent = (props) => {
             temp = 'BNB'
         }
         setSymbol(temp)
+        // get TOKEN PRICE
+        let tokenIDArray = {
+            'BNB': {'tokenID': 'bnb-coin'}, // THIS ID IS WRONG! check list at: https://www.coingecko.com/en/api#explore-api
+            'USDT': {'tokenID': 'tether'},
+            'BTCB': {'tokenID': 'bitcoin-bep2'},
+            'BUSD': {'tokenID': 'binance-usd'},
+            'RAVEN': {'tokenID': 'raven-protocol'},
+            'ETH': {'tokenID': 'binance-eth'},
+            'DOT': {'tokenID': 'polkadot'},
+            'CREAM': {'tokenID': 'cream'},
+            'BIFI': {'tokenID': 'beefy-finance'},
+            'PROM': {'tokenID': 'prometeus'},
+            'ADA': {'tokenID': 'cardano'},
+            'LINK': {'tokenID': 'chainlink'},
+            'BURGER': {'tokenID': 'burger-swap'},
+            'XRP': {'tokenID': 'ripple'},
+            'GIV': {'tokenID': 'givly-coin'}
+        }
+        console.log(tokenIDArray)
+        let tokenIDReady = tokenIDArray[temp].tokenID
+        console.log(tokenIDReady)
+        let tokenPrice = await getPriceByID(tokenIDReady)
+        console.log(tokenPrice)
         // Get sum of all token adds
         let tempArray = []
         let tempAdd = []
@@ -157,6 +185,16 @@ const PositionComponent = (props) => {
                     <CardBody>
                         <div>
                             <Row>
+                                <Col xs="12">
+                                    <div>
+                                        <p className="text-muted mb-2">USD Gainz inc Bond!</p>
+                                        <h5>(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves))))</h5>
+                                        <h5>{context.spartaPrice}</h5>
+                                        {/* {(convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))) * context.spartaPrice)}
+                                        {(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))) * tokenPrice)} */}
+                                    </div>
+                                </Col>
+
                                 <Col xs="6">
                                     <div>
                                         <p className="text-muted mb-2">SPARTA Adds</p>
