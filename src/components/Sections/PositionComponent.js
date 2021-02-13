@@ -261,9 +261,9 @@ const PositionComponent = (props) => {
                                             inc. Locked in BOND</p>
                                         <h5>
                                             <mark>
-                                                {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))
+                                                {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds)))))
                                                 :
-                                                formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}
+                                                formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds)))))}
                                             </mark>
                                         </h5>
                                     </div>
