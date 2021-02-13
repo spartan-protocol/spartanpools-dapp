@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useState} from 'react'
+import React, {useContext, useState} from 'react'
 import {Context} from '../context'
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import {withRouter} from "react-router-dom";
@@ -15,6 +15,7 @@ import {
 import Web3 from 'web3'
 
 import {Container, Row, TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
+import {InputGroup, InputGroupAddon, Input, Button} from "reactstrap";
 import PositionComponent from "../components/Sections/PositionComponent"
 
 import axios from "axios";
@@ -36,33 +37,33 @@ const Positions = (props) => {
     let addLiq = ''
     const [userPositions, setUserPositions] = useState([])
     const [loading, setLoading] = useState(false)
-    // const simpleLoader = <div className='m-auto'><i className='bx bx-loader bx-sm align-middle text-warning bx-spin mx-1' /></div>
+    const simpleLoader = <div className='m-auto'><i className='bx bx-loader bx-sm align-middle text-warning bx-spin mx-1' /></div>
     const loader = <div className='m-auto pt-3'><i className='bx bx-loader bx-sm align-middle text-warning bx-spin mx-1' />Please wait ~30 seconds for data to compile!</div>
 
-    useEffect(() => {
-        if (context.sharesDataComplete && header['x-rapidapi-key'] !== '') {
-            getData()
-        }
-        return function cleanup() {
-            setLoading(false)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.sharesDataComplete])
+    // useEffect(() => {
+    //     if (context.sharesDataComplete && header['x-rapidapi-key'] !== '') {
+    //         getData()
+    //     }
+    //     return function cleanup() {
+    //         setLoading(false)
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [context.sharesDataComplete])
 
-    // const getStarted = (wallet) => {
-    //     setUserPositions([])
-    //     allTsfsOut = ''
-    //     tsfsOut = ''
-    //     tsfsIn = ''
-    //     removeLiq = ''
-    //     addLiq = ''
-    //     getData(wallet)
-    // }
+    const getStarted = (wallet) => {
+        setUserPositions([])
+        allTsfsOut = ''
+        tsfsOut = ''
+        tsfsIn = ''
+        removeLiq = ''
+        addLiq = ''
+        getData(wallet)
+    }
 
-    const getData = async () => {
+    const getData = async (wallet) => {
         setLoading(true)
         // Get User's In & Out Transfers
-        await Promise.all([getTsfsOut(), getTsfsIn()])
+        await Promise.all([getTsfsOut(wallet), getTsfsIn(wallet)])
         // Get all add & remove events and filter users in/outs 
         await Promise.all([getRemoveLiqData(), getAddLiqData()]) 
         // Filter user's in/outs by pool
@@ -77,7 +78,7 @@ const Positions = (props) => {
             if (addr1 === WBNB_ADDR) {addr1 = BNB_ADDR}
             let tempFilter = context.poolsData.filter(x => Web3.utils.toChecksumAddress(x.address) === Web3.utils.toChecksumAddress(addr1))
             let userPC = (bn(sharesData[i].locked).plus(bn(sharesData[i].units))).div(bn(tempFilter[0].units))
-            let dataBond = await Promise.all([getBondedv2MemberDetails(context.account, addr1), getBondedv3MemberDetails(context.account, addr1)])
+            let dataBond = await Promise.all([getBondedv2MemberDetails(wallet, addr1), getBondedv3MemberDetails(wallet, addr1)])
             dataBond = bn(dataBond[0].bondedLP).plus(bn(dataBond[1].bondedLP))
             let dataBondPC = bn(dataBond).div(bn(tempFilter[0].units))
             positionsData[i] = ({
@@ -106,14 +107,14 @@ const Positions = (props) => {
         setLoading(false)
     }
 
-    const getTsfsOut = async () => {
+    const getTsfsOut = async (wallet) => {
         // Get all member transfers out of wallet
         const options = {
             method: 'POST',
             url: apiUrl,
             headers: header,
             data: {
-                query: 'query ($network: EthereumNetwork!, $offset: Int!, $from: ISO8601DateTime, $till: ISO8601DateTime) {\n  ethereum(network: $network) {\n    transfers(options: {desc: "block.height", offset: $offset}, date: {since: $from, till: $till}, sender: {is: "' + context.account + '"}, amount: {gt: 0}) {\n      block {\n        timestamp {\n          time(format: "%Y-%m-%d %H:%M:%S")\n        }\n        height\n      }\n      sender {\n        address\n        annotation\n      }\n      receiver {\n        address\n        annotation\n      }\n      currency {\n        address\n        symbol\n      }\n      amount\n      transaction {\n        hash\n      }\n      external\n    }\n  }\n}',
+                query: 'query ($network: EthereumNetwork!, $offset: Int!, $from: ISO8601DateTime, $till: ISO8601DateTime) {\n  ethereum(network: $network) {\n    transfers(options: {desc: "block.height", offset: $offset}, date: {since: $from, till: $till}, sender: {is: "' + wallet + '"}, amount: {gt: 0}) {\n      block {\n        timestamp {\n          time(format: "%Y-%m-%d %H:%M:%S")\n        }\n        height\n      }\n      sender {\n        address\n        annotation\n      }\n      receiver {\n        address\n        annotation\n      }\n      currency {\n        address\n        symbol\n      }\n      amount\n      transaction {\n        hash\n      }\n      external\n    }\n  }\n}',
                 variables: {offset: 0, network: 'bsc', from: null, till: null, dateFormat: '%Y-%m-%d'}
             }
         }
@@ -125,14 +126,14 @@ const Positions = (props) => {
         })
     }
 
-    const getTsfsIn = async () => {
+    const getTsfsIn = async (wallet) => {
         // Get all member transfers receiving to their wallet
         const options = {
             method: 'POST',
             url: apiUrl,
             headers: header,
             data: {
-                query: 'query ($network: EthereumNetwork!, $offset: Int!, $from: ISO8601DateTime, $till: ISO8601DateTime) {\n  ethereum(network: $network) {\n    transfers(options: {desc: "block.height", offset: $offset}, date: {since: $from, till: $till}, receiver: {is: "' + context.account + '"}, amount: {gt: 0}) {\n      block {\n        timestamp {\n          time(format: "%Y-%m-%d %H:%M:%S")\n        }\n        height\n      }\n      sender {\n        address\n        annotation\n      }\n      receiver {\n        address\n        annotation\n      }\n      currency {\n        address\n        symbol\n      }\n      amount\n      transaction {\n        hash\n      }\n      external\n    }\n  }\n}',
+                query: 'query ($network: EthereumNetwork!, $offset: Int!, $from: ISO8601DateTime, $till: ISO8601DateTime) {\n  ethereum(network: $network) {\n    transfers(options: {desc: "block.height", offset: $offset}, date: {since: $from, till: $till}, receiver: {is: "' + wallet + '"}, amount: {gt: 0}) {\n      block {\n        timestamp {\n          time(format: "%Y-%m-%d %H:%M:%S")\n        }\n        height\n      }\n      sender {\n        address\n        annotation\n      }\n      receiver {\n        address\n        annotation\n      }\n      currency {\n        address\n        symbol\n      }\n      amount\n      transaction {\n        hash\n      }\n      external\n    }\n  }\n}',
                 variables: {offset: 0, network: 'bsc', from: null, till: null, dateFormat: '%Y-%m-%d'}
             }
         }
@@ -413,17 +414,13 @@ const Positions = (props) => {
                     <TabContent activeTab={activeTab}>
                         <TabPane tabId="1">
                             <Row>
-                                {/* {context.sharesDataComplete ?
+                                {context.sharesDataComplete &&
                                     <InputGroup className='py-3'>
-                                        <InputGroupAddon addonType="prepend"><Button onClick={() => {getStarted(document.getElementById('walletButton').value)}}>I'm a button</Button></InputGroupAddon>
-                                        <Input defaultValue={context.account} id='walletButton' />
-                                        <InputGroupAddon addonType="append">
-                                            <InputGroupText>To the Right!</InputGroupText>
-                                        </InputGroupAddon>
+                                        <InputGroupAddon addonType="prepend"><Button onClick={() => {getStarted(document.getElementById('walletButton').value)}}>Check Positions</Button></InputGroupAddon>
+                                        <Input value={context.account} id='walletButton' readOnly />
                                     </InputGroup>
-                                :
-                                    simpleLoader
-                                } */}
+                                }
+                                {!context.sharesDataComplete && simpleLoader}
                                 {userPositions.filter((x) => (parseFloat(bn(x.userBondPC).plus(bn(x.userPC))) > 0)).sort((a, b) => (parseFloat(bn(a.userBondPC).plus(bn(a.userPC))) > parseFloat(bn(b.userBondPC).plus(bn(b.userPC)))) ? -1 : 1).map(x => 
                                     <PositionComponent 
                                         key={x.address}

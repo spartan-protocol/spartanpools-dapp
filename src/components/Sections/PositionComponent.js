@@ -214,25 +214,6 @@ const PositionComponent = (props) => {
                                     <>
                                         <Col xs="6">
                                             <div>
-                                                <p className="text-muted mb-2"> SPARTA Gains<br/>
-                                                    exc. Locked in BOND</p>
-                                                <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
-                                            </div>
-                                        </Col>
-                                        <Col xs="6">
-                                            <div className="text-right">
-                                                <p className="text-muted mb-2">{symbol} Gains<br/>
-                                                    exc. Locked in BOND</p>
-                                                <h5>
-                                                    {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))))) 
-                                                    : 
-                                                    formatAllUnits(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}
-                                                </h5>
-                                            </div>
-                                        </Col>
-
-                                        <Col xs="6">
-                                            <div>
                                                 <p className="text-muted mb-2">SPARTA value<br/>
                                                     Locked in BOND</p>
                                                 <h5>{formatAllUnits(convertFromWei(props.userBondSparta))}</h5>
@@ -246,23 +227,44 @@ const PositionComponent = (props) => {
                                             </div>
                                         </Col>
 
+                                        <Col xs="6">
+                                            <div>
+                                                <p className="text-muted mb-2"> SPARTA Gains<br/>
+                                                    exc. Locked in BOND</p>
+                                                <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
+                                            </div>
+                                        </Col>
+                                        <Col xs="6">
+                                            <div className="text-right">
+                                                <p className="text-muted mb-2">{symbol} Gains<br/>
+                                                    exc. Locked in BOND</p>
+                                                <h5>
+                                                    {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds))))) 
+                                                    : 
+                                                    formatAllUnits(convertFromWei(bn(props.userToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves))).minus(bn(convertToWei(tokenBondAdds)))))}
+                                                </h5>
+                                            </div>
+                                        </Col>
+
                                     </>
                                 }
                                 <Col xs="6">
-                                    <div>
+                                    <div className='border rounded p-2 text-center'>
                                         <p className="text-muted mb-2"> SPARTA Gains<br/>
                                             inc. Locked in BOND</p>
-                                        <h5>{formatAllUnits(convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</h5>
+                                        <h5><mark>{formatAllUnits(convertFromWei(bn(props.userSparta).plus(bn(props.userBondSparta)).minus(bn(convertToWei(spartaAdds))).plus(bn(convertToWei(spartaRemoves)))))}</mark></h5>
                                     </div>
                                 </Col>
                                 <Col xs="6">
-                                    <div className="text-right">
+                                    <div className="text-center border rounded p-2">
                                         <p className="text-muted mb-2">{symbol} Gains<br/>
                                             inc. Locked in BOND</p>
                                         <h5>
-                                            {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))
-                                            :
-                                            formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}
+                                            <mark>
+                                                {symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))
+                                                :
+                                                formatAllUnits(convertFromWei(bn(props.userToken).plus(props.userBondToken).minus(bn(convertToWei(tokenAdds))).plus(bn(convertToWei(tokenRemoves)))))}
+                                            </mark>
                                         </h5>
                                     </div>
                                 </Col>
