@@ -9,19 +9,29 @@ const MobileNavbar = (props) => {
 
     const [isDropdown1,setIsDropdown1] = useState(false)
     const [isDropdown2,setIsDropdown2] = useState(false)
+    const [isDropdown3,setIsDropdown3] = useState(false)
 
     const toggleDropdown1 = () => {
         setIsDropdown1(!isDropdown1)
         setIsDropdown2(false)
+        setIsDropdown3(false)
     }
 
     const toggleDropdown2 = () => {
         setIsDropdown2(!isDropdown2)
         setIsDropdown1(false)
+        setIsDropdown3(false)
+    }
+
+    const toggleDropdown3 = () => {
+        setIsDropdown3(!isDropdown3)
+        setIsDropdown1(false)
+        setIsDropdown2(false)
     }
 
     const closeDropdowns = () => {
         props.setNavIsOpen(false)
+        setIsDropdown3(false)
         setIsDropdown2(false)
         setIsDropdown1(false)
     }
@@ -32,8 +42,14 @@ const MobileNavbar = (props) => {
                 <div className="container-fluid">
                     <nav className="navbar navbar-light navbar-expand-lg topnav-menu" id="navigation">
                         <ul className="navbar-nav">
-                            <li className="nav-item dropdown" onClick={()=>closeDropdowns()}>
-                                <Link to="/pools" className="nav-link dropdown-toggle arrow-none"><i className="bx bx-swim mr-2 align-middle"/>{props.t('Pools')}</Link>
+                            <li className="nav-item dropdown">
+                                <Link className="nav-link dropdown-toggle arrow-none" onClick={()=>toggleDropdown3()} to="#">
+                                    <i className="bx bx-group mr-2 align-middle"/>{props.t('Pools')} <div className="arrow-down ml-2"></div>
+                                </Link>
+                                <div className={classname("dropdown-menu", { show: isDropdown3  })}>
+                                    <Link to="/pools" className="dropdown-item" onClick={()=>closeDropdowns()}><i className="bx bx-swim mr-1"/>{props.t('Pools')}</Link>
+                                    <Link to="/positions" className="dropdown-item" onClick={()=>closeDropdowns()}><i className='mr-1 bx bx-trending-up' />Positions</Link>
+                                </div>
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle arrow-none" onClick={()=>toggleDropdown1()} to="#">
