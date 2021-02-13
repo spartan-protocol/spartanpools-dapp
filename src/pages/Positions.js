@@ -9,7 +9,8 @@ import {bn} from '../utils'
 import {
     ROUTERv1_ADDR, ROUTER_ADDR, ROUTERv2a_ADDR, 
     BNB_ADDR, WBNB_ADDR, BONDv1_ADDR, BONDv2_ADDR, 
-    BONDv3_ADDR, getBondedv2MemberDetails, getBondedv3MemberDetails
+    BONDv3_ADDR, BONDv3a_ADDR, BONDv3b_ADDR,
+    getBondedv2MemberDetails, getBondedv3MemberDetails
 } from '../client/web3'
 
 import Web3 from 'web3'
@@ -313,7 +314,7 @@ const Positions = (props) => {
         let tempData = []
         let dataIn = []
         // ALL REMOVE LIQ TXNS BY POOL IF BNB
-        for (let i = 0; i < tsfsIn.length - 1; i+=2) {
+        for (let i = 0; i < tsfsIn.length; i+=2) {
             let count = 0
             let addr1 = tsfsIn[i].currency.address
             let addr2 = tsfsIn[i + 1].currency.address
@@ -372,9 +373,9 @@ const Positions = (props) => {
     const bondTsfsByPool = (pool) => {
         // ALL BOND ADD LIQ TXNS BY POOL
         let tempArray = []
-        tempArray = allTsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv1_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv2_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv3_ADDR))
+        tempArray = allTsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv1_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv2_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv3_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv3a_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(BONDv3b_ADDR))
         let dataOut = []
-        for (let i = 0; i < tempArray.length - 1; i++) {
+        for (let i = 0; i < tempArray.length; i++) {
             let addr1 = tempArray[i].currency.address
             if (addr1 === '-') {addr1 = WBNB_ADDR}
             addr1 = Web3.utils.toChecksumAddress(addr1)

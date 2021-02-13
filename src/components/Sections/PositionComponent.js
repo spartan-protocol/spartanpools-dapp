@@ -100,15 +100,11 @@ const PositionComponent = (props) => {
             'XRP': {'tokenID': 'ripple'},
             'GIV': {'tokenID': 'givly-coin'}
         }
-        console.log(tokenIDArray)
         let tokenIDReady = tokenIDArray[temp].tokenID
-        console.log(tokenIDReady)
         let tknPrice = await getPriceByID(tokenIDReady)
         setTokenPrice(tknPrice)
-        console.log(tknPrice)
         let tempPrice = await getSpartaPrice()
         setSpartaPrice(tempPrice)
-        console.log(tempPrice)
         // Get sum of all token adds
         let tempArray = []
         let tempAdd = []
