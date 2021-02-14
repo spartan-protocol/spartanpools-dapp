@@ -355,9 +355,9 @@ const Positions = (props) => {
         // ALL ADD LIQ TXNS BY POOL IF NOT BNB
         else {tempArray = tsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(poolAddress))}
         let dataOut = []
-        for (let i = 0; i < tempArray.length - 1; i++) {
+        for (let i = 0; i < tempArray.length; i++) {
             let block1 = tempArray[i].block.height
-            let block2 = tempArray[i + 1].block.height
+            let block2 = tempArray[i + 1]?.block.height
             if (block1 === block2) {
                 tempData.push(tempArray[i])
                 tempData.push(tempArray[i + 1])
