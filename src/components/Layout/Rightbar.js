@@ -44,7 +44,9 @@ const RightSidebar = (props) => {
               </Link>
               <h5 className="m-0">Wallet</h5>
               {context.account !== undefined &&
-                <a target="_blank" href={"https://bscscan.com/address/" + context.account} rel="noopener noreferrer"><p>View on BSC Scan</p></a>
+                <>
+                  <a target="_blank" href={"https://bscscan.com/address/" + context.account} rel="noopener noreferrer" className='d-inline-block'><p>View on BSC Scan</p></a> <span> </span>
+                </>
               }
             </div>
 
