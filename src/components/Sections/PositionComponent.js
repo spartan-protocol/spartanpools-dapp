@@ -290,7 +290,7 @@ const PositionComponent = (props) => {
                                 </Col>
                                 <Col xs="6">
                                     <div className="text-center border rounded p-2">
-                                        <h5>{formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds)))))))}</h5>
+                                        <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds))))))) : formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds)))))))}</h5>
                                         <p className="text-muted mb-0">{symbol} Gains</p>
                                     </div>
                                 </Col>
@@ -306,7 +306,7 @@ const PositionComponent = (props) => {
                                 </Col>
 
                                 <Button color="primary" id="toggler" className='mx-auto mt-2' style={{ marginBottom: '1rem' }}>
-                                    + More Details
+                                    Toggle Details
                                 </Button>
                             
                                 {/* <Col xs="12">
