@@ -129,12 +129,13 @@ const PoolPaneSide = (props) => {
                                             </td>
                                             <td className='text-center'>
                                                 <h5 className="mb-0">{formatAllUnits( ( props.pool.apy - 10000) / 100)} %</h5>
-                                                <h6 className='mb-0 font-weight-light d-inline-block'>Confidence</h6>
-                                                <div id={props.pool.symbol + 'APY'} role='button' className={confidence + ' d-inline-block ml-1'} />
+                                                <h6 className='mb-0 font-weight-light d-inline-block'>Info</h6>
+                                                <div id={props.pool.symbol + 'APY'} role='button' className={'bx bx-info-circle d-inline-block ml-1'} />
                                                     <UncontrolledTooltip placement="bottom" target={props.pool.symbol + 'APY'}>
-                                                        {confidence === 'trafficRed' && 'Very Low Confidence!'}
+                                                        {/* {confidence === 'trafficRed' && 'Very Low Confidence!'}
                                                         {confidence === 'trafficOrange' && 'Low Confidence!'}
-                                                        {confidence === 'trafficYellow' && 'Moderate Confidence!'}
+                                                        {confidence === 'trafficYellow' && 'Moderate Confidence!'} */}
+                                                        APY is based on the entire history of the pool!<br />
                                                         <br />Past performance is NOT a guarantee of future performance!
                                                     </UncontrolledTooltip>
                                             </td>
