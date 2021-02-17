@@ -415,6 +415,7 @@ const Positions = (props) => {
                     <TabContent activeTab={activeTab}>
                         <TabPane tabId="1">
                             <Row>
+                                <p className='pt-3'>Brave Browser Users: Please <a href="https://spartanprotocol.medium.com/disable-brave-browser-shields-4c727cf5a120" target="_blank" rel="noopener noreferrer">disable shields</a> otherwise this data will be incomplete! <br /></p>
                                 {context.sharesDataComplete &&
                                     <InputGroup className='py-3'>
                                         <InputGroupAddon addonType="prepend"><Button onClick={() => {getStarted(document.getElementById('walletButton').value)}}>Check Positions</Button></InputGroupAddon>
