@@ -12,7 +12,7 @@ import {
     Button
 } from "reactstrap";
 import { convertFromWei, formatUnitsLong, formatAllUnits, bn, convertToWei } from '../../utils';
-import { getPriceByID, getSpartaPrice } from '../../client/web3'
+import { getPriceByID, getPastPriceByID, getSpartaPrice } from '../../client/web3'
 import { TokenIcon } from '../Common/TokenIcon'
 import ReactApexChart from "react-apexcharts";
 
@@ -28,10 +28,15 @@ const PositionComponent = (props) => {
 
     const [symbol, setSymbol] = useState('')
     const [spartaAdds, setSpartaAdds] = useState(0)
+    const [spartaAddsUSD, setSpartaAddsUSD] = useState(0)
     const [tokenAdds, setTokenAdds] = useState(0)
+    const [tokenAddsUSD, setTokenAddsUSD] = useState(0)
     const [spartaRemoves, setSpartaRemoves] = useState(0)
+    const [spartaRemovesUSD, setSpartaRemovesUSD] = useState(0)
     const [tokenRemoves, setTokenRemoves] = useState(0)
+    const [tokenRemovesUSD, setTokenRemovesUSD] = useState(0)
     const [tokenBondAdds, setTokenBondAdds] = useState(0)
+    const [tokenBondAddsUSD, setTokenBondAddsUSD] = useState(0)
     const [tokenPrice, setTokenPrice] = useState(0)
     const [spartaPrice, setSpartaPrice] = useState(0)
 
@@ -105,8 +110,9 @@ const PositionComponent = (props) => {
         setTokenPrice(tknPrice)
         let tempPrice = await getSpartaPrice()
         setSpartaPrice(tempPrice)
-        // Get sum of all token adds
+        // Get array of all token adds (START)
         let tempArray = []
+        let tempArrayUSD = []
         let tempAdd = []
         for (let i = 0; i < props.adds.length; i++) {
             tempAdd = props.adds[i].filter(x => x.currency.symbol === temp)
@@ -115,11 +121,29 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
+        console.log(tempArray)
+        // Get sum of all token adds USD
+        for (let i = 0; i < tempArray.length; i++) {
+            tempAdd = tempArray[i].block.timestamp.time
+            tempAdd = tempAdd.split(" ")
+            tempAdd = tempAdd[0].split("-")
+            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
+            tempAdd = await getPastPriceByID(tokenIDReady, tempAdd)
+            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempArrayUSD.push(tempAdd)
+        }
+        tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
+        tempArrayUSD = tempArrayUSD.toString()
+        console.log(tempArrayUSD)
+        setTokenAddsUSD(tempArrayUSD)
+        // Get sum of all token adds UNITS (FINAL)
         tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
         tempArray = tempArray.toString()
+        console.log(tempArray)
         setTokenAdds(tempArray)
         tempArray = []
-        // Get sum of all sparta adds
+        tempArrayUSD = []
+        // Get sum of all sparta adds (START)
         for (let i = 0; i < props.adds.length; i++) {
             tempAdd = props.adds[i].filter(x => x.currency.symbol === 'SPARTA')
             if (tempAdd.length > 0) {
@@ -127,11 +151,28 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
+        // Get sum of all sparta adds USD
+        for (let i = 0; i < tempArray.length; i++) {
+            tempAdd = tempArray[i].block.timestamp.time
+            tempAdd = tempAdd.split(" ")
+            tempAdd = tempAdd[0].split("-")
+            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
+            tempAdd = await getPastPriceByID('spartan-protocol-token', tempAdd)
+            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempArrayUSD.push(tempAdd)
+        }
+        tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
+        tempArrayUSD = tempArrayUSD.toString()
+        console.log(tempArrayUSD)
+        setSpartaAddsUSD(tempArrayUSD)
+        // Get sum of all sparta adds UNITS (FINAL)
         tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
         tempArray = tempArray.toString()
+        console.log(tempArray)
         setSpartaAdds(tempArray)
         tempArray = []
-        // Get sum of all token removes
+        tempArrayUSD = []
+        // Get sum of all token removes (START)
         for (let i = 0; i < props.removes.length; i++) {
             tempAdd = props.removes[i].filter(x => x.currency.symbol === temp)
             if (tempAdd.length > 0) {
@@ -139,11 +180,28 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
+        // Get sum of all token removes USD
+        for (let i = 0; i < tempArray.length; i++) {
+            tempAdd = tempArray[i].block.timestamp.time
+            tempAdd = tempAdd.split(" ")
+            tempAdd = tempAdd[0].split("-")
+            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
+            tempAdd = await getPastPriceByID(tokenIDReady, tempAdd)
+            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempArrayUSD.push(tempAdd)
+        }
+        tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
+        tempArrayUSD = tempArrayUSD.toString()
+        console.log(tempArrayUSD)
+        setTokenRemovesUSD(tempArrayUSD)
+        // Get sum of all token removes UNITS (FINAL)
         tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
         tempArray = tempArray.toString()
+        console.log(tempArray)
         setTokenRemoves(tempArray)
         tempArray = []
-        // Get sum of all sparta removes
+        tempArrayUSD = []
+        // Get sum of all sparta removes (START)
         for (let i = 0; i < props.removes.length; i++) {
             tempAdd = props.removes[i].filter(x => x.currency.symbol === 'SPARTA')
             if (tempAdd.length > 0) {
@@ -151,17 +209,51 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
+        // Get sum of all sparta removes USD
+        for (let i = 0; i < tempArray.length; i++) {
+            tempAdd = tempArray[i].block.timestamp.time
+            tempAdd = tempAdd.split(" ")
+            tempAdd = tempAdd[0].split("-")
+            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
+            tempAdd = await getPastPriceByID('spartan-protocol-token', tempAdd)
+            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempArrayUSD.push(tempAdd)
+        }
+        tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
+        tempArrayUSD = tempArrayUSD.toString()
+        console.log(tempArrayUSD)
+        setSpartaRemovesUSD(tempArrayUSD)
+        // Get sum of all sparta removes UNITS (FINAL)
         tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
         tempArray = tempArray.toString()
+        console.log(tempArray)
         setSpartaRemoves(tempArray)
         tempArray = []
-        // Get sum of all token bond-adds
+        tempArrayUSD = []
+        // Get sum of all token bond-adds (START)
         tempArray = props.bondAdds
         tempArray = tempArray.flat(Infinity)
+        // Get sum of all token bond-adds USD
+        for (let i = 0; i < tempArray.length; i++) {
+            tempAdd = tempArray[i].block.timestamp.time
+            tempAdd = tempAdd.split(" ")
+            tempAdd = tempAdd[0].split("-")
+            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
+            tempAdd = await getPastPriceByID(tokenIDReady, tempAdd)
+            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempArrayUSD.push(tempAdd)
+        }
+        tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
+        tempArrayUSD = tempArrayUSD.toString()
+        console.log(tempArrayUSD)
+        setTokenBondAddsUSD(tempArrayUSD)
+        // Get sum of all token bond-adds UNITS (FINAL)
         tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
         tempArray = tempArray.toString()
+        console.log(tempArray)
         setTokenBondAdds(tempArray)
         tempArray = []
+        tempArrayUSD = []
     }
 
     return (
@@ -186,7 +278,7 @@ const PositionComponent = (props) => {
                         <div>
                             <Row>
                                 {/* TOTAL LP HOLDINGS POSITION SECTION */}
-                                <Col xs='12'><h5 className="text-center">Your LP Token Value (inc Bond)</h5></Col>
+                                <Col xs='12'><h5 className="text-center">Your LP Token Value</h5></Col>
                                 <UncontrolledCollapse toggler="#toggler">
                                     <Row>
                                         <Col xs='12' className='text-center'><p className="text-muted mb-2">Bond-Locked LP Tokens Value</p></Col>
@@ -238,7 +330,7 @@ const PositionComponent = (props) => {
                                 <Col xs='12' className="text-center"><h2>-</h2></Col>
 
                                 {/* NET ADD REMOVE + BOND LIQ POSITION SECTION */}
-                                <Col xs='12'><h5 className="text-center">NET Adds (inc Bond) & Removes</h5></Col>
+                                <Col xs='12'><h5 className="text-center">NET Add / Removes</h5></Col>
                                 <UncontrolledCollapse toggler="#toggler">
                                     <Row>
                                         <Col xs='12' className='text-center'><p className="text-muted mb-2">Add Liquidity to Bond+Mint (Total)</p></Col>
@@ -274,12 +366,20 @@ const PositionComponent = (props) => {
                                     <div className="text-center border rounded p-2">
                                         <h5>{formatAllUnits(bn(spartaAdds).minus(bn(spartaRemoves)))}</h5>
                                         <p className="text-muted mb-0">SPARTA</p>
+                                        <UncontrolledCollapse toggler="#toggler">
+                                            <h5 className='pt-2'>{'$' + formatAllUnits(bn(spartaAddsUSD).minus(bn(spartaRemovesUSD)))}</h5>
+                                            <p className="text-muted mb-0">USD (At time of)</p>
+                                        </UncontrolledCollapse>
                                     </div>
                                 </Col>
                                 <Col xs="6">
                                     <div className="text-center border rounded p-2">
                                         <h5>{symbol === 'BTCB' ? formatUnitsLong(bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds))) : formatAllUnits(bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds)))}</h5>
                                         <p className="text-muted mb-0">{symbol}</p>
+                                        <UncontrolledCollapse toggler="#toggler">
+                                            <h5 className='pt-2'>{'$' + formatAllUnits(bn(tokenAddsUSD).minus(bn(tokenRemovesUSD)).plus(bn(tokenBondAddsUSD)))}</h5>
+                                            <p className="text-muted mb-0">USD (At time of)</p>
+                                        </UncontrolledCollapse>
                                     </div>
                                 </Col>
 
@@ -301,11 +401,28 @@ const PositionComponent = (props) => {
                                 <Col xs="12" className='mt-2'>
                                     <div className="text-center border rounded p-2">
                                         <h4>
+                                            {'$' + formatAllUnits(
+                                                (
+                                                    (convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta))).toFixed(2) * spartaPrice)
+                                                    +
+                                                    (convertFromWei(bn(props.userBondToken).plus(bn(props.userToken))).toFixed(2) * tokenPrice)
+                                                )
+                                                -
+                                                (
+                                                    ((bn(spartaAddsUSD).minus(bn(spartaRemovesUSD))).toFixed(2) * 1)
+                                                    +
+                                                    ((bn(tokenAddsUSD).minus(bn(tokenRemovesUSD)).plus(bn(tokenBondAddsUSD))).toFixed(2) * 1)
+                                                )
+                                            )}
+                                        </h4>
+                                        <p className="text-muted mb-0">USD Gains (vs initial)</p>
+
+                                        <h4 className='pt-2'>
                                             {'$' + formatAllUnits(((convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta)).minus(convertToWei((bn(spartaAdds).minus(bn(spartaRemoves))))))).toFixed(2) * spartaPrice)
                                             + 
                                             ((convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds))))))).toFixed(2) * tokenPrice))}
                                         </h4>
-                                        <p className="text-muted mb-0">Gains (Current USD Value)</p>
+                                        <p className="text-muted mb-0">Unit Gains (vs HODL)</p>
                                     </div>
                                 </Col>
 
