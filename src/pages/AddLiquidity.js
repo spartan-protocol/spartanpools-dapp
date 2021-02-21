@@ -6,7 +6,7 @@ import queryString from 'query-string';
 
 import InputPaneJoin from "../components/Sections/InputPaneJoin";
 
-import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits} from '../utils'
+import {bn, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits} from '../utils'
 import {getLiquidityUnits} from '../math'
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import {manageBodyClass} from "../components/common";
@@ -776,7 +776,7 @@ const AddSymmPane = (props) => {
                     <h6 className='m-0'>Output <i className="bx bx-info-circle align-middle" id="tooltipUnits" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipUnits">An estimate of the amount of LP tokens you will receive from this transaction.</UncontrolledTooltip>
                 </Col>
-                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))} *</h5></Col>
+                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatGranularUnits(convertFromWei(props.estLiquidityUnits))} *</h5></Col>
 
                 <Col xs={12} className='py-1'><hr className='m-0'/></Col>
 
@@ -915,7 +915,7 @@ const AddAsymmPane = (props) => {
                     <h6 className='m-0'>Output <i className="bx bx-info-circle align-middle" id="tooltipUnits" role='button'/></h6>
                     <UncontrolledTooltip placement="right" target="tooltipUnits">An estimate of the amount of LP tokens you will receive from this transaction.</UncontrolledTooltip>
                 </Col>
-                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatAllUnits(convertFromWei(props.estLiquidityUnits / 2))} *</h5></Col>
+                <Col xs={7} className='py-1'><h5 className="text-right m-0 py-2">{formatGranularUnits(convertFromWei(props.estLiquidityUnits))} *</h5></Col>
 
                 <Col xs={12} className='py-1'><hr className='m-0'/></Col>
 
