@@ -149,7 +149,7 @@ export const getLiquidityUnits = (stake, pool) => {
   const slipAdjustment = getSlipAdjustment(b, B, t, T)
   const part1 = t.times(B)
   const part2 = T.times(b)
-  const part3 = T.times(B)//.times(2)
+  const part3 = T.times(B).times(2)
   const result = (P.times(part1.plus(part2))).div(part3).times(slipAdjustment)
   return result
 }
