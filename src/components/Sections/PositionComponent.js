@@ -110,6 +110,7 @@ const PositionComponent = (props) => {
         setTokenPrice(tknPrice)
         let tempPrice = await getSpartaPrice()
         setSpartaPrice(tempPrice)
+        
         // Get array of all token adds (START)
         let tempArray = []
         let tempArrayUSD = []
@@ -121,7 +122,11 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
-        console.log(tempArray)
+        tempAdd = tempArray
+        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
+        tempArray = tempArray.toString()
+        setTokenAdds(tempArray)
+        tempArray = tempAdd
         // Get sum of all token adds USD
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
@@ -134,15 +139,10 @@ const PositionComponent = (props) => {
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
         tempArrayUSD = tempArrayUSD.toString()
-        console.log(tempArrayUSD)
         setTokenAddsUSD(tempArrayUSD)
-        // Get sum of all token adds UNITS (FINAL)
-        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
-        tempArray = tempArray.toString()
-        console.log(tempArray)
-        setTokenAdds(tempArray)
         tempArray = []
         tempArrayUSD = []
+
         // Get sum of all sparta adds (START)
         for (let i = 0; i < props.adds.length; i++) {
             tempAdd = props.adds[i].filter(x => x.currency.symbol === 'SPARTA')
@@ -151,7 +151,12 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
-        // Get sum of all sparta adds USD
+        tempAdd = tempArray
+        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
+        tempArray = tempArray.toString()
+        setSpartaAdds(tempArray)
+        tempArray = tempAdd
+        // Get sum of all sparta adds USD (FINAL)
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
@@ -163,15 +168,10 @@ const PositionComponent = (props) => {
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
         tempArrayUSD = tempArrayUSD.toString()
-        console.log(tempArrayUSD)
         setSpartaAddsUSD(tempArrayUSD)
-        // Get sum of all sparta adds UNITS (FINAL)
-        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
-        tempArray = tempArray.toString()
-        console.log(tempArray)
-        setSpartaAdds(tempArray)
         tempArray = []
         tempArrayUSD = []
+
         // Get sum of all token removes (START)
         for (let i = 0; i < props.removes.length; i++) {
             tempAdd = props.removes[i].filter(x => x.currency.symbol === temp)
@@ -180,7 +180,12 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
-        // Get sum of all token removes USD
+        tempAdd = tempArray
+        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
+        tempArray = tempArray.toString()
+        setTokenRemoves(tempArray)
+        tempArray = tempAdd
+        // Get sum of all token removes USD (FINAL)
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
@@ -192,15 +197,10 @@ const PositionComponent = (props) => {
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
         tempArrayUSD = tempArrayUSD.toString()
-        console.log(tempArrayUSD)
         setTokenRemovesUSD(tempArrayUSD)
-        // Get sum of all token removes UNITS (FINAL)
-        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
-        tempArray = tempArray.toString()
-        console.log(tempArray)
-        setTokenRemoves(tempArray)
         tempArray = []
         tempArrayUSD = []
+
         // Get sum of all sparta removes (START)
         for (let i = 0; i < props.removes.length; i++) {
             tempAdd = props.removes[i].filter(x => x.currency.symbol === 'SPARTA')
@@ -209,7 +209,12 @@ const PositionComponent = (props) => {
             }
         }
         tempArray = tempArray.flat(Infinity)
-        // Get sum of all sparta removes USD
+        tempAdd = tempArray
+        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
+        tempArray = tempArray.toString()
+        setSpartaRemoves(tempArray)
+        tempArray = tempAdd
+        // Get sum of all sparta removes USD (FINAL)
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
@@ -221,19 +226,19 @@ const PositionComponent = (props) => {
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
         tempArrayUSD = tempArrayUSD.toString()
-        console.log(tempArrayUSD)
         setSpartaRemovesUSD(tempArrayUSD)
-        // Get sum of all sparta removes UNITS (FINAL)
-        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
-        tempArray = tempArray.toString()
-        console.log(tempArray)
-        setSpartaRemoves(tempArray)
         tempArray = []
         tempArrayUSD = []
+
         // Get sum of all token bond-adds (START)
         tempArray = props.bondAdds
         tempArray = tempArray.flat(Infinity)
-        // Get sum of all token bond-adds USD
+        tempAdd = tempArray
+        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
+        tempArray = tempArray.toString()
+        setTokenBondAdds(tempArray)
+        // Get sum of all token bond-adds USD (FINAL)
+        tempArray = tempAdd
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
@@ -245,13 +250,7 @@ const PositionComponent = (props) => {
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
         tempArrayUSD = tempArrayUSD.toString()
-        console.log(tempArrayUSD)
         setTokenBondAddsUSD(tempArrayUSD)
-        // Get sum of all token bond-adds UNITS (FINAL)
-        tempArray = tempArray.reduce((a, b) => bn(a).plus(bn(b.amount)), 0)
-        tempArray = tempArray.toString()
-        console.log(tempArray)
-        setTokenBondAdds(tempArray)
         tempArray = []
         tempArrayUSD = []
     }
