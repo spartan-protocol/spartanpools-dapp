@@ -121,19 +121,36 @@ export const getValueOfToken1InToken2 = (input, pool1, pool2) => {
   return result
 }
 
+export const getSlipAdjustment = (b, B, t, T) => {
+  // slipAdjustment = (1 - ABS((B t - b T)/((2 b + B) (t + T))))
+  // 1 - ABS(part1 - part2)/(part3 * part4))
+  const part1 = bn(B).times(t)
+  const part2 = bn(b).times(T)
+  const part3 = bn(b).times(2).plus(B)
+  const part4 = bn(t).plus(T)
+  let numerator = ''
+  if(part1.comparedTo(part2) === 1){
+      numerator = part1.minus(part2)
+  } else {
+      numerator = part2.minus(part1)
+  }
+  const denominator = part3.times(part4)
+  return bn(1).minus((numerator).div(denominator))
+}
+
 export const getLiquidityUnits = (stake, pool) => {
-  // formula: ((V + T) (v T + V t))/(4 V T)
-  // part1 * (part2 + part3) / denominator
-  const v = bn(stake.baseAmount)
-  const t = bn(stake.tokenAmount)
-  const V = bn(pool.baseAmount).plus(v) // Must add r first
-  const T = bn(pool.tokenAmount).plus(t) // Must add t first
-  const part1 = V.plus(T)
-  const part2 = v.times(T)
-  const part3 = V.times(t)
-  const numerator = part1.times(part2.plus(part3))
-  const denominator = V.times(T).times(4)
-  const result = numerator.div(denominator)
+  // units = ((P (t B + T b))/(2 T B)) * slipAdjustment
+  // P * (part1 + part2) / (part3) * slipAdjustment
+  const b = bn(stake.baseAmount) // b = _actualInputBase
+  const B = bn(pool.baseAmount) // B = baseAmount
+  const t = bn(stake.tokenAmount) // t = _actualInputToken
+  const T = bn(pool.tokenAmount) // T = tokenAmount
+  const P = bn(pool.units) // P = LP Token TotalSupply
+  const slipAdjustment = getSlipAdjustment(b, B, t, T)
+  const part1 = t.times(B)
+  const part2 = T.times(b)
+  const part3 = T.times(B)//.times(2)
+  const result = (P.times(part1.plus(part2))).div(part3).times(slipAdjustment)
   return result
 }
 
