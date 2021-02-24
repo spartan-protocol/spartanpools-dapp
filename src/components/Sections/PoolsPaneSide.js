@@ -22,7 +22,7 @@ export const PoolsPaneSide = (props) => {
 
         const series1 = [{
             name: "Pooled",
-            data: [0, formatAllUSD(convertFromWei(props.globalData * 2), context.spartanPrice).slice(1)]
+            data: [0, formatAllUSD(convertFromWei(props.tvl * 2), context.spartanPrice).slice(1)]
         }];
         const options1 = {
             chart: {sparkline: {enabled: !0}},
@@ -104,13 +104,18 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="12">
                                         <div>
-                                            <h3 className="d-inline-block">{formatAllUSD(convertFromWei(props.globalData * 2), context.spartanPrice)}</h3>
+                                            {context.poolsDataComplete &&
+                                                <h3 className="d-inline-block">{formatAllUSD(convertFromWei(props.tvl * 2), context.spartanPrice)}</h3>
+                                            }
+                                            {!context.poolsDataComplete &&
+                                                <i className="bx bx-spin bx-loader ml-1"/>
+                                            }
                                             <h5 className='d-inline-block ml-2'>USD</h5>
                                             <i className="bx bx-info-circle ml-1" id="globalDataTotalPooled" role='button'/>
                                             <UncontrolledTooltip placement="bottom" target="globalDataTotalPooled">
                                                 Total USD value of all assets locked in SpartanPools.<br/>
                                                 (SPARTA * PRICE * 2)<br/>
-                                                {formatAllUnits(convertFromWei(props.globalData))} * {formatAllUnits(context.spartanPrice)} * 2<br/>
+                                                {formatAllUnits(convertFromWei(props.tvl))} * {formatAllUnits(context.spartanPrice)} * 2<br/>
                                             </UncontrolledTooltip>
                                         </div>
                                     </Col>
@@ -134,7 +139,12 @@ export const PoolsPaneSide = (props) => {
                                 <Row>
                                     <Col xs="12">
                                         <div>
-                                            <h3 className='d-inline-block'>{formatAllUnits(convertFromWei(props.totalVolume))}</h3>
+                                            {context.poolsDataComplete &&
+                                                <h3 className='d-inline-block'>{formatAllUnits(convertFromWei(props.totalVolume))}</h3>
+                                            }
+                                            {!context.poolsDataComplete &&
+                                                <i className="bx bx-spin bx-loader ml-1"/>
+                                            }
                                             <h5 className='d-inline-block ml-2'>SPARTA</h5>
                                             <i className="bx bx-dollar-circle ml-1" id="globalDataTotalVol" role='button'/>
                                             <UncontrolledTooltip placement="bottom" target="globalDataTotalVol">
