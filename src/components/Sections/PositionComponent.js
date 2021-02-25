@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import {withRouter} from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
@@ -12,11 +12,15 @@ import {
     Button
 } from "reactstrap";
 import { convertFromWei, formatUnitsLong, formatAllUnits, bn, convertToWei } from '../../utils';
-import { getPriceByID, getPastPriceByID, getSpartaPrice } from '../../client/web3'
+import { getTokenHistoryByID } from '../../client/web3'
 import { TokenIcon } from '../Common/TokenIcon'
 import ReactApexChart from "react-apexcharts";
+import { Context } from '../../context';
 
 const PositionComponent = (props) => {
+
+    const context = useContext(Context)
+
     useEffect(() => {
         getData()
         
@@ -91,10 +95,10 @@ const PositionComponent = (props) => {
         let tokenIDArray = {
             'BNB': {'tokenID': 'binancecoin'},
             'USDT': {'tokenID': 'tether'},
-            'BTCB': {'tokenID': 'bitcoin-bep2'},
+            'BTCB': {'tokenID': 'bitcoin'},
             'BUSD': {'tokenID': 'binance-usd'},
             'RAVEN': {'tokenID': 'raven-protocol'},
-            'ETH': {'tokenID': 'binance-eth'},
+            'ETH': {'tokenID': 'ethereum'},
             'DOT': {'tokenID': 'polkadot'},
             'CREAM': {'tokenID': 'cream-2'},
             'BIFI': {'tokenID': 'beefy-finance'},
@@ -106,10 +110,12 @@ const PositionComponent = (props) => {
             'GIV': {'tokenID': 'givly-coin'}
         }
         let tokenIDReady = tokenIDArray[temp].tokenID
-        let tknPrice = await getPriceByID(tokenIDReady)
-        setTokenPrice(tknPrice)
-        let tempPrice = await getSpartaPrice()
+        let tempPrice = context.spartanPrice
         setSpartaPrice(tempPrice)
+        let pastTknPrice = await getTokenHistoryByID(tokenIDReady)
+        let tknPrice = pastTknPrice.prices[pastTknPrice.prices.length - 1][1]
+        setTokenPrice(tknPrice)
+        let pastSpartaPrice = props.spartaData
         
         // Get array of all token adds (START)
         let tempArray = []
@@ -131,10 +137,13 @@ const PositionComponent = (props) => {
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
-            tempAdd = tempAdd[0].split("-")
-            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
-            tempAdd = await getPastPriceByID(tokenIDReady, tempAdd)
-            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempAdd = parseInt((new Date(tempAdd[0]).getTime()))
+            let time = tempAdd
+            let tempCheck = pastTknPrice.prices.reduce((a, b) => {
+                return Math.abs(b[0] - time) < Math.abs(a[0] - time) ? b : a
+            })
+            tempAdd = pastTknPrice.prices.filter(i => i[0] === tempCheck[0])
+            tempAdd = bn(tempAdd[0][1]).times(bn(tempArray[i].amount)).toFixed(18)
             tempArrayUSD.push(tempAdd)
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
@@ -160,10 +169,13 @@ const PositionComponent = (props) => {
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
-            tempAdd = tempAdd[0].split("-")
-            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
-            tempAdd = await getPastPriceByID('spartan-protocol-token', tempAdd)
-            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempAdd = parseInt((new Date(tempAdd[0]).getTime()))
+            let time = tempAdd
+            let tempCheck = pastSpartaPrice.prices.reduce((a, b) => {
+                return Math.abs(b[0] - time) < Math.abs(a[0] - time) ? b : a
+            })
+            tempAdd = pastSpartaPrice.prices.filter(i => i[0] === tempCheck[0])
+            tempAdd = bn(tempAdd[0][1]).times(bn(tempArray[i].amount)).toFixed(18)
             tempArrayUSD.push(tempAdd)
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
@@ -189,10 +201,13 @@ const PositionComponent = (props) => {
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
-            tempAdd = tempAdd[0].split("-")
-            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
-            tempAdd = await getPastPriceByID(tokenIDReady, tempAdd)
-            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempAdd = parseInt((new Date(tempAdd[0]).getTime()))
+            let time = tempAdd
+            let tempCheck = pastTknPrice.prices.reduce((a, b) => {
+                return Math.abs(b[0] - time) < Math.abs(a[0] - time) ? b : a
+            })
+            tempAdd = pastTknPrice.prices.filter(i => i[0] === tempCheck[0])
+            tempAdd = bn(tempAdd[0][1]).times(bn(tempArray[i].amount)).toFixed(18)
             tempArrayUSD.push(tempAdd)
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
@@ -218,10 +233,13 @@ const PositionComponent = (props) => {
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
-            tempAdd = tempAdd[0].split("-")
-            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
-            tempAdd = await getPastPriceByID('spartan-protocol-token', tempAdd)
-            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempAdd = parseInt((new Date(tempAdd[0]).getTime()))
+            let time = tempAdd
+            let tempCheck = pastSpartaPrice.prices.reduce((a, b) => {
+                return Math.abs(b[0] - time) < Math.abs(a[0] - time) ? b : a
+            })
+            tempAdd = pastSpartaPrice.prices.filter(i => i[0] === tempCheck[0])
+            tempAdd = bn(tempAdd[0][1]).times(bn(tempArray[i].amount)).toFixed(18)
             tempArrayUSD.push(tempAdd)
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)
@@ -242,10 +260,13 @@ const PositionComponent = (props) => {
         for (let i = 0; i < tempArray.length; i++) {
             tempAdd = tempArray[i].block.timestamp.time
             tempAdd = tempAdd.split(" ")
-            tempAdd = tempAdd[0].split("-")
-            tempAdd = tempAdd[2] + '-' + tempAdd[1] + '-' + tempAdd[0]
-            tempAdd = await getPastPriceByID(tokenIDReady, tempAdd)
-            tempAdd = bn(tempAdd).times(bn(tempArray[i].amount)).toFixed(18)
+            tempAdd = parseInt((new Date(tempAdd[0]).getTime()))
+            let time = tempAdd
+            let tempCheck = pastTknPrice.prices.reduce((a, b) => {
+                return Math.abs(b[0] - time) < Math.abs(a[0] - time) ? b : a
+            })
+            tempAdd = pastTknPrice.prices.filter(i => i[0] === tempCheck[0])
+            tempAdd = bn(tempAdd[0][1]).times(bn(tempArray[i].amount)).toFixed(18)
             tempArrayUSD.push(tempAdd)
         }
         tempArrayUSD = tempArrayUSD.reduce((a, b) => bn(a).plus(bn(b)), 0)

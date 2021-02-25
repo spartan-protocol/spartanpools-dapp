@@ -27,7 +27,7 @@ const AddressConn = (props) => {
     const getSpartaPriceLoop = async () => {
         let data = await getSpartaPrice()
         context.setContext({'spartanPrice': data})
-        await pause(7500)
+        await pause(15000)
         getSpartaPriceLoop()
     }
 

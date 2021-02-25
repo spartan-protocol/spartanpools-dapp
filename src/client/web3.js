@@ -89,12 +89,14 @@ export const getSpartaPrice = async () => {
 }
 
 export const getPriceByID = async (ID) => {
+    console.log('start get' + ID + 'price')
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=' + ID + '&vs_currencies=usd')
     //console.log(resp)
     return resp.data[ID].usd
 }
 
 export const getPastPriceByID = async (ID, date) => {
+    console.log('start get' + ID + 'price on' + date)
     // date in this format DD-MM-YYYY
     let resp = await axios.get('https://api.coingecko.com/api/v3/coins/' + ID + '/history?date=' + date)
     //console.log(resp)
@@ -109,6 +111,15 @@ export const getPastPriceByID = async (ID, date) => {
     }
     else {data = resp.data['market_data'].current_price.usd}
     return data
+}
+
+export const getTokenHistoryByID = async (ID) => {
+    console.log('start get' + ID + 'token history')
+    // dates in unix timestamp
+    // SPARTA genesis ~ 1600000000
+    let now = Date.now()
+    let resp = await axios.get('https://api.coingecko.com/api/v3/coins/' + ID + '/market_chart/range?vs_currency=usd&from=1600000000&to=' + now)
+    return resp.data
 }
 
 export const getTokenContract = (address) => {
