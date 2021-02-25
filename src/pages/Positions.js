@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import {Context} from '../context'
 import Breadcrumbs from "../components/Common/Breadcrumb";
 import {withRouter} from "react-router-dom";
@@ -10,7 +10,7 @@ import {
     ROUTERv1_ADDR, ROUTER_ADDR, ROUTERv2a_ADDR, 
     BNB_ADDR, WBNB_ADDR, BONDv1_ADDR, BONDv2_ADDR, 
     BONDv3_ADDR, BONDv3a_ADDR, BONDv3b_ADDR,
-    getBondedv2MemberDetails, getBondedv3MemberDetails
+    getBondedv2MemberDetails, getBondedv3MemberDetails, getTokenHistoryByID
 } from '../client/web3'
 
 import Web3 from 'web3'
@@ -37,19 +37,27 @@ const Positions = (props) => {
     let removeLiq = ''
     let addLiq = ''
     const [userPositions, setUserPositions] = useState([])
+    const [spartaData, setSpartaData] = useState([])
     const [loading, setLoading] = useState(false)
     const simpleLoader = <div className='m-auto'><i className='bx bx-loader bx-sm align-middle text-warning bx-spin mx-1' /></div>
     const loader = <div className='m-auto pt-3'><i className='bx bx-loader bx-sm align-middle text-warning bx-spin mx-1' />Please wait ~30 seconds for data to compile!</div>
 
-    // useEffect(() => {
-    //     if (context.sharesDataComplete && header['x-rapidapi-key'] !== '') {
-    //         getData()
-    //     }
-    //     return function cleanup() {
-    //         setLoading(false)
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [context.sharesDataComplete])
+    useEffect(() => {
+        if (context.sharesDataComplete) {
+            getSpartaData()
+        }
+        return function cleanup() {
+            setLoading(false)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [context.sharesDataComplete])
+
+    const getSpartaData = async () => {
+        console.log('start get sparta history data')
+        let temp = await getTokenHistoryByID('spartan-protocol-token')
+        setSpartaData(temp)
+        console.log('end get sparta history data')
+    }
 
     const getStarted = (wallet) => {
         setUserPositions([])
@@ -443,6 +451,7 @@ const Positions = (props) => {
                                         removes={x.removes}
                                         adds={x.adds}
                                         bondAdds={x.bondAdds}
+                                        spartaData={spartaData}
                                     />
                                 )}
                             </Row>
