@@ -478,6 +478,7 @@ const Positions = (props) => {
                                         removes={x.removes}
                                         adds={x.adds}
                                         bondAdds={x.bondAdds}
+                                        spartaData={spartaData}
                                     />
                                 )}
                             </Row>
