@@ -7,7 +7,7 @@ import classnames from 'classnames';
 
 import {bn} from '../utils'
 import {
-    ROUTERv1_ADDR, ROUTER_ADDR, ROUTERv2a_ADDR, 
+    ROUTERv1_ADDR, ROUTER_ADDR, ROUTERv2a_ADDR, ROUTERv2b_ADDR, ROUTERv2c_ADDR,
     BNB_ADDR, WBNB_ADDR, BONDv1_ADDR, BONDv2_ADDR, 
     BONDv3_ADDR, BONDv3a_ADDR, BONDv3b_ADDR,
     getBondedv2MemberDetails, getBondedv3MemberDetails, getTokenHistoryByID
@@ -205,7 +205,7 @@ const Positions = (props) => {
         }).catch(function (error) {
             console.error(error)
         })
-        // Get all removeLiq Events ROUTERv2
+        // Get all removeLiq Events ROUTERv2b
         options = {
             method: 'POST',
             url: apiUrl,
@@ -215,7 +215,7 @@ const Positions = (props) => {
                 variables: {
                     offset: 0,
                     network: 'bsc',
-                    contract: ROUTER_ADDR, // UPDATE WHEN ROUTER IS UPGRADED
+                    contract: ROUTERv2b_ADDR, // UPDATE WHEN ROUTER IS UPGRADED
                     caller: '',
                     method: '05fe138b',
                     from: null,
@@ -226,7 +226,32 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             removeLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all removeLiq Events ROUTERv2', removeLiq)
+            console.log('all removeLiq Events ROUTERv2b', removeLiq)
+        }).catch(function (error) {
+            console.error(error)
+        })
+        // Get all removeLiq Events ROUTERv2c
+        options = {
+            method: 'POST',
+            url: apiUrl,
+            headers: header,
+            data: {
+                query: 'query ($network: EthereumNetwork!, $offset: Int!, $contract: String!, $method: String!, $from: ISO8601DateTime, $till: ISO8601DateTime) {\n  ethereum(network: $network) {\n    smartContractCalls(options: {desc: "block.timestamp.time", offset: $offset}, smartContractAddress: {is: $contract}, smartContractMethod: {is: $method}, date: {since: $from, till: $till}) {\n      block {\n        timestamp {\n          time(format: "%Y-%m-%d %H:%M:%S")\n        }\n        height\n      }\n      transaction {\n        hash\n      }\n    }\n  }\n}',
+                variables: {
+                    offset: 0,
+                    network: 'bsc',
+                    contract: ROUTERv2c_ADDR, // UPDATE WHEN ROUTER IS UPGRADED
+                    caller: '',
+                    method: '05fe138b',
+                    from: null,
+                    till: null,
+                    dateFormat: '%Y-%m'
+                }
+            }
+        }
+        await axios.request(options).then(function (response) {
+            removeLiq.push(...response.data.data.ethereum.smartContractCalls)
+            console.log('all removeLiq Events ROUTERv2c', removeLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -287,7 +312,7 @@ const Positions = (props) => {
         }).catch(function (error) {
             console.error(error)
         })
-        // Get all addLiq Events ROUTERv2
+        // Get all addLiq Events ROUTERv2b
         options = {
             method: 'POST',
             url: apiUrl,
@@ -297,7 +322,7 @@ const Positions = (props) => {
                 variables: {
                     offset: 0,
                     network: 'bsc',
-                    contract: ROUTER_ADDR, // UPDATE WHEN ROUTER IS UPGRADED
+                    contract: ROUTERv2b_ADDR, // UPDATE WHEN ROUTER IS UPGRADED
                     caller: '',
                     method: '87b21efc',
                     from: null,
@@ -308,7 +333,32 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             addLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all addLiq Events ROUTERv2', addLiq)
+            console.log('all addLiq Events ROUTERv2b', addLiq)
+        }).catch(function (error) {
+            console.error(error)
+        })
+        // Get all addLiq Events ROUTERv2c
+        options = {
+            method: 'POST',
+            url: apiUrl,
+            headers: header,
+            data: {
+                query: 'query ($network: EthereumNetwork!, $offset: Int!, $contract: String!, $method: String!, $from: ISO8601DateTime, $till: ISO8601DateTime) {\n  ethereum(network: $network) {\n    smartContractCalls(options: {desc: "block.timestamp.time", offset: $offset}, smartContractAddress: {is: $contract}, smartContractMethod: {is: $method}, date: {since: $from, till: $till}) {\n      block {\n        timestamp {\n          time(format: "%Y-%m-%d %H:%M:%S")\n        }\n        height\n      }\n      transaction {\n        hash\n      }\n    }\n  }\n}\n',
+                variables: {
+                    offset: 0,
+                    network: 'bsc',
+                    contract: ROUTERv2c_ADDR, // UPDATE WHEN ROUTER IS UPGRADED
+                    caller: '',
+                    method: '87b21efc',
+                    from: null,
+                    till: null,
+                    dateFormat: '%Y-%m'
+                }
+            }
+        }
+        await axios.request(options).then(function (response) {
+            addLiq.push(...response.data.data.ethereum.smartContractCalls)
+            console.log('all addLiq Events ROUTERv2c', addLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -359,7 +409,7 @@ const Positions = (props) => {
         poolAddress = poolAddress.filter(x => Web3.utils.toChecksumAddress(x.address) === Web3.utils.toChecksumAddress(pool))
         poolAddress = poolAddress[0].poolAddress
         let tempArray = []
-        if (pool === WBNB_ADDR) {tempArray = tsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(poolAddress) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(ROUTER_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(ROUTERv1_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(ROUTERv2a_ADDR))}
+        if (pool === WBNB_ADDR) {tempArray = tsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(poolAddress) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(ROUTER_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(ROUTERv1_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(ROUTERv2a_ADDR) || Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(ROUTERv2b_ADDR))}
         // ALL ADD LIQ TXNS BY POOL IF NOT BNB
         else {tempArray = tsfsOut.filter(x => Web3.utils.toChecksumAddress(x.receiver.address) === Web3.utils.toChecksumAddress(poolAddress))}
         let dataOut = []
