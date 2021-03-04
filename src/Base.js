@@ -38,7 +38,7 @@ const Base = () => {
         //setNotifyType(type)
     }
 
-    const tempDisable = true
+    const tempDisable = false
 
     return (
         <>
