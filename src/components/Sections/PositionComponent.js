@@ -334,7 +334,7 @@ const PositionComponent = (props) => {
                                     <div className="text-center border rounded p-2">
                                         <h5>{formatAllUnits(convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta))))}</h5>
                                         <p className="text-muted mb-0">SPARTA</p>
-                                        <h5 className='pt-2'>{'$' + formatAllUnits(convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta))).toFixed(2) * spartaPrice)}</h5>
+                                        <h5 className='pt-2'>{spartaPrice > 0 ? '$' + formatAllUnits(convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta))).toFixed(2) * spartaPrice) : 'API ISSUE'}</h5>
                                         <p className="text-muted mb-0">USD (Current)</p>
                                     </div>
                                 </Col>
@@ -342,7 +342,7 @@ const PositionComponent = (props) => {
                                     <div className="text-center border rounded p-2">
                                         <h5>{symbol === 'BTCB' ? formatUnitsLong(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)))) : formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken))))}</h5>
                                         <p className="text-muted mb-0">{symbol}</p>
-                                        <h5 className='pt-2'>{'$' + formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken))).toFixed(2) * tokenPrice)}</h5>
+                                        <h5 className='pt-2'>{tokenPrice > 0 ? '$' + formatAllUnits(convertFromWei(bn(props.userBondToken).plus(bn(props.userToken))).toFixed(2) * tokenPrice) : 'API ISSUE'}</h5>
                                         <p className="text-muted mb-0">USD (Current)</p>
                                     </div>
                                 </Col>
@@ -421,7 +421,7 @@ const PositionComponent = (props) => {
                                 <Col xs="12" className='mt-2'>
                                     <div className="text-center border rounded p-2">
                                         <h4>
-                                            {'$' + formatAllUnits(
+                                            {tokenPrice > 0 && spartaPrice > 0 ? '$' + formatAllUnits(
                                                 (
                                                     (convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta))).toFixed(2) * spartaPrice)
                                                     +
@@ -433,14 +433,14 @@ const PositionComponent = (props) => {
                                                     +
                                                     ((bn(tokenAddsUSD).minus(bn(tokenRemovesUSD)).plus(bn(tokenBondAddsUSD))).toFixed(2) * 1)
                                                 )
-                                            )}
+                                            ) : 'API ISSUE'}
                                         </h4>
                                         <p className="text-muted mb-0">USD Gains (vs initial)</p>
 
                                         <h4 className='pt-2'>
-                                            {'$' + formatAllUnits(((convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta)).minus(convertToWei((bn(spartaAdds).minus(bn(spartaRemoves))))))).toFixed(2) * spartaPrice)
+                                            {tokenPrice > 0 && spartaPrice > 0 ? '$' + formatAllUnits(((convertFromWei(bn(props.userBondSparta).plus(bn(props.userSparta)).minus(convertToWei((bn(spartaAdds).minus(bn(spartaRemoves))))))).toFixed(2) * spartaPrice)
                                             + 
-                                            ((convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds))))))).toFixed(2) * tokenPrice))}
+                                            ((convertFromWei(bn(props.userBondToken).plus(bn(props.userToken)).minus(convertToWei((bn(tokenAdds).minus(bn(tokenRemoves)).plus(bn(tokenBondAdds))))))).toFixed(2) * tokenPrice)) : 'API ISSUE'}
                                         </h4>
                                         <p className="text-muted mb-0">Unit Gains (vs HODL)</p>
                                     </div>
