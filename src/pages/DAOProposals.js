@@ -579,7 +579,7 @@ const DAOProposals = (props) => {
                                     <Card className='w-100'>
                                         <CardTitle className='pt-3'>BOND</CardTitle>
                                         <CardSubtitle>
-                                            List Asssets<br/>Delist Assets<br/>Increase Allocation<br/>
+                                            List Assets<br/>Delist Assets<br/>Increase Allocation<br/>
                                             {bondBalance > 0 &&
                                                 <button className="btn btn-success mt-2 mx-auto" onClick={()=>{burnBond()}}>
                                                     <i className="bx bxs-zap align-middle"/> Increase BOND Allocation!
