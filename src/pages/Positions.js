@@ -24,11 +24,12 @@ import axios from "axios";
 const Positions = (props) => {
     const context = useContext(Context)
 
-    const apiUrl = 'https://blockchain-data.p.rapidapi.com/'
+    const apiUrl = 'https://graphql.bitquery.io'
     const header = {
         'content-type': 'application/json',
-        'x-rapidapi-key': process.env.REACT_APP_BITQUERY, // create secret key
-        'x-rapidapi-host': 'blockchain-data.p.rapidapi.com'
+        'X-API-KEY': process.env.REACT_APP_BITQUERY,
+        // 'x-rapidapi-key': process.env.REACT_APP_BITQUERY, // create secret key
+        // 'x-rapidapi-host': 'blockchain-data.p.rapidapi.com'
     }
 
     let allTsfsOut = ''
