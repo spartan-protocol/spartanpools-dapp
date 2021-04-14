@@ -1,164 +1,170 @@
-import React, {useState, useContext, useEffect} from 'react'
-import {Context} from '../context'
+import React from 'react'
+// import {Context} from '../context'
 
 import {withRouter} from "react-router-dom";
 import {withNamespaces} from "react-i18next";
 
-import {
-    BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract, explorerURL, 
-    getBondv3Contract, getBondProposals, SPARTA_ADDR, getPoolsData, 
-    checkArrayComplete, getNextPoolsData, getListedTokens, BNB_ADDR, WBNB_ADDR,
-    updateWalletData, getTokenContract,
-} from '../client/web3'
+// import {
+//     BONDv2_ADDR, BONDv3_ADDR, getSpartaContract, getDaoContract,
+//     getBondv3Contract, getBondProposals, SPARTA_ADDR, getPoolsData, 
+//     checkArrayComplete, getNextPoolsData, getListedTokens, BNB_ADDR, WBNB_ADDR,
+//     updateWalletData, getTokenContract,
+// } from '../client/web3'
 
-import {formatAllUnits, convertFromWei, bn, getAddressShort, convertToWei} from '../utils'
+// import {
+//     // formatAllUnits,
+//     // convertFromWei,
+//     bn,
+//     // getAddressShort,
+//     convertToWei
+// } from '../utils'
 
-import {ProposalItem} from '../components/Sections/ProposalItem'
+// import {ProposalItem} from '../components/Sections/ProposalItem'
 
 import {
     Container, Row, Col,
-    Card, CardBody, CardTitle, CardSubtitle, CardFooter,
-    Modal, ModalHeader, ModalBody, ModalFooter,
+    // Card, CardBody, CardTitle, CardSubtitle, CardFooter,
+    // Modal, ModalHeader, ModalBody, ModalFooter,
 } from "reactstrap";
 
 import Breadcrumbs from "../components/Common/Breadcrumb";
 
 const DAOProposals = (props) => {
-    const context = useContext(Context)
+    // const context = useContext(Context)
 
-    useEffect(() => {
-        if (context.account && context.account > 0) {
-            getData()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [context.account])
+    // useEffect(() => {
+    //     if (context.account && context.account > 0) {
+    //         getData()
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [context.account])
 
-    const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
+    // const loader = <i className='bx bx-loader bx-sm align-middle text-warning bx-spin ml-1' />
 
-    const [bondBurnRate, setBondBurnRate] = useState('XXX')
-    const [bondBalance, setBondBalance] = useState('0')
-    const [enoughSpartaAlloc, setEnoughSpartaAlloc] = useState('')
-    const [wholeDAOWeight, setWholeDAOWeight] = useState('XXX')
-    const [coolOff, setCoolOff] = useState('')
-    const [simpleActionArray, setSimpleActionArray] = useState({
-        emitting: '',
-        bondRemaining: 'XXX',
-    })
-    const [proposalArray, setProposalArray] = useState('')
-    const [proposalArrayLoading, setProposalArrayLoading] = useState('')
-    const [proposalArrayComplete, setProposalArrayComplete] = useState(false)
-    const [spartaApproved, setSpartaApproved] = useState(false)
+    // const [bondBurnRate, setBondBurnRate] = useState('XXX')
+    // const [bondBalance, setBondBalance] = useState('0')
+    // const [enoughSpartaAlloc, setEnoughSpartaAlloc] = useState('')
+    // const [wholeDAOWeight, setWholeDAOWeight] = useState('XXX')
+    // const [coolOff, setCoolOff] = useState('')
+    // const [simpleActionArray, setSimpleActionArray] = useState({
+    //     emitting: '',
+    //     bondRemaining: 'XXX',
+    // })
+    // const [proposalArray, setProposalArray] = useState('')
+    // const [proposalArrayLoading, setProposalArrayLoading] = useState('')
+    // const [proposalArrayComplete, setProposalArrayComplete] = useState(false)
+    // const [spartaApproved, setSpartaApproved] = useState(false)
     //const [paramArray, setParamArray] = useState({
     //    emissionCurve: 'XXX',
     //    eraDuration: 'XXX',
     //    coolOff: 'XXX',
     //    erasToEarn: 'XXX',
     //})
-    const getData = async () => {
-        setProposalArray(await getProposalArray())
-        // get current param values from contracts
-        let spartaContract = getSpartaContract()
-        spartaContract = spartaContract.methods
-        let daoContract = getDaoContract()
-        daoContract = daoContract.methods
-        let bondContract = getBondv3Contract()
-        bondContract= bondContract.methods
-        let data = await Promise.all([
-            spartaContract.getAdjustedClaimRate(BONDv3_ADDR).call(), spartaContract.emitting().call(),
-            spartaContract.balanceOf(BONDv3_ADDR).call(), 
-            //spartaContract.emissionCurve().call(), daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(), daoContract.erasToEarn().call(), 
-            daoContract.totalWeight().call(), bondContract.balanceOf(BONDv3_ADDR).call(), bondContract.coolOffPeriod().call()
-        ])
-        setBondBurnRate(data[0])
-        setSimpleActionArray({
-            emitting: data[1],
-            bondRemaining: data[2],
-        })
-        //setParamArray({
-        //    emissionCurve: data[3],
-        //    eraDuration: data[4],
-        //    coolOff: data[5],
-        //    erasToEarn: data[6],
-        //})
-        setWholeDAOWeight(data[3])
-        setBondBalance(data[4])
-        setCoolOff(data[5])
-        setSpartaApproved(await checkApproval(SPARTA_ADDR))
-        if (bn(data[2]).comparedTo(bn(convertToWei(10))) === -1) {setEnoughSpartaAlloc(false)}
-        else {setEnoughSpartaAlloc(true)}
-    }
+    // const getData = async () => {
+    //     setProposalArray(await getProposalArray())
+    //     // get current param values from contracts
+    //     let spartaContract = getSpartaContract()
+    //     spartaContract = spartaContract.methods
+    //     let daoContract = getDaoContract()
+    //     daoContract = daoContract.methods
+    //     let bondContract = getBondv3Contract()
+    //     bondContract= bondContract.methods
+    //     let data = await Promise.all([
+    //         spartaContract.getAdjustedClaimRate(BONDv3_ADDR).call(), spartaContract.emitting().call(),
+    //         spartaContract.balanceOf(BONDv3_ADDR).call(), 
+    //         //spartaContract.emissionCurve().call(), daoContract.secondsPerEra().call(), daoContract.coolOffPeriod().call(), daoContract.erasToEarn().call(), 
+    //         daoContract.totalWeight().call(), bondContract.balanceOf(BONDv3_ADDR).call(), bondContract.coolOffPeriod().call()
+    //     ])
+    //     setBondBurnRate(data[0])
+    //     setSimpleActionArray({
+    //         emitting: data[1],
+    //         bondRemaining: data[2],
+    //     })
+    //     //setParamArray({
+    //     //    emissionCurve: data[3],
+    //     //    eraDuration: data[4],
+    //     //    coolOff: data[5],
+    //     //    erasToEarn: data[6],
+    //     //})
+    //     setWholeDAOWeight(data[3])
+    //     setBondBalance(data[4])
+    //     setCoolOff(data[5])
+    //     setSpartaApproved(await checkApproval(SPARTA_ADDR))
+    //     if (bn(data[2]).comparedTo(bn(convertToWei(10))) === -1) {setEnoughSpartaAlloc(false)}
+    //     else {setEnoughSpartaAlloc(true)}
+    // }
 
-    const refreshPoolsData = async () => {
-        // (poolsData) POOLS DATA | USED: POOLS TABLE + ADD LIQ + CREATE POOL + SWAP
-        if (context.poolsDataLoading !== true) {
-            context.setContext({'poolsDataLoading': true})
-            const getPools = await getPoolsData(context.tokenArray)
-            context.setContext({'poolsData': getPools})
-            context.setContext({'poolsDataLoading': false})
-            //console.log(getPools)
-            var lastPage = await checkArrayComplete(context.tokenArray, getPools)
-            if (context.poolsDataLoading !== true) {
-                context.setContext({'poolsDataLoading': true})
-                context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, getPools)})
-                context.setContext({'poolsDataLoading': false})
-                context.setContext({'poolsDataComplete': lastPage})
-            }
-        }
-    }
+    // const refreshPoolsData = async () => {
+    //     // (poolsData) POOLS DATA | USED: POOLS TABLE + ADD LIQ + CREATE POOL + SWAP
+    //     if (context.poolsDataLoading !== true) {
+    //         context.setContext({'poolsDataLoading': true})
+    //         const getPools = await getPoolsData(context.tokenArray)
+    //         context.setContext({'poolsData': getPools})
+    //         context.setContext({'poolsDataLoading': false})
+    //         //console.log(getPools)
+    //         var lastPage = await checkArrayComplete(context.tokenArray, getPools)
+    //         if (context.poolsDataLoading !== true) {
+    //             context.setContext({'poolsDataLoading': true})
+    //             context.setContext({'poolsData': await getNextPoolsData(context.tokenArray, getPools)})
+    //             context.setContext({'poolsDataLoading': false})
+    //             context.setContext({'poolsDataComplete': lastPage})
+    //         }
+    //     }
+    // }
 
-    const getProposalArray = async () => {
-        // (proposalArray) PROPOSALS
-        setProposalArrayComplete(false)
-        setProposalArrayLoading(true)
-        let data = await getBondProposals()
-        setProposalArrayLoading(false)
-        setProposalArrayComplete(true)
-        console.log(data)
-        return data
-    }
+    // const getProposalArray = async () => {
+    //     // (proposalArray) PROPOSALS
+    //     setProposalArrayComplete(false)
+    //     setProposalArrayLoading(true)
+    //     let data = await getBondProposals()
+    //     setProposalArrayLoading(false)
+    //     setProposalArrayComplete(true)
+    //     console.log(data)
+    //     return data
+    // }
 
-    const getStatus = (item) => {
-        let status = 'Pending'
-        if (item.finalised === true) {status = 'Finalised'}
-        else if (item.finalising === true) {status = 'Finalising'}
-        return status
-    }
+    // const getStatus = (item) => {
+    //     let status = 'Pending'
+    //     if (item.finalised === true) {status = 'Finalised'}
+    //     else if (item.finalising === true) {status = 'Finalising'}
+    //     return status
+    // }
 
-    const getWeight = (item) => {
-        let weight = 'Needs more support'
-        if (item.majority === true) {weight = 'Majority support'}
-        else if (item.quorum === true) {weight = 'Quorum support'}
-        else if (item.minority === true) {weight = 'Minority support'}
-        return weight
-    }
+    // const getWeight = (item) => {
+    //     let weight = 'Needs more support'
+    //     if (item.majority === true) {weight = 'Majority support'}
+    //     else if (item.quorum === true) {weight = 'Quorum support'}
+    //     else if (item.minority === true) {weight = 'Minority support'}
+    //     return weight
+    // }
 
-    const getDate = (item) => {
-        let interval = ''
-        let date = ''
-        let now = new Date().getTime() / 1000
-        now = now.toFixed(0)
-        if (+item.timeStart !== 0) {
-            interval = ' seconds'
-            date = +item.timeStart + +coolOff
-            if (+now < date) {
-                date = date - +now
-                if (date > 360) {
-                    date = (date / 60).toFixed(0)
-                    interval = ' minutes'
-                }
-                if (date > 360) {
-                    date = (date / 60).toFixed(0)
-                    interval = ' hours'
-                }
-            }
-            else {
-                date = 'Now'
-                interval = ''
-            }
-        }
-        else date = '-'
-        return [date, interval]
-    }
+    // const getDate = (item) => {
+    //     let interval = ''
+    //     let date = ''
+    //     let now = new Date().getTime() / 1000
+    //     now = now.toFixed(0)
+    //     if (+item.timeStart !== 0) {
+    //         interval = ' seconds'
+    //         date = +item.timeStart + +coolOff
+    //         if (+now < date) {
+    //             date = date - +now
+    //             if (date > 360) {
+    //                 date = (date / 60).toFixed(0)
+    //                 interval = ' minutes'
+    //             }
+    //             if (date > 360) {
+    //                 date = (date / 60).toFixed(0)
+    //                 interval = ' hours'
+    //             }
+    //         }
+    //         else {
+    //             date = 'Now'
+    //             interval = ''
+    //         }
+    //     }
+    //     else date = '-'
+    //     return [date, interval]
+    // }
 
     // SIMPLE ACTION PROPOSAL
     // function newActionProposal(string memory typeStr)
@@ -184,30 +190,30 @@ const DAOProposals = (props) => {
     //    let index = actionTypes.findIndex(i => i.type === actionType)
     //    return actionTypes[index].formatted
     //}
-    const proposeAction = async (directType) => {
-        let typeFormatted = ''
-        if (directType === undefined) {
-        //    typeFormatted = getActionIndex()
-        }
-        else {typeFormatted = directType}
-        let contract = getBondv3Contract()
-        console.log(typeFormatted)
-        await contract.methods.newActionProposal(typeFormatted).send({ from: context.account })
-        await getData()
-        checkActionExisting(typeFormatted)
-    }
-    const [actionExisting, setActionExisting] = useState(false)
-    const checkActionExisting = (directType) => {
-        let existing = proposalArray.filter(i => i.type === directType && i.finalised === false)
-        existing = existing.sort((a, b) => +b.votes - +a.votes)
-        setActionExisting(existing)
-    }
+    // const proposeAction = async (directType) => {
+    //     let typeFormatted = ''
+    //     if (directType === undefined) {
+    //     //    typeFormatted = getActionIndex()
+    //     }
+    //     else {typeFormatted = directType}
+    //     let contract = getBondv3Contract()
+    //     console.log(typeFormatted)
+    //     await contract.methods.newActionProposal(typeFormatted).send({ from: context.account })
+    //     await getData()
+    //     checkActionExisting(typeFormatted)
+    // }
+    // const [actionExisting, setActionExisting] = useState(false)
+    // const checkActionExisting = (directType) => {
+    //     let existing = proposalArray.filter(i => i.type === directType && i.finalised === false)
+    //     existing = existing.sort((a, b) => +b.votes - +a.votes)
+    //     setActionExisting(existing)
+    // }
 
-    const burnBond = async () => {
-        let contract = getBondv3Contract()
-        await contract.methods.burnBond().send({from: context.account})
-        getData()
-    }
+    // const burnBond = async () => {
+    //     let contract = getBondv3Contract()
+    //     await contract.methods.burnBond().send({from: context.account})
+    //     getData()
+    // }
 
     // CHANGE PARAMETER PROPOSAL
     // function newParamProposal(uint param, string memory typeStr)
@@ -311,104 +317,104 @@ const DAOProposals = (props) => {
     //    let index = addressTypes.findIndex(i => i.type === addressType)
     //    return addressTypes[index].formatted
     //}
-    const [addrListLoading, setAddrListLoading] = useState(false)
-    const proposeAddress = async (directType, address) => {
-        if (address === undefined) {
-        //    address = propAddress
-        }
-        let typeFormatted = ''
-        if (directType === undefined) {
-        //    typeFormatted = getAddressIndex()
-        }
-        else {typeFormatted = directType}
-        let contract = getBondv3Contract()
-        console.log(address, typeFormatted)
-        await contract.methods.newAddressProposal(address, typeFormatted).send({ from: context.account })
-        await getData()
-        if (typeFormatted === 'LIST') {checkListBondExisting(typeFormatted)}
-        if (typeFormatted === 'DELIST') {checkDelistBondExisting(typeFormatted)}
-    }
+    // const [addrListLoading, setAddrListLoading] = useState(false)
+    // const proposeAddress = async (directType, address) => {
+    //     if (address === undefined) {
+    //     //    address = propAddress
+    //     }
+    //     let typeFormatted = ''
+    //     if (directType === undefined) {
+    //     //    typeFormatted = getAddressIndex()
+    //     }
+    //     else {typeFormatted = directType}
+    //     let contract = getBondv3Contract()
+    //     console.log(address, typeFormatted)
+    //     await contract.methods.newAddressProposal(address, typeFormatted).send({ from: context.account })
+    //     await getData()
+    //     if (typeFormatted === 'LIST') {checkListBondExisting(typeFormatted)}
+    //     if (typeFormatted === 'DELIST') {checkDelistBondExisting(typeFormatted)}
+    // }
     //const [addressExisting, setAddressExisting] = useState(false)
-    const [bondAddressExisting, setBondAddressExisting] = useState(false)
+    // const [bondAddressExisting, setBondAddressExisting] = useState(false)
     //const checkAddressExisting = (directType) => {
     //    let existing = context.proposalArray.filter(i => i.type === directType && i.finalised === false)
     //    existing = existing.sort((a, b) => +b.votes - +a.votes)
     //    setAddressExisting(existing)
     //}
-    const checkListBondExisting = async (directType) => {
-        setAddrListLoading(true)
-        let existing = []
-        let contract = getBondv3Contract()
-        let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', '0xE49b84771470A87F4D9544685ea0F0517933B2B4', BONDv2_ADDR, BONDv3_ADDR, SPARTA_ADDR, WBNB_ADDR, BNB_ADDR]
-        let data = await Promise.all([getListedTokens(), getProposalArray()])
-        let allListed = data[0]
-        let propArray = data[1]
-        let bondListed = ''
-        let symbol = ''
-        let listBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
-        for (let i = 0; i < allListed.length + 1; i++) {
-            let address = allListed[i]
-            if (address) {
-                if (blacklist.includes(address) === false) {
-                    bondListed = await contract.methods.isListed(address).call()
-                    symbol = context.poolsData.filter(i => i.address === address)
-                    if (bondListed === false) {
-                        let proposal = listBondProposals.filter(i => i.proposedAddress === address)
-                        if (existing.some(i => i.address === address) === false) {
-                            existing.push({
-                                'symbol': symbol[0] ? symbol[0].symbol : '-',
-                                'id': proposal[0] ? proposal[0].id : '-',
-                                'address': address,
-                                'votes': proposal[0] ? proposal[0].votes : '0',
-                                'finalising': proposal[0] ? proposal[0].finalising : false,
-                                'majority': proposal[0] ? proposal[0].majority : false,
-                            })
-                        }
-                    }
-                }
-            }
-        }
-        existing = existing.sort((a, b) => +b.votes - +a.votes)
-        console.log(existing)
-        setBondAddressExisting(existing)
-        setAddrListLoading(false)
-    }
-    const checkDelistBondExisting = async (directType) => {
-        setAddrListLoading(true)
-        let existing = []
-        let contract = getBondv3Contract()
-        let blacklist = [WBNB_ADDR, BNB_ADDR]
-        let data = await Promise.all([contract.methods.allListedAssets().call(), getProposalArray()])
-        let allBond = data[0]
-        let propArray = data[1]
-        let bondListed = ''
-        let symbol = ''
-        let delistBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
-        for (let i = 0; i < allBond.length + 1; i++) {
-            let address = allBond[i]
-            if (address) {
-                if (blacklist.includes(address) === false) {
-                    bondListed = await contract.methods.isListed(address).call()
-                    symbol = context.poolsData.filter(i => i.address === address)
-                    if (bondListed === true) {
-                        let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
-                        existing.push({
-                            'symbol': symbol[0] ? symbol[0].symbol : '-',
-                            'id': proposal[0] ? proposal[0].id : '-',
-                            'address': address,
-                            'votes': proposal[0] ? proposal[0].votes : '0',
-                            'finalising': proposal[0] ? proposal[0].finalising : false,
-                            'majority': proposal[0] ? proposal[0].majority : false,
-                        })
-                    }
-                }
-            }
-        }
-        existing = existing.sort((a, b) => +b.votes - +a.votes)
-        console.log(existing)
-        setBondAddressExisting(existing)
-        setAddrListLoading(false)
-    }
+    // const checkListBondExisting = async (directType) => {
+    //     setAddrListLoading(true)
+    //     let existing = []
+    //     let contract = getBondv3Contract()
+    //     let blacklist = ['0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da', '0x0a5FECAbbDB1908b5f58a26e528A21663C824137', '0xE49b84771470A87F4D9544685ea0F0517933B2B4', BONDv2_ADDR, BONDv3_ADDR, SPARTA_ADDR, WBNB_ADDR, BNB_ADDR]
+    //     let data = await Promise.all([getListedTokens(), getProposalArray()])
+    //     let allListed = data[0]
+    //     let propArray = data[1]
+    //     let bondListed = ''
+    //     let symbol = ''
+    //     let listBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
+    //     for (let i = 0; i < allListed.length + 1; i++) {
+    //         let address = allListed[i]
+    //         if (address) {
+    //             if (blacklist.includes(address) === false) {
+    //                 bondListed = await contract.methods.isListed(address).call()
+    //                 symbol = context.poolsData.filter(i => i.address === address)
+    //                 if (bondListed === false) {
+    //                     let proposal = listBondProposals.filter(i => i.proposedAddress === address)
+    //                     if (existing.some(i => i.address === address) === false) {
+    //                         existing.push({
+    //                             'symbol': symbol[0] ? symbol[0].symbol : '-',
+    //                             'id': proposal[0] ? proposal[0].id : '-',
+    //                             'address': address,
+    //                             'votes': proposal[0] ? proposal[0].votes : '0',
+    //                             'finalising': proposal[0] ? proposal[0].finalising : false,
+    //                             'majority': proposal[0] ? proposal[0].majority : false,
+    //                         })
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     existing = existing.sort((a, b) => +b.votes - +a.votes)
+    //     console.log(existing)
+    //     setBondAddressExisting(existing)
+    //     setAddrListLoading(false)
+    // }
+    // const checkDelistBondExisting = async (directType) => {
+    //     setAddrListLoading(true)
+    //     let existing = []
+    //     let contract = getBondv3Contract()
+    //     let blacklist = [WBNB_ADDR, BNB_ADDR]
+    //     let data = await Promise.all([contract.methods.allListedAssets().call(), getProposalArray()])
+    //     let allBond = data[0]
+    //     let propArray = data[1]
+    //     let bondListed = ''
+    //     let symbol = ''
+    //     let delistBondProposals = propArray.filter(i => i.type === directType && i.finalised === false)
+    //     for (let i = 0; i < allBond.length + 1; i++) {
+    //         let address = allBond[i]
+    //         if (address) {
+    //             if (blacklist.includes(address) === false) {
+    //                 bondListed = await contract.methods.isListed(address).call()
+    //                 symbol = context.poolsData.filter(i => i.address === address)
+    //                 if (bondListed === true) {
+    //                     let proposal = delistBondProposals.filter(i => i.proposedAddress === address)
+    //                     existing.push({
+    //                         'symbol': symbol[0] ? symbol[0].symbol : '-',
+    //                         'id': proposal[0] ? proposal[0].id : '-',
+    //                         'address': address,
+    //                         'votes': proposal[0] ? proposal[0].votes : '0',
+    //                         'finalising': proposal[0] ? proposal[0].finalising : false,
+    //                         'majority': proposal[0] ? proposal[0].majority : false,
+    //                     })
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     existing = existing.sort((a, b) => +b.votes - +a.votes)
+    //     console.log(existing)
+    //     setBondAddressExisting(existing)
+    //     setAddrListLoading(false)
+    // }
 
     // GRANT PROPOSAL
     // function newGrantProposal(address recipient, uint amount) 
@@ -434,14 +440,14 @@ const DAOProposals = (props) => {
     //}
 
     // PROPOSAL MANAGEMENT FUNCTIONS
-    const voteProposal = async (proposalID) => {
-        // Vote for a proposal
-        // function voteProposal(uint proposalID)
-        let contract = getBondv3Contract()
-        console.log('vote for', proposalID)
-        await contract.methods.voteProposal(proposalID).send({ from: context.account })
-        getData()
-    }
+    // const voteProposal = async (proposalID) => {
+    //     // Vote for a proposal
+    //     // function voteProposal(uint proposalID)
+    //     let contract = getBondv3Contract()
+    //     console.log('vote for', proposalID)
+    //     await contract.methods.voteProposal(proposalID).send({ from: context.account })
+    //     getData()
+    // }
     // eslint-disable-next-line
     {/*
     const cancelProposal = async (oldProposalID, newProposalID) => {
@@ -453,69 +459,69 @@ const DAOProposals = (props) => {
         getData()
     }
     */}
-    const finaliseProposal = async (proposalID) => {
-        // Finalise Proposal and call internal proposal ID function
-        // function finaliseProposal(uint proposalID)
-        let contract = getBondv3Contract()
-        console.log('finalise proposal', proposalID)
-        await contract.methods.finaliseProposal(proposalID).send({ from: context.account })
-        getData()
-        refreshPoolsData()
-    }
+    // const finaliseProposal = async (proposalID) => {
+    //     // Finalise Proposal and call internal proposal ID function
+    //     // function finaliseProposal(uint proposalID)
+    //     let contract = getBondv3Contract()
+    //     console.log('finalise proposal', proposalID)
+    //     await contract.methods.finaliseProposal(proposalID).send({ from: context.account })
+    //     getData()
+    //     refreshPoolsData()
+    // }
 
-    const approve = async () => {
-        const contract = getSpartaContract()
-        const supply = await contract.methods.totalSupply().call()
-        console.log('Approving SPARTA', BONDv3_ADDR, supply)
-        await contract.methods.approve(BONDv3_ADDR, supply).send({
-            from: context.account,
-            gasPrice: '',
-            gas: ''
-        })
+    // const approve = async () => {
+    //     const contract = getSpartaContract()
+    //     const supply = await contract.methods.totalSupply().call()
+    //     console.log('Approving SPARTA', BONDv3_ADDR, supply)
+    //     await contract.methods.approve(BONDv3_ADDR, supply).send({
+    //         from: context.account,
+    //         gasPrice: '',
+    //         gas: ''
+    //     })
     
-        let data = await checkApproval(SPARTA_ADDR)
-        setSpartaApproved(data)
+    //     let data = await checkApproval(SPARTA_ADDR)
+    //     setSpartaApproved(data)
 
-        if (context.walletDataLoading !== true) {
-            // Refresh BNB balance
-            context.setContext({'walletDataLoading': true})
-            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
-        }
-    }
+    //     if (context.walletDataLoading !== true) {
+    //         // Refresh BNB balance
+    //         context.setContext({'walletDataLoading': true})
+    //         let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
+    //         context.setContext({'walletData': walletData})
+    //         context.setContext({'walletDataLoading': false})
+    //     }
+    // }
 
-    const checkApproval = async (address) => {
-        const contract = getTokenContract(address)
-        const approval = await contract.methods.allowance(context.account, BONDv3_ADDR).call()
-        if (+approval > 0) {
-            return true
-        } else {
-            return false
-        }
-    }
+    // const checkApproval = async (address) => {
+    //     const contract = getTokenContract(address)
+    //     const approval = await contract.methods.allowance(context.account, BONDv3_ADDR).call()
+    //     if (+approval > 0) {
+    //         return true
+    //     } else {
+    //         return false
+    //     }
+    // }
 
-    const [showFeeModal, setShowFeeModal] = useState(false)
-    const toggleFeeModal = () => setShowFeeModal(!showFeeModal)
-    const [feeModalLoading, setFeeModalLoading] = useState(false)
-    const [proposalAction, setProposalAction] = useState('')
-    const [proposalAddress, setProposalAddress] = useState('')
+    // const [showFeeModal, setShowFeeModal] = useState(false)
+    // const toggleFeeModal = () => setShowFeeModal(!showFeeModal)
+    // const [feeModalLoading, setFeeModalLoading] = useState(false)
+    // const [proposalAction, setProposalAction] = useState('')
+    // const [proposalAddress, setProposalAddress] = useState('')
 
-    const runFeeModal = async () => {
-        setFeeModalLoading(true)
-        if (proposalAction === 'MINT') {await proposeAction('MINT')}
-        else if (proposalAction === 'LIST') {await proposeAddress('LIST', proposalAddress)}
-        else if (proposalAction === 'DELIST') {await proposeAddress('DELIST', proposalAddress)}
-        setFeeModalLoading(false)
-        setShowFeeModal(false)
-    }
+    // const runFeeModal = async () => {
+    //     setFeeModalLoading(true)
+    //     if (proposalAction === 'MINT') {await proposeAction('MINT')}
+    //     else if (proposalAction === 'LIST') {await proposeAddress('LIST', proposalAddress)}
+    //     else if (proposalAction === 'DELIST') {await proposeAddress('DELIST', proposalAddress)}
+    //     setFeeModalLoading(false)
+    //     setShowFeeModal(false)
+    // }
 
-    const [showMINTModal, setShowMINTModal] = useState(false)
-    const toggleMINTModal = () => setShowMINTModal(!showMINTModal)
-    const [showLISTBONDModal, setShowLISTBONDModal] = useState(false)
-    const toggleLISTBONDModal = () => setShowLISTBONDModal(!showLISTBONDModal)
-    const [showDELISTBONDModal, setShowDELISTBONDModal] = useState(false)
-    const toggleDELISTBONDModal = () => setShowDELISTBONDModal(!showDELISTBONDModal)
+    // const [showMINTModal, setShowMINTModal] = useState(false)
+    // const toggleMINTModal = () => setShowMINTModal(!showMINTModal)
+    // const [showLISTBONDModal, setShowLISTBONDModal] = useState(false)
+    // const toggleLISTBONDModal = () => setShowLISTBONDModal(!showLISTBONDModal)
+    // const [showDELISTBONDModal, setShowDELISTBONDModal] = useState(false)
+    // const toggleDELISTBONDModal = () => setShowDELISTBONDModal(!showDELISTBONDModal)
 
     //const [showSWITCHEMISSIONSModal, setShowSWITCHEMISSIONSModal] = useState(false)
     //const toggleSWITCHEMISSIONSModal = () => setShowSWITCHEMISSIONSModal(!showSWITCHEMISSIONSModal)
@@ -547,7 +553,13 @@ const DAOProposals = (props) => {
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("DAO")}/>
 
-                    <Modal isOpen={showFeeModal} toggle={toggleFeeModal} className='text-center'>
+                    <Col xs='10' className='text-center'>
+                        <h3>Please be advised, DAO proposals are temporarily disabled before deployment of Synths!</h3>
+                        <br />
+                        <h4>This is an important step to minimize any variables that may impact the ease of rollout.</h4>
+                    </Col>
+
+                    {/* <Modal isOpen={showFeeModal} toggle={toggleFeeModal} className='text-center'>
                         <ModalHeader toggle={toggleFeeModal}>100 SPARTA Fee for new proposals!</ModalHeader>
                         <ModalBody>
                             There will be a 100 SPARTA fee for this proposal.<br/>
@@ -568,15 +580,15 @@ const DAOProposals = (props) => {
                                 <i className="bx bx-window-close align-middle"/> Close 
                             </button>
                         </ModalFooter>
-                    </Modal>
+                    </Modal> */}
 
-                    {proposalArray &&
+                    {/* {proposalArray && */}
                         <>
                             <Row className='text-center'>
 
                                 {/* BOND MANAGEMENT */}
                                 <Col xs='12' className='d-flex align-items-stretch px-1 px-md-2'>
-                                    <Card className='w-100'>
+                                    {/* <Card className='w-100'>
                                         <CardTitle className='pt-3'>BOND</CardTitle>
                                         <CardSubtitle>
                                             List Assets<br/>Delist Assets<br/>Increase Allocation<br/>
@@ -622,10 +634,10 @@ const DAOProposals = (props) => {
                                                 <i className="bx bx-layer-plus bx-xs align-middle"/> Alloc+
                                             </button>
                                         </CardFooter>
-                                    </Card>
+                                    </Card> */}
 
                                     {/* BOND - LIST ASSET MODAL */}
-                                    <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal} className='text-center'>
+                                    {/* <Modal isOpen={showLISTBONDModal} toggle={toggleLISTBONDModal} className='text-center'>
                                         <ModalHeader toggle={toggleLISTBONDModal}>List a New BOND Asset</ModalHeader>
                                         <ModalBody>
                                             List new assets for BOND+MINT<br/>
@@ -694,10 +706,10 @@ const DAOProposals = (props) => {
                                                 <i className="bx bx-window-close align-middle"/> Close 
                                             </button>
                                         </ModalFooter>
-                                    </Modal>
+                                    </Modal> */}
 
                                     {/* BOND - DE-LIST ASSET MODAL */}
-                                    <Modal isOpen={showDELISTBONDModal} toggle={toggleDELISTBONDModal} className='text-center'>
+                                    {/* <Modal isOpen={showDELISTBONDModal} toggle={toggleDELISTBONDModal} className='text-center'>
                                         <ModalHeader toggle={toggleDELISTBONDModal}>De-list a BOND Asset</ModalHeader>
                                         <ModalBody>
                                             Delist assets from BOND+MINT<br/>
@@ -765,10 +777,10 @@ const DAOProposals = (props) => {
                                                 <i className="bx bx-window-close align-middle"/> Close 
                                             </button>
                                         </ModalFooter>
-                                    </Modal>
+                                    </Modal> */}
 
                                     {/* BOND - INCREASE ALLOCATION MODAL */}
-                                    <Modal isOpen={showMINTModal} toggle={toggleMINTModal} className='text-center'>
+                                    {/* <Modal isOpen={showMINTModal} toggle={toggleMINTModal} className='text-center'>
                                         <ModalHeader toggle={toggleMINTModal}>Increase BOND Allocation</ModalHeader>
                                         <ModalBody>
                                             {bondBalance <= 0 &&
@@ -847,7 +859,7 @@ const DAOProposals = (props) => {
                                                 <i className="bx bx-window-close align-middle"/> Close 
                                             </button>
                                         </ModalFooter>
-                                    </Modal>
+                                    </Modal> */}
 
                                 </Col>
 
@@ -1868,9 +1880,9 @@ const DAOProposals = (props) => {
                                 </Col>
                                 */}
 
-                                <Col xs='12' className='mb-2'><h3>Pending Proposals</h3></Col>
+                                {/* <Col xs='12' className='mb-2'><h3>Pending Proposals</h3></Col> */}
 
-                                {proposalArray.filter(x => x.type !== '').filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
+                                {/* {proposalArray.filter(x => x.type !== '').filter(x => x.finalised === false).sort((a, b) => (parseFloat(a.votes) > parseFloat(b.votes)) ? -1 : 1).map(c =>
                                     <ProposalItem 
                                         key={c.id}
                                         id={c.id}
@@ -1905,14 +1917,14 @@ const DAOProposals = (props) => {
                                     {context.sharesDataLoading !== true && !context.walletData &&
                                         <div className="text-center m-2">Please connect your wallet to proceed</div>
                                     }
-                                </Col>
+                                </Col> */}
                 
                             </Row>
                         </>
-                    }
-                    {!proposalArray &&
+                    {/* } */}
+                    {/* {!proposalArray &&
                         loader
-                    }
+                    } */}
                 </Container>
             </div>
         </React.Fragment>
