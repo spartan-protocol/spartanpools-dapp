@@ -34,7 +34,7 @@ import UncontrolledTooltip from "reactstrap/lib/UncontrolledTooltip";
 
 const AddLiquidity = (props) => {
 
-    const [activeTab, setActiveTab] = useState('1');
+    const [activeTab, setActiveTab] = useState('3');
     const [notifyMessage, setNotifyMessage] = useState("");
     const [notifyType, setNotifyType] = useState("dark");
 
@@ -621,7 +621,7 @@ const AddLiquidity = (props) => {
                                                 <div className="crypto-buy-sell-nav">
                                                     <br />
                                                     <Nav  className="nav-tabs-custom" role="tablist">
-                                                        <NavItem className="text-center w-33">
+                                                        {/* <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '1'})} onClick={() => {toggleTab('1');}}>
                                                                 <i className="bx bxs-chevrons-up bx-sm"/>
                                                                 <br/>
@@ -634,7 +634,7 @@ const AddLiquidity = (props) => {
                                                                 <br/>
                                                                 <h6 style={{fontSize:'0.68rem'}}>{`${props.t("ADD")} ${pool.symbol}`}</h6>
                                                             </NavLink>
-                                                        </NavItem>
+                                                        </NavItem> */}
                                                         <NavItem className="text-center w-33">
                                                             <NavLink className={classnames({active: activeTab === '3'})} onClick={() => {toggleTab('3');}}>
                                                                 <i className="bx bxs-chevrons-down bx-sm"/>
