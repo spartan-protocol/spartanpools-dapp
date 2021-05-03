@@ -8,7 +8,7 @@ import {getRewards, getDaoContract,
 
 import Notification from '../../components/Common/notification'
 
-import {convertFromWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince, bn} from '../../utils'
+import {convertFromWei, formatGranularUnits, hoursSince, bn} from '../../utils'
 
 import {Row, Col, Table, Card, CardTitle, CardSubtitle, CardBody, Spinner} from "reactstrap"
 import {withNamespaces} from 'react-i18next'
@@ -21,7 +21,7 @@ const EarnTable = (props) => {
     const context = useContext(Context)
     const [reward, setReward] = useState(0)
     const [member, setMember] = useState([])
-    const [totalWeight, setTotalWeight] = useState(0)
+    // const [totalWeight, setTotalWeight] = useState(0)
     const [notifyMessage, setNotifyMessage] = useState("")
     const [notifyType, setNotifyType] = useState("dark")
     const [loadingHarvest, setLoadingHarvest] = useState(false)
@@ -41,10 +41,10 @@ const EarnTable = (props) => {
         let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
         let rewards = data[0]
         let memberDetails = data[1]
-        let weight = data[2]
+        // let weight = data[2]
         setReward(rewards)
         setMember(memberDetails)
-        setTotalWeight(weight)
+        // setTotalWeight(weight)
         setlastHarvest(hoursSince(memberDetails.lastBlock))
     }
 
@@ -134,7 +134,7 @@ const EarnTable = (props) => {
                             <CardBody>
                                 <CardTitle><h4>Claim Rewards</h4></CardTitle>
                                 <CardSubtitle className="mb-3">
-                                    Witness the power of BSC's fast block-times by watching your harvest accumulate in real-time!<br/>
+                                    {/* Witness the power of BSC's fast block-times by watching your harvest accumulate in real-time!<br/> */}
                                 </CardSubtitle>
                                 {context.walletData &&
                                     <>
@@ -150,9 +150,9 @@ const EarnTable = (props) => {
                                             </Col>
                                             <Col xs='12' sm='8' className='p-2'>
                                                 <p>
-                                                    <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}{member.weight <= 0 && 0}%</strong> of the total DAO weight represented by your wallet.<br/>
+                                                    {/* <strong>{member.weight > 0 && formatAllUnits((member.weight / totalWeight)*100)}{member.weight <= 0 && 0}%</strong> of the total DAO weight represented by your wallet.<br/>
                                                     <strong>SPARTA</strong> rewards await your next visit, come back often to harvest!<br/>
-                                                    <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}{member.lastBlock <= 0 && '0 minutes'}</strong> passed since your last harvest
+                                                    <strong>{member.lastBlock > 0 && daysSince(member.lastBlock)}{member.lastBlock <= 0 && '0 minutes'}</strong> passed since your last harvest */}
                                                 </p>
                                             </Col>
                                         </Row>

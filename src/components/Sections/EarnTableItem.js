@@ -196,11 +196,11 @@ export const EarnTableItem = (props) => {
                     </Progress>
                 </td>
                 <td>
-                    {props.units > 0 &&
+                    {/* {props.units > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock()}>
                             <i className="bx bx-lock font-size-16 align-middle"/> Lock
                         </button>
-                    }
+                    } */}
                     {props.locked > 0 &&
                         <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock()}>
                             <i className="bx bx-lock-open font-size-16 align-middle"/> Unlock
@@ -294,41 +294,41 @@ export const EarnTableItem = (props) => {
                                     You are unlocking your tokens!
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 6 &&
+                            {isMember === true &&
                                 <>
                                     You are unlocking your tokens!
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 6 &&
+                            {/* {isMember === true && props.lastHarvest > 6 &&
                                 <>
                                     *** YOU MUST HARVEST FIRST ***
                                 </>
-                            }
+                            } */}
                         </ModalHeader>
                         <ModalBody>
                             {isMember === false &&
                                 <>
-                                    Unlocking your tokens disables them from earning yield.<br/>
-                                    Doing so also decreases your weight in the DAO.<br/>
+                                    {/* Unlocking your tokens disables them from earning yield.<br/>
+                                    Doing so also decreases your weight in the DAO.<br/> */}
                                     Confirming will unlock all of your available {props.symbol} tokens.<br/>
-                                    However, you can re-lock them any time.<br/>
+                                    {/* However, you can re-lock them any time.<br/> */}
                                 </>
                             }
-                            {isMember === true && props.lastHarvest <= 6 &&
+                            {isMember === true &&
                                 <>
-                                    Unlocking your tokens disables them from earning yield.<br/>
-                                    Doing so also decreases your weight in the DAO.<br/>
+                                    {/* Unlocking your tokens disables them from earning yield.<br/>
+                                    Doing so also decreases your weight in the DAO.<br/> */}
                                     Confirming will unlock all of your available {props.symbol} tokens.<br/>
-                                    However, you can re-lock them any time.<br/>
+                                    {/* However, you can re-lock them any time.<br/> */}
                                 </>
                             }
-                            {isMember === true && props.lastHarvest > 6 &&
+                            {/* {isMember === true && props.lastHarvest > 6 &&
                                 <>
                                     Before you unlock your tokens, a harvest must be performed.<br/>
                                     This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
                                     Harvesting now ensures you do not miss out on your hard earned rewards!<br/>
                                 </>
-                            }
+                            } */}
                         </ModalBody>
                         <ModalFooter>
 
@@ -342,7 +342,7 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && props.lastHarvest <= 6 &&
+                            {isMember === true &&
                                 <Button 
                                 color="primary" 
                                 onClick={() => {
@@ -352,14 +352,14 @@ export const EarnTableItem = (props) => {
                                     Unlock Tokens!
                                 </Button>
                             }
-                            {isMember === true && props.lastHarvest > 6 &&
+                            {/* {isMember === true && props.lastHarvest > 6 &&
                                 <Button color="primary" onClick={() => {props.harvest()}}>
                                     Harvest SPARTA!
                                     {props.loadingHarvest === true &&
                                         <i className="bx bx-spin bx-loader ml-1" />
                                     }
                                 </Button>
-                            }
+                            } */}
                             <Button color="secondary" onClick={()=>toggleUnlock()}>Cancel</Button>
 
                         </ModalFooter>
