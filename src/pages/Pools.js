@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react'
+import React, {useEffect, useContext} from 'react'
 import {Context} from "../context";
 import {withRouter} from "react-router-dom";
 
@@ -10,7 +10,7 @@ import Breadcrumbs from "../components/Common/Breadcrumb";
 import {Container, Row, Col} from "reactstrap";
 import {withNamespaces} from 'react-i18next';
 import PoolTable from "../components/Sections/PoolTable";
-import PoolsPaneSide from "../components/Sections/PoolsPaneSide";
+// import PoolsPaneSide from "../components/Sections/PoolsPaneSide";
 
 const Pools = (props) => {
 
@@ -25,8 +25,8 @@ const Pools = (props) => {
     //     swapTx: 0,
     // });
 
-    const [totalVolume, setTotalVolume] = useState(0)
-    const [totalValueLocked, setTotalValueLocked] = useState(0)
+    // const [totalVolume, setTotalVolume] = useState(0)
+    // const [totalValueLocked, setTotalValueLocked] = useState(0)
 
     useEffect(() => {
         getData()
@@ -43,8 +43,8 @@ const Pools = (props) => {
                 volume = bn(volume).plus(bn(data[i].volume))
                 tvl = bn(tvl).plus(bn(data[i].baseAmount))
             }
-            setTotalVolume(volume)
-            setTotalValueLocked(tvl)
+            // setTotalVolume(volume)
+            // setTotalValueLocked(tvl)
         }
     }
 
@@ -54,9 +54,9 @@ const Pools = (props) => {
                 <Container fluid>
                     <Breadcrumbs title={props.t("App")} breadcrumbItem={props.t("Pools")}/>
                     <Row>
-                        <Col xs="12">
+                        {/* <Col xs="12">
                             <PoolsPaneSide totalVolume={totalVolume} tvl={totalValueLocked} />
-                        </Col>
+                        </Col> */}
                         <Col xs="12">
                             <PoolTable/>
                         </Col>

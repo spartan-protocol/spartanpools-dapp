@@ -84,21 +84,21 @@ export const getGasPrice = async () => {
 }
 
 export const getSpartaPrice = async () => {
-    console.log('start get sparta price')
+    // console.log('start get sparta price')
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=spartan-protocol-token&vs_currencies=usd')
     //console.log(resp)
     return resp.data["spartan-protocol-token"].usd
 }
 
 export const getPriceByID = async (ID) => {
-    console.log('start get' + ID + 'price')
+    // console.log('start get' + ID + 'price')
     let resp = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=' + ID + '&vs_currencies=usd')
     //console.log(resp)
     return resp.data[ID].usd
 }
 
 export const getPastPriceByID = async (ID, date) => {
-    console.log('start get' + ID + 'price on' + date)
+    // console.log('start get' + ID + 'price on' + date)
     // date in this format DD-MM-YYYY
     let resp = await axios.get('https://api.coingecko.com/api/v3/coins/' + ID + '/history?date=' + date)
     //console.log(resp)
@@ -116,7 +116,7 @@ export const getPastPriceByID = async (ID, date) => {
 }
 
 export const getTokenHistoryByID = async (ID) => {
-    console.log('start get' + ID + 'token history')
+    // console.log('start get' + ID + 'token history')
     // dates in unix timestamp
     // SPARTA genesis ~ 1600000000
     let now = Date.now()
@@ -190,7 +190,7 @@ export const checkArrayComplete = (refArray, prevArray) => {
 
 // Build out Asset Details, as long as they have a balance
 export const getTokenDetails = async (address, tokenArray) => {
-    console.log('start getTokenDetails')
+    // console.log('start getTokenDetails')
     let assetDetailsArray = []
     for (let i = 0; i < tokenArray.length; i++) {
         let utilsContract = getUtilsContract()
@@ -212,7 +212,7 @@ export const getEligibleAssets = async (address, assetDetailsArray) => {
 }
 
 export const getListedTokens = async () => {
-    console.log('start getlistedtokens')
+    // console.log('start getlistedtokens')
     var contract = getUtilsContract()
     let tokenArray = await contract.methods.allTokens().call()
     //console.log(tokenArray)
@@ -229,7 +229,7 @@ export const getAlltokens = async () => {
 }
 
 export const getListedPools = async () => {
-    console.log('start getlistedpools')
+    // console.log('start getlistedpools')
     var contract = getUtilsContract()
     let poolArray = await contract.methods.allPools().call()
     //console.log(poolArray)
@@ -238,7 +238,7 @@ export const getListedPools = async () => {
 
 // Get BOND Proposals Count
 export const getBondProposalCount = async () => {
-    console.log('start getproposalcount')
+    // console.log('start getproposalcount')
     var contract = getBondv3Contract()
     let proposalCount = await contract.methods.proposalCount().call()
     //console.log(proposalCount)
@@ -247,7 +247,7 @@ export const getBondProposalCount = async () => {
 
 // Get BOND Proposal Array
 export const getBondProposals = async () => {
-    console.log('start getproposals')
+    // console.log('start getproposals')
     let proposalCount = await getBondProposalCount()
     let proposalsData = []
     for (let i = 0; i < +proposalCount + 1; i++) {
@@ -283,7 +283,7 @@ export const getBondProposal = async (pid) => {
 
 // Get Proposals Count
 export const getProposalCount = async () => {
-    console.log('start getproposalcount')
+    // console.log('start getproposalcount')
     var contract = getDaoContract()
     let proposalCount = await contract.methods.proposalCount().call()
     //console.log(proposalCount)
@@ -292,7 +292,7 @@ export const getProposalCount = async () => {
 
 // Get Proposal Array
 export const getProposals = async () => {
-    console.log('start getproposals')
+    // console.log('start getproposals')
     let proposalCount = await getProposalCount()
     let proposalsData = []
     for (let i = 0; i < +proposalCount + 1; i++) {
@@ -330,7 +330,7 @@ export const getProposal = async (pid) => {
 
 // Get Pools Table Data (initial load)
 export const getPoolsData = async (tokenArray) => {
-    console.log('start getPoolsData')
+    // console.log('start getPoolsData')
     let results = 0
     const pagination = 3
     if (tokenArray.length > pagination) {
@@ -349,7 +349,7 @@ export const getPoolsData = async (tokenArray) => {
 
 /// Get Pools Table Data (pagination)
 export const getNextPoolsData = async (tokenArray, prevPoolsData) => {
-    console.log('start getNextPoolsData')
+    // console.log('start getNextPoolsData')
     let results = 0
     const pagination = 20
     const currentLength = prevPoolsData.length
@@ -421,7 +421,7 @@ export const getNetworkData = async (poolsData) => {
 
 // get global pools data stats (txns, APY etc)
 export const getGlobalData = async ()  => {
-    console.log('start getGlobalData')
+    // console.log('start getGlobalData')
     var contract = getRouterContract()
     contract = contract.methods
     let data = await contract.totalPooled().call()
@@ -433,7 +433,7 @@ export const getGlobalData = async ()  => {
 
 // Get Wallet Data (Inital load; just SPARTA & BNB)
 export const getWalletData = async (address) => {
-    console.log('start getWalletData')
+    // console.log('start getWalletData')
     var walletData = []
     walletData.push({
         'symbol': 'SPARTA',
@@ -462,7 +462,7 @@ export const getWalletData = async (address) => {
 
 // Get Wallet Data (Remaining assets)
 export const getNextWalletData = async (account, tokenArray, prevWalletData) => {
-    console.log('start getNextWalletData') 
+    // console.log('start getNextWalletData') 
     let results = 0
     const pagination = 20
     const currentLength = prevWalletData.length
@@ -496,7 +496,7 @@ export const getNextWalletData = async (account, tokenArray, prevWalletData) => 
 
 // Update Wallet Data (Specific Asset)
 export const updateWalletData = async (account, prevWalletData, tokenAddr) => {
-    console.log('start updateWalletData') 
+    // console.log('start updateWalletData') 
     let walletData = prevWalletData
     const findToken = (element) => element.address === tokenAddr
     const index = walletData.findIndex(findToken)
@@ -596,7 +596,7 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
 
 // Load Initial Shares Data (Wallet Drawer & Earn Page)
 export const getSharesData = async (member, poolArray) => {
-    console.log('start getSharesData')
+    // console.log('start getSharesData')
     let results = 0
     const pagination = 3
     //console.log(poolArray)
@@ -619,7 +619,7 @@ export const getSharesData = async (member, poolArray) => {
 
 // Load More Shares Data (Wallet Drawer & Earn Page)
 export const getNextSharesData = async (member, poolArray, prevSharesData) => {
-    console.log('start getNextSharesData')
+    // console.log('start getNextSharesData')
     let results = 0
     const pagination = 20
     const currentLength = prevSharesData.length
@@ -642,7 +642,7 @@ export const getNextSharesData = async (member, poolArray, prevSharesData) => {
 
 // Update Shares Data (Specific Asset)
 export const updateSharesData = async (member, prevSharesData, tokenAddr) => {
-    console.log('start updateSharesData') 
+    // console.log('start updateSharesData') 
     let sharesData = prevSharesData
     var newTokenAddr = tokenAddr
     if (tokenAddr === BNB_ADDR) {newTokenAddr = WBNB_ADDR}

@@ -1,601 +1,723 @@
-import React, {useContext, useEffect, useState} from "react"
-import {Context} from "../../context"
-import queryString from 'query-string';
+import React, { useContext, useEffect, useState } from "react";
+import { Context } from "../../context";
+import queryString from "query-string";
 import {
-    getBondv2Contract,getBondv3Contract, BNB_ADDR, WBNB_ADDR,BONDv3_ADDR, getClaimableLPBondv2,getClaimableLPBondv3, getUtilsContract, updateSharesData, getBNBBalance,
-    getTokenContract, getBondedv2MemberDetails,getBondedv3MemberDetails, SPARTA_ADDR, getPoolData, getTokenData, updateWalletData, getBaseAllocation, getGasPrice,
-} from "../../client/web3"
-import Notification from '../Common/notification'
-
-import {bn, one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
+  getBondv2Contract,
+  BNB_ADDR,
+  getClaimableLPBondv2,
+  getClaimableLPBondv3,
+  updateSharesData,
+  getBNBBalance,
+  getBondedv2MemberDetails,
+  getBondedv3MemberDetails,
+  SPARTA_ADDR,
+  getPoolData,
+  getTokenData,
+  updateWalletData,
+  getGasPrice,
+} from "../../client/web3";
+import Notification from "../Common/notification";
 
 import {
-    Row, Col, InputGroup, InputGroupAddon, Label, UncontrolledTooltip,
-    FormGroup, Card, CardTitle, CardSubtitle, CardBody,
-    Spinner, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, Progress
-} from "reactstrap"
+  bn,
+  convertFromWei,
+  formatAllUnits,
+  formatGranularUnits,
+  daysSince,
+} from "../../utils";
 
-import {withNamespaces} from 'react-i18next'
-import {TokenIcon} from "../Common/TokenIcon";
-import {PercentSlider} from "../common";
-import {withRouter, Link} from "react-router-dom"
-import {Doughnut} from 'react-chartjs-2';
+import {
+  Row,
+  Col,
+  Card,
+  CardTitle,
+  CardSubtitle,
+  CardBody,
+  Spinner,
+} from "reactstrap";
+
+import { withNamespaces } from "react-i18next";
+// import {TokenIcon} from "../Common/TokenIcon";
+// import {PercentSlider} from "../common";
+import { withRouter } from "react-router-dom";
+// import { Doughnut } from "react-chartjs-2";
 
 const BondComponent = (props) => {
+  const context = useContext(Context);
+  const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const [claimableLPBondv2, setClaimableLPBondv2] = useState(0);
+  const [claimableLPBondv3, setClaimableLPBondv3] = useState(0);
+  const [memberBondv2, setBondv2Member] = useState([]);
+  const [memberBondv3, setBondv3Member] = useState([]);
+  const [notifyMessage, setNotifyMessage] = useState("");
+  const [notifyType, setNotifyType] = useState("dark");
+  const [loadingBondedLP, setloadingBondedLP] = useState(false);
+  //   const [approvalToken, setApprovalToken] = useState(false);
+  //   const [loadingApproval, setLoadingApproval] = useState(false);
+  //   const [spartaAllocation, setSpartaAllocation] = useState("");
+  //   const [spartaEstimatedAllocation, setSpartaEstimatedAllocation] =
+  //     useState("");
+  //   const [poolTokenDepth, setPoolTokenDepth] = useState("");
+  //   const [enoughSpartaAlloc, setEnoughSpartaAlloc] = useState("");
 
-    const context = useContext(Context)
-    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-    const [claimableLPBondv2, setClaimableLPBondv2] = useState(0)
-    const [claimableLPBondv3, setClaimableLPBondv3] = useState(0)
-    const [memberBondv2, setBondv2Member] = useState([])
-    const [memberBondv3, setBondv3Member] = useState([])
-    const [notifyMessage, setNotifyMessage] = useState("")
-    const [notifyType, setNotifyType] = useState("dark")
-    const [loadingBondedLP, setloadingBondedLP] = useState(false)
-    const [approvalToken, setApprovalToken] = useState(false)
-    const [loadingApproval, setLoadingApproval] = useState(false)
-    const [spartaAllocation, setSpartaAllocation] = useState("")
-    const [spartaEstimatedAllocation, setSpartaEstimatedAllocation] = useState("")
-    const [poolTokenDepth, setPoolTokenDepth] = useState('')
-    const [enoughSpartaAlloc, setEnoughSpartaAlloc] = useState('')
+  const [userData, setUserData] = useState({
+    address: SPARTA_ADDR,
+    symbol: "XXX",
+    balance: 0,
+    input: 0,
+  });
 
-    const [userData, setUserData] = useState({
-        'address': SPARTA_ADDR,
-        'symbol': 'XXX',
-        'balance': 0,
-        'input': 0,
-    })
+  //   const [startTx, setStartTx] = useState(false);
+  //   const [endTx, setEndTx] = useState(false);
 
-    const [startTx, setStartTx] = useState(false)
-    const [endTx, setEndTx] = useState(false)
+  //   const [showBondModal, setShowBondModal] = useState(false);
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [showClaimNewModal, setShowClaimNewModal] = useState(false);
 
-    const [showBondModal, setShowBondModal] = useState(false);
-    const [showClaimModal, setShowClaimModal] = useState(false);
-    const [showClaimNewModal, setShowClaimNewModal] = useState(false);
+  //   const remainder = convertFromWei(userData.balance - userData.input);
 
-    const remainder = convertFromWei(userData.balance - userData.input)
-
-    const [getDataCount, setGetDataCount] = useState(0)
-    useEffect(() => {
-        if (context.poolsData && context.walletData) {
-            getData()
-        }
-        // eslint-disable-next-line
-    }, [context.poolsData, context.walletData, getDataCount])
-
-    const getData = async () => {
-        let params = queryString.parse(props.location.search)
-        var existsInPoolsData = await context.poolsData.some(e => (e.address === params.pool))
-        var existsInWalletData = await context.walletData.some(e => (e.address === params.pool))
-        if (existsInPoolsData === true && existsInWalletData === true) {
-            const pool = await getPoolData(params.pool, context.poolsData)
-            setPoolTokenDepth(pool.tokenAmount)
-            const tokenData = await getTokenData(pool.address, context.walletData)
-            let _userData = {
-                'address': tokenData?.address,
-                'symbol': tokenData?.symbol,
-                'balance': tokenData?.balance,
-                'input': 0,
-            }
-            setUserData(_userData)
-            await checkApproval(pool.address) ? setApprovalToken(true) : setApprovalToken(false)
-        }
-        else {
-            await pause(2000)
-            setGetDataCount(getDataCount + 1)
-        }
+  const [getDataCount, setGetDataCount] = useState(0);
+  useEffect(() => {
+    if (context.poolsData && context.walletData) {
+      getData();
     }
+    // eslint-disable-next-line
+  }, [context.poolsData, context.walletData, getDataCount]);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (context.account && userData.symbol !== 'XXX') {
-                getLPData()
-            }
-        }, 3000);
-        return () => clearInterval(interval)
-        // eslint-disable-next-line
-    }, [context.account, userData])
-
-    const getLPData = async () => {
-        let params = queryString.parse(props.location.search)
-        let data = await Promise.all([
-            getClaimableLPBondv2(context.account, params.pool), getBondedv2MemberDetails(context.account, params.pool),
-            getClaimableLPBondv3(context.account, params.pool), getBondedv3MemberDetails(context.account, params.pool)
-        ])
-        let bondedLPBondv2 = data[0]
-        let bondv2MemberDetails = data[1]
-        let bondedLPBondv3 = data[2]
-        let bondv3MemberDetails = data[3]
-        let allocation = await getBaseAllocation()
-        setSpartaAllocation(allocation)
-        setClaimableLPBondv2(bondedLPBondv2)
-        setClaimableLPBondv3(bondedLPBondv3)
-        setBondv2Member(bondv2MemberDetails)
-        setBondv3Member(bondv3MemberDetails)
-        if (bn(allocation).comparedTo(bn(convertToWei(10))) === -1) {setEnoughSpartaAlloc(false)}
-        else {setEnoughSpartaAlloc(true)}
+  const getData = async () => {
+    let params = queryString.parse(props.location.search);
+    var existsInPoolsData = await context.poolsData.some(
+      (e) => e.address === params.pool
+    );
+    var existsInWalletData = await context.walletData.some(
+      (e) => e.address === params.pool
+    );
+    if (existsInPoolsData === true && existsInWalletData === true) {
+      const pool = await getPoolData(params.pool, context.poolsData);
+      //   setPoolTokenDepth(pool.tokenAmount);
+      const tokenData = await getTokenData(pool.address, context.walletData);
+      let _userData = {
+        address: tokenData?.address,
+        symbol: tokenData?.symbol,
+        balance: tokenData?.balance,
+        input: 0,
+      };
+      setUserData(_userData);
+      //   (await checkApproval(pool.address))
+      //     ? setApprovalToken(true)
+      //     : setApprovalToken(false);
+    } else {
+      await pause(2000);
+      setGetDataCount(getDataCount + 1);
     }
+  };
 
-    const claimOldLP = async () => {
-        setNotifyMessage('...')
-        setloadingBondedLP(true)
-        let gasFee = 0
-        let gasLimit = 0
-        let contTxn = false
-        const estGasPrice = await getGasPrice()
-        let contractBondv2 = getBondv2Contract()
-        let address = userData.address
-        console.log('Estimating gas', estGasPrice)
-        await contractBondv2.methods.claim(address).estimateGas({
-            from: context.account,
-            gasPrice: estGasPrice,
-        }, function(error, gasAmount) {
-            if (error) {
-                console.log(error)
-                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
-                setNotifyType('warning')
-                setloadingBondedLP(false)
-            }
-            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
-            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
-        })
-        let enoughBNB = true
-        var gasBalance = await getBNBBalance(context.account)
-        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
-            enoughBNB = false
-            setNotifyMessage('You do not have enough BNB for gas fee!')
-            setNotifyType('warning')
-            setloadingBondedLP(false)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (context.account && userData.symbol !== "XXX") {
+        getLPData();
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line
+  }, [context.account, userData]);
+
+  const getLPData = async () => {
+    let params = queryString.parse(props.location.search);
+    let data = await Promise.all([
+      getClaimableLPBondv2(context.account, params.pool),
+      getBondedv2MemberDetails(context.account, params.pool),
+      getClaimableLPBondv3(context.account, params.pool),
+      getBondedv3MemberDetails(context.account, params.pool),
+    ]);
+    let bondedLPBondv2 = data[0];
+    let bondv2MemberDetails = data[1];
+    let bondedLPBondv3 = data[2];
+    let bondv3MemberDetails = data[3];
+    // let allocation = await getBaseAllocation();
+    // setSpartaAllocation(allocation);
+    setClaimableLPBondv2(bondedLPBondv2);
+    setClaimableLPBondv3(bondedLPBondv3);
+    setBondv2Member(bondv2MemberDetails);
+    setBondv3Member(bondv3MemberDetails);
+    // if (bn(allocation).comparedTo(bn(convertToWei(10))) === -1) {
+    //   setEnoughSpartaAlloc(false);
+    // } else {
+    //   setEnoughSpartaAlloc(true);
+    // }
+  };
+
+  const claimOldLP = async () => {
+    setNotifyMessage("...");
+    setloadingBondedLP(true);
+    let gasFee = 0;
+    let gasLimit = 0;
+    let contTxn = false;
+    const estGasPrice = await getGasPrice();
+    let contractBondv2 = getBondv2Contract();
+    let address = userData.address;
+    // console.log("Estimating gas", estGasPrice);
+    await contractBondv2.methods.claim(address).estimateGas(
+      {
+        from: context.account,
+        gasPrice: estGasPrice,
+      },
+      function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+          setNotifyMessage(
+            "Transaction error, do you have enough BNB for gas fee?"
+          );
+          setNotifyType("warning");
+          setloadingBondedLP(false);
         }
-        else if (enoughBNB === true) {
-            console.log('Claiming Old LP', estGasPrice, gasLimit, gasFee)
-            await contractBondv2.methods.claim(address).send({
-                from: context.account,
-                gasPrice: estGasPrice,
-                gas: gasLimit,
-            }, function(error, transactionHash) {
-                if (error) {
-                    console.log(error)
-                    setNotifyMessage('Transaction cancelled')
-                    setNotifyType('warning')
-                    setloadingBondedLP(false)
-                }
-                else {
-                    console.log('txn:', transactionHash)
-                    setNotifyMessage('V2 Bond - LP Token-Claim Pending...')
-                    setNotifyType('success')
-                    contTxn = true
-                }
-            })
-            if (contTxn === true) {
-                setNotifyMessage('V2 Bond - LP Tokens Claimed!')
-                setNotifyType('success')
-                await refreshData()
-                setloadingBondedLP(false)
-            }
+        gasLimit = Math.floor(gasAmount * 1.5).toFixed(0);
+        gasFee = bn(gasLimit).times(bn(estGasPrice)).toFixed(0);
+      }
+    );
+    let enoughBNB = true;
+    var gasBalance = await getBNBBalance(context.account);
+    if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+      enoughBNB = false;
+      setNotifyMessage("You do not have enough BNB for gas fee!");
+      setNotifyType("warning");
+      setloadingBondedLP(false);
+    } else if (enoughBNB === true) {
+    //   console.log("Claiming Old LP", estGasPrice, gasLimit, gasFee);
+      await contractBondv2.methods.claim(address).send(
+        {
+          from: context.account,
+          gasPrice: estGasPrice,
+          gas: gasLimit,
+        },
+        function (error, transactionHash) {
+          if (error) {
+            console.log(error);
+            setNotifyMessage("Transaction cancelled");
+            setNotifyType("warning");
+            setloadingBondedLP(false);
+          } else {
+            // console.log("txn:", transactionHash);
+            setNotifyMessage("V2 Bond - LP Token-Claim Pending...");
+            setNotifyType("success");
+            contTxn = true;
+          }
         }
+      );
+      if (contTxn === true) {
+        setNotifyMessage("V2 Bond - LP Tokens Claimed!");
+        setNotifyType("success");
+        await refreshData();
+        setloadingBondedLP(false);
+      }
     }
+  };
 
-    const claimNewLP = async () => {
-        setNotifyMessage('...')
-        setloadingBondedLP(true)
-        let gasFee = 0
-        let gasLimit = 0
-        let contTxn = false
-        const estGasPrice = await getGasPrice()
-        let contractBondv3 = getBondv3Contract()
-        let address = userData.address
-        console.log('Estimating gas', estGasPrice)
-        await contractBondv3.methods.claimAndLock(address).estimateGas({
-            from: context.account,
-            gasPrice: estGasPrice,
-        }, function(error, gasAmount) {
-            if (error) {
-                console.log(error)
-                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
-                setNotifyType('warning')
-                setloadingBondedLP(false)
-            }
-            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
-            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
-        })
-        let enoughBNB = true
-        var gasBalance = await getBNBBalance(context.account)
-        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
-            enoughBNB = false
-            setNotifyMessage('You do not have enough BNB for gas fee!')
-            setNotifyType('warning')
-            setloadingBondedLP(false)
-        }
-        else if (enoughBNB === true) {
-            console.log('Claiming Old LP', estGasPrice, gasLimit, gasFee)
-            await contractBondv3.methods.claimAndLock(address).send({
-                from: context.account,
-                gasPrice: estGasPrice,
-                gas: gasLimit,
-            }, function(error, transactionHash) {
-                if (error) {
-                    console.log(error)
-                    setNotifyMessage('Transaction cancelled')
-                    setNotifyType('warning')
-                    setloadingBondedLP(false)
-                }
-                else {
-                    console.log('txn:', transactionHash)
-                    setNotifyMessage('Bond - LP Token-Claim Pending...')
-                    setNotifyType('success')
-                    contTxn = true
-                }
-            })
-            if (contTxn === true) {
-                setNotifyMessage('Bond - LP Tokens Claimed!')
-                setNotifyType('success')
-                await refreshData()
-                setloadingBondedLP(false)
-            }
-        }
+  //   const claimNewLP = async () => {
+  //     setNotifyMessage("...");
+  //     setloadingBondedLP(true);
+  //     let gasFee = 0;
+  //     let gasLimit = 0;
+  //     let contTxn = false;
+  //     const estGasPrice = await getGasPrice();
+  //     let contractBondv3 = getBondv3Contract();
+  //     let address = userData.address;
+  //     console.log("Estimating gas", estGasPrice);
+  //     await contractBondv3.methods.claimAndLock(address).estimateGas(
+  //       {
+  //         from: context.account,
+  //         gasPrice: estGasPrice,
+  //       },
+  //       function (error, gasAmount) {
+  //         if (error) {
+  //           console.log(error);
+  //           setNotifyMessage(
+  //             "Transaction error, do you have enough BNB for gas fee?"
+  //           );
+  //           setNotifyType("warning");
+  //           setloadingBondedLP(false);
+  //         }
+  //         gasLimit = Math.floor(gasAmount * 1.5).toFixed(0);
+  //         gasFee = bn(gasLimit).times(bn(estGasPrice)).toFixed(0);
+  //       }
+  //     );
+  //     let enoughBNB = true;
+  //     var gasBalance = await getBNBBalance(context.account);
+  //     if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+  //       enoughBNB = false;
+  //       setNotifyMessage("You do not have enough BNB for gas fee!");
+  //       setNotifyType("warning");
+  //       setloadingBondedLP(false);
+  //     } else if (enoughBNB === true) {
+  //       console.log("Claiming Old LP", estGasPrice, gasLimit, gasFee);
+  //       await contractBondv3.methods.claimAndLock(address).send(
+  //         {
+  //           from: context.account,
+  //           gasPrice: estGasPrice,
+  //           gas: gasLimit,
+  //         },
+  //         function (error, transactionHash) {
+  //           if (error) {
+  //             console.log(error);
+  //             setNotifyMessage("Transaction cancelled");
+  //             setNotifyType("warning");
+  //             setloadingBondedLP(false);
+  //           } else {
+  //             console.log("txn:", transactionHash);
+  //             setNotifyMessage("Bond - LP Token-Claim Pending...");
+  //             setNotifyType("success");
+  //             contTxn = true;
+  //           }
+  //         }
+  //       );
+  //       if (contTxn === true) {
+  //         setNotifyMessage("Bond - LP Tokens Claimed!");
+  //         setNotifyType("success");
+  //         await refreshData();
+  //         setloadingBondedLP(false);
+  //       }
+  //     }
+  //   };
+
+  const refreshData = async () => {
+    let params = queryString.parse(props.location.search);
+    if (context.walletDataLoading !== true) {
+      // Refresh BNB & TOKEN balance
+      context.setContext({ walletDataLoading: true });
+      let walletData = await updateWalletData(
+        context.account,
+        context.walletData,
+        BNB_ADDR
+      );
+      walletData = await updateWalletData(
+        context.account,
+        walletData,
+        params.pool
+      );
+      context.setContext({ walletData: walletData });
+      context.setContext({ walletDataLoading: false });
     }
-
-    const refreshData = async () => {
-        let params = queryString.parse(props.location.search)
-        if (context.walletDataLoading !== true) {
-            // Refresh BNB & TOKEN balance
-            context.setContext({'walletDataLoading': true})
-            let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-            walletData = await updateWalletData(context.account, walletData, params.pool)
-            context.setContext({'walletData': walletData})
-            context.setContext({'walletDataLoading': false})
-        }
-        if (context.sharesDataLoading !== true) {
-            // Refresh sharesData for token
-            let sharesData = await updateSharesData(context.account, context.sharesData, params.pool)
-            context.setContext({'sharesDataLoading': true})
-            context.setContext({'sharesData': sharesData})
-            context.setContext({'sharesDataLoading': false})
-        }
-        setNotifyMessage('Transaction Sent!')
-        setNotifyType('success')
+    if (context.sharesDataLoading !== true) {
+      // Refresh sharesData for token
+      let sharesData = await updateSharesData(
+        context.account,
+        context.sharesData,
+        params.pool
+      );
+      context.setContext({ sharesDataLoading: true });
+      context.setContext({ sharesData: sharesData });
+      context.setContext({ sharesDataLoading: false });
     }
+    setNotifyMessage("Transaction Sent!");
+    setNotifyType("success");
+  };
 
-    const toggleLock = () => {
-        setShowBondModal(!showBondModal)
+  //   const toggleLock = () => {
+  //     setShowBondModal(!showBondModal);
+  //   };
+
+  const toggleClaim = () => {
+    if (bn(claimableLPBondv2).comparedTo(0) === 1 && !memberBondv3.isMember) {
+      claimOldLP();
+    } else if (bn(claimableLPBondv2).comparedTo(0) === 1) {
+      toggleNewClaim();
+      setShowClaimModal(!showClaimModal);
+    } else {
+      setShowClaimModal(!showClaimModal);
     }
+  };
 
-    const toggleClaim = () => {
-        if(bn(claimableLPBondv2).comparedTo(0) === 1 && !memberBondv3.isMember){
-            claimOldLP();
-        }else if(bn(claimableLPBondv2).comparedTo(0) === 1){
-            toggleNewClaim();
-            setShowClaimModal(!showClaimModal)
-        }else {
-            setShowClaimModal(!showClaimModal)
-        }
-    }
+  const toggleNewClaim = () => {
+    setShowClaimNewModal(!showClaimNewModal);
+  };
 
-    const toggleNewClaim = () => {
-        setShowClaimNewModal(!showClaimNewModal)
-    }
+  //   const checkApproval = async (address) => {
+  //     if (address === BNB_ADDR || address === WBNB_ADDR) {
+  //       return true;
+  //     } else {
+  //       const contract = getTokenContract(address);
+  //       const approvalToken = await contract.methods
+  //         .allowance(context.account, BONDv3_ADDR)
+  //         .call();
+  //       if (+approvalToken > 0) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     }
+  //   };
 
-    const checkApproval = async (address) => {
-        if (address === BNB_ADDR || address === WBNB_ADDR) {
-            return true
-        } else {
-            const contract = getTokenContract(address)
-            const approvalToken = await contract.methods.allowance(context.account, BONDv3_ADDR).call()
-            if (+approvalToken > 0) {
-                return true
-            } else {
-                return false
-            }
-        }
-    }
+  //   const onChange = async (amount) => {
+  //     let finalAmt = "";
+  //     if (amount === "100") {
+  //       finalAmt = bn(userData?.balance);
+  //     } else {
+  //       finalAmt = bn(userData?.balance).times(amount).div(100);
+  //     }
+  //     let _userData = {
+  //       address: userData.address,
+  //       symbol: userData.symbol,
+  //       balance: userData.balance,
+  //       input: formatBN(bn(finalAmt), 0),
+  //     };
+  //     setUserData(_userData);
+  //     //console.log(userData)
+  //   };
 
-    const onChange = async (amount) => {
-        let finalAmt = ''
-        if (amount === '100') {finalAmt = bn(userData?.balance)}
-        else {
-            finalAmt = (bn(userData?.balance)).times(amount).div(100)
-        }
-        let _userData = {
-            'address': userData.address,
-            'symbol': userData.symbol,
-            'balance': userData.balance,
-            'input': formatBN(bn(finalAmt), 0),
-        }
-        setUserData(_userData)
-        //console.log(userData)
-    }
+  //   const onInputChange = async (e) => {
+  //     const input = e.target.value;
+  //     let finalAmt = formatBN(convertToWei(input), 0);
 
-    const onInputChange = async (e) => {
-        const input = e.target.value
-        let finalAmt = formatBN(convertToWei(input), 0)
+  //     let _userData = {
+  //       address: userData.address,
+  //       symbol: userData.symbol,
+  //       balance: userData.balance,
+  //       input: formatBN(bn(finalAmt), 0),
+  //     };
+  //     setUserData(_userData);
+  //   };
 
-        let _userData = {
-            'address': userData.address,
-            'symbol': userData.symbol,
-            'balance': userData.balance,
-            'input': formatBN(bn(finalAmt), 0),
-        }
-        setUserData(_userData)
-    }
+  //   const unlockToken = async () => {
+  //     unlock(userData.address);
+  //   };
 
-    const unlockToken = async () => {
-        unlock(userData.address)
-    }
+  //   const unlock = async (address) => {
+  //     setNotifyMessage("...");
+  //     // setLoadingApproval(true);
+  //     let gasFee = 0;
+  //     let gasLimit = 0;
+  //     let contTxn = false;
+  //     const estGasPrice = await getGasPrice();
+  //     const contract = getTokenContract(address);
+  //     const supply = await contract.methods.totalSupply().call();
+  //     await contract.methods.approve(BONDv3_ADDR, supply).estimateGas(
+  //       {
+  //         from: context.account,
+  //         gasPrice: estGasPrice,
+  //       },
+  //       function (error, gasAmount) {
+  //         if (error) {
+  //           console.log(error);
+  //           setNotifyMessage(
+  //             "Transaction error, do you have enough BNB for gas fee?"
+  //           );
+  //           setNotifyType("warning");
+  //         //   setLoadingApproval(false);
+  //         }
+  //         gasLimit = Math.floor(gasAmount * 1.5).toFixed(0);
+  //         gasFee = bn(gasLimit).times(bn(estGasPrice)).toFixed(0);
+  //       }
+  //     );
+  //     let enoughBNB = true;
+  //     var gasBalance = await getBNBBalance(context.account);
+  //     if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+  //       enoughBNB = false;
+  //       setNotifyMessage("You do not have enough BNB for gas fee!");
+  //       setNotifyType("warning");
+  //       setLoadingApproval(false);
+  //     }
+  //     if (enoughBNB === true) {
+  //       console.log("Approving token", estGasPrice, gasLimit, gasFee);
+  //       await contract.methods.approve(BONDv3_ADDR, supply).send(
+  //         {
+  //           from: context.account,
+  //           gasPrice: estGasPrice,
+  //           gas: gasLimit,
+  //         },
+  //         function (error, transactionHash) {
+  //           if (error) {
+  //             console.log(error);
+  //             setNotifyMessage("Token Approval Cancelled");
+  //             setNotifyType("warning");
+  //             setLoadingApproval(false);
+  //           } else {
+  //             console.log("txn:", transactionHash);
+  //             setNotifyMessage("Token Approval Pending...");
+  //             setNotifyType("success");
+  //             contTxn = true;
+  //           }
+  //         }
+  //       );
+  //       if (contTxn === true) {
+  //         setNotifyMessage("Token Approved!");
+  //         setNotifyType("success");
+  //         setLoadingApproval(false);
+  //         setApprovalToken(true);
+  //         if (context.walletDataLoading !== true) {
+  //           // Refresh BNB balance
+  //           context.setContext({ walletDataLoading: true });
+  //           let walletData = await updateWalletData(
+  //             context.account,
+  //             context.walletData,
+  //             BNB_ADDR
+  //           );
+  //           context.setContext({ walletData: walletData });
+  //           context.setContext({ walletDataLoading: false });
+  //         }
+  //       }
+  //     }
+  //   };
 
-    const unlock = async (address) => {
-        setNotifyMessage('...')
-        setLoadingApproval(true)
-        let gasFee = 0
-        let gasLimit = 0
-        let contTxn = false
-        const estGasPrice = await getGasPrice()
-        const contract = getTokenContract(address)
-        const supply = await contract.methods.totalSupply().call()
-        await contract.methods.approve(BONDv3_ADDR, supply).estimateGas({
-            from: context.account,
-            gasPrice: estGasPrice,
-        }, function(error, gasAmount) {
-            if (error) {
-                console.log(error)
-                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
-                setNotifyType('warning')
-                setLoadingApproval(false)
-            }
-            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
-            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
-        })
-        let enoughBNB = true
-        var gasBalance = await getBNBBalance(context.account)
-        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
-            enoughBNB = false
-            setNotifyMessage('You do not have enough BNB for gas fee!')
-            setNotifyType('warning')
-            setLoadingApproval(false)
-        }
-        if (enoughBNB === true) {
-            console.log('Approving token', estGasPrice, gasLimit, gasFee)
-            await contract.methods.approve(BONDv3_ADDR, supply).send({
-                from: context.account,
-                gasPrice: estGasPrice,
-                gas: gasLimit,
-            }, function (error, transactionHash) {
-                if (error) {
-                    console.log(error)
-                    setNotifyMessage('Token Approval Cancelled')
-                    setNotifyType('warning')
-                    setLoadingApproval(false)
-                }
-                else {
-                    console.log('txn:', transactionHash)
-                    setNotifyMessage('Token Approval Pending...')
-                    setNotifyType('success')
-                    contTxn = true
-                }
-            })
-            if (contTxn === true) {
-                setNotifyMessage('Token Approved!')
-                setNotifyType('success')
-                setLoadingApproval(false)
-                setApprovalToken(true)
-                if (context.walletDataLoading !== true) {
-                    // Refresh BNB balance
-                    context.setContext({'walletDataLoading': true})
-                    let walletData = await updateWalletData(context.account, context.walletData, BNB_ADDR)
-                    context.setContext({'walletData': walletData})
-                    context.setContext({'walletDataLoading': false})
-                }
-            }
-        }
-    }
+  //   const [estLiqTokens, setEstLiqTokens] = useState("0");
 
-    const [estLiqTokens, setEstLiqTokens] = useState('0')
+  //   const getEstLiqTokens = async () => {
+  //     let contract = getUtilsContract();
+  //     let data = await Promise.all([
+  //       getPoolData(userData.address, context.poolsData),
+  //       contract.methods
+  //         .calcTokenPPinBase(userData.address, userData.input)
+  //         .call(),
+  //     ]);
+  //     const pool = data[0];
+  //     const estBaseValue = data[1];
+  //     setSpartaEstimatedAllocation(estBaseValue);
+  //     const tokenInput = userData.input;
+  //     setEstLiqTokens(
+  //       formatBN(
+  //         calcLiquidityUnits(
+  //           estBaseValue,
+  //           pool.baseAmount,
+  //           tokenInput,
+  //           pool.tokenAmount,
+  //           pool.units
+  //         ),
+  //         0
+  //       )
+  //     );
+  //   };
 
-    const getEstLiqTokens = async () => {
-        let contract = getUtilsContract()
-        let data = await Promise.all([getPoolData(userData.address, context.poolsData), contract.methods.calcTokenPPinBase(userData.address, userData.input).call()])
-        const pool = data[0]
-        const estBaseValue = data[1]
-        setSpartaEstimatedAllocation(estBaseValue)
-        const tokenInput = userData.input
-        setEstLiqTokens(formatBN(calcLiquidityUnits(estBaseValue, pool.baseAmount, tokenInput, pool.tokenAmount, pool.units ), 0))
-    }
+  //   const calcLiquidityUnits = (_b, _B, _t, _T, _P) => {
+  //     let b = bn(_b);
+  //     let B = bn(_B);
+  //     let t = bn(_t);
+  //     let T = bn(_T);
+  //     let P = bn(_P);
+  //     let slipAdjustment = getSlipAdustment(b, B, t, T);
+  //     let part1 = t.times(B);
+  //     let part2 = T.times(b);
+  //     let part3 = T.times(B).times(2);
+  //     let _units = P.times(part1.plus(part2)).div(part3);
+  //     return _units.times(slipAdjustment).div(one); // Divide by 10**18
+  //   };
 
-    const calcLiquidityUnits = (_b, _B, _t, _T, _P) => {
-            let b = bn(_b)
-            let B = bn(_B)
-            let t = bn(_t)
-            let T = bn(_T)
-            let P = bn(_P)
-            let slipAdjustment = getSlipAdustment(b, B, t, T);
-            let part1 = t.times(B);
-            let part2 = T.times(b);
-            let part3 = T.times(B).times(2);
-            let _units = (P.times(part1.plus(part2))).div(part3);
-            return _units.times(slipAdjustment).div(one);  // Divide by 10**18
-    }
+  //   const getSlipAdustment = (b, B, t, T) => {
+  //     // slipAdjustment = (1 - ABS((B t - b T)/((2 b + B) (t + T))))
+  //     // 1 - ABS(part1 - part2)/(part3 * part4))
+  //     let _one = bn(one);
+  //     let part1 = B.times(t);
+  //     let part2 = b.times(T);
+  //     let part3 = b.times(2).plus(B);
+  //     let part4 = t.plus(T);
+  //     let numerator;
+  //     if (part1 > part2) {
+  //       numerator = part1.minus(part2);
+  //     } else {
+  //       numerator = part2.minus(part1);
+  //     }
+  //     let denominator = part3.times(part4);
+  //     return _one.minus(numerator.times(_one).div(denominator)); // Multiply by 10**18
+  //   };
 
-    const getSlipAdustment = ( b,  B,  t,  T) => {
-        // slipAdjustment = (1 - ABS((B t - b T)/((2 b + B) (t + T))))
-        // 1 - ABS(part1 - part2)/(part3 * part4))
-        let _one = bn(one);
-        let part1 = B.times(t);
-        let part2 = b.times(T);
-        let part3 = b.times(2).plus(B);
-        let part4 = t.plus(T);
-        let numerator;
-        if(part1 > part2){
-            numerator = part1.minus(part2);
-        } else {
-            numerator = part2.minus(part1);
-        }
-        let denominator = part3.times(part4);
-        return _one.minus((numerator.times(_one)).div(denominator)); // Multiply by 10**18
-    }
+  //   const depositAsset = async () => {
+  //     setNotifyMessage("...");
+  //     setStartTx(true);
+  //     setEndTx(false);
+  //     let gasFee = 0;
+  //     let gasLimit = 0;
+  //     let validInput = true;
+  //     let contTxn = false;
+  //     const estGasPrice = await getGasPrice();
+  //     let inputAmount = userData.input;
+  //     let contract = getBondv3Contract();
+  //     console.log("Estimating gas", inputAmount, estGasPrice);
+  //     await contract.methods.deposit(userData.address, "1").estimateGas(
+  //       {
+  //         from: context.account,
+  //         gasPrice: estGasPrice,
+  //         value: userData.address === BNB_ADDR ? "1" : "0",
+  //       },
+  //       function (error, gasAmount) {
+  //         if (error) {
+  //           console.log(error);
+  //           setNotifyMessage(
+  //             "Transaction error, do you have enough BNB for gas fee?"
+  //           );
+  //           setNotifyType("warning");
+  //           setStartTx(false);
+  //           setEndTx(true);
+  //         }
+  //         gasLimit = Math.floor(gasAmount * 1.5).toFixed(0);
+  //         gasFee = bn(gasLimit).times(bn(estGasPrice)).toFixed(0);
+  //       }
+  //     );
+  //     let enoughBNB = true;
+  //     var gasBalance = await getBNBBalance(context.account);
+  //     if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+  //       enoughBNB = false;
+  //       setNotifyMessage("You do not have enough BNB for gas fee!");
+  //       setNotifyType("warning");
+  //       setStartTx(false);
+  //       setEndTx(true);
+  //     } else if (enoughBNB === true) {
+  //       if (
+  //         userData.address === BNB_ADDR &&
+  //         bn(userData.balance).minus(gasFee).comparedTo(bn(inputAmount)) === -1
+  //       ) {
+  //         inputAmount = bn(inputAmount).minus(gasFee).toFixed(0);
+  //         if (bn(inputAmount).comparedTo(0) === -1) {
+  //           validInput = false;
+  //           setNotifyMessage("Gas larger than BNB input amount");
+  //           setNotifyType("warning");
+  //           setStartTx(false);
+  //           setEndTx(true);
+  //         }
+  //       }
+  //       if (validInput === true) {
+  //         console.log(
+  //           "Bonding Asset",
+  //           inputAmount,
+  //           estGasPrice,
+  //           gasLimit,
+  //           gasFee
+  //         );
+  //         await contract.methods.deposit(userData.address, inputAmount).send(
+  //           {
+  //             from: context.account,
+  //             gasPrice: estGasPrice,
+  //             gas: gasLimit,
+  //             value: userData.address === BNB_ADDR ? inputAmount : "0",
+  //           },
+  //           function (error, transactionHash) {
+  //             if (error) {
+  //               console.log(error);
+  //               setNotifyMessage("Transaction cancelled");
+  //               setNotifyType("warning");
+  //               setStartTx(false);
+  //               setEndTx(true);
+  //             } else {
+  //               console.log("txn:", transactionHash);
+  //               setNotifyMessage("Asset-Bond Pending...");
+  //               setNotifyType("success");
+  //               contTxn = true;
+  //             }
+  //           }
+  //         );
+  //         if (contTxn === true) {
+  //           setNotifyMessage("Assets Bonded!");
+  //           setNotifyType("success");
+  //           setStartTx(false);
+  //           setEndTx(true);
+  //           await refreshData();
+  //         }
+  //       }
+  //     }
+  //   };
 
-    const depositAsset = async () => {
-        setNotifyMessage('...')
-        setStartTx(true)
-        setEndTx(false)
-        let gasFee = 0
-        let gasLimit = 0
-        let validInput = true
-        let contTxn = false
-        const estGasPrice = await getGasPrice()
-        let inputAmount = userData.input
-        let contract = getBondv3Contract()
-        console.log('Estimating gas', inputAmount, estGasPrice)
-        await contract.methods.deposit(userData.address, '1').estimateGas({
-            from: context.account,
-            gasPrice: estGasPrice,
-            value: userData.address === BNB_ADDR ? '1' : '0'
-        }, function(error, gasAmount) {
-            if (error) {
-                console.log(error)
-                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
-                setNotifyType('warning')
-                setStartTx(false)
-                setEndTx(true)
-            }
-            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
-            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
-        })
-        let enoughBNB = true
-        var gasBalance = await getBNBBalance(context.account)
-        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
-            enoughBNB = false
-            setNotifyMessage('You do not have enough BNB for gas fee!')
-            setNotifyType('warning')
-            setStartTx(false)
-            setEndTx(true)
-        }
-        else if (enoughBNB === true) {
-            if (userData.address === BNB_ADDR && bn(userData.balance).minus(gasFee).comparedTo(bn(inputAmount)) === -1 ) {
-                inputAmount = bn(inputAmount).minus(gasFee).toFixed(0)
-                if (bn(inputAmount).comparedTo(0) === -1) {
-                    validInput = false
-                    setNotifyMessage('Gas larger than BNB input amount')
-                    setNotifyType('warning')
-                    setStartTx(false)
-                    setEndTx(true)
-                }
-            }
-            if (validInput === true) {
-                console.log('Bonding Asset', inputAmount, estGasPrice, gasLimit, gasFee)
-                await contract.methods.deposit(userData.address, inputAmount).send({
-                    from: context.account,
-                    gasPrice: estGasPrice,
-                    gas: gasLimit,
-                    value: userData.address === BNB_ADDR ? inputAmount : '0'
-                }, function(error, transactionHash) {
-                    if (error) {
-                        console.log(error)
-                        setNotifyMessage('Transaction cancelled')
-                        setNotifyType('warning')
-                        setStartTx(false)
-                        setEndTx(true)
-                    }
-                    else {
-                        console.log('txn:', transactionHash)
-                        setNotifyMessage('Asset-Bond Pending...')
-                        setNotifyType('success')
-                        contTxn = true
-                    }
-                })
-                if (contTxn === true) {
-                    setNotifyMessage('Assets Bonded!')
-                    setNotifyType('success')
-                    setStartTx(false)
-                    setEndTx(true)
-                    await refreshData()
-                }
-            }
-        }
-    }
+  //   const chartData = {
+  //     labels: ["Instant", "Over 12 Months"],
+  //     datasets: [
+  //       {
+  //         data: [0, ((convertFromWei(estLiqTokens) * 100) / 100).toFixed(2)],
+  //         backgroundColor: ["#626262", "#a80005"],
+  //         hoverBackgroundColor: ["#626262", "rgba(168,0,5,0.6)"],
+  //         borderColor: "#2a3042",
+  //         borderWidth: "1",
+  //         hoverBorderWidth: "2",
+  //       },
+  //     ],
+  //   };
 
-    const chartData = {
-        labels: [
-            "Instant",
-            "Over 12 Months",
-        ],
-        datasets: [
-            {
-                data: [(0),(convertFromWei(estLiqTokens)*100/100).toFixed(2)],
-                backgroundColor: [
-                    "#626262",
-                    "#a80005"
-                ],
-                hoverBackgroundColor: [
-                    "#626262",
-                    "rgba(168,0,5,0.6)"
-                ],
-                borderColor: "#2a3042",
-                borderWidth: '1',
-                hoverBorderWidth: '2',
-            }]
-    }
+  //   const chartOptions = {
+  //     legend: {
+  //       position: "bottom",
+  //       labels: {
+  //         fontColor: "#FFF",
+  //       },
+  //     },
+  //   };
 
-    const chartOptions = {
-        legend: {
-            position: 'bottom',
-            labels: {
-                fontColor: '#FFF'
-            }
-        }
-    }
-
-    return (
-        <>
-            <Notification
-                type={notifyType}
-                message={notifyMessage}
-            />
+  return (
+    <>
+      <Notification type={notifyType} message={notifyMessage} />
+      <Card>
+        <Row>
+          <Col sm={12} className='mr-20'>
             <Card>
-                <Row>
-                    <Col sm={12} className="mr-20">
-                        <Card>
-                            <CardBody>
-                                <CardTitle><h4>Time-Locked LP Tokens</h4></CardTitle>
-                                <CardSubtitle className="mb-3">
-                                    Bond {userData.symbol} to get SPARTA LP Tokens. Claim your vested LP tokens.
-                                </CardSubtitle>
-                                {context.walletData &&
-                                    <>
-                                        <Row>
-                                            <Col xs='12' sm='3' className='text-center p-2'>
-                                                <h5><Spinner type="grow" color="primary" className='m-2' style={{ height: '15px', width: '15px' }} />{formatGranularUnits(convertFromWei(claimableLPBondv3).plus(convertFromWei(claimableLPBondv2)))} LP Tokens</h5>
-                                               
-                                                <button type="button" className="btn btn-primary waves-effect waves-light" onClick={toggleClaim}>
-                                                    <i className="bx bx-log-in-circle font-size-16 align-middle" /> Claim LP Tokens
-                                                    {loadingBondedLP === true &&
-                                                        <i className="bx bx-spin bx-loader ml-1"/>
-                                                    }
-                                                </button>
-                                            </Col>
-                                            <Col xs='12' sm='8' className='p-2'>
-                                                <p>
-                                                    <strong>{formatAllUnits(convertFromWei(memberBondv3.bondedLP).plus(convertFromWei(memberBondv2.bondedLP)))}</strong> SPARTA:{userData.symbol} LP tokens remaining in time-locked contract.
-                                                </p>
-                                                
-                                                {memberBondv3.bondedLP > 0 &&
-                                                <p>
-                                                    <strong>{memberBondv3.lastBlockTime > 0 && daysSince(memberBondv3.lastBlockTime)}</strong> passed since your last claim.
-                                                </p>
-                                                }
-                                                 
-                                            </Col>
-                                        </Row>
-                                    </>
-                                }
-                                {!context.walletData &&
-                                    <div className="text-center m-2"><i className="bx bx-spin bx-loader" /></div>
-                                }
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
+              <CardBody>
+                <CardTitle>
+                  <h4>Time-Locked LP Tokens</h4>
+                </CardTitle>
+                <CardSubtitle className='mb-3'>
+                  Claim the remainder of your vested LP tokens. (All Bond positions have now been 100% unlocked)
+                </CardSubtitle>
+                {context.walletData && (
+                  <>
+                    <Row>
+                      <Col xs='12' sm='3' className='text-center p-2'>
+                        <h5>
+                          <Spinner
+                            type='grow'
+                            color='primary'
+                            className='m-2'
+                            style={{ height: "15px", width: "15px" }}
+                          />
+                          {formatGranularUnits(
+                            convertFromWei(claimableLPBondv3).plus(
+                              convertFromWei(claimableLPBondv2)
+                            )
+                          )}{" "}
+                          LP Tokens
+                        </h5>
+
+                        <button
+                          type='button'
+                          className='btn btn-primary waves-effect waves-light'
+                          onClick={toggleClaim}
+                        >
+                          <i className='bx bx-log-in-circle font-size-16 align-middle' />{" "}
+                          Claim LP Tokens
+                          {loadingBondedLP === true && (
+                            <i className='bx bx-spin bx-loader ml-1' />
+                          )}
+                        </button>
+                      </Col>
+                      <Col xs='12' sm='8' className='p-2'>
+                        <p>
+                          <strong>
+                            {formatAllUnits(
+                              convertFromWei(memberBondv3.bondedLP).plus(
+                                convertFromWei(memberBondv2.bondedLP)
+                              )
+                            )}
+                          </strong>{" "}
+                          SPARTA:{userData.symbol} LP tokens remaining in
+                          time-locked contract.
+                        </p>
+
+                        {memberBondv3.bondedLP > 0 && (
+                          <p>
+                            <strong>
+                              {memberBondv3.lastBlockTime > 0 &&
+                                daysSince(memberBondv3.lastBlockTime)}
+                            </strong>{" "}
+                            passed since your last claim.
+                          </p>
+                        )}
+                      </Col>
+                    </Row>
+                  </>
+                )}
+                {!context.walletData && (
+                  <div className='text-center m-2'>
+                    <i className='bx bx-spin bx-loader' />
+                  </div>
+                )}
+              </CardBody>
             </Card>
-            <Row>
+          </Col>
+        </Row>
+      </Card>
+      {/* <Row>
                 <Col sm={12} className="mr-20">
                     <Card>
                         <CardBody>
@@ -853,9 +975,9 @@ const BondComponent = (props) => {
                         </CardBody>
                     </Card>
                 </Col>
-            </Row>
-        </>
-    )
+            </Row> */}
+    </>
+  );
 };
 
 export default withRouter(withNamespaces()(BondComponent));

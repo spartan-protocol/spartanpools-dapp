@@ -25,29 +25,29 @@ export const PoolTableItem = (props) => {
                         <div className="d-block mb-0"><TokenIcon address={props.address}/></div>
                         <h5 className="d-block my-2">{formatAllUSD(props.price, context.spartanPrice)}</h5>
                         <h5 className='mb-0 font-weight-light'>{props.symbol}</h5>
-                        <div className='d-inline-block d-sm-none pt-2' style={{fontSize:'0.85rem'}}>APY:</div>
+                        {/* <div className='d-inline-block d-sm-none pt-2' style={{fontSize:'0.85rem'}}>APY:</div>
                         <div id={props.symbol + 'APYmobile'} role='button' className={'bx bx-info-circle d-inline-block d-sm-none ml-1'} />
-                        <UncontrolledTooltip placement="bottom" target={props.symbol + 'APYmobile'}>
+                        <UncontrolledTooltip placement="bottom" target={props.symbol + 'APYmobile'}> */}
                             {/* {confidence === 'trafficRed' && 'Very Low Confidence!'}
                             {confidence === 'trafficOrange' && 'Low Confidence!'}
                             {confidence === 'trafficYellow' && 'Moderate Confidence!'} */}
-                            APY is based on the entire history of the pool!<br />
+                            {/* APY is based on the entire history of the pool!<br />
                             <br />Past performance is NOT a guarantee of future performance!
                         </UncontrolledTooltip>
-                        <h5 className='d-block d-sm-none'>{((props.apy - 10000 ) / 100).toFixed(0)} %</h5>
+                        <h5 className='d-block d-sm-none'>{((props.apy - 10000 ) / 100).toFixed(0)} %</h5> */}
                     </td>
-                    <td className="d-none d-lg-table-cell">
+                    {/* <td className="d-none d-lg-table-cell">
                         <h5>{formatAllUnits((props.apy - 10000 )/ 100)} %</h5>
                         <h6 className='mb-0 font-weight-light d-inline-block'>Info</h6>
                         <div id={props.symbol + 'APY'} role='button' className={'bx bx-info-circle d-inline-block ml-1'} />
-                        <UncontrolledTooltip placement="bottom" target={props.symbol + 'APY'}>
+                        <UncontrolledTooltip placement="bottom" target={props.symbol + 'APY'}> */}
                             {/* {confidence === 'trafficRed' && 'Very Low Confidence!'}
                             {confidence === 'trafficOrange' && 'Low Confidence!'}
                             {confidence === 'trafficYellow' && 'Moderate Confidence!'} */}
-                            APY is based on the entire history of the pool!<br />
+                            {/* APY is based on the entire history of the pool!<br />
                             <br />Past performance is NOT a guarantee of future performance!
                         </UncontrolledTooltip>
-                    </td>
+                    </td> */}
                     <td className="d-none d-lg-table-cell">
                         <h5>{formatAllUSD(convertFromWei(props.depth), context.spartanPrice)}</h5>
                         <h6 className='mb-0 font-weight-light'>USD</h6>

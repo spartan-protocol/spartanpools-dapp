@@ -56,7 +56,7 @@ const EarnTable = (props) => {
         let contTxn = false
         const estGasPrice = await getGasPrice()
         let contract = getDaoContract()
-        console.log('Estimating gas', estGasPrice)
+        // console.log('Estimating gas', estGasPrice)
         await contract.methods.harvest().estimateGas({
             from: context.account,
             gasPrice: estGasPrice,
@@ -79,7 +79,7 @@ const EarnTable = (props) => {
             setLoadingHarvest(false)
         }
         else if (enoughBNB === true) {
-            console.log('Harvesting SPARTA', estGasPrice, gasLimit, gasFee)
+            // console.log('Harvesting SPARTA', estGasPrice, gasLimit, gasFee)
             await contract.methods.harvest().send({
                 from: context.account,
                 gasPrice: estGasPrice,
@@ -92,7 +92,7 @@ const EarnTable = (props) => {
                     setLoadingHarvest(false)
                 }
                 else {
-                    console.log('txn:', transactionHash)
+                    // console.log('txn:', transactionHash)
                     setNotifyMessage('Harvest Pending...')
                     setNotifyType('success')
                     contTxn = true

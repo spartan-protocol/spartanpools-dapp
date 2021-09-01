@@ -54,10 +54,10 @@ const Positions = (props) => {
     }, [context.sharesDataComplete])
 
     const getSpartaData = async () => {
-        console.log('start get sparta history data')
+        // console.log('start get sparta history data')
         let temp = await getTokenHistoryByID('spartan-protocol-token')
         setSpartaData(temp)
-        console.log('end get sparta history data')
+        // console.log('end get sparta history data')
     }
 
     const getStarted = (wallet) => {
@@ -78,7 +78,7 @@ const Positions = (props) => {
         await Promise.all([getRemoveLiqData(), getAddLiqData()]) 
         // Filter user's in/outs by pool
         let sharesData = context.sharesData
-        console.log('sharesData', sharesData)
+        // console.log('sharesData', sharesData)
         let positionsData = context.sharesData.map(x => ({
             'address': x.address,
             'symbol': x.symbol,
@@ -112,7 +112,7 @@ const Positions = (props) => {
             })
         }
         setUserPositions(positionsData)
-        console.log('positionsData', positionsData)
+        // console.log('positionsData', positionsData)
         //getPoolPositions()
         setLoading(false)
     }
@@ -130,7 +130,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             allTsfsOut = response.data.data.ethereum.transfers
-            console.log('All member tsfs out of wallet', allTsfsOut);
+            // console.log('All member tsfs out of wallet', allTsfsOut);
         }).catch(function (error) {
             console.error(error);
         })
@@ -149,7 +149,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             tsfsIn = response.data.data.ethereum.transfers
-            console.log('all member transfers receiving to their wallet', tsfsIn);
+            // console.log('all member transfers receiving to their wallet', tsfsIn);
         }).catch(function (error) {
             console.error(error);
         })
@@ -177,7 +177,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             removeLiq = response.data.data.ethereum.smartContractCalls
-            console.log('all removeLiq Events ROUTERv1', removeLiq)
+            // console.log('all removeLiq Events ROUTERv1', removeLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -202,7 +202,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             removeLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all removeLiq Events ROUTERv2a', removeLiq)
+            // console.log('all removeLiq Events ROUTERv2a', removeLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -227,7 +227,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             removeLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all removeLiq Events ROUTERv2b', removeLiq)
+            // console.log('all removeLiq Events ROUTERv2b', removeLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -252,14 +252,14 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             removeLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all removeLiq Events ROUTERv2c', removeLiq)
+            // console.log('all removeLiq Events ROUTERv2c', removeLiq)
         }).catch(function (error) {
             console.error(error)
         })
         // Get all relevant remove-liquidity transfers
         removeLiq = removeLiq.map(x => x.transaction.hash)
         tsfsIn = tsfsIn.filter(x => removeLiq.includes(x.transaction.hash))
-        console.log('Total/all relevant remove-liquidity transfers', tsfsIn)
+        // console.log('Total/all relevant remove-liquidity transfers', tsfsIn)
     }
 
     const getAddLiqData = async () => {
@@ -284,7 +284,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             addLiq = response.data.data.ethereum.smartContractCalls
-            console.log('all addLiq Events ROUTERv1', addLiq)
+            // console.log('all addLiq Events ROUTERv1', addLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -309,7 +309,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             addLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all addLiq Events ROUTERv2a', addLiq)
+            // console.log('all addLiq Events ROUTERv2a', addLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -334,7 +334,7 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             addLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all addLiq Events ROUTERv2b', addLiq)
+            // console.log('all addLiq Events ROUTERv2b', addLiq)
         }).catch(function (error) {
             console.error(error)
         })
@@ -359,14 +359,14 @@ const Positions = (props) => {
         }
         await axios.request(options).then(function (response) {
             addLiq.push(...response.data.data.ethereum.smartContractCalls)
-            console.log('all addLiq Events ROUTERv2c', addLiq)
+            // console.log('all addLiq Events ROUTERv2c', addLiq)
         }).catch(function (error) {
             console.error(error)
         })
         // Get all relevant add-liquidity transfers
         addLiq = addLiq.map(x => x.transaction.hash)
         tsfsOut = allTsfsOut.filter(x => addLiq.includes(x.transaction.hash))
-        console.log('Total/all relevant add-liquidity transfers', tsfsOut)
+        // console.log('Total/all relevant add-liquidity transfers', tsfsOut)
     }
 
     const removeTsfsByPool = (pool) => {

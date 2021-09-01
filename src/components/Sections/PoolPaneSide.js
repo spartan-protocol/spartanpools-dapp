@@ -6,7 +6,7 @@ import {withNamespaces} from "react-i18next";
 import {withRouter} from "react-router-dom";
 
 import {TokenIconPane} from '../Common/TokenIconPane'
-import {Card, CardBody, Row, Col, UncontrolledTooltip} from "reactstrap";
+import {Card, CardBody, Row, Col} from "reactstrap";
 import { Context } from "../../context";
 
 const PoolPaneSide = (props) => {
@@ -123,7 +123,7 @@ const PoolPaneSide = (props) => {
                                             </td>
                                             */}
                                         </tr>
-                                        <tr>
+                                        {/* <tr>
                                             <td className='text-center'>
                                                 <p className="mb-0">APY</p>
                                             </td>
@@ -131,20 +131,20 @@ const PoolPaneSide = (props) => {
                                                 <h5 className="mb-0">{formatAllUnits( ( props.pool.apy - 10000) / 100)} %</h5>
                                                 <h6 className='mb-0 font-weight-light d-inline-block'>Info</h6>
                                                 <div id={props.pool.symbol + 'APY'} role='button' className={'bx bx-info-circle d-inline-block ml-1'} />
-                                                    <UncontrolledTooltip placement="bottom" target={props.pool.symbol + 'APY'}>
+                                                    <UncontrolledTooltip placement="bottom" target={props.pool.symbol + 'APY'}> */}
                                                         {/* {confidence === 'trafficRed' && 'Very Low Confidence!'}
                                                         {confidence === 'trafficOrange' && 'Low Confidence!'}
                                                         {confidence === 'trafficYellow' && 'Moderate Confidence!'} */}
-                                                        APY is based on the entire history of the pool!<br />
+                                                        {/* APY is based on the entire history of the pool!<br />
                                                         <br />Past performance is NOT a guarantee of future performance!
                                                     </UncontrolledTooltip>
-                                            </td>
+                                            </td> */}
                                             {/*
                                             <td>
                                                 <Progress value="12" color="secondary" className="bg-transparent" size="sm"/>
                                             </td>
                                             */}
-                                        </tr>
+                                        {/* </tr> */}
                                     </tbody>
                                 </table>
                             }
