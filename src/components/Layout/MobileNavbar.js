@@ -57,7 +57,7 @@ const MobileNavbar = (props) => {
                                 </Link>
                                 <div className={classname("dropdown-menu", { show: isDropdown1  })}>
                                     <Link to="/dao/lock" className="dropdown-item" onClick={()=>closeDropdowns()}><i className='mr-1 bx bx-lock' />{props.t('Lock+Earn')}</Link>
-                                    <Link to="/dao/proposals" className="dropdown-item" onClick={()=>closeDropdowns()}><i className='mr-1 bx bx-pin' />{props.t('Proposals')}</Link>
+                                    {/* <Link to="/dao/proposals" className="dropdown-item" onClick={()=>closeDropdowns()}><i className='mr-1 bx bx-pin' />{props.t('Proposals')}</Link> */}
                                 </div>
                             </li>
                             <li className="nav-item dropdown">
