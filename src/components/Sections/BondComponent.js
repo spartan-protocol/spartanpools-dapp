@@ -156,7 +156,7 @@ const BondComponent = (props) => {
     const estGasPrice = await getGasPrice();
     let contractBondv2 = getBondv2Contract();
     let address = userData.address;
-    console.log("Estimating gas", estGasPrice);
+    // console.log("Estimating gas", estGasPrice);
     await contractBondv2.methods.claim(address).estimateGas(
       {
         from: context.account,
@@ -183,7 +183,7 @@ const BondComponent = (props) => {
       setNotifyType("warning");
       setloadingBondedLP(false);
     } else if (enoughBNB === true) {
-      console.log("Claiming Old LP", estGasPrice, gasLimit, gasFee);
+    //   console.log("Claiming Old LP", estGasPrice, gasLimit, gasFee);
       await contractBondv2.methods.claim(address).send(
         {
           from: context.account,
@@ -197,7 +197,7 @@ const BondComponent = (props) => {
             setNotifyType("warning");
             setloadingBondedLP(false);
           } else {
-            console.log("txn:", transactionHash);
+            // console.log("txn:", transactionHash);
             setNotifyMessage("V2 Bond - LP Token-Claim Pending...");
             setNotifyType("success");
             contTxn = true;

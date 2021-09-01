@@ -34,7 +34,7 @@ export const EarnTableItem = (props) => {
         let contTxn = false
         const estGasPrice = await getGasPrice()
         let contract = getDaoContract()
-        console.log('Estimating gas', '1', estGasPrice)
+        // console.log('Estimating gas', '1', estGasPrice)
         await contract.methods.deposit(record.address, '1').estimateGas({
             from: context.account,
             gasPrice: estGasPrice
@@ -55,7 +55,7 @@ export const EarnTableItem = (props) => {
             setNotifyType('warning')
         }
         else if (enoughBNB === true) {
-            console.log('Locking', record.units, estGasPrice, gasLimit, gasFee)
+            // console.log('Locking', record.units, estGasPrice, gasLimit, gasFee)
             await contract.methods.deposit(record.address, record.units).send({
                 from: context.account,
                 gasPrice: estGasPrice,
@@ -67,7 +67,7 @@ export const EarnTableItem = (props) => {
                     setNotifyType('warning')
                 }
                 else {
-                    console.log('txn:', transactionHash)
+                    // console.log('txn:', transactionHash)
                     setNotifyMessage('Lock Pending...')
                     setNotifyType('success')
                     contTxn = true
@@ -88,7 +88,7 @@ export const EarnTableItem = (props) => {
         let contTxn = false
         const estGasPrice = await getGasPrice()
         let contract = getDaoContract()
-        console.log('Estimating gas', estGasPrice)
+        // console.log('Estimating gas', estGasPrice)
         await contract.methods.withdraw(record.address).estimateGas({
             from: context.account,
             gasPrice: estGasPrice
@@ -109,7 +109,7 @@ export const EarnTableItem = (props) => {
             setNotifyType('warning')
         }
         else if (enoughBNB === true) {
-            console.log('UnLocking', estGasPrice, gasLimit, gasFee)
+            // console.log('UnLocking', estGasPrice, gasLimit, gasFee)
             await contract.methods.withdraw(record.address).send({
                 from: context.account,
                 gasPrice: estGasPrice,
@@ -121,7 +121,7 @@ export const EarnTableItem = (props) => {
                     setNotifyType('warning')
                 }
                 else {
-                    console.log('txn:', transactionHash)
+                    // console.log('txn:', transactionHash)
                     setNotifyMessage('UnLock Pending...')
                     setNotifyType('success')
                     contTxn = true
@@ -145,7 +145,7 @@ export const EarnTableItem = (props) => {
         }
         if (context.sharesDataLoading !== true) {
             // Refresh sharesData for specific token
-            console.log(tokenAddr)
+            // console.log(tokenAddr)
             let sharesData = await updateSharesData(context.account, context.sharesData, tokenAddr)
             context.setContext({'sharesDataLoading': true})
             context.setContext({'sharesData': sharesData})

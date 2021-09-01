@@ -13,7 +13,7 @@ const Footer = () => {
                         <Col xs='12' sm='6'>
                             <div className="text-center text-sm-right">
                                 <a href='https://github.com/spartan-protocol' target='_blank' rel="noopener noreferrer"><i className='bx bxl-github bx-sm mx-1' /></a>
-                                <a href='https://medium.com/spartanprotocol' target='_blank' rel="noopener noreferrer"><i className='bx bxl-medium bx-sm mx-1' /></a>
+                                <a href='https://spartanprotocol.medium.com/' target='_blank' rel="noopener noreferrer"><i className='bx bxl-medium bx-sm mx-1' /></a>
                                 <a href='https://twitter.com/SpartanProtocol' target='_blank' rel="noopener noreferrer"><i className='bx bxl-twitter bx-sm mx-1' /></a>
                                 <a href='https://t.me/SpartanProtocolOrg' target='_blank' rel="noopener noreferrer"><i className='bx bxl-telegram bx-sm mx-1' /></a>
                             </div>
